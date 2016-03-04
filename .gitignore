@@ -1,0 +1,8 @@
+.Rproj.user
+.Rhistory
+.RData
+*.pdf
+*.docx
+*.html
+*.Rproj
+*.sqlite3
