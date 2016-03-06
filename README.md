@@ -1,11 +1,11 @@
 # README #
 
-Randell contribution to doqtl2 project.
+Yandell contribution to doqtl2 project.
 
 ### What is this repository for? ###
 
 * Code to liaise between Broman work on R/qtl2 and Attie Lab.
-* Version 0.2
+* Version 0.2.1
 
 ### What has been done ###
 
