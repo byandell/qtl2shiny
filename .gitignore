@@ -6,3 +6,4 @@
 *.html
 *.Rproj
 *.sqlite3
+*.sqlite
