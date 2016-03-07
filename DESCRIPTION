@@ -1,12 +1,12 @@
 Package: doqtl2
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.2.2
-Date: 2016-03-06
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Title: DOQTL updates to mesh with R/qtl2
+Version: 0.2.4
+Date: 2016-03-07
+Author: Brian S. Yandell
+Maintainer: Brian S. Yandell <byandell@wisc.edu>
+Description: Update gene_plot, soon variants.
+License: GPL-3
 LazyData: TRUE
 Depends:
     readr,dplyr,ggplot2
