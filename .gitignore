@@ -10,3 +10,4 @@
 *.gz
 *.rds
 R/variants.R
+.DS_Store
