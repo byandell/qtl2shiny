@@ -7,3 +7,6 @@
 *.Rproj
 *.sqlite3
 *.sqlite
+*.gz
+*.rds
+R/variants.R
