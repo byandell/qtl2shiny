@@ -1,13 +1,13 @@
 Package: doqtl2
 Type: Package
 Title: DOQTL updates to mesh with R/qtl2
-Version: 0.2.8
-Date: 2016-03-11
+Version: 0.2.9
+Date: 2016-03-12
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
 Description: Update gene_plot, soon variants.
 License: GPL-3
 LazyData: TRUE
 Depends:
-    readr,dplyr,ggplot2
+    readr,dplyr,tidyr,ggplot2
 RoxygenNote: 5.0.1
