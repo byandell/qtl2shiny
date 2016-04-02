@@ -9,5 +9,7 @@ Description: Update gene_plot, soon variants.
 License: GPL-3
 LazyData: TRUE
 Depends:
-    readr,dplyr,tidyr,ggplot2
+    readr,dplyr,tidyr,ggplot2,stats,graphics
+Suggests:
+    ggbiplot
 RoxygenNote: 5.0.1
