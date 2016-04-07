@@ -23,12 +23,8 @@ Major issues
 
 Minor issues
 
-* chr 3 HOMA broken again -- no snps
 * ggbiplot not working sometimes in plot.snp_pc (batch Rmd mode?)
 * summary.snp_pc: include loadings somehow
-* put `snp_csq` analysis before `gene_exon` plots
-* try snp_csq plot by both Csq and pattern
-* rename `qtl2_pipeline` as `qtl2_onepheno`
 
 Redesign for use by scientists
 
