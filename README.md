@@ -5,7 +5,7 @@ Yandell contribution to doqtl2 project.
 ### What is this repository for? ###
 
 * Code to liaise between Broman work on R/qtl2 and Attie Lab.
-* Version 0.2.1
+* Version 0.3
 
 ### What has been done ###
 
@@ -18,13 +18,16 @@ Yandell contribution to doqtl2 project.
 
 Major issues
 
-* using covariates from analysis.csv as done for pipeline
 * update as [R/qtl2](http://kbroman.org/qtl2/) evolves
+* incorporate Ensembl ID as well as Gene Name
+* Get Csq from SNP database rather than Sanger site
 
 Minor issues
 
 * ggbiplot not working sometimes in plot.snp_pc (batch Rmd mode?)
 * summary.snp_pc: include loadings somehow
+* use output rather than phename for folder
+* organize DerivedData in its own folder
 
 Redesign for use by scientists
 
