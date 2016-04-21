@@ -11,3 +11,4 @@
 *.rds
 R/variants.R
 .DS_Store
+data/
