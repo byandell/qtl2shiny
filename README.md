@@ -33,7 +33,7 @@ Major issues
 * probs will only grow, but SQLite does not seem easy answer
   + [NetCDF and HDF5](http://www.unidata.ucar.edu/software/netcdf/docs/interoperability_hdf5.html)? (used at Jax; see [RNetCDF](https://cran.r-project.org/web/packages/RNetCDF/index.html))
 * shiny SNP plot across traits for one pattern
-* SNPs as covariates as function and shiny module
+* SNPs as covariates as function and shiny module (see inst/tests/best_snp.R)
 
 Minor issues
 
