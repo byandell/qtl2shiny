@@ -5,15 +5,16 @@ Yandell contribution to doqtl2 project.
 ### What is this repository for? ###
 
 * Code to liaise between Broman work on R/qtl2 and Attie Lab.
-* Version 0.4
+* Version 0.5
 
 ### What has been done ###
 
 * built SQLite database for MGI genes
 * rebuilt gene_plot routine for association map SNP plot
+* Shiny interface for multiple phenotypes
 * Rmd pipelines for single pheno and single peaks
 * Rmd pipeline for multiple phenotypes (say <10)
-* incorporated shiny parameter setting for users
+* incorporated shiny parameter setting into rmd files
 * intermediate calculations saved in rds files
 * Dependencies: readr, dplyr, tidyr, ggplot2, stats, graphics
 * Suggests: shiny (for params), ggbiplot (for PCA of patterns)
@@ -27,9 +28,12 @@ Major issues
 * incorporate Ensembl ID as well as Gene Name
 * Get Csq and other gene features from SNP database rather than Sanger site
   + got Csq, but need gene name and/or other features in CSQ part of VCF
+  + probably bring in as compressed character format
 * threshold calculations
 * probs will only grow, but SQLite does not seem easy answer
   + [NetCDF and HDF5](http://www.unidata.ucar.edu/software/netcdf/docs/interoperability_hdf5.html)? (used at Jax; see [RNetCDF](https://cran.r-project.org/web/packages/RNetCDF/index.html))
+* shiny SNP plot across traits for one pattern
+* SNPs as covariates as function and shiny module
 
 Minor issues
 
@@ -43,6 +47,9 @@ Minor issues
 * streamline Rmd output to focus on key findings
   + fewer plots
   + better story around figures
+* shiny
+  + shiny zoom in and reset window if possible (shinyScan1.R)
+  + user save settings for quick replay of shiny
 
 Redesign for use by scientists
 
