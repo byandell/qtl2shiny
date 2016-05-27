@@ -1,8 +1,8 @@
 Package: doqtl2
 Type: Package
 Title: DOQTL updates to mesh with R/qtl2
-Version: 0.4.1
-Date: 2016-05-17
+Version: 0.4.2
+Date: 2016-05-27
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
 Description: Update gene_plot, soon variants.

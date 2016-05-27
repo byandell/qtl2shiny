@@ -5,13 +5,13 @@ Yandell contribution to doqtl2 project.
 ### What is this repository for? ###
 
 * Code to liaise between Broman work on R/qtl2 and Attie Lab.
-* Version 0.5
+* Version 0.4.2
 
 ### What has been done ###
 
 * built SQLite database for MGI genes
 * rebuilt gene_plot routine for association map SNP plot
-* Shiny interface for multiple phenotypes
+* Shiny interface for multiple phenotypes with modules
 * Rmd pipelines for single pheno and single peaks
 * Rmd pipeline for multiple phenotypes (say <10)
 * incorporated shiny parameter setting into rmd files
@@ -48,7 +48,7 @@ Minor issues
   + fewer plots
   + better story around figures
 * shiny
-  + shiny zoom in and reset window if possible (shinyScan1.R)
+  + quick chr:pos (or chr@pos or chr pos)
   + user save settings for quick replay of shiny
 
 Redesign for use by scientists
@@ -57,6 +57,7 @@ Redesign for use by scientists
   + qtl2_rmd() generic interface
   + qtl2_onepheno() more customized for onepheno & onepeak run
 * connect to Karl's new server and d3 tools
+* use shinydashboard for shiny and flexdashboard for Rmd
 
 ### Contribution guidelines ###
 
