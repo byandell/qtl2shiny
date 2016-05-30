@@ -5,13 +5,13 @@ Yandell contribution to doqtl2 project.
 ### What is this repository for? ###
 
 * Code to liaise between Broman work on R/qtl2 and Attie Lab.
-* Version 0.4.2
+* Version 0.4.3
 
 ### What has been done ###
 
 * built SQLite database for MGI genes
 * rebuilt gene_plot routine for association map SNP plot
-* Shiny interface for multiple phenotypes with modules
+* Shiny interface for multiple phenotypes with modules and dashboard
 * Rmd pipelines for single pheno and single peaks
 * Rmd pipeline for multiple phenotypes (say <10)
 * incorporated shiny parameter setting into rmd files
@@ -32,7 +32,8 @@ Major issues
 * threshold calculations
 * probs will only grow, but SQLite does not seem easy answer
   + [NetCDF and HDF5](http://www.unidata.ucar.edu/software/netcdf/docs/interoperability_hdf5.html)? (used at Jax; see [RNetCDF](https://cran.r-project.org/web/packages/RNetCDF/index.html))
-* shiny SNP plot across traits for one pattern
+  + for now use save/readRDS for individual chromosomes
+* shiny SNP pattern plot across traits by pattern
 * SNPs as covariates as function and shiny module (see inst/tests/best_snp.R)
 
 Minor issues
@@ -48,7 +49,7 @@ Minor issues
   + fewer plots
   + better story around figures
 * shiny
-  + quick chr:pos (or chr@pos or chr pos)
+  + reveal plots more (settings on sidebar? tabs?)
   + user save settings for quick replay of shiny
 
 Redesign for use by scientists
@@ -57,7 +58,10 @@ Redesign for use by scientists
   + qtl2_rmd() generic interface
   + qtl2_onepheno() more customized for onepheno & onepeak run
 * connect to Karl's new server and d3 tools
-* use shinydashboard for shiny and flexdashboard for Rmd
+* shinydashboard for shiny has download of CSV; refine and expand
+* flexdashboard for Rmd to create dynamic reports
+* link Rmd and shiny
+* dynamic plots with [d3panels](http://kbroman.org/d3panels/) and [qtlcharts](http://kbroman.org/qtlcharts/)
 
 ### Contribution guidelines ###
 
