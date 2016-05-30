@@ -10,7 +10,7 @@ License: GPL-3
 LazyData: TRUE
 Depends:
     readr,plyr,dplyr,tidyr,ggplot2,stats,graphics,
-    qtl2geno,qtl2scan,qtl2plot
+    qtl2geno,qtl2scan,qtl2plot,
 Suggests:
-    ggbiplot,shiny,knitr,rmarkdown,qtl
+    ggbiplot,shiny,knitr,rmarkdown,qtl,gdata
 RoxygenNote: 5.0.1
