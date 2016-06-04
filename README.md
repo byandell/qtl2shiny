@@ -26,9 +26,7 @@ Major issues
 
 * update as [R/qtl2](http://kbroman.org/qtl2/) evolves
 * incorporate Ensembl ID as well as Gene Name
-* Get Csq and other gene features from SNP database rather than Sanger site
-  + got Csq, but need gene name and/or other features in CSQ part of VCF
-  + probably bring in as compressed character format
+  + got Ensembl ID, but misspelled as `ensmbl_gene`
 * threshold calculations
 * probs will only grow, but SQLite does not seem easy answer
   + [NetCDF and HDF5](http://www.unidata.ucar.edu/software/netcdf/docs/interoperability_hdf5.html)? (used at Jax; see [RNetCDF](https://cran.r-project.org/web/packages/RNetCDF/index.html))
@@ -51,6 +49,7 @@ Minor issues
 * shiny
   + reveal plots more (settings on sidebar? tabs?)
   + user save settings for quick replay of shiny
+  + fix up peak and pheno entries to get hot peaks without first opening
 
 Redesign for use by scientists
 
