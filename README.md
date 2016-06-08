@@ -12,6 +12,7 @@ Yandell contribution to doqtl2 project.
 * built SQLite database for MGI genes
 * rebuilt gene_plot routine for association map SNP plot
 * Shiny interface for multiple phenotypes with modules and dashboard
+  + download CSV and/or plots
 * Rmd pipelines for single pheno and single peaks
 * Rmd pipeline for multiple phenotypes (say <10)
 * incorporated shiny parameter setting into rmd files
@@ -49,10 +50,10 @@ Minor issues
 * shiny
   + reveal plots more (settings on sidebar? tabs?)
   + user save settings for quick replay of shiny
-  + fix up peak and pheno entries to get hot peaks without first opening
 
 Redesign for use by scientists
 
+* invoke shiny dashboard as doqtl2_app()
 * now down to one command to get to shiny parameter check
   + qtl2_rmd() generic interface
   + qtl2_onepheno() more customized for onepheno & onepeak run
