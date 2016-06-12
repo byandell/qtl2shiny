@@ -50,6 +50,7 @@ Minor issues
 * shiny
   + reveal plots more (settings on sidebar? tabs?)
   + user save settings for quick replay of shiny
+* windows: looks like GeneRegion and TopFeature window is off somehow
 
 Redesign for use by scientists
 
