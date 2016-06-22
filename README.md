@@ -50,8 +50,8 @@ Minor issues
 * shiny
   + reveal plots more (settings on sidebar? tabs?)
   + user save settings for quick replay of shiny
-* windows: looks like GeneRegion and TopFeature window is off somehow
-
+* snpinfo varying names for `pos_Mbp` as `pos` and `snp_id` as `snp`
+  + `R/exon_snp.R`, `R/check_interval.R`, `R/snpinfo.R`, others?
 Redesign for use by scientists
 
 * invoke shiny dashboard as doqtl2_app()
