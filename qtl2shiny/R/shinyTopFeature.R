@@ -1,0 +1,113 @@
+#' Shiny Top Features in SNP Region module
+#'
+#' Shiny module for scan1 analysis and plots.
+#'
+#' @param input,output,session standard shiny arguments
+#' @param scan_obj,top_snps_tbl,gene_exon_tbl reactive arguments
+#'
+#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
+#' @keywords utilities
+#'
+#' @export
+shinyTopFeature <- function(input, output, session,
+                     chr_pos, scan_obj, top_snps_tbl, gene_exon_tbl) {
+  ns <- session$ns
+  ## This is just repeat of GeneRegion for now
+  ## See child/tests/top_feature.R for filler.
+  top_feature <- reactive({
+    req(top_snps_tbl(),scan_obj(),gene_exon_tbl())
+    withProgress(message = 'Merging gene info ...', value = 0,
+    {
+      setProgress(1)
+      merge_feature(top_snps_tbl(), scan_obj(), 1.5, 0, gene_exon_tbl())
+    })
+  })
+  output$top_snp_type <- renderDataTable({
+    t(table(top_feature()$snp_type))
+  }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
+  output$top_pattern <- renderDataTable({
+    t(table(top_feature()$AB1NZCPW))
+  }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
+  plot_top_feat_csq <- function(phenoi) {
+    ggplot(top_feature() %>%
+             mutate_(lod=phenoi) %>%
+             filter(!is.na(lod)),
+           aes(x=pos_Mbp,y=lod,col=AB1NZCPW)) +
+      geom_jitter() +
+      facet_wrap(~snp_type) +
+      xlab("Position in Mbp") + ylab("LOD") +
+      ggtitle(paste("Top SNPs by Consequence for", phenoi))
+  }
+  plot_top_feat_pat <- function(phenoi) {
+    ggplot(top_feature() %>%
+             mutate_(lod=phenoi) %>%
+             filter(!is.na(lod)),
+           aes(x=pos_Mbp,y=lod,col=snp_type)) +
+      geom_jitter() +
+      facet_wrap(~AB1NZCPW) +
+      xlab("Position in Mbp") + ylab("LOD") +
+      ggtitle(paste("Top SNPs by Allele Pattern for", phenoi))
+  }
+  phename <- reactive({dimnames(scan_obj()$lod)[[2]]})
+  output$top_names <- renderUI({
+    selectInput(ns("top_name"), NULL, phename())
+  })
+  output$top_gene_by_snp <- renderPlot({
+    req(top_feature(),input$top_name)
+    phenoi <- input$top_name
+    plot_top_feat_csq(phenoi)
+  })
+  output$top_gene_by_pattern <- renderPlot({
+    req(top_feature(),input$top_name)
+    phenoi <- input$top_name
+    plot_top_feat_pat(phenoi)
+  })
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      file.path(paste0("top_feature_", chr_pos(), ".csv")) },
+    content = function(file) {
+      write.csv(req(top_feature()), file)
+    }
+  )
+  output$downloadPlot <- downloadHandler(
+    filename = function() {
+      file.path(paste0("top_feature_", chr_pos(), ".pdf")) },
+    content = function(file) {
+      req(top_feature())
+      pdf(file)
+      for(phenoi in phename()) {
+        print(plot_top_feat_csq(phenoi))
+        print(plot_top_feat_pat(phenoi))
+      }
+      dev.off()
+    }
+  )
+}
+
+#' UI for shinyTopFeature Shiny Module
+#'
+#' UI for top features to use in shiny module.
+#'
+#' @param id identifier for \code{\link{shinyScan1SNP}} use
+#'
+#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
+#' @keywords utilities
+#'
+#' @rdname shinyTopFeature
+#' @export
+shinyTopFeatureUI <- function(id) {
+  ns <- NS(id)
+  tagList(
+    tabsetPanel(
+      tabPanel("summary",
+               downloadButton(ns("downloadData"), "Download CSV"),
+               dataTableOutput(ns("top_snp_type")),
+               dataTableOutput(ns("top_pattern"))),
+      tabPanel("plots",
+               downloadButton(ns("downloadPlot"), "Download Plots"),
+               uiOutput(ns("top_names")),
+               plotOutput(ns("top_gene_by_snp")),
+               plotOutput(ns("top_gene_by_pattern")))
+    )
+  )
+}

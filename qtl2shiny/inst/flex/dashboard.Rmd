@@ -1,0 +1,64 @@
+---
+title: "Flex QTL2 Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE,
+                      comment="")
+```
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+suppressPackageStartupMessages({
+  library(doqtl2)
+  library(GGally)
+})
+source(system.file("shiny/setup.R", package="doqtl2"))
+```
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+fillCol(height=600, flex=c(NA,NA,1),
+        shinyWindowUI("window"),
+        shinyPhenosUI("phenos")
+)
+win_par <- callModule(shinyWindow, "window", pmap_obj, hot_peak)
+pheno_anal <- callModule(shinyPhenos, "phenos",
+                         pheno_typer, peaks_tbl, analyses_tblr,
+                         hot_peak, win_par)
+```
+
+Row {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Hot Spot Set
+
+```{r}
+  ## Reactives for shinyPhenos.
+  pheno_typer <- reactive({pheno_type})
+  peaks_tbl <- reactive({peaks})
+  pmap_obj <- reactive({pmap})
+  analyses_tblr <- reactive({analyses_tbl})
+
+  fillCol(height=600, flex=c(NA,NA,1),
+    shinyPeaksInput("shinypeaks")
+  )
+  hot_peak <- callModule(shinyPeaks, "shinypeaks",
+                         pheno_typer, peaks_tbl, pmap_obj)
+```
+
+### Hot Spot View
+
+```{r}
+  renderPlot({
+      plot(1:5,1:5)
+    })
+    shinyPeaksOutput("shinypeaks")
+```
