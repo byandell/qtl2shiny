@@ -15,7 +15,6 @@ shinyGeneExon <- function(input, output, session,
   output$gene_sum <- renderDataTable({
     withProgress(message = 'Gene Exon Table ...', value = 0, {
       setProgress(1)
-      cat(file=stderr(),"gene_sum\n")
       summary(gene_exon_tbl())
     })
   }, options = list(scrollX = TRUE, pageLength = 5,
@@ -23,7 +22,6 @@ shinyGeneExon <- function(input, output, session,
                                       list("5","10","20","all"))))
   output$gene_name <- renderUI({
     gene_exon <- req(gene_exon_tbl())
-    cat(file=stderr(),"gene_name\n")
     selectInput(ns("gene_name"), NULL,
                 choices = unique(gene_exon$gene))
   })
@@ -32,7 +30,6 @@ shinyGeneExon <- function(input, output, session,
   }
   output$gene_plot <- renderPlot({
     req(top_snps_tbl(),gene_exon_tbl())
-    cat(file=stderr(),"gene_plot\n")
     gene_name <- input$gene_name
     withProgress(message = 'Gene Exon Plot ...', value = 0, {
       setProgress(1)

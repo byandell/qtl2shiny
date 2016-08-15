@@ -23,10 +23,11 @@ shinyTopFeature <- function(input, output, session,
     })
   })
   output$top_snp_type <- renderDataTable({
-    summary(top_feature())
+    tops <- req(top_feature(), "SNP type")
+    summary(tops)
   }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
   output$top_pattern <- renderDataTable({
-    summary(top_feature())
+    summary(top_feature(), "pattern")
   }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
   phename <- reactive({dimnames(scan_obj()$lod)[[2]]})
   output$top_names <- renderUI({

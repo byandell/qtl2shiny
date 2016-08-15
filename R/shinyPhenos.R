@@ -24,7 +24,6 @@ shinyPhenos <- function(input, output, session,
                 selected = selected)
   })
   observeEvent(hot_peak(), {
-    cat(file=stderr(), "hot_peak pheno\n")
     scan_tbl <- hot_peak() %>%
       filter(lod==max(lod))
     updateSelectInput(session, "dataset",

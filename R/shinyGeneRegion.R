@@ -54,12 +54,8 @@ shinyGeneRegion <- function(input, output, session,
     ## negative (blue) strand, then unknown (grey), then positive (red) strand.
     wrng <- input$scan_window
     ## Filtering removes feature_tbl class, so need to be explicit.
-    plot.feature_tbl(gene_region_tbl() %>%
-                       filter(start >= convert_bp(wrng[1]),
-                              stop <= convert_bp(wrng[2])),
-                     top_snps_tbl=top_snps_tbl() %>%
-                       filter(pos_Mbp >= wrng[1],
-                              pos_Mbp <= wrng[2]))
+    plot(subset(gene_region_tbl(), wrng[1], wrng[2]),
+         top_snps_tbl=subset(top_snps_tbl(), wrng[1], wrng[2]))
   }
   output$gene_plot <- renderPlot({
     plot_gene_region()

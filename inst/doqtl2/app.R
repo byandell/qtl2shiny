@@ -1,9 +1,6 @@
 ## app.R ##
 suppressPackageStartupMessages({
-  library(plyr)
-  library(doqtl2)
-  library(shiny)
-  library(shinydashboard)
+  library(qtl2shiny)
   library(GGally)
 })
 
@@ -116,55 +113,19 @@ server <- function(input, output, session) {
                         pmap_obj, hot_peak)
 
   chr_pos <- reactive({
-    chr_id <- win_par$chr_id
-    if(is.null(chr_id))
-      chr_id <- "?"
-    left_Mbp <- right_Mbp <- "?"
-    peak_Mbp <- win_par$peak_Mbp
-    if(is.null(peak_Mbp))
-      peak_Mbp <- "?"
-    else
-      peak_Mbp <- round(peak_Mbp, 2)
-    window_Mbp <- win_par$window_Mbp
-    if(is.null(window_Mbp))
-      window_Mbp <- "?"
-    else {
-      window_Mbp <- round(window_Mbp, 2)
-      if(peak_Mbp != "?") {
-        left_Mbp <- peak_Mbp - window_Mbp
-        right_Mbp <- peak_Mbp + window_Mbp
-      }
-    }
-    paste(chr_id, left_Mbp, right_Mbp, sep = "_")
+    make_chr_pos(win_par$chr_id, 
+                 win_par$peak_Mbp, win_par$window_Mbp)
   })
   output$chr_pos <- renderText({
     paste0("Region: ", chr_pos(), "Mbp")
   })
-  hr_num <- function(x, digits_ct=0) {
-    x <- gdata::humanReadable(x, digits=digits_ct, sep="",
-                              standard="SI",
-                              justify=c("right","right"))
-    substring(x, 1, nchar(x) - 1)
-  }
   output$num_pheno <- renderText({
-    tot_pheno <- nrow(analyses_tbl %>%
-                        distinct(pheno, .keep_all=TRUE))
-    tot_pheno <- hr_num(tot_pheno, 2)
-    paste("Phenotypes:", 0, "of", tot_pheno)
-
+    num_pheno(character(), analyses_tbl)
   })
   observeEvent(pheno_anal(), {
     output$num_pheno <- renderText({
-      pheno <- pheno_anal()
-      if(any(c("all","none") %in% pheno))
-        return(NULL)
-      num_pheno <- length(unique(pheno))
-      tot_pheno <- nrow(analyses_tbl %>%
-                          distinct(pheno, .keep_all=TRUE))
-      ## Put in human-readable format
-      num_pheno <- hr_num(num_pheno, 0)
-      tot_pheno <- hr_num(tot_pheno, 2)
-      paste("Phenotypes:", num_pheno, "of", tot_pheno)
+      pheno <- req(pheno_anal())
+      num_pheno(pheno, analyses_tbl)
     })
   })
 
@@ -192,15 +153,7 @@ server <- function(input, output, session) {
 
   # Output the analyses table
   output$analyses_tbl <- renderDataTable({
-    dat <- analyses_df()
-
-    ## Collapse covariates (past winsorize column).
-    covar_names <- names(dat)[-seq_len(match("winsorize",names(dat)))]
-    dat %>%
-      unite(covar, one_of(covar_names)) %>%
-      mutate(covar = sapply(strsplit(covar,"_"),
-                            function(x) paste(covar_names[as.logical(x)],
-                                              collapse=",")))
+    collapse_covar(analyses_df())
   }, options = list(scrollX = TRUE, pageLength = 10))
 
   # Output the peaks table
@@ -242,7 +195,7 @@ server <- function(input, output, session) {
     })
   })
   plot_scans <- reactive({"scans"})
-  scan_obj <- callModule(shinyScan1, "genome_scan", plot_scans,
+  callModule(shinyScan1, "genome_scan", plot_scans,
                          chr_id, phe_df, cov_mx, pheno_anal,
                          probs_obj, K_chr)
 
@@ -250,7 +203,6 @@ server <- function(input, output, session) {
   snpprobs_obj <- reactive({
     window_Mbp <- req(win_par$window_Mbp)
     peak_Mbp <- req(win_par$peak_Mbp)
-    cat(file=stderr(), "get_snpprobs\n")
     withProgress(message = 'SNP Scan ...', value = 0, {
       setProgress(1)
       get_snpprobs(chr_id(), peak_Mbp, window_Mbp,

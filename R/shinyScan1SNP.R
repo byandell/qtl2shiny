@@ -30,7 +30,6 @@ shinyScan1SNP <- function(input, output, session,
                  })
   })
   output$snpPatternSum <- renderTable({
-    cat(file=stderr(),"snpPatternSum\n")
     req(pheno_id(), scan_obj())
     scan_snp <- scan_obj()
     if(max(scan_snp$lod) <= 1.5)
@@ -64,7 +63,6 @@ shinyScan1SNP <- function(input, output, session,
                  })
   })
   output$snp_phe_pat <- renderPlot({
-    cat(file=stderr(),"snp_phe_pat\n")
     withProgress(message = 'SNP Pheno patterns ...', value = 0,
                  {
                    setProgress(1)
@@ -73,7 +71,6 @@ shinyScan1SNP <- function(input, output, session,
                  })
   })
   output$snp_pat_phe <- renderPlot({
-    cat(file=stderr(),"snp_pat_phe\n")
     withProgress(message = 'SNP Pattern phenos ...', value = 0,
                  {
                    setProgress(1)

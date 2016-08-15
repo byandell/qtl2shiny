@@ -15,7 +15,6 @@ shinyWindow <- function(input, output, session, pmap_obj,
 
   # Select chromosome.
   output$choose_chr <- renderUI({
-    cat(file=stderr(),"chr", input$chr_id, "\n")
     selectInput(ns("chr_id"), strong("Key Chromosome"),
                 choices = names(pmap_obj()),
                 selected = input$chr_id)
@@ -24,7 +23,6 @@ shinyWindow <- function(input, output, session, pmap_obj,
   # Position slider
   output$choose_peak <- renderUI({
     req(input$chr_id)
-    cat(file=stderr(),"peak", input$peak_Mbp, "\n")
     rng <- round(range(pmap_obj()[[input$chr_id]]), 2)
     pos <- input$peak_Mbp
     if(is.null(pos)) {
@@ -39,14 +37,12 @@ shinyWindow <- function(input, output, session, pmap_obj,
 
   ## Window slider
   output$choose_window <- renderUI({
-    cat(file=stderr(),"window", input$window_Mbp, "\n")
     if(is.null(pos <- input$window_Mbp))
       pos <- 3
     sliderInput(ns("window_Mbp"), "Window over Peak if Positive",
                 0, 6, pos, step=0.5)
   })
   observeEvent(hot_peak(), {
-    cat(file=stderr(), "hot_peak\n")
     scan_tbl <- hot_peak() %>%
       filter(lod==max(lod))
 
@@ -68,7 +64,6 @@ shinyWindow <- function(input, output, session, pmap_obj,
   })
 
   observeEvent(input$chr_pos, {
-    cat(file=stderr(), "chr_pos", input$chr_pos, "\n")
     chr_pos <- strsplit(input$chr_pos, ":|@|_| |,")[[1]]
     if(length(chr_pos) == 2) {
       chr <- chr_pos[1]

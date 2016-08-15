@@ -34,7 +34,6 @@ shinyPeaks <- function(input, output, session,
     })
 
   scan_obj_all <- reactive({
-    cat(file=stderr(), "scan_obj_all\n")
     out_peaks <- pmap_obj()
     map_chr <- names(out_peaks)
     n_chr <- length(map_chr)
@@ -72,9 +71,7 @@ shinyPeaks <- function(input, output, session,
     out_peaks
   })
   scan_obj <- reactive({
-    cat(file=stderr(), "scan_obj\n")
     peak_chr <- req(input$peak_chr_id)
-    cat(file=stderr(), peak_chr, "\n")
     out_peaks <- scan_obj_all()
     withProgress(message = 'Hot peak filtering ...', value = 0,
     {
@@ -95,7 +92,6 @@ shinyPeaks <- function(input, output, session,
   })
 
   output$peak_show <- renderPlot({
-    cat(file=stderr(), "peak_show")
     ## Here need scan1 object.
     peak_set <- req(input$peak_set)
     out_peaks <- scan_obj()
