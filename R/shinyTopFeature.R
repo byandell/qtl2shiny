@@ -23,44 +23,22 @@ shinyTopFeature <- function(input, output, session,
     })
   })
   output$top_snp_type <- renderDataTable({
-    t(table(top_feature()$snp_type))
+    summary(top_feature())
   }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
   output$top_pattern <- renderDataTable({
-    t(table(top_feature()$AB1NZCPW))
+    summary(top_feature())
   }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
-  plot_top_feat_csq <- function(phenoi) {
-    ggplot(top_feature() %>%
-             mutate_(lod=phenoi) %>%
-             filter(!is.na(lod)),
-           aes(x=pos_Mbp,y=lod,col=AB1NZCPW)) +
-      geom_jitter() +
-      facet_wrap(~snp_type) +
-      xlab("Position in Mbp") + ylab("LOD") +
-      ggtitle(paste("Top SNPs by Consequence for", phenoi))
-  }
-  plot_top_feat_pat <- function(phenoi) {
-    ggplot(top_feature() %>%
-             mutate_(lod=phenoi) %>%
-             filter(!is.na(lod)),
-           aes(x=pos_Mbp,y=lod,col=snp_type)) +
-      geom_jitter() +
-      facet_wrap(~AB1NZCPW) +
-      xlab("Position in Mbp") + ylab("LOD") +
-      ggtitle(paste("Top SNPs by Allele Pattern for", phenoi))
-  }
   phename <- reactive({dimnames(scan_obj()$lod)[[2]]})
   output$top_names <- renderUI({
     selectInput(ns("top_name"), NULL, phename())
   })
   output$top_gene_by_snp <- renderPlot({
-    req(top_feature(),input$top_name)
-    phenoi <- input$top_name
-    plot_top_feat_csq(phenoi)
+    req(top_feature(), input$top_name)
+    plot(top_feature(), input$top_name, "consequence")
   })
   output$top_gene_by_pattern <- renderPlot({
     req(top_feature(),input$top_name)
-    phenoi <- input$top_name
-    plot_top_feat_pat(phenoi)
+    plot(top_feature(), input$top_name, "pattern")
   })
   output$downloadData <- downloadHandler(
     filename = function() {

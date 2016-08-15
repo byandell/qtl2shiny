@@ -1,17 +1,13 @@
-Package: doqtl2
+Package: qtl2shiny
 Type: Package
-Title: DOQTL updates to mesh with R/qtl2
-Version: 0.4.12
+Title: Shiny interface for R/qtl2 and R/doqtl2
+Version: 0.1
 Date: 2016-08-14
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
-Description: Genome and SNP scan for R/qtl2.
+Description: Shiny Interface for R/qtl2 and R/doqtl2.
 License: GPL-3
 LazyData: TRUE
 Depends:
-    readr,plyr,dplyr,tidyr,ggplot2,stringr
-    stats,graphics,
-    qtl2geno,qtl2scan,qtl2plot,RSQLite
-Suggests:
-    ggbiplot,shiny,knitr,rmarkdown,qtl,gdata,broman
+    doqtl2
 RoxygenNote: 5.0.1
