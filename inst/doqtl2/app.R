@@ -42,6 +42,9 @@ ui <- dashboardPage(skin="red",
                icon = icon("dashboard")),
       menuItem("Identify Hotspot", tabName = "peak",
                icon = icon("dashboard")),
+      ## Transform menuItem into fluidRow.
+      ## Include phenotypes and Region on left, with choices
+      ## Plots and details on right.
       menuItem("Phenotype Info", tabName = "tables", icon = icon("dashboard"),
                collapsible =
                  menuSubItem("Phenotype Peaks", tabName = "peaks_tbl"),
@@ -52,6 +55,9 @@ ui <- dashboardPage(skin="red",
                icon = icon("dashboard")),
       menuItem("SNP Scans", tabName = "snps",
                icon = icon("dashboard")),
+      ## Transform menuItem into fluidRow.
+      ## Include phenotypes and Region on left, with choices
+      ## Plots and details on right.
       menuItem("SNP Detail", tabName = "snp_detail", icon = icon("dashboard"),
                collapsible =
                menuSubItem("Top SNPs", tabName = "top_snps_tbl"),
@@ -69,11 +75,11 @@ ui <- dashboardPage(skin="red",
     tabItems(
       ## Genome Region
       tabItem(tabName = "phenos", fluidRow(
-        shinyPhenosUI("phenos"),
-        shinyWindowUI("window"))),
+        column(6, shinyPhenosUI("phenos")),
+        column(4, shinyWindowUI("window")))),
       tabItem(tabName = "peak", fluidRow(
-        shinyPeaksInput("shinypeaks"),
-        shinyPeaksOutput("shinypeaks"))),
+        column(4, shinyPeaksInput("shinypeaks")),
+        column(8, shinyPeaksOutput("shinypeaks")))),
 
       ## Tables and Plots
       tabItem(tabName="analyses_tbl", fluidRow(

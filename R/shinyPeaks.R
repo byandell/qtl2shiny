@@ -151,10 +151,11 @@ shinyPeaks <- function(input, output, session,
 shinyPeaksInput <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("choose_peakset")),
-    uiOutput(ns("peak_chr")),
-    sliderInput(ns("peak_window"), "Peak Window", 0, 6, 3)
-  )
+    fluidRow(
+      uiOutput(ns("choose_peakset")),
+      uiOutput(ns("peak_chr")),
+      sliderInput(ns("peak_window"), "Peak Window", 0, 6, 3)
+  ))
 }
 #' UI for shinyPeaks output
 #'
@@ -170,7 +171,7 @@ shinyPeaksInput <- function(id) {
 shinyPeaksOutput <- function(id) {
   ns <- NS(id)
   tagList(
-    tableOutput(ns("peak_tbl")),
-    plotOutput(ns("peak_show"))
+    plotOutput(ns("peak_show")),
+    tableOutput(ns("peak_tbl"))
   )
 }
