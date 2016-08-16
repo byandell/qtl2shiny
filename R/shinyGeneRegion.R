@@ -91,14 +91,13 @@ shinyGeneRegion <- function(input, output, session,
 shinyGeneRegionUI <- function(id) {
   ns <- NS(id)
   tagList(
-    tabsetPanel(
-      tabPanel("summary",
-               downloadButton(ns("downloadData"), "Download CSV"),
-               tableOutput(ns("gene_sum"))),
-      tabPanel("plot",
-               uiOutput(ns("choose_scan_window")),
-               downloadButton(ns("downloadPlot"), "Download Plot"),
-               plotOutput(ns("gene_plot")))
-    )
+    plotOutput(ns("gene_plot")),
+    column(6, fluidRow(
+      uiOutput(ns("choose_scan_window")),
+      fluidRow(
+        downloadButton(ns("downloadPlot"), "Plot"),
+        downloadButton(ns("downloadData"), "CSV")))),
+    column(6, fluidRow(
+      tableOutput(ns("gene_sum"))))
   )
 }

@@ -45,7 +45,8 @@ ui <- dashboardPage(skin="red",
       ## Transform menuItem into fluidRow.
       ## Include phenotypes and Region on left, with choices
       ## Plots and details on right.
-      menuItem("Phenotype Info", tabName = "tables", icon = icon("dashboard"),
+      menuItem("Phenotype Info", tabName = "tables",
+               icon = icon("dashboard"),
                collapsible =
                  menuSubItem("Phenotype Peaks", tabName = "peaks_tbl"),
                  menuSubItem("Analyses Details", tabName = "analyses_tbl"),
@@ -58,13 +59,14 @@ ui <- dashboardPage(skin="red",
       ## Transform menuItem into fluidRow.
       ## Include phenotypes and Region on left, with choices
       ## Plots and details on right.
-      menuItem("SNP Detail", tabName = "snp_detail", icon = icon("dashboard"),
-               collapsible =
-               menuSubItem("Top SNPs", tabName = "top_snps_tbl"),
-               menuSubItem("Genes in SNP Region", tabName = "gene_region"),
-               menuSubItem("Top Features in SNP Region", tabName = "top_feature"),
-               menuSubItem("Genes and Exons in SNP Region", tabName = "gene_exon")
-      ),
+      menuItem("SNP Detail", tabName = "snp_detail", 
+               icon = icon("dashboard")),
+#               collapsible =
+#               menuSubItem("Top SNPs", tabName = "top_snps_tbl"),
+#               menuSubItem("Genes in SNP Region", tabName = "gene_region"),
+#               menuSubItem("Top Features in SNP Region", tabName = "top_feature"),
+#               menuSubItem("Genes and Exons in SNP Region", tabName = "gene_exon")
+#      ),
       tags$div(id = "popup",
                helpPopup(NULL,
                          includeMarkdown("about.md"),
@@ -88,18 +90,27 @@ ui <- dashboardPage(skin="red",
         dataTableOutput("peaks_tbl"))),
       tabItem(tabName="pheno_plot", fluidRow(
         shinyPhenoPlotUI("PhenoPlot"))),
+      
+      ## Scans
       tabItem(tabName="scans", fluidRow(
         shinyScan1UI("genome_scan"))),
+      
       tabItem(tabName="snps", fluidRow(
         shinyScan1UI("snp_scan"))),
-      tabItem(tabName="top_snps_tbl", fluidRow(
-        shinySNPUI("best_snp"))),
-      tabItem(tabName="gene_region", fluidRow(
-        shinyGeneRegionUI("gene_region"))),
-      tabItem(tabName="top_feature", fluidRow(
-        shinyTopFeatureUI("top_feature"))),
-      tabItem(tabName="gene_exon", fluidRow(
-        shinyGeneExonUI("gene_exon")))
+      
+      ## SNP Detail
+      tabItem(tabName="snp_detail", 
+              h4(strong("Region Detail")),
+              tabsetPanel(
+                tabPanel("Top Features",
+                         shinyTopFeatureUI("top_feature")),
+                tabPanel("Genes in SNP Region",
+                         shinyGeneRegionUI("gene_region")),
+                tabPanel("Genes & Exons",
+                         shinyGeneExonUI("gene_exon")),
+                tabPanel("Top SNPs",
+                         shinySNPUI("best_snp")))
+              )
     )
   )
 )

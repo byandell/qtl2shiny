@@ -77,16 +77,16 @@ shinyTopFeature <- function(input, output, session,
 shinyTopFeatureUI <- function(id) {
   ns <- NS(id)
   tagList(
+    fluidRow(
+      uiOutput(ns("top_names")),
+      downloadButton(ns("downloadPlot"), "Plots"),
+      downloadButton(ns("downloadData"), "CSV")),
     tabsetPanel(
-      tabPanel("summary",
-               downloadButton(ns("downloadData"), "Download CSV"),
-               dataTableOutput(ns("top_snp_type")),
-               dataTableOutput(ns("top_pattern"))),
-      tabPanel("plots",
-               downloadButton(ns("downloadPlot"), "Download Plots"),
-               uiOutput(ns("top_names")),
+      tabPanel("By Allele Pattern",
                plotOutput(ns("top_gene_by_snp")),
-               plotOutput(ns("top_gene_by_pattern")))
-    )
+               dataTableOutput(ns("top_pattern"))),
+      tabPanel("By Consequence",
+               plotOutput(ns("top_gene_by_pattern")),
+               dataTableOutput(ns("top_snp_type"))))
   )
 }
