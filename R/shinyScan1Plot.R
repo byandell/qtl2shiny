@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param chr_id,phe_df,cov_mx,scan_window,chr_pos,pheno_id,scan_obj,probs_chr,K_chr reactive arguments
+#' @param chr_id,phe_df,cov_mx,pheno_anal,probs_obj,K_chr reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -12,9 +12,40 @@
 #'
 #' @export
 shinyScan1Plot <- function(input, output, session,
-                       chr_id, phe_df, cov_mx,
-                       scan_window, chr_pos, pheno_id,
-                       scan_obj, probs_chr, K_chr) {
+                       chr_id, phe_df, cov_mx, 
+                       pheno_anal, probs_obj, K_chr) {
+  ns <- session$ns
+  
+  ## Scan1
+  scan_obj <- reactive({
+    req(pheno_anal())
+    withProgress(message = paste("Scan1 for", plot_type(), "..."),
+                 value = 0,
+                 {
+                   setProgress(1)
+                   scan1(probs_obj(), phe_df(), K_chr(), cov_mx())
+                 })
+  })
+  
+  # Scan Window slider
+  output$choose_scan_window <- renderUI({
+    req(chr_id(),pheno_anal(),probs_obj())
+    rng <- round(range(probs_obj()$map[[chr_id()]]), 2)
+    sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
+                rng, step=.1)
+  })
+  
+  ## Select phenotype for plots.
+  output$choose_pheno <- renderUI({
+    req(pheno_anal())
+    selectInput(ns("pheno_anal"), NULL,
+                choices = names(pheno_anal()))
+  })
+  pheno_id <- reactive({
+    pheno_anal <- req(input$pheno_anal)
+    pheno_anal()[pheno_anal]
+  })
+  
   ## Scan1 plot
   output$scanPlot <- renderPlot({
     withProgress(message = 'Scan plots ...', value = 0,
@@ -24,7 +55,7 @@ shinyScan1Plot <- function(input, output, session,
     })
   })
 
-  ## Coefficient Effects Reactives.
+  ## Coefficient Effects.
   eff_obj <- reactive({
     withProgress(message = 'Effect scans ...', value = 0,
     {
@@ -32,22 +63,12 @@ shinyScan1Plot <- function(input, output, session,
       listof_scan1coefCC(phe_df(), cov_mx(), probs_chr(), K_chr())
     })
   })
-  plot_eff <- function(pheno) {
-    lodcol <- match(pheno, names(eff_obj()))
-    plot_coefCC(eff_obj()[[lodcol]], xlim=scan_window())
-    max_pos <- max(scan_obj(), lodcolumn=lodcol)$pos[1]
-    abline(v=max_pos, lty=2, lwd=2, col=lodcol)
-    at <- par("usr")[1:2]
-    at <- seq(at[1],at[2],length.out=length(CCcolors))
-    mtext(names(CCcolors),col=CCcolors,at=at)
-    title(pheno)
-  }
   output$effPlot <- renderPlot({
     req(pheno_id(),eff_obj())
     withProgress(message = 'Effect plots ...', value = 0,
     {
       setProgress(1)
-      plot_eff(pheno_id())
+      plot_eff(pheno_id(), scan_obj(), eff_obj(), scan_window())
     })
   })
   output$effSummary <- renderDataTable({
@@ -59,6 +80,12 @@ shinyScan1Plot <- function(input, output, session,
                  })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
+  
+  ## Downloads.
+  chr_pos <- reactive({make_chr_pos(chr_id(), 
+                                    left_Mbp = scan_window()[1], 
+                                    right_Mbp = scan_window()[2])
+  })
   output$downloadData <- downloadHandler(
     filename = function() {
       file.path(paste0("sum_effects_", chr_pos(), ".csv")) },

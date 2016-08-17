@@ -117,9 +117,8 @@ shinySNP <- function(input, output, session,
 #' @export
 shinySNPUI <- function(id) {
   ns <- NS(id)
-  tagList(
-    downloadButton(ns("downloadData"), "Download CSV"),
-    tabsetPanel(
+  tagList(fluidRow(
+    column(11, tabsetPanel(
       tabPanel("best",
         dataTableOutput(ns("top_snps_best"))),
       tabPanel("indels",
@@ -128,6 +127,7 @@ shinySNPUI <- function(id) {
         dataTableOutput(ns("top_snps_peak"))),
       tabPanel("range",
         dataTableOutput(ns("top_snps_tbl")))
-    )
-  )
+    )),
+    column(1, downloadButton(ns("downloadData"), "CSV"))
+  ))
 }

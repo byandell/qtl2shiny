@@ -5,17 +5,17 @@
 \alias{shinyScan1UI}
 \title{Shiny scan1 analysis and plot module}
 \usage{
-shinyScan1(input, output, session, plot_type, chr_id, phe_df, cov_mx,
-  pheno_anal, probs_obj, K_chr)
+shinyScan1(input, output, session, chr_id, phe_df, cov_mx, pheno_anal,
+  probs_obj, K_chr)
 
 shinyScan1UI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{plot_type, chr_id, phe_df, cov_mx, pheno_anal, probs_obj, K_chr}{reactive arguments}
-
 \item{id}{identifier for \code{\link{shinyScan1}} use}
+
+\item{plot_type, chr_id, phe_df, cov_mx, pheno_anal, probs_obj, K_chr}{reactive arguments}
 }
 \value{
 object of class \code{\link[qtl2scan]{scan1}}

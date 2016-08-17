@@ -12,8 +12,11 @@
 #'
 #' @export
 shinyScan1 <- function(input, output, session,
-                       plot_type, chr_id, phe_df, cov_mx, pheno_anal,
-                       probs_obj, K_chr) {
+                       chr_id, phe_df, cov_mx,
+                       pheno_anal, probs_obj, K_chr) {
+  
+  ## This is basically obsolete now.
+  
   ns <- session$ns
 
   ## Scan1
@@ -35,75 +38,13 @@ shinyScan1 <- function(input, output, session,
                 rng, step=.1)
   })
 
-  snp_coef <- reactive({
-    req(plot_type(),pheno_anal())
-    phename <- dimnames(scan_obj()$lod)[[2]]
-    coef_topsnp(scan_obj(),probs_obj(),phe_df(),K_chr(),cov_mx())
-  })
-  output$scanTable <- renderDataTable({
-    snp_coef()
-  }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10))
-
   ## Select phenotype for plots.
   output$choose_pheno <- renderUI({
     req(pheno_anal())
     selectInput(ns("pheno_anal"), NULL,
                 choices = names(pheno_anal()))
   })
-  pheno_id <- reactive({
-    pheno_anal <- req(input$pheno_anal)
-    pheno_anal()[pheno_anal]
-  })
-  chr_pos <- reactive({
-    chr <- req(chr_id())
-    scan_w <- req(input$scan_window)
-    scan_w <- round(scan_w, 2)
-    paste(chr, scan_w[1], scan_w[2], sep = "_")
-  })
 
-  ## Module for scan1 plots.
-  scan_window <- reactive({input$scan_window})
-  callModule(shinyScan1Plot, "scan1plot", chr_id, phe_df, cov_mx,
-             scan_window, chr_pos, pheno_id, scan_obj, probs_obj, K_chr)
-
-  ## Module for SNP plots.
-  callModule(shinyScan1SNP, "scan1snp", chr_id,
-             scan_window, chr_pos, pheno_id, scan_obj, probs_obj)
-
-  output$scan1_plot <- renderUI({
-    req(pheno_anal())
-    withProgress(message = paste("Plots for", plot_type(), "..."),
-                 value = 0,
-    {
-      setProgress(1)
-      if(plot_type() == "scans") {
-        shinyScan1PlotUI(ns("scan1plot"))
-      } else {
-        shinyScan1SNPUI(ns("scan1snp"))
-      }
-    })
-  })
-  output$effectTable <- renderUI({
-    req(pheno_anal(),plot_type())
-    withProgress(message = paste("Effects for", plot_type(), "..."),
-                 value = 0,
-                 {
-                   setProgress(1)
-                   if(plot_type() == "scans") {
-                     shinyScan1PlotOutput(ns("scan1plot"))
-                   } else { "snsp"
-                     dataTableOutput(ns("scanTable"))
-                   }
-                 })
-  })
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      file.path(paste0("snp_effects_", chr_pos(), ".csv")) },
-    content = function(file) {
-      write.csv(snp_coef(), file)
-    }
-  )
   scan_obj
 }
 

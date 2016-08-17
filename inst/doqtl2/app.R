@@ -42,31 +42,14 @@ ui <- dashboardPage(skin="red",
                icon = icon("dashboard")),
       menuItem("Identify Hotspot", tabName = "peak",
                icon = icon("dashboard")),
-      ## Transform menuItem into fluidRow.
-      ## Include phenotypes and Region on left, with choices
-      ## Plots and details on right.
-      menuItem("Phenotype Info", tabName = "tables",
-               icon = icon("dashboard"),
-               collapsible =
-                 menuSubItem("Phenotype Peaks", tabName = "peaks_tbl"),
-                 menuSubItem("Analyses Details", tabName = "analyses_tbl"),
-                 menuSubItem("Phenotype Plots", tabName = "pheno_plot")
-      ),
+      menuItem("Phenotype Info", tabName = "pheno_info",
+               icon = icon("dashboard")),
       menuItem("Genome Scans", tabName = "scans",
                icon = icon("dashboard")),
       menuItem("SNP Scans", tabName = "snps",
                icon = icon("dashboard")),
-      ## Transform menuItem into fluidRow.
-      ## Include phenotypes and Region on left, with choices
-      ## Plots and details on right.
-      menuItem("SNP Detail", tabName = "snp_detail", 
+      menuItem("SNPs in Region", tabName = "snp_detail", 
                icon = icon("dashboard")),
-#               collapsible =
-#               menuSubItem("Top SNPs", tabName = "top_snps_tbl"),
-#               menuSubItem("Genes in SNP Region", tabName = "gene_region"),
-#               menuSubItem("Top Features in SNP Region", tabName = "top_feature"),
-#               menuSubItem("Genes and Exons in SNP Region", tabName = "gene_exon")
-#      ),
       tags$div(id = "popup",
                helpPopup(NULL,
                          includeMarkdown("about.md"),
@@ -83,14 +66,18 @@ ui <- dashboardPage(skin="red",
         column(4, shinyPeaksInput("shinypeaks")),
         column(8, shinyPeaksOutput("shinypeaks")))),
 
-      ## Tables and Plots
-      tabItem(tabName="analyses_tbl", fluidRow(
-        dataTableOutput("analyses_tbl"))),
-      tabItem(tabName="peaks_tbl", fluidRow(
-        dataTableOutput("peaks_tbl"))),
-      tabItem(tabName="pheno_plot", fluidRow(
-        shinyPhenoPlotUI("PhenoPlot"))),
-      
+      ## Phenotype Information
+      tabItem(tabName="pheno_info", 
+              tabsetPanel(
+                tabPanel("Peaks",
+                         dataTableOutput("peaks_tbl")),
+                tabPanel("Raw Data",
+                         shinyPhenoPlotUI("PhenoPlotRaw")),
+                tabPanel("Trans Data",
+                         shinyPhenoPlotUI("PhenoPlotTrans")),
+                tabPanel("Covariates",
+                         dataTableOutput("analyses_tbl")))),
+
       ## Scans
       tabItem(tabName="scans", fluidRow(
         shinyScan1UI("genome_scan"))),
@@ -175,7 +162,8 @@ server <- function(input, output, session) {
 
   # Output the peaks table
   output$peaks_tbl <- renderDataTable({
-    peaks_df()
+    peaks_df() %>%
+      select(pheno,chr,pos,lod)
   }, options = list(scrollX = TRUE, pageLength = 10))
 
   ## Reactive for phenotypes.
@@ -197,13 +185,14 @@ server <- function(input, output, session) {
   })
 
   ## Density or scatter plot of phenotypes.
-  callModule(shinyPhenoPlot, "PhenoPlot", raw_phe_df, phe_df, cov_mx)
-
+  callModule(shinyPhenoPlot, "PhenoPlotRaw", raw_phe_df, cov_mx)
+  callModule(shinyPhenoPlot, "PhenoPlotTrans", phe_df, cov_mx)
+  
   ## Set up reactives for scan1 module.
   chr_id <- reactive({as.character(req(win_par$chr_id))})
   K_chr <- reactive({K[chr_id()]})
 
-  ## Genome scan.
+  ## Genome scans by haplotype alleles and SNPs.
   probs_obj <- reactive({
     req(chr_id())
     withProgress(message = 'Read probs ...', value = 0, {
@@ -211,26 +200,14 @@ server <- function(input, output, session) {
       read_probs(chr_id(), datapath)
     })
   })
-  plot_scans <- reactive({"scans"})
-  callModule(shinyScan1, "genome_scan", plot_scans,
-                         chr_id, phe_df, cov_mx, pheno_anal,
-                         probs_obj, K_chr)
-
-  ## SNP analyses.
-  snpprobs_obj <- reactive({
-    window_Mbp <- req(win_par$window_Mbp)
-    peak_Mbp <- req(win_par$peak_Mbp)
-    withProgress(message = 'SNP Scan ...', value = 0, {
-      setProgress(1)
-      get_snpprobs(chr_id(), peak_Mbp, window_Mbp,
-                   names(phe_df()), probs_obj(),
-                   pattern = "AB1NZCPW", datapath)
-    })
-  })
-  plot_snps <- reactive({"snps"})
-  snp_scan_obj <- callModule(shinyScan1, "snp_scan", plot_snps,
-                             chr_id, phe_df, cov_mx, pheno_anal,
-                             snpprobs_obj, K_chr)
+  callModule(shinyScan1Plot, "hap_scan", 
+                             chr_id, phe_df, cov_mx,
+                             pheno_anal, probs_obj, K_chr)
+  
+  snp_scan_obj <- callModule(shinyScan1SNP, "snp_scan",
+                             chr_id, phe_df, cov_mx, 
+                             pheno_anal, probs_obj, K_chr)
+  
   top_snps_tbl <- reactive({
     withProgress(message = 'Get Top SNPs ...', value = 0, {
       setProgress(1)

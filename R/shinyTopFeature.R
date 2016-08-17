@@ -78,9 +78,10 @@ shinyTopFeatureUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      uiOutput(ns("top_names")),
-      downloadButton(ns("downloadPlot"), "Plots"),
-      downloadButton(ns("downloadData"), "CSV")),
+      column(6, uiOutput(ns("top_names"))),
+      column(6,
+        downloadButton(ns("downloadPlot"), "Plots"),
+        downloadButton(ns("downloadData"), "CSV"))),
     tabsetPanel(
       tabPanel("By Allele Pattern",
                plotOutput(ns("top_gene_by_snp")),
