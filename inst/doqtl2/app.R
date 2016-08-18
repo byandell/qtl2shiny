@@ -80,10 +80,10 @@ ui <- dashboardPage(skin="red",
 
       ## Scans
       tabItem(tabName="scans", fluidRow(
-        shinyScan1UI("genome_scan"))),
+        shinyScan1PlotUI("genome_scan"))),
       
       tabItem(tabName="snps", fluidRow(
-        shinyScan1UI("snp_scan"))),
+        shinyScan1SNPUI("snp_scan"))),
       
       ## SNP Detail
       tabItem(tabName="snp_detail", 
@@ -205,7 +205,7 @@ server <- function(input, output, session) {
                              pheno_anal, probs_obj, K_chr)
   
   snp_scan_obj <- callModule(shinyScan1SNP, "snp_scan",
-                             chr_id, phe_df, cov_mx, 
+                             win_par, phe_df, cov_mx, 
                              pheno_anal, probs_obj, K_chr)
   
   top_snps_tbl <- reactive({

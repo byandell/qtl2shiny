@@ -2,36 +2,27 @@
 % Please edit documentation in R/shinyScan1SNP.R
 \name{shinyScan1SNP}
 \alias{shinyScan1SNP}
-\alias{shinyScan1SNPOutput}
 \alias{shinyScan1SNPUI}
 \title{Shiny scan1 SNP analysis and plot module}
 \usage{
-shinyScan1SNP(input, output, session, chr_id, scan_window, chr_pos, pheno_id,
-  scan_obj, probs_obj)
-
-shinyScan1SNPOutput(id)
+shinyScan1SNP(input, output, session, win_par, phe_df, cov_mx, pheno_anal,
+  probs_obj, K_chr)
 
 shinyScan1SNPUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{chr_id, scan_window, chr_pos, pheno_id, scan_obj, probs_obj}{reactive arguments}
-
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{win_par, phe_df, cov_mx, pheno_anal, probs_obj, K_chr}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }
 \description{
 Shiny module for scan1 analysis and plots.
 
-UI for scan1 analyses and summaries to use in shiny module.
-
 Output for scan1 analyses and summaries to use in shiny module.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 
 Brian S Yandell, \email{brian.yandell@wisc.edu}

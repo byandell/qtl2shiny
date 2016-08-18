@@ -48,7 +48,7 @@ shinyScan1Plot <- function(input, output, session,
     withProgress(message = 'Genome LOD Plot ...', value = 0, {
       setProgress(1)
       show_peaks(chr_id(), scan_obj(), mytitle="", 
-                 xlim=scan_window())
+                 xlim=input$scan_window)
     })
   })
 
@@ -63,7 +63,7 @@ shinyScan1Plot <- function(input, output, session,
     req(pheno_id(),eff_obj())
     withProgress(message = 'Effect plots ...', value = 0, {
       setProgress(1)
-      plot_eff(pheno_id(), scan_obj(), eff_obj(), scan_window())
+      plot_eff(pheno_id(), scan_obj(), eff_obj(), input$scan_window)
     })
   })
   output$effSummary <- renderDataTable({
@@ -77,7 +77,7 @@ shinyScan1Plot <- function(input, output, session,
   
   ## Downloads.
   chr_pos <- reactive({
-    make_chr_pos(chr_id(), range = scan_window())
+    make_chr_pos(chr_id(), range = input$scan_window)
   })
   output$downloadData <- downloadHandler(
     filename = function() {
@@ -93,7 +93,7 @@ shinyScan1Plot <- function(input, output, session,
     content = function(file) {
       req(eff_obj())
       pdf(file)
-      show_peaks(chr_id(), scan_obj(), mytitle="", xlim=scan_window())
+      show_peaks(chr_id(), scan_obj(), mytitle="", xlim=input$scan_window)
       for(pheno in names(eff_obj()))
         plot_eff(pheno)
       dev.off()
@@ -115,24 +115,20 @@ shinyScan1Plot <- function(input, output, session,
 shinyScan1PlotUI <- function(id) {
   ns <- NS(id)
   tagList(
-    downloadButton(ns("downloadPlot"), "Download Plots"),
-    plotOutput(ns("effPlot")),
-    plotOutput(ns("scanPlot")))
-}
-#' Output for shinyScan1 Shiny Module
-#'
-#' Output for scan1 analyses and summaries to use in shiny module.
-#'
-#' @param id identifier for \code{\link{shinyScan1}} use
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
-#' @rdname shinyScan1Plot
-#' @export
-shinyScan1PlotOutput <- function(id) {
-  ns <- NS(id)
-  tagList(
-    downloadButton(ns("downloadData"), "Download CSV"),
-    dataTableOutput(ns("effSummary")))
+    h4(strong("SNP Plots")),
+    fluidRow(
+      column(4, 
+             uiOutput(ns("choose_scan_window")),
+             uiOutput(ns("choose_pheno")),
+             column(6, downloadButton(ns("downloadData"), "CSV")),
+             column(6, downloadButton(ns("downloadPlot"), "Plots"))),
+      tabsetPanel(
+        tabPanel("LOD",
+                 plotOutput(ns("scanPlot"))),
+        tabPanel("Effects",
+                 plotOutput(ns("effPlot"))),
+        tabPanel("summary",
+                 dataTableOutput(ns("effSummary"))))
+    )
+  )
 }

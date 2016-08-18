@@ -2,7 +2,6 @@
 % Please edit documentation in R/shinyScan1Plot.R
 \name{shinyScan1Plot}
 \alias{shinyScan1Plot}
-\alias{shinyScan1PlotOutput}
 \alias{shinyScan1PlotUI}
 \title{Shiny coefficient analysis and plot module}
 \usage{
@@ -10,15 +9,11 @@ shinyScan1Plot(input, output, session, chr_id, phe_df, cov_mx, pheno_anal,
   probs_obj, K_chr)
 
 shinyScan1PlotUI(id)
-
-shinyScan1PlotOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{chr_id, phe_df, cov_mx, pheno_anal, probs_obj, K_chr}{reactive arguments}
-
-\item{id}{identifier for \code{\link{shinyScan1}} use}
 
 \item{id}{identifier for \code{\link{shinyScan1}} use}
 }
@@ -29,12 +24,8 @@ shinyScan1PlotOutput(id)
 Shiny module for scan1 coefficient plots.
 
 UI for scan1 analyses and summaries to use in shiny module.
-
-Output for scan1 analyses and summaries to use in shiny module.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 
 Brian S Yandell, \email{brian.yandell@wisc.edu}

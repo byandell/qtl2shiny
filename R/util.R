@@ -51,10 +51,10 @@ num_pheno <- function(pheno, analyses_tbl) {
 #' @export
 make_chr_pos <- function(chr_id=NULL, peak_Mbp=NULL, window_Mbp=NULL,
                          range = c(peak_Mbp - window_Mbp,
-                                    peak_Mbp + window_Mbp) {
+                                    peak_Mbp + window_Mbp)) {
   if(is.null(chr_id))
     chr_id <- "?"
-  if(min(length(left_Mbp), length(right_Mbp)) == 0 )
+  if(length(range) < 2 )
     range <- rep("?", 2)
   paste(chr_id, range[1], range[2], sep = "_")
 }
@@ -199,13 +199,18 @@ top_pat_plot <- function(pheno,
   top_pattern <- topsnp_pattern(scan_obj, pheno, drop)
   if(is.null(top_pattern)) {
     if(fill.null)
-      return(ggplot(,aes(x=1,y=1,label="no SNP allele patterns to plot")) +
-               geom_text(size=10) + theme_void())
+      return(plot_null())
     else
       return()
   }
+  chr_id <- names(scan_obj$map)[1]
   plot(top_pattern, group=group) + xlim(xlim) +
-    ggtitle(paste(pheno, "on chr", chr_id(), "by", top_type))
+    ggtitle(paste(pheno, "on chr", chr_id, "by", top_type))
+}
+#' @export
+plot_null <- function() {
+  ggplot(data.frame(x=1,y=1), aes(x,y,label="no data")) +
+    geom_text(size=10) + theme_void()
 }
 #' Top SNP Association Plot Wrapper
 #'
@@ -221,6 +226,9 @@ top_pat_plot <- function(pheno,
 #' 
 #' @export
 top_snp_asso <- function(pheno, scan_obj, xlim) {
+  if(is.null(pheno) | is.null(scan_obj) | is.null(xlim))
+    return(print(plot_null()))
+  
   phename <- dimnames(scan_obj$lod)[[2]]
   chr_id <- names(scan_obj$map)[1]
   plot_snpasso(subset(scan_obj,
