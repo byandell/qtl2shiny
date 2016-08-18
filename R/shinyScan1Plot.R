@@ -19,17 +19,15 @@ shinyScan1Plot <- function(input, output, session,
   ## Scan1
   scan_obj <- reactive({
     req(pheno_anal())
-    withProgress(message = paste("Scan1 for", plot_type(), "..."),
-                 value = 0,
-                 {
-                   setProgress(1)
-                   scan1(probs_obj(), phe_df(), K_chr(), cov_mx())
-                 })
+    withProgress(message = "Genome Scan ...", value = 0, {
+      setProgress(1)
+      scan1(probs_obj(), phe_df(), K_chr(), cov_mx())
+    })
   })
   
   # Scan Window slider
   output$choose_scan_window <- renderUI({
-    req(chr_id(),pheno_anal(),probs_obj())
+    req(chr_id(), pheno_anal(), probs_obj())
     rng <- round(range(probs_obj()$map[[chr_id()]]), 2)
     sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
                 rng, step=.1)
@@ -42,49 +40,44 @@ shinyScan1Plot <- function(input, output, session,
                 choices = names(pheno_anal()))
   })
   pheno_id <- reactive({
-    pheno_anal <- req(input$pheno_anal)
-    pheno_anal()[pheno_anal]
+    pheno_anal()[req(input$pheno_anal)]
   })
   
   ## Scan1 plot
   output$scanPlot <- renderPlot({
-    withProgress(message = 'Scan plots ...', value = 0,
-    {
+    withProgress(message = 'Genome LOD Plot ...', value = 0, {
       setProgress(1)
-      show_peaks(chr_id(), scan_obj(), mytitle="", xlim=scan_window())
+      show_peaks(chr_id(), scan_obj(), mytitle="", 
+                 xlim=scan_window())
     })
   })
 
   ## Coefficient Effects.
   eff_obj <- reactive({
-    withProgress(message = 'Effect scans ...', value = 0,
-    {
+    withProgress(message = 'Effect scans ...', value = 0, {
       setProgress(1)
       listof_scan1coefCC(phe_df(), cov_mx(), probs_chr(), K_chr())
     })
   })
   output$effPlot <- renderPlot({
     req(pheno_id(),eff_obj())
-    withProgress(message = 'Effect plots ...', value = 0,
-    {
+    withProgress(message = 'Effect plots ...', value = 0, {
       setProgress(1)
       plot_eff(pheno_id(), scan_obj(), eff_obj(), scan_window())
     })
   })
   output$effSummary <- renderDataTable({
     req(eff_obj(),scan_obj())
-    withProgress(message = 'Effect summary ...', value = 0,
-                 {
-                   setProgress(1)
-                   summary(eff_obj(),scan_obj())
-                 })
+    withProgress(message = 'Effect summary ...', value = 0, {
+      setProgress(1)
+      summary(eff_obj(),scan_obj())
+    })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
   
   ## Downloads.
-  chr_pos <- reactive({make_chr_pos(chr_id(), 
-                                    left_Mbp = scan_window()[1], 
-                                    right_Mbp = scan_window()[2])
+  chr_pos <- reactive({
+    make_chr_pos(chr_id(), range = scan_window())
   })
   output$downloadData <- downloadHandler(
     filename = function() {

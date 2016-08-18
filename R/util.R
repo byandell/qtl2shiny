@@ -40,7 +40,7 @@ num_pheno <- function(pheno, analyses_tbl) {
 #' @param chr_id chromosome ID
 #' @param peak_Mbp position of peak in Mbp
 #' @param window_Mbp half-width of window around peak in Mbp
-#' @param left_Mbp,right_Mbp left and right window positions in Mbp
+#' @param range left and right window positions in Mbp
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -50,13 +50,13 @@ num_pheno <- function(pheno, analyses_tbl) {
 #' 
 #' @export
 make_chr_pos <- function(chr_id=NULL, peak_Mbp=NULL, window_Mbp=NULL,
-                         left_Mbp = peak_Mbp - window_Mbp, 
-                         right_Mbp = peak_Mbp + window_Mbp) {
+                         range = c(peak_Mbp - window_Mbp,
+                                    peak_Mbp + window_Mbp) {
   if(is.null(chr_id))
     chr_id <- "?"
   if(min(length(left_Mbp), length(right_Mbp)) == 0 )
-    left_Mbp <- right_Mbp <- "?"
-  paste(chr_id, left_Mbp, right_Mbp, sep = "_")
+    range <- rep("?", 2)
+  paste(chr_id, range[1], range[2], sep = "_")
 }
 #' Collapse covariate names in analyses table
 #'

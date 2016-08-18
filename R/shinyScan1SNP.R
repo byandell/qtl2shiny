@@ -3,15 +3,15 @@
 #' Shiny module for scan1 analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param chr_id,scan_window,chr_pos,pheno_id,scan_obj,probs_obj reactive arguments
+#' @param chr_id,phe_df,cov_mx,pheno_anal,probs_obj,K_chr reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 shinyScan1SNP <- function(input, output, session,
-                          chr_id, scan_window, chr_pos, pheno_id,
-                          scan_obj, probs_obj) {
+                          chr_id, phe_df, cov_mx, 
+                          pheno_anal, probs_obj, K_chr) {
   ns <- session$ns
 
   ## SNP analyses.
@@ -49,49 +49,38 @@ shinyScan1SNP <- function(input, output, session,
   ## Want to have slider for snp_w
   phename <- reactive({dimnames(scan_obj()$lod)[[2]]})
   output$snpPlot <- renderPlot({
-    withProgress(message = 'SNP plots ...', value = 0,
-                 {
-                   setProgress(1)
-                   top_snp_asso(pheno_id(), scan_obj(), scan_window())
-                 })
+    withProgress(message = 'SNP plots ...', value = 0, {
+      setProgress(1)
+      top_snp_asso(pheno_id(), scan_obj(), scan_window())
+    })
   })
   output$snpPatternSum <- renderTable({
     req(pheno_id(), scan_obj())
     scan_snp <- scan_obj()
     if(max(scan_snp$lod) <= 1.5)
       return(NULL)
-    top_pattern <- topsnp_pattern(scan_snp, pheno_id())
-    summary(top_pattern)
+    summary(topsnp_pattern(scan_snp, pheno_id()))
   })
   output$snpPatternPlot <- renderPlot({
     req(pheno_id(), scan_obj())
-    withProgress(message = 'SNP pattern plots ...', value = 0,
-                 {
-                   setProgress(1)
-                   top_pat_plot(pheno_id(), 
-                                scan_obj(), scan_window(), 
-                                TRUE)
-                 })
+    withProgress(message = 'SNP pattern plots ...', value = 0, {
+      setProgress(1)
+      top_pat_plot(pheno_id(), scan_obj(), scan_window(), TRUE)
+    })
   })
   output$snp_phe_pat <- renderPlot({
-    withProgress(message = 'SNP Pheno patterns ...', value = 0,
-                 {
-                   setProgress(1)
-                   top_pat_plot(phename(), 
-                                scan_obj(), scan_window(),
-                                group = "pheno",
-                                top_type = "SNP allele pattern")
-                 })
+    withProgress(message = 'SNP Pheno patterns ...', value = 0, {
+      setProgress(1)
+      top_pat_plot(phename(), scan_obj(), scan_window(),
+                   group = "pheno", top_type = "SNP allele pattern")
+    })
   })
   output$snp_pat_phe <- renderPlot({
-    withProgress(message = 'SNP Pattern phenos ...', value = 0,
-                 {
-                   setProgress(1)
-                   top_pat_plot(phename(), 
-                                scan_obj(), scan_window(),
-                                group = "pattern",
-                                top_type = "Phenotype")
-                 })
+    withProgress(message = 'SNP Pattern phenos ...', value = 0, {
+      setProgress(1)
+      top_pat_plot(phename(), scan_obj(), scan_window(),
+                   group = "pattern", top_type = "Phenotype")
+    })
   })
   snp_coef <- reactive({
     req(plot_type(),pheno_anal())
@@ -104,6 +93,9 @@ shinyScan1SNP <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
   
   ## Downloads.
+  chr_pos <- reactive({
+    make_chr_pos(chr_id(), range = scan_window())
+  })
   output$downloadData <- downloadHandler(
     filename = function() {
       file.path(paste0("snp_effects_", chr_pos(), ".csv")) },
