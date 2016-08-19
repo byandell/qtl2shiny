@@ -50,6 +50,8 @@ ui <- dashboardPage(skin="red",
                icon = icon("dashboard")),
       menuItem("SNP Consequence", tabName = "snp_detail", 
                icon = icon("dashboard")),
+      menuItem("Diploid Scan", tabName = "dip_scan", 
+               icon = icon("dashboard")),
       tags$div(id = "popup",
                helpPopup(NULL,
                          includeMarkdown("about.md"),
@@ -97,7 +99,9 @@ ui <- dashboardPage(skin="red",
                          shinyGeneExonUI("gene_exon")),
                 tabPanel("Top SNPs",
                          shinySNPUI("best_snp")))
-              )
+              ),
+      tabItem(tabName="dip_scan",
+              shinyDominanceUI("dip_scan"))
     )
   )
 )
@@ -230,6 +234,11 @@ server <- function(input, output, session) {
              chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl)
   callModule(shinyGeneExon, "gene_exon",
              chr_pos, top_snps_tbl, gene_exon_tbl)
+  
+  ## Dominance
+  callModule(shinyDominance, "dip_scan",
+                             win_par, phe_df, cov_mx,
+                             pheno_anal, probs_obj, K_chr)
 }
 
 shinyApp(ui, server)

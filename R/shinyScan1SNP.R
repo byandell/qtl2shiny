@@ -3,7 +3,7 @@
 #' Shiny module for scan1 analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,pheno_anal,probs_obj,K_chr reactive arguments
+#' @param win_par,phe_df,cov_mx,pheno_anal,probs_obj,K_chr,dom_type reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -11,7 +11,8 @@
 #' @export
 shinyScan1SNP <- function(input, output, session,
                           win_par, phe_df, cov_mx, 
-                          pheno_anal, probs_obj, K_chr) {
+                          pheno_anal, probs_obj, K_chr,
+                          snp_action = reactive({NULL})) {
   ns <- session$ns
   
   chr_id <- reactive({win_par$chr_id})
@@ -26,12 +27,17 @@ shinyScan1SNP <- function(input, output, session,
     })
   })
   
+  snpprobs_act <- reactive({
+    snpprobs <- req(snpprobs_obj())
+    snpprob_collapse(snpprobs, snp_action())
+  })
+  
   ## Scan1
   scan_obj <- reactive({
     req(pheno_anal())
     withProgress(message = "SNP Scan ...", value = 0, {
       setProgress(1)
-      scan1(snpprobs_obj(), phe_df(), K_chr(), cov_mx())
+      scan1(snpprobs_act(), phe_df(), K_chr(), cov_mx())
     })
   })
   
