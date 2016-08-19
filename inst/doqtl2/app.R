@@ -48,7 +48,7 @@ ui <- dashboardPage(skin="red",
                icon = icon("dashboard")),
       menuItem("SNP Scans", tabName = "snps",
                icon = icon("dashboard")),
-      menuItem("SNPs in Region", tabName = "snp_detail", 
+      menuItem("SNP Consequence", tabName = "snp_detail", 
                icon = icon("dashboard")),
       tags$div(id = "popup",
                helpPopup(NULL,
@@ -80,14 +80,14 @@ ui <- dashboardPage(skin="red",
 
       ## Scans
       tabItem(tabName="scans", fluidRow(
-        shinyScan1PlotUI("genome_scan"))),
+        shinyScan1PlotUI("hap_scan"))),
       
       tabItem(tabName="snps", fluidRow(
         shinyScan1SNPUI("snp_scan"))),
       
       ## SNP Detail
       tabItem(tabName="snp_detail", 
-              h4(strong("Region Detail")),
+              h4(strong("SNP Consequence")),
               tabsetPanel(
                 tabPanel("Top Features",
                          shinyTopFeatureUI("top_feature")),

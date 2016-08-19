@@ -36,21 +36,36 @@ shinyScan1SNP <- function(input, output, session,
   })
   
   # Scan Window slider
-  output$choose_scan_window <- renderUI({
+  output$scan_window <- renderUI({
     req(chr_id(),pheno_anal(),snpprobs_obj())
     rng <- round(range(snpprobs_obj()$map[[chr_id()]]), 2)
     sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
                 rng, step=.1)
   })
   
-  ## Select phenotype for plots.
-  output$choose_pheno <- renderUI({
+  ## Select phenotype for plots. Paired between assoc and pattern.
+  output$pheno_assoc <- renderUI({
     req(pheno_anal())
-    selectInput(ns("pheno_anal"), NULL,
+    selectInput(ns("pheno_assoc"), NULL,
                 choices = names(pheno_anal()))
   })
+  output$pheno_pattern <- renderUI({
+    req(pheno_anal())
+    selectInput(ns("pheno_pattern"), NULL,
+                choices = names(pheno_anal()))
+  })
+  observeEvent(input$pheno_pattern, {
+    updateSelectInput(session, "pheno_assoc", 
+                      choices = names(pheno_anal()),
+                      selected = input$pheno_pattern)
+  })
+  observeEvent(input$pheno_assoc, {
+    updateSelectInput(session, "pheno_pattern", 
+                      choices = names(pheno_anal()),
+                      selected = input$pheno_assoc)
+  })
   pheno_id <- reactive({
-    pheno_anal <- req(input$pheno_anal)
+    pheno_anal <- req(input$pheno_assoc)
     pheno_anal()[pheno_anal]
   })
 
@@ -63,13 +78,14 @@ shinyScan1SNP <- function(input, output, session,
       top_snp_asso(pheno_id(), scan_obj(), input$scan_window)
     })
   })
-  output$snpPatternSum <- renderTable({
+  output$snpPatternSum <- renderDataTable({
     req(pheno_id(), scan_obj())
     scan_snp <- scan_obj()
     if(max(scan_snp$lod) <= 1.5)
       return(NULL)
     summary(topsnp_pattern(scan_snp, pheno_id()))
-  })
+  }, escape = FALSE,
+  options = list(scrollX = TRUE, pageLength = 10))
   output$snpPatternPlot <- renderPlot({
     req(pheno_id(), scan_obj())
     withProgress(message = 'SNP pattern plots ...', value = 0, {
@@ -92,7 +108,7 @@ shinyScan1SNP <- function(input, output, session,
     })
   })
   snp_coef <- reactive({
-    req(plot_type(),pheno_anal())
+    req(pheno_anal())
     phename <- dimnames(scan_obj()$lod)[[2]]
     coef_topsnp(scan_obj(),probs_obj(),phe_df(),K_chr(),cov_mx())
   })
@@ -149,24 +165,24 @@ shinyScan1SNP <- function(input, output, session,
 shinyScan1SNPUI <- function(id) {
   ns <- NS(id)
   tagList(
-    h4(strong("SNP Plots")),
     fluidRow(
-      column(4, 
-             uiOutput(ns("choose_scan_window")),
-             uiOutput(ns("choose_pheno")),
-             column(6, downloadButton(ns("downloadData"), "CSV")),
-             column(6, downloadButton(ns("downloadPlot"), "Plots"))),
-      tabsetPanel(
+      column(3, h4(strong("SNP Plots"))),
+      column(6, uiOutput(ns("scan_window"))),
+      column(3, 
+             downloadButton(ns("downloadData"), "CSV"),
+             downloadButton(ns("downloadPlot"), "Plots"))),
+    tabsetPanel(
         tabPanel("Assocation",
-                 plotOutput(ns("snpPlot"))),
+                 plotOutput(ns("snpPlot")),
+                 uiOutput(ns("pheno_assoc"))),
         tabPanel("Pattern",
-                 plotOutput(ns("snpPatternPlot"))),
+                 plotOutput(ns("snpPatternPlot")),
+                 uiOutput(ns("pheno_pattern"))),
         tabPanel("all phenos",
                  plotOutput(ns("snp_phe_pat"))),
         tabPanel("all patterns",
                  plotOutput(ns("snp_pat_phe"))),
         tabPanel("summary",
-                 tableOutput(ns("snpPatternSum"))))
-    )
+                 dataTableOutput(ns("snpPatternSum"))))
   )
 }

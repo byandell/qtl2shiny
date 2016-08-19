@@ -26,7 +26,7 @@ shinyScan1Plot <- function(input, output, session,
   })
   
   # Scan Window slider
-  output$choose_scan_window <- renderUI({
+  output$scan_window <- renderUI({
     req(chr_id(), pheno_anal(), probs_obj())
     rng <- round(range(probs_obj()$map[[chr_id()]]), 2)
     sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
@@ -34,7 +34,7 @@ shinyScan1Plot <- function(input, output, session,
   })
   
   ## Select phenotype for plots.
-  output$choose_pheno <- renderUI({
+  output$pheno_anal <- renderUI({
     req(pheno_anal())
     selectInput(ns("pheno_anal"), NULL,
                 choices = names(pheno_anal()))
@@ -56,7 +56,7 @@ shinyScan1Plot <- function(input, output, session,
   eff_obj <- reactive({
     withProgress(message = 'Effect scans ...', value = 0, {
       setProgress(1)
-      listof_scan1coefCC(phe_df(), cov_mx(), probs_chr(), K_chr())
+      listof_scan1coefCC(phe_df(), cov_mx(), probs_obj(), K_chr())
     })
   })
   output$effPlot <- renderPlot({
@@ -115,20 +115,19 @@ shinyScan1Plot <- function(input, output, session,
 shinyScan1PlotUI <- function(id) {
   ns <- NS(id)
   tagList(
-    h4(strong("SNP Plots")),
     fluidRow(
-      column(4, 
-             uiOutput(ns("choose_scan_window")),
-             uiOutput(ns("choose_pheno")),
-             column(6, downloadButton(ns("downloadData"), "CSV")),
-             column(6, downloadButton(ns("downloadPlot"), "Plots"))),
-      tabsetPanel(
-        tabPanel("LOD",
-                 plotOutput(ns("scanPlot"))),
-        tabPanel("Effects",
-                 plotOutput(ns("effPlot"))),
-        tabPanel("summary",
-                 dataTableOutput(ns("effSummary"))))
-    )
+      column(3, h4(strong("Genome Plots"))),
+      column(6, uiOutput(ns("scan_window"))),
+      column(3, 
+             downloadButton(ns("downloadData"), "CSV"),
+             downloadButton(ns("downloadPlot"), "Plots"))),
+    tabsetPanel(
+      tabPanel("LOD", 
+               plotOutput(ns("scanPlot"))),
+      tabPanel("Effects",
+               plotOutput(ns("effPlot")),
+               uiOutput(ns("pheno_anal"))),
+      tabPanel("summary",
+               dataTableOutput(ns("effSummary"))))
   )
 }

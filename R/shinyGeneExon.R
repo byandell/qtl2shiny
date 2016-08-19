@@ -72,14 +72,14 @@ shinyGeneExonUI <- function(id) {
   ns <- NS(id)
   tagList(
     tabsetPanel(
-      tabPanel("summary",
-               dataTableOutput(ns("gene_sum")),
-               downloadButton(ns("downloadData"), "CSV")),
+      tabPanel("summary", fluidRow(
+        column(10, dataTableOutput(ns("gene_sum"))),
+        column(2, fluidRow(
+          downloadButton(ns("downloadData"), "CSV"),
+          downloadButton(ns("downloadPlot"), "Plots"))))),
       tabPanel("plots",
-               fluidRow(
-               column(6, uiOutput(ns("gene_name"))),
-               column(6, downloadButton(ns("downloadPlot"), "Plots"))),
-               plotOutput(ns("gene_plot")))
+        plotOutput(ns("gene_plot")),
+        uiOutput(ns("gene_name")))
     )
   )
 }
