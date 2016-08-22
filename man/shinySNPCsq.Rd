@@ -14,6 +14,9 @@ shinySNPCsqUI(id)
 
 \item{snp_scan_obj, chr_pos}{reactive arguments}
 }
+\value{
+tbl with top SNPs
+}
 \description{
 Shiny SNP Consequence
 }

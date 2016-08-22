@@ -121,7 +121,7 @@ shinyScan1PlotUI <- function(id) {
   tagList(
     fluidRow(
       column(3, 
-             h4(strong("Genome Plots")),
+             h4(strong("Genome Scans")),
              radioButtons(ns("genome_scan"), "",
                           c("LOD","Effects","Summary")),
              uiOutput(ns("scan_window")),

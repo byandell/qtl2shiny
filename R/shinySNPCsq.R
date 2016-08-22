@@ -5,6 +5,8 @@
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
+#' 
+#' @return tbl with top SNPs
 #'
 #' @export
 shinySNPCsq <- function(input, output, session,
@@ -49,6 +51,7 @@ shinySNPCsq <- function(input, output, session,
             shinySNPUI(ns("best_snp"))
             })
   })
+  top_snps_tbl
 }
 #' @rdname shinySNPCsq
 #' @export

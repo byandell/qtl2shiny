@@ -35,28 +35,20 @@ shinyDominance <- function(input, output, session,
                              pheno_anal, probs1, K_chr,
                              snp_action)
   
-  callModule(shinySNPCsq, "dip_csq", 
-             snp_scan_obj, chr_pos)
+  top_snps_tbl <- callModule(shinySNPCsq, "dip_csq",
+                             snp_scan_obj, chr_pos)
+  
+  callModule(shinyPattern, "dip_pat", 
+             probs1, top_snps_tbl,
+             phe_df, K_chr, cov_mx)
   
   
   snp_action <- reactive({input$snp_action})
   output$snp_dip <- renderUI({
     switch(input$snp_dip,
            Scan = shinyScan1SNPUI(ns("dip_scan")),
-           Consequence  = shinySNPCsqUI(ns("dip_csq")))
-  })
-  
-  ## Names of haplos and diplos in terms of founders.
-  founders <- reactive({
-    founders <- str_split("AB1NZCPW","")[[1]]
-    names(founders) <- LETTERS[seq_along(founders)]
-    founders
-  })
-  haplos <- reactive({
-    str_replace_all(dimnames(probs_obj()$probs[[1]])[[2]], founders())
-  })
-  diplos <- reactive({
-    str_replace_all(dimnames(probs1()$probs[[1]])[[2]], founders())
+           Consequence  = shinySNPCsqUI(ns("dip_csq")),
+           Pattern = plotOutput(ns("scan_pattern"))) ## NOT WORKING YET.
   })
 }
 #' @rdname shinyDominance
