@@ -14,20 +14,11 @@ shinyScan1PlotUI(id)
 \item{input, output, session}{standard shiny arguments}
 
 \item{chr_id, phe_df, cov_mx, pheno_anal, probs_obj, K_chr}{reactive arguments}
-
-\item{id}{identifier for \code{\link{shinyScan1}} use}
-}
-\value{
-2-element vector of scan window
 }
 \description{
 Shiny module for scan1 coefficient plots.
-
-UI for scan1 analyses and summaries to use in shiny module.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}

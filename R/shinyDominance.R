@@ -35,15 +35,17 @@ shinyDominance <- function(input, output, session,
                              pheno_anal, probs1, K_chr,
                              snp_action)
   
-  ## Dominance type.
-  output$snp_action <- renderUI({
-    ## Need to modify snpprobs based on this.
-    ## Cannot do at this level.
-    selectInput(ns("snp_action"), "", 
-                c("both","additive","dominance",
-                  "B6-recessive","B6-dominance"))
-  })
+  callModule(shinySNPCsq, "dip_csq", 
+             snp_scan_obj, chr_pos)
+  
+  
   snp_action <- reactive({input$snp_action})
+  output$snp_dip <- renderUI({
+    switch(input$snp_dip,
+           Scan = shinyScan1SNPUI(ns("dip_scan")),
+           Consequence  = shinySNPCsqUI(ns("dip_csq")))
+  })
+  
   ## Names of haplos and diplos in terms of founders.
   founders <- reactive({
     founders <- str_split("AB1NZCPW","")[[1]]
@@ -63,8 +65,14 @@ shinyDominanceUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(6,h4(strong("SNP Gene Action"))),
-      column(6, uiOutput(ns("snp_action")))),
-    shinyScan1SNPUI(ns("dip_scan"))
+      column(3,h4(strong("SNP Gene Action"))),
+      column(6, 
+             selectInput(ns("snp_action"), "",
+                         c("both","additive","dominance",
+                           "B6-recessive","B6-dominance"))),
+      column(3, 
+             selectInput(ns("snp_dip"), "",
+                         c("Scan","Consequence")))),
+    uiOutput(ns("snp_dip"))
   )
 }

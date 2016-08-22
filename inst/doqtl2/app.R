@@ -83,25 +83,17 @@ ui <- dashboardPage(skin="red",
       ## Scans
       tabItem(tabName="scans", fluidRow(
         shinyScan1PlotUI("hap_scan"))),
-      
+
       tabItem(tabName="snps", fluidRow(
         shinyScan1SNPUI("snp_scan"))),
-      
-      ## SNP Detail
-      tabItem(tabName="snp_detail", 
-              h4(strong("SNP Consequence")),
-              tabsetPanel(
-                tabPanel("Top Features",
-                         shinyTopFeatureUI("top_feature")),
-                tabPanel("Genes in SNP Region",
-                         shinyGeneRegionUI("gene_region")),
-                tabPanel("Genes & Exons",
-                         shinyGeneExonUI("gene_exon")),
-                tabPanel("Top SNPs",
-                         shinySNPUI("best_snp")))
-              ),
+
+      ## Diploid Scan
       tabItem(tabName="dip_scan",
-              shinyDominanceUI("dip_scan"))
+              shinyDominanceUI("dip_scan")),
+
+      ## SNP Detail
+      tabItem(tabName="snp_detail",
+              shinySNPCsqUI("snp_csq"))
     )
   )
 )
@@ -212,33 +204,14 @@ server <- function(input, output, session) {
                              win_par, phe_df, cov_mx, 
                              pheno_anal, probs_obj, K_chr)
   
-  top_snps_tbl <- reactive({
-    withProgress(message = 'Get Top SNPs ...', value = 0, {
-      setProgress(1)
-      get_top_snps_tbl(snp_scan_obj())
-    })
-  })
-  callModule(shinySNP, "best_snp", chr_pos, top_snps_tbl)
-  feature_file <- reactive({file.path(datapath, "mgi_db.sqlite")})
-  callModule(shinyGeneRegion, "gene_region",
-             top_snps_tbl, feature_file)
-  gene_exon_tbl <- reactive({
-    withProgress(message = 'Gene Exon Calc ...', value = 0, {
-      setProgress(1)
-      sql_filename <- req(feature_file())
-      top_snps_set <- req(top_snps_tbl())
-      get_gene_exon_snp(top_snps_set, sql_filename)
-    })
-  })
-  callModule(shinyTopFeature, "top_feature",
-             chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl)
-  callModule(shinyGeneExon, "gene_exon",
-             chr_pos, top_snps_tbl, gene_exon_tbl)
-  
   ## Dominance
   callModule(shinyDominance, "dip_scan",
                              win_par, phe_df, cov_mx,
                              pheno_anal, probs_obj, K_chr)
+  
+  ## SNP Consequence
+  callModule(shinySNPCsq, "snp_csq", 
+             snp_scan_obj, chr_pos)
 }
 
 shinyApp(ui, server)

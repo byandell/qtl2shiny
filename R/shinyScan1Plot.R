@@ -8,8 +8,6 @@
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
-#' @return 2-element vector of scan window
-#'
 #' @export
 shinyScan1Plot <- function(input, output, session,
                        chr_id, phe_df, cov_mx, 
@@ -74,7 +72,23 @@ shinyScan1Plot <- function(input, output, session,
     })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
-  
+
+  output$genome_scan <- renderUI({
+    switch(req(input$genome_scan),
+           LOD = {
+             plotOutput(ns("scanPlot"))
+           },
+           Effects = {
+             tagList(
+               uiOutput(ns("pheno_anal")),
+               plotOutput(ns("effPlot"))
+             )
+           },
+           Summary = {
+             dataTableOutput(ns("effSummary"))
+           })
+  })
+
   ## Downloads.
   chr_pos <- reactive({
     make_chr_pos(chr_id(), range = input$scan_window)
@@ -100,34 +114,21 @@ shinyScan1Plot <- function(input, output, session,
     }
   )
 }
-
-#' UI for shinyScan1 Shiny Module
-#'
-#' UI for scan1 analyses and summaries to use in shiny module.
-#'
-#' @param id identifier for \code{\link{shinyScan1}} use
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
 #' @rdname shinyScan1Plot
 #' @export
 shinyScan1PlotUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(3, h4(strong("Genome Plots"))),
-      column(6, uiOutput(ns("scan_window"))),
       column(3, 
-             downloadButton(ns("downloadData"), "CSV"),
-             downloadButton(ns("downloadPlot"), "Plots"))),
-    tabsetPanel(
-      tabPanel("LOD", 
-               plotOutput(ns("scanPlot"))),
-      tabPanel("Effects",
-               plotOutput(ns("effPlot")),
-               uiOutput(ns("pheno_anal"))),
-      tabPanel("summary",
-               dataTableOutput(ns("effSummary"))))
+             h4(strong("Genome Plots")),
+             radioButtons(ns("genome_scan"), "",
+                          c("LOD","Effects","Summary")),
+             uiOutput(ns("scan_window")),
+             fluidRow(
+               column(6, downloadButton(ns("downloadData"), "CSV")),
+               column(6, downloadButton(ns("downloadPlot"), "Plots")))),
+      column(9,
+             uiOutput(ns("genome_scan"))))
   )
 }

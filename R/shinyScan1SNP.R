@@ -53,22 +53,8 @@ shinyScan1SNP <- function(input, output, session,
   output$pheno_assoc <- renderUI({
     req(pheno_anal())
     selectInput(ns("pheno_assoc"), NULL,
-                choices = names(pheno_anal()))
-  })
-  output$pheno_pattern <- renderUI({
-    req(pheno_anal())
-    selectInput(ns("pheno_pattern"), NULL,
-                choices = names(pheno_anal()))
-  })
-  observeEvent(input$pheno_pattern, {
-    updateSelectInput(session, "pheno_assoc", 
-                      choices = names(pheno_anal()),
-                      selected = input$pheno_pattern)
-  })
-  observeEvent(input$pheno_assoc, {
-    updateSelectInput(session, "pheno_pattern", 
-                      choices = names(pheno_anal()),
-                      selected = input$pheno_assoc)
+                choices = names(pheno_anal()),
+                selected = input$pheno_assoc)
   })
   pheno_id <- reactive({
     pheno_anal <- req(input$pheno_assoc)
@@ -127,6 +113,31 @@ shinyScan1SNP <- function(input, output, session,
   chr_pos <- reactive({
     make_chr_pos(chr_id(), range = input$scan_window)
   })
+  
+  output$snp_scan <- renderUI({
+    switch(req(input$snp_scan),
+           Association = {
+             tagList(
+               uiOutput(ns("pheno_assoc")),
+               plotOutput(ns("snpPlot")))
+             },
+           Pattern = {
+             tagList(
+               uiOutput(ns("pheno_assoc")),
+               plotOutput(ns("snpPatternPlot")))
+             },
+           "All Phenos" = {
+             plotOutput(ns("snp_phe_pat"))
+             },
+           "All Patterns" = {
+            plotOutput(ns("snp_pat_phe"))
+            },
+          Summary = {
+             dataTableOutput(ns("snpPatternSum"))
+            })
+  })
+  
+  ## Downloads
   output$downloadData <- downloadHandler(
     filename = function() {
       file.path(paste0("snp_effects_", chr_pos(), ".csv")) },
@@ -172,23 +183,17 @@ shinyScan1SNPUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(3, h4(strong("SNP Plots"))),
-      column(6, uiOutput(ns("scan_window"))),
       column(3, 
-             downloadButton(ns("downloadData"), "CSV"),
-             downloadButton(ns("downloadPlot"), "Plots"))),
-    tabsetPanel(
-        tabPanel("Assocation",
-                 plotOutput(ns("snpPlot")),
-                 uiOutput(ns("pheno_assoc"))),
-        tabPanel("Pattern",
-                 plotOutput(ns("snpPatternPlot")),
-                 uiOutput(ns("pheno_pattern"))),
-        tabPanel("all phenos",
-                 plotOutput(ns("snp_phe_pat"))),
-        tabPanel("all patterns",
-                 plotOutput(ns("snp_pat_phe"))),
-        tabPanel("summary",
-                 dataTableOutput(ns("snpPatternSum"))))
+             h4(strong("SNP Plots")),
+             radioButtons(ns("snp_scan"), "",
+                          c("Association","Pattern",
+                            "All Phenos","All Patterns",
+                            "Summary")),
+             uiOutput(ns("scan_window")),
+             fluidRow(
+               column(6, downloadButton(ns("downloadData"), "CSV")),
+               column(6, downloadButton(ns("downloadPlot"), "Plots")))),
+      column(9,
+             uiOutput(ns("snp_scan"))))
   )
 }
