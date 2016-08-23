@@ -10,34 +10,63 @@
 shinyPattern <- function(input, output, session,
                          probs1, top_snps_tbl,
                          phe_df, K_chr, cov_mx) {
+  ## lod values too small--getting wrong one?
+  ## error with replacement having 1 row briefly when switch pheno
   ns <- session$ns
 
+  ## Select phenotype for plots.
+  output$pheno <- renderUI({
+    selectInput(ns("pheno"), NULL,
+                choices = names(phe_df()),
+                selected = input$pheno)
+  })
+  ## Select pattern for plots.
+  output$pattern <- renderUI({
+    req(input$pheno)
+    pats <- patterns() %>%
+      filter(pheno == input$pheno)
+    if(nrow(pats)) {
+      choices <- pats$AB1NZCPW
+    } else {
+      choices <- input$pattern
+    }
+    selectInput(ns("pattern"), NULL,
+                choices = choices,
+                selected = input$pattern)
+  })
+  
   ## Names of haplos and diplos in terms of founders.
-  founders <- reactive({
+  haplos <- reactive({
     founders <- str_split("AB1NZCPW","")[[1]]
     names(founders) <- LETTERS[seq_along(founders)]
     founders
   })
-  haplos <- reactive({
-    str_replace_all(dimnames(probs_obj()$probs[[1]])[[2]], founders())
-  })
   diplos <- reactive({
-    str_replace_all(dimnames(probs1()$probs[[1]])[[2]], founders())
+    str_replace_all(dimnames(probs1()$probs[[1]])[[2]], haplos())
   })
-  
+
   patterns <- reactive({
-    summary(top_snps_tbl()) %>%
-      mutate(pheno = names(phe_df())[1])
+    summary(top_snps_tbl())
   })
-  
-  output$scan_pattern <- renderPlot({
-    ## Want to use idea of plot_snpscan except:
-    ## split out LOD and effect
-    ## get rid of pheno column use
-    ## link up to shinyScan1Plot
-    plot_snpscan(probs1(), phe_df(), K_chr(), cov_mx(),
-                 patterns(),
+  scan_pat <- reactive({
+    pheno_in <- req(input$pheno)
+    pattern_in <- req(input$pattern)
+    pats <- patterns() %>%
+      filter(AB1NZCPW == pattern_in,
+             pheno == pheno_in)
+    scan_pattern(probs1(),
+                 phe_df()[,pheno_in, drop=FALSE],
+                 K_chr(), cov_mx(),
+                 pats,
                  haplos(), diplos())
+  })
+
+  output$scan_pat_lod <- renderPlot({
+    plot(scan_pat(), "lod") + 
+      theme(legend.position="none")
+  })
+  output$scan_pat_coef <- renderPlot({
+    plot(scan_pat(), "coef")
   })
 }
 #' @rdname shinyPattern
@@ -46,14 +75,9 @@ shinyPatternUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(3,h4(strong("SNP Gene Action"))),
-      column(6, 
-             selectInput(ns("snp_action"), "",
-                         c("both","additive","dominance",
-                           "B6-recessive","B6-dominance"))),
-      column(3, 
-             selectInput(ns("snp_dip"), "",
-                         c("Scan","Consequence")))),
-    uiOutput(ns("snp_dip"))
+      column(6, uiOutput(ns("pheno"))),
+      column(6, uiOutput(ns("pattern")))),
+    plotOutput(ns("scan_pat_lod")),
+    plotOutput(ns("scan_pat_coef"))
   )
 }

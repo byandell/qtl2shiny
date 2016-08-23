@@ -10,11 +10,11 @@
 #'
 #' @export
 shinyScan1SNP <- function(input, output, session,
-                          win_par, phe_df, cov_mx, 
+                          win_par, phe_df, cov_mx,
                           pheno_anal, probs_obj, K_chr,
                           snp_action = reactive({NULL})) {
   ns <- session$ns
-  
+
   chr_id <- reactive({win_par$chr_id})
 
   ## SNP analyses.
@@ -26,12 +26,12 @@ shinyScan1SNP <- function(input, output, session,
                    pattern = "AB1NZCPW", datapath)
     })
   })
-  
+
   snpprobs_act <- reactive({
     snpprobs <- req(snpprobs_obj())
     snpprob_collapse(snpprobs, snp_action())
   })
-  
+
   ## Scan1
   scan_obj <- reactive({
     req(pheno_anal())
@@ -40,7 +40,7 @@ shinyScan1SNP <- function(input, output, session,
       scan1(snpprobs_act(), phe_df(), K_chr(), cov_mx())
     })
   })
-  
+
   # Scan Window slider
   output$scan_window <- renderUI({
     req(chr_id(),pheno_anal(),snpprobs_obj())
@@ -48,8 +48,8 @@ shinyScan1SNP <- function(input, output, session,
     sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
                 rng, step=.1)
   })
-  
-  ## Select phenotype for plots. Paired between assoc and pattern.
+
+  ## Select phenotype for plots.
   output$pheno_assoc <- renderUI({
     req(pheno_anal())
     selectInput(ns("pheno_assoc"), NULL,
@@ -108,12 +108,12 @@ shinyScan1SNP <- function(input, output, session,
     snp_coef()
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
-  
+
   ## Downloads.
   chr_pos <- reactive({
     make_chr_pos(chr_id(), range = input$scan_window)
   })
-  
+
   output$snp_scan <- renderUI({
     switch(req(input$snp_scan),
            Association = {
@@ -136,7 +136,7 @@ shinyScan1SNP <- function(input, output, session,
              dataTableOutput(ns("snpPatternSum"))
             })
   })
-  
+
   ## Downloads
   output$downloadData <- downloadHandler(
     filename = function() {
@@ -183,7 +183,7 @@ shinyScan1SNPUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(3, 
+      column(3,
              h4(strong("SNP Plots")),
              radioButtons(ns("snp_scan"), "",
                           c("Association","Pattern",

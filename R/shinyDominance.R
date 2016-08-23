@@ -48,7 +48,7 @@ shinyDominance <- function(input, output, session,
     switch(input$snp_dip,
            Scan = shinyScan1SNPUI(ns("dip_scan")),
            Consequence  = shinySNPCsqUI(ns("dip_csq")),
-           Pattern = plotOutput(ns("scan_pattern"))) ## NOT WORKING YET.
+           Pattern = shinyPatternUI(ns("dip_pat")))
   })
 }
 #' @rdname shinyDominance
@@ -64,7 +64,7 @@ shinyDominanceUI <- function(id) {
                            "B6-recessive","B6-dominance"))),
       column(3, 
              selectInput(ns("snp_dip"), "",
-                         c("Scan","Consequence")))),
+                         c("Scan","Consequence","Pattern")))),
     uiOutput(ns("snp_dip"))
   )
 }
