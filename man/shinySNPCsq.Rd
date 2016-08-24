@@ -5,14 +5,15 @@
 \alias{shinySNPCsqUI}
 \title{Shiny SNP Consequence}
 \usage{
-shinySNPCsq(input, output, session, snp_scan_obj, chr_pos)
+shinySNPCsq(input, output, session, snp_scan_obj, chr_pos,
+  snp_action = reactive({     NULL }))
 
 shinySNPCsqUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{snp_scan_obj, chr_pos}{reactive arguments}
+\item{snp_scan_obj, chr_pos, snp_action}{reactive arguments}
 }
 \value{
 tbl with top SNPs

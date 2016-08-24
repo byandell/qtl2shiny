@@ -13,7 +13,7 @@ shinyScan1SNPUI(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, phe_df, cov_mx, pheno_anal, probs_obj, K_chr, dom_type}{reactive arguments}
+\item{win_par, phe_df, cov_mx, pheno_anal, probs_obj, K_chr, snp_action}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

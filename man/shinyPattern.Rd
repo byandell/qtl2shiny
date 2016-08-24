@@ -5,15 +5,15 @@
 \alias{shinyPatternUI}
 \title{Shiny Pattern module}
 \usage{
-shinyPattern(input, output, session, probs1, top_snps_tbl, phe_df, K_chr,
-  cov_mx)
+shinyPattern(input, output, session, probs1, patterns, phe_df, K_chr, cov_mx,
+  chr_pos, snp_action = reactive({     NULL }))
 
 shinyPatternUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{plot_type, chr_id, phe_df, cov_mx, pheno_anal, probs_obj, K_chr}{reactive arguments}
+\item{probs1, patterns, phe_df, K_chr, cov_mx, chr_pos, snp_action}{reactive arguments}
 }
 \description{
 Shiny Pattern module

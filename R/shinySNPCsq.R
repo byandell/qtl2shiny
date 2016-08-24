@@ -1,7 +1,7 @@
 #' Shiny SNP Consequence
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_scan_obj,chr_pos reactive arguments
+#' @param snp_scan_obj,chr_pos,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -10,10 +10,12 @@
 #'
 #' @export
 shinySNPCsq <- function(input, output, session,
-                        snp_scan_obj, chr_pos) {
+                        snp_scan_obj, chr_pos,
+                        snp_action = reactive({NULL})) {
   ns <- session$ns
   
   top_snps_tbl <- reactive({
+    req(snp_action())
     withProgress(message = 'Get Top SNPs ...', value = 0, {
       setProgress(1)
       get_top_snps_tbl(snp_scan_obj())
@@ -51,7 +53,11 @@ shinySNPCsq <- function(input, output, session,
             shinySNPUI(ns("best_snp"))
             })
   })
-  top_snps_tbl
+  reactive({
+    summary(top_snps_tbl()) %>%
+      filter(max_lod >= 3) %>%
+      arrange(desc(max_lod))
+  })
 }
 #' @rdname shinySNPCsq
 #' @export

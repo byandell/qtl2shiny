@@ -35,12 +35,14 @@ shinyDominance <- function(input, output, session,
                              pheno_anal, probs1, K_chr,
                              snp_action)
   
-  top_snps_tbl <- callModule(shinySNPCsq, "dip_csq",
-                             snp_scan_obj, chr_pos)
+  patterns <- callModule(shinySNPCsq, "dip_csq",
+                             snp_scan_obj, chr_pos, 
+                             snp_action)
   
   callModule(shinyPattern, "dip_pat", 
-             probs1, top_snps_tbl,
-             phe_df, K_chr, cov_mx)
+             probs1, patterns,
+             phe_df, K_chr, cov_mx, chr_pos,
+             snp_action)
   
   
   snp_action <- reactive({input$snp_action})
