@@ -56,6 +56,7 @@ shinySNPCsq <- function(input, output, session,
   reactive({
     summary(top_snps_tbl()) %>%
       filter(max_lod >= 3) %>%
+      mutate(contrast = snp_action()) %>%
       arrange(desc(max_lod))
   })
 }

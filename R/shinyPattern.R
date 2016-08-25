@@ -90,14 +90,24 @@ shinyPattern <- function(input, output, session,
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
   
+  output$scan_choice <- renderUI({
+    tagList(
+      radioButtons(ns("genomescan"), "",
+                   c("LOD","Effects","Summary")),
+      uiOutput(ns("pheno")),
+      conditionalPanel( ## This is still not working properly. Always on.
+        condition = paste0("input.", ns("genomescan"), " == 'Effects'"),
+        uiOutput(ns("pattern")))
+    )
+  })
+  
   output$genome_scan <- renderUI({
-    switch(req(input$genome_scan),
+    switch(req(input$genomescan),
            LOD = {
              plotOutput(ns("scan_pat_lod"))
            },
            Effects = {
              tagList(
-               uiOutput(ns("pattern")),
                plotOutput(ns("scan_pat_coef"))
              )
            },
@@ -109,7 +119,9 @@ shinyPattern <- function(input, output, session,
   ## Downloads
   output$downloadData <- downloadHandler(
     filename = function() {
-      file.path(paste0("sum_effects_", chr_pos(), ".csv")) },
+      pheno_in <- req(input$pheno)
+      file.path(paste0(pheno_in, "_", snp_action(), "_effects_", chr_pos(), ".csv"))
+    },
     content = function(file) {
       scan_in <- req(scan_pat())
       write.csv(summary(scan_in), file)
@@ -117,10 +129,13 @@ shinyPattern <- function(input, output, session,
   )
   output$downloadPlot <- downloadHandler(
     filename = function() {
-      file.path(paste0("genome_scan_", chr_pos(), ".pdf")) },
+      pheno_in <- req(input$pheno)
+      file.path(paste0(pheno_in, "_", snp_action(), "_scan_", chr_pos(), ".pdf"))
+    },
     content = function(file) {
       pdf(file)
       print(scan_pat_lod())
+      plot(scan_pat(), "coef")
       dev.off()
     }
   )
@@ -133,9 +148,7 @@ shinyPatternUI <- function(id) {
     fluidRow(
       column(3, 
              h4(strong("Genome Scans")),
-             radioButtons(ns("genome_scan"), "",
-                          c("LOD","Effects","Summary")),
-             uiOutput(ns("pheno")),
+             uiOutput(ns("scan_choice")),
              fluidRow(
                column(6, downloadButton(ns("downloadData"), "CSV")),
                column(6, downloadButton(ns("downloadPlot"), "Plots")))),
