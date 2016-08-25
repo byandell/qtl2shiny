@@ -60,10 +60,9 @@ shinyPattern <- function(input, output, session,
   scan_pat_lod <- reactive({
     req(scan_pat())
     p <- plot(scan_pat(), "lod")
-    if(length(patterns()) == 1)
+    if(nrow(patterns()) == 1)
       p <- p + theme(legend.position="none")
     p
-    
   })
 
   output$scan_pat_lod <- renderPlot({
@@ -121,7 +120,7 @@ shinyPattern <- function(input, output, session,
       file.path(paste0("genome_scan_", chr_pos(), ".pdf")) },
     content = function(file) {
       pdf(file)
-      scan_pat_lod()
+      print(scan_pat_lod())
       dev.off()
     }
   )
