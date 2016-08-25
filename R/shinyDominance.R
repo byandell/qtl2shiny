@@ -35,6 +35,10 @@ shinyDominance <- function(input, output, session,
                              pheno_anal, probs1, K_chr,
                              snp_action)
   
+  chr_pos <- reactive({
+    make_chr_pos (win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
+  })
+  
   patterns <- callModule(shinySNPCsq, "dip_csq",
                              snp_scan_obj, chr_pos, 
                              snp_action)

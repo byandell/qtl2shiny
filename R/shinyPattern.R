@@ -47,27 +47,40 @@ shinyPattern <- function(input, output, session,
   scan_pat <- reactive({
     pheno_in <- req(input$pheno)
     pats <- patterns()
-    scan_pattern(probs1(),
-                 phe_df()[,pheno_in, drop=FALSE],
-                 K_chr(), cov_mx(),
-                 pats,
-                 haplos(), diplos())
+    withProgress(message = 'Scan Patterns ...', value = 0, {
+      setProgress(1)
+      scan_pattern(probs1(),
+                   phe_df()[,pheno_in, drop=FALSE],
+                   K_chr(), cov_mx(),
+                   pats,
+                   haplos(), diplos())
+    })
   })
-
-  output$scan_pat_lod <- renderPlot({
+  
+  scan_pat_lod <- reactive({
     req(scan_pat())
     p <- plot(scan_pat(), "lod")
     if(length(patterns()) == 1)
       p <- p + theme(legend.position="none")
     p
+    
+  })
+
+  output$scan_pat_lod <- renderPlot({
+    withProgress(message = 'Pattern LODs ...', value = 0, {
+      setProgress(1)
+      scan_pat_lod()
+    })
   })
   output$scan_pat_coef <- renderPlot({
     scan_in <- req(scan_pat())
     pattern_in <- req(input$pattern)
-    pattern_cont <- (scan_in$patterns %>%
-      filter(AB1NZCPW == pattern_in))$contrast
-    ## Title of plot is wrong.
-    plot(scan_in, "coef", pattern_cont)
+    withProgress(message = 'Pattern Effects ...', value = 0, {
+      setProgress(1)
+      pattern_cont <- (scan_in$patterns %>%
+                         filter(AB1NZCPW == pattern_in))$contrast
+      plot(scan_in, "coef", pattern_cont)
+    })
   })
   output$scanSummary <- renderDataTable({
     req(scan_pat())
@@ -100,18 +113,15 @@ shinyPattern <- function(input, output, session,
       file.path(paste0("sum_effects_", chr_pos(), ".csv")) },
     content = function(file) {
       req(eff_obj(),scan_obj())
-      write.csv(summary(eff_obj(),scan_obj()), file)
+      write.csv(summary(scan_pat()), file)
     }
   )
   output$downloadPlot <- downloadHandler(
     filename = function() {
       file.path(paste0("genome_scan_", chr_pos(), ".pdf")) },
     content = function(file) {
-      req(eff_obj())
       pdf(file)
-      show_peaks(chr_id(), scan_obj(), mytitle="", xlim=input$scan_window)
-      for(pheno in names(eff_obj()))
-        plot_eff(pheno)
+      scan_pat_lod()
       dev.off()
     }
   )
