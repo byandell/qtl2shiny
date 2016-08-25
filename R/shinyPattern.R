@@ -112,8 +112,8 @@ shinyPattern <- function(input, output, session,
     filename = function() {
       file.path(paste0("sum_effects_", chr_pos(), ".csv")) },
     content = function(file) {
-      req(eff_obj(),scan_obj())
-      write.csv(summary(scan_pat()), file)
+      scan_in <- req(scan_pat())
+      write.csv(summary(scan_in), file)
     }
   )
   output$downloadPlot <- downloadHandler(
