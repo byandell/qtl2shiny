@@ -36,6 +36,20 @@ shinyGeneExon <- function(input, output, session,
       plot_gene_exon(gene_name)
     })
   })
+  
+  ## Outputs
+  output$exon_choice <- renderUI({
+    if(input$exon_choice == "Plot") {
+      uiOutput(ns("gene_name"))
+    }
+  })
+  output$exon_output <- renderUI({
+    switch(input$exon_choice,
+           Plot = plotOutput(ns("gene_plot")),
+           Summary = dataTableOutput(ns("gene_sum")))
+  })
+  
+  ## Downloads.
   output$downloadData <- downloadHandler(
     filename = function() {
       file.path(paste0("gene_exon_", chr_pos(), ".csv")) },
@@ -56,30 +70,21 @@ shinyGeneExon <- function(input, output, session,
     }
   )
 }
-
-#' UI for shinyGeneExon Shiny Module
-#'
-#' UI for scan1 analyses and summaries to use in shiny module.
-#'
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
 #' @rdname shinyGeneExon
 #' @export
 shinyGeneExonUI <- function(id) {
   ns <- NS(id)
-  tagList(
-    tabsetPanel(
-      tabPanel("summary", fluidRow(
-        column(10, dataTableOutput(ns("gene_sum"))),
-        column(2, fluidRow(
-          downloadButton(ns("downloadData"), "CSV"),
-          downloadButton(ns("downloadPlot"), "Plots"))))),
-      tabPanel("plots",
-        plotOutput(ns("gene_plot")),
-        uiOutput(ns("gene_name")))
-    )
-  )
+  fluidRow(
+    selectInput(ns("exon_choice"), NULL, c("Plot","Summary")),
+    uiOutput(ns("exon_choice")),
+    fluidRow(
+      column(6, downloadButton(ns("downloadData"), "CSV")),
+      column(6, downloadButton(ns("downloadPlot"), "Plots"))))
+}
+#' @rdname shinyGeneExon
+#' @export
+shinyGeneExonOutput <- function(id) {
+  ns <- NS(id)
+  uiOutput(ns("exon_output"))
 }

@@ -41,6 +41,21 @@ shinyTopFeature <- function(input, output, session,
     req(top_feature(),input$top_name)
     plot(top_feature(), input$top_name, "pattern")
   })
+  output$by_choice <- renderUI({
+    switch(input$by_choice,
+           Pattern = {
+             tagList(
+               plotOutput(ns("top_gene_by_snp")),
+               dataTableOutput(ns("top_pattern")))
+           },
+           Consequence = {
+             tagList(
+               plotOutput(ns("top_gene_by_pattern")),
+               dataTableOutput(ns("top_snp_type")))
+           })
+  })
+  
+  ## Downloads.
   output$downloadData <- downloadHandler(
     filename = function() {
       file.path(paste0("top_feature_", chr_pos(), ".csv")) },
@@ -62,32 +77,21 @@ shinyTopFeature <- function(input, output, session,
     }
   )
 }
-
-#' UI for shinyTopFeature Shiny Module
-#'
-#' UI for top features to use in shiny module.
-#'
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
 #' @rdname shinyTopFeature
 #' @export
 shinyTopFeatureUI <- function(id) {
   ns <- NS(id)
-  tagList(
+  fluidRow(
+    uiOutput(ns("top_names")),
+    selectInput(ns("by_choice"), NULL, c("Pattern","Consequence")),
     fluidRow(
-      column(6, uiOutput(ns("top_names"))),
-      column(6,
-        downloadButton(ns("downloadData"), "CSV"),
-        downloadButton(ns("downloadPlot"), "Plots"))),
-    tabsetPanel(
-      tabPanel("By Allele Pattern",
-               plotOutput(ns("top_gene_by_snp")),
-               dataTableOutput(ns("top_pattern"))),
-      tabPanel("By Consequence",
-               plotOutput(ns("top_gene_by_pattern")),
-               dataTableOutput(ns("top_snp_type"))))
-  )
+      column(6, downloadButton(ns("downloadData"), "CSV")),
+      column(6, downloadButton(ns("downloadPlot"), "Plots"))))
+}
+#' @rdname shinyTopFeature
+#' @export
+shinyTopFeatureOutput <- function(id) {
+  ns <- NS(id)
+  uiOutput(ns("by_choice"))
 }

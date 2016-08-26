@@ -30,7 +30,7 @@ shinyGeneRegion <- function(input, output, session,
   })
 
   # Scan Window slider
-  output$choose_scan_window <- renderUI({
+  output$scan_window <- renderUI({
     wrng <- round(rng(), 2)
     sliderInput(ns("scan_window"), NULL, wrng[1], wrng[2],
                 wrng, step=.5)
@@ -76,26 +76,22 @@ shinyGeneRegion <- function(input, output, session,
   )
   reactive({input$scan_window})
 }
-
-#' UI for shinyGeneRegion Shiny Module
-#'
-#' UI for scan1 analyses and summaries to use in shiny module.
-#'
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
 #' @rdname shinyGeneRegion
 #' @export
 shinyGeneRegionUI <- function(id) {
   ns <- NS(id)
-  tagList(
+  fluidRow(
+    uiOutput(ns("scan_window")),
     fluidRow(
-      column(6, uiOutput(ns("choose_scan_window"))),
-      column(6, 
-             downloadButton(ns("downloadData"), "CSV"),
-             downloadButton(ns("downloadPlot"), "Plot"))),
+      column(6, downloadButton(ns("downloadData"), "CSV")),
+      column(6, downloadButton(ns("downloadPlot"), "Plot"))))
+}
+#' @rdname shinyGeneRegion
+#' @export
+shinyGeneRegionOutput <- function(id) {
+  ns <- NS(id)
+  tagList(
     plotOutput(ns("gene_plot")),
     tableOutput(ns("gene_sum"))
   )

@@ -140,21 +140,23 @@ shinyPattern <- function(input, output, session,
     }
   )
 }
+#' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyPattern
 #' @export
 shinyPatternUI <- function(id) {
   ns <- NS(id)
   tagList(
+    radioButtons(ns("genome_scan"), "",
+                 c("LOD","Effects","Summary")),
+    uiOutput(ns("scan_choice")),
     fluidRow(
-      column(3, 
-             h4(strong("Genome Scans")),
-             radioButtons(ns("genome_scan"), "",
-                          c("LOD","Effects","Summary")),
-             uiOutput(ns("scan_choice")),
-             fluidRow(
-               column(6, downloadButton(ns("downloadData"), "CSV")),
-               column(6, downloadButton(ns("downloadPlot"), "Plots")))),
-      column(9,
-             uiOutput(ns("genome_scan"))))
+      column(6, downloadButton(ns("downloadData"), "CSV")),
+      column(6, downloadButton(ns("downloadPlot"), "Plots")))
   )
+}
+#' @rdname shinyPattern
+#' @export
+shinyPatternOutput <- function(id) {
+  ns <- NS(id)
+  uiOutput(ns("genome_scan"))
 }

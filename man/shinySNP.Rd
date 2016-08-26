@@ -2,12 +2,15 @@
 % Please edit documentation in R/shinySNP.R
 \name{shinySNP}
 \alias{shinySNP}
+\alias{shinySNPOutput}
 \alias{shinySNPUI}
 \title{Shiny SNP analysis and plot module}
 \usage{
 shinySNP(input, output, session, chr_pos, top_snps_tbl)
 
 shinySNPUI(id)
+
+shinySNPOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
@@ -18,12 +21,8 @@ shinySNPUI(id)
 }
 \description{
 Shiny module for scan1 analysis and plots.
-
-UI for scan1 analyses and summaries to use in shiny module.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}

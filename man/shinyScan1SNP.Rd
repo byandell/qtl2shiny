@@ -2,13 +2,16 @@
 % Please edit documentation in R/shinyScan1SNP.R
 \name{shinyScan1SNP}
 \alias{shinyScan1SNP}
+\alias{shinyScan1SNPOutput}
 \alias{shinyScan1SNPUI}
 \title{Shiny scan1 SNP analysis and plot module}
 \usage{
 shinyScan1SNP(input, output, session, win_par, phe_df, cov_mx, pheno_anal,
-  probs_obj, K_chr, snp_action = reactive({     NULL }))
+  probs_obj, K_chr, snp_action = reactive({     "basic" }))
 
 shinyScan1SNPUI(id)
+
+shinyScan1SNPOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
@@ -19,12 +22,8 @@ shinyScan1SNPUI(id)
 }
 \description{
 Shiny module for scan1 analysis and plots.
-
-Output for scan1 analyses and summaries to use in shiny module.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}

@@ -2,6 +2,7 @@
 % Please edit documentation in R/shinyTopFeature.R
 \name{shinyTopFeature}
 \alias{shinyTopFeature}
+\alias{shinyTopFeatureOutput}
 \alias{shinyTopFeatureUI}
 \title{Shiny Top Features in SNP Region module}
 \usage{
@@ -9,6 +10,8 @@ shinyTopFeature(input, output, session, chr_pos, scan_obj, top_snps_tbl,
   gene_exon_tbl)
 
 shinyTopFeatureUI(id)
+
+shinyTopFeatureOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
@@ -19,12 +22,8 @@ shinyTopFeatureUI(id)
 }
 \description{
 Shiny module for scan1 analysis and plots.
-
-UI for top features to use in shiny module.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}

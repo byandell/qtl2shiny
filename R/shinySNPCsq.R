@@ -11,7 +11,7 @@
 #' @export
 shinySNPCsq <- function(input, output, session,
                         snp_scan_obj, chr_pos,
-                        snp_action = reactive({NULL})) {
+                        snp_action = reactive({"basic"})) {
   ns <- session$ns
   
   top_snps_tbl <- reactive({
@@ -41,18 +41,38 @@ shinySNPCsq <- function(input, output, session,
   output$snp_csq <- renderUI({
     switch(req(input$snp_csq),
            "Top Features" = {
-             shinyTopFeatureUI(ns("top_feature"))
+             shinyTopFeatureOutput(ns("top_feature"))
              },
            Genes = {
-             shinyGeneRegionUI(ns("gene_region"))
+             shinyGeneRegionOutput(ns("gene_region"))
              },
            Exons = {
-             shinyGeneExonUI(ns("gene_exon"))
+             shinyGeneExonOutput(ns("gene_exon"))
              },
           Summary = {
-            shinySNPUI(ns("best_snp"))
+            shinySNPOutput(ns("best_snp"))
             })
   })
+  output$snp_choice <- renderUI({
+    switch(req(input$snp_csq),
+           "Top Features" = {
+             shinyTopFeatureUI(ns("top_feature"))
+           },
+           Genes = {
+             shinyGeneRegionUI(ns("gene_region"))
+           },
+           Exons = {
+             shinyGeneExonUI(ns("gene_exon"))
+           },
+           Summary = {
+             shinySNPUI(ns("best_snp"))
+           })
+  })
+  output$title <- renderUI({
+    if(snp_action() == "basic")
+      h4(strong("SNP Consequence"))
+  })
+  
   reactive({
     summary(top_snps_tbl()) %>%
       filter(max_lod >= 3) %>%
@@ -60,18 +80,21 @@ shinySNPCsq <- function(input, output, session,
       arrange(desc(max_lod))
   })
 }
+#' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinySNPCsq
 #' @export
 shinySNPCsqUI <- function(id) {
   ns <- NS(id)
   tagList(
-    fluidRow(
-      column(3, 
-             h4(strong("SNP Consequence")),
-             radioButtons(ns("snp_csq"), "",
-                          c("Top Features","Genes",
-                            "Exons", "Summary"))),
-      column(9,
-             uiOutput(ns("snp_csq"))))
-  )
+    uiOutput(ns("title")),
+    radioButtons(ns("snp_csq"), "",
+                 c("Top Features","Genes",
+                   "Exons", "Summary")),
+    uiOutput(ns("snp_choice")))
+}
+#' @rdname shinySNPCsq
+#' @export
+shinySNPCsqOutput <- function(id) {
+  ns <- NS(id)
+  uiOutput(ns("snp_csq"))
 }

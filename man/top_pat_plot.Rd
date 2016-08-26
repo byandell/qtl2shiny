@@ -5,7 +5,7 @@
 \title{Top Pattern Plot}
 \usage{
 top_pat_plot(pheno, scan_obj, xlim, fill.null = TRUE, group = "pheno",
-  top_type = "SNP allele pattern")
+  snp_action = "basic")
 }
 \arguments{
 \item{pheno}{name of phenotype for effect scan}
@@ -18,7 +18,7 @@ top_pat_plot(pheno, scan_obj, xlim, fill.null = TRUE, group = "pheno",
 
 \item{group}{group by one of c("pheno","pattern")}
 
-\item{top_type}{title part for plot}
+\item{snp_action}{character string for plot}
 }
 \description{
 Plot of top patterns.

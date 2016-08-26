@@ -2,12 +2,15 @@
 % Please edit documentation in R/shinyGeneExon.R
 \name{shinyGeneExon}
 \alias{shinyGeneExon}
+\alias{shinyGeneExonOutput}
 \alias{shinyGeneExonUI}
 \title{Shiny Genes and Exons with nearby SNPs module}
 \usage{
 shinyGeneExon(input, output, session, chr_pos, top_snps_tbl, gene_exon_tbl)
 
 shinyGeneExonUI(id)
+
+shinyGeneExonOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
@@ -18,12 +21,8 @@ shinyGeneExonUI(id)
 }
 \description{
 Shiny module for scan1 analysis and plots.
-
-UI for scan1 analyses and summaries to use in shiny module.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}

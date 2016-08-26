@@ -182,7 +182,7 @@ plot_eff <- function(pheno, scan_obj, eff_obj, xlim) {
 #' @param xlim x limits for plot
 #' @param fill.null null plot if no data
 #' @param group group by one of c("pheno","pattern")
-#' @param top_type title part for plot
+#' @param snp_action character string for plot
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords hplot
@@ -194,7 +194,7 @@ plot_eff <- function(pheno, scan_obj, eff_obj, xlim) {
 top_pat_plot <- function(pheno, 
                          scan_obj, xlim,
                          fill.null=TRUE, group = "pheno",
-                         top_type = "SNP allele pattern") {
+                         snp_action = "basic") {
   drop <- max(max(scan_obj$lod) - 1.5, 1.5)
   top_pattern <- topsnp_pattern(scan_obj, pheno, drop)
   if(is.null(top_pattern)) {
@@ -204,8 +204,11 @@ top_pat_plot <- function(pheno,
       return()
   }
   chr_id <- names(scan_obj$map)[1]
+  mytitle <- paste(pheno, "chr", chr_id)
+  if(snp_action != "basic")
+    mytitle <- paste(mytitle, snp_action)
   plot(top_pattern, group=group) + xlim(xlim) +
-    ggtitle(paste(pheno, "on chr", chr_id, "by", top_type))
+    ggtitle(mytitle)
 }
 #' @export
 plot_null <- function() {
@@ -217,6 +220,7 @@ plot_null <- function() {
 #' @param pheno name of phenotype for effect scan
 #' @param scan_obj object of class \code{\link[qtl2scan]{scan1}}
 #' @param xlim x limits for plot
+#' @param snp_action character string for plot
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords hplot
@@ -225,7 +229,7 @@ plot_null <- function() {
 #' \dontrun{top_snp_asso(pheno, scan_obj, xlim)}
 #' 
 #' @export
-top_snp_asso <- function(pheno, scan_obj, xlim) {
+top_snp_asso <- function(pheno, scan_obj, xlim, snp_action="basic") {
   if(is.null(pheno) | is.null(scan_obj) | is.null(xlim))
     return(print(plot_null()))
   
@@ -235,6 +239,9 @@ top_snp_asso <- function(pheno, scan_obj, xlim) {
                       lodcolumn=match(pheno, phename)),
                show_all_snps=FALSE, drop.hilit=1.5,
                xlim=xlim)
-  title(paste(pheno, "chr", chr_id))
+  mytitle <- paste(pheno, "chr", chr_id)
+  if(snp_action != "basic")
+    mytitle <- paste(mytitle, snp_action)
+  title(mytitle)
 }
 

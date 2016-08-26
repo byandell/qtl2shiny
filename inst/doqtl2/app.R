@@ -84,16 +84,19 @@ ui <- dashboardPage(skin="red",
       tabItem(tabName="scans", fluidRow(
         shinyScan1PlotUI("hap_scan"))),
 
-      tabItem(tabName="snps", fluidRow(
-        shinyScan1SNPUI("snp_scan"))),
+      tabItem(tabName="snps", tagList(
+        sidebarPanel(shinyScan1SNPUI("snp_scan")),
+        mainPanel(shinyScan1SNPOutput("snp_scan")))),
 
       ## Diploid Scan
-      tabItem(tabName="dip_scan",
-              shinyDominanceUI("dip_scan")),
+      tabItem(tabName="dip_scan", tagList(
+        sidebarPanel(shinyDominanceUI("dip_scan")),
+        mainPanel(shinyDominanceOutput("dip_scan")))),
 
       ## SNP Detail
-      tabItem(tabName="snp_detail",
-              shinySNPCsqUI("snp_csq"))
+      tabItem(tabName="snp_detail", tagList(
+        sidebarPanel(shinySNPCsqUI("snp_csq")),
+        mainPanel(shinySNPCsqOutput("snp_csq"))))
     )
   )
 )

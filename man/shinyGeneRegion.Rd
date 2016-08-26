@@ -2,12 +2,15 @@
 % Please edit documentation in R/shinyGeneRegion.R
 \name{shinyGeneRegion}
 \alias{shinyGeneRegion}
+\alias{shinyGeneRegionOutput}
 \alias{shinyGeneRegionUI}
 \title{Shiny Genes in SNP Region module}
 \usage{
 shinyGeneRegion(input, output, session, top_snps_tbl, feature_file)
 
 shinyGeneRegionUI(id)
+
+shinyGeneRegionOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
@@ -18,12 +21,8 @@ shinyGeneRegionUI(id)
 }
 \description{
 Shiny module for scan1 analysis and plots.
-
-UI for scan1 analyses and summaries to use in shiny module.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}

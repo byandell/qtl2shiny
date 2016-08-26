@@ -4,7 +4,7 @@
 \alias{top_snp_asso}
 \title{Top SNP Association Plot Wrapper}
 \usage{
-top_snp_asso(pheno, scan_obj, xlim)
+top_snp_asso(pheno, scan_obj, xlim, snp_action = "basic")
 }
 \arguments{
 \item{pheno}{name of phenotype for effect scan}
@@ -12,6 +12,8 @@ top_snp_asso(pheno, scan_obj, xlim)
 \item{scan_obj}{object of class \code{\link[qtl2scan]{scan1}}}
 
 \item{xlim}{x limits for plot}
+
+\item{snp_action}{character string for plot}
 }
 \description{
 Top SNP Association Plot Wrapper

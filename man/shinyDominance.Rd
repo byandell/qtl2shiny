@@ -2,6 +2,7 @@
 % Please edit documentation in R/shinyDominance.R
 \name{shinyDominance}
 \alias{shinyDominance}
+\alias{shinyDominanceOutput}
 \alias{shinyDominanceUI}
 \title{Shiny Dominance module}
 \usage{
@@ -9,9 +10,13 @@ shinyDominance(input, output, session, win_par, phe_df, cov_mx, pheno_anal,
   probs_obj, K_chr)
 
 shinyDominanceUI(id)
+
+shinyDominanceOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
+
+\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 
 \item{plot_type, chr_id, phe_df, cov_mx, pheno_anal, probs_obj, K_chr}{reactive arguments}
 }

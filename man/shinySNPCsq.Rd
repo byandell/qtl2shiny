@@ -2,18 +2,23 @@
 % Please edit documentation in R/shinySNPCsq.R
 \name{shinySNPCsq}
 \alias{shinySNPCsq}
+\alias{shinySNPCsqOutput}
 \alias{shinySNPCsqUI}
 \title{Shiny SNP Consequence}
 \usage{
 shinySNPCsq(input, output, session, snp_scan_obj, chr_pos,
-  snp_action = reactive({     NULL }))
+  snp_action = reactive({     "basic" }))
 
 shinySNPCsqUI(id)
+
+shinySNPCsqOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_scan_obj, chr_pos, snp_action}{reactive arguments}
+
+\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }
 \value{
 tbl with top SNPs

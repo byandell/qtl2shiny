@@ -11,6 +11,8 @@
 #' @export
 shinySNP <- function(input, output, session,
                      chr_pos, top_snps_tbl) {
+  ns <- session$ns
+  
   ensembl_species <- reactive({"Mus_musculus"})
   best_snps <- reactive({
     req(top_snps_tbl())
@@ -58,13 +60,6 @@ shinySNP <- function(input, output, session,
     }
     best
   })
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      file.path(paste0("top_snps_", chr_pos(), ".csv")) },
-    content = function(file) {
-      write.csv(best_http(), file)
-    }
-  )
 
   output$top_snps_tbl <- renderDataTable({
     req(top_snps_tbl())
@@ -99,35 +94,36 @@ shinySNP <- function(input, output, session,
       summary(top_snps_tbl(),"peak")
     })
   })
-  output$best <- renderText({"Best SNPs"})
-  output$peak <- renderText({"Peak SNPs"})
-  output$range <- renderText({"SNP Range"})
+  output$snp_sum <- renderUI({
+    switch(input$snp_sum,
+           best   = dataTableOutput(ns("top_snps_best")),
+           indels = dataTableOutput(ns("top_indels")),
+           peaks  = dataTableOutput(ns("top_snps_peak")),
+           range  = dataTableOutput(ns("top_snps_tbl")))
+  })
+  
+  ## Downloads.
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      file.path(paste0("top_snps_", chr_pos(), ".csv")) },
+    content = function(file) {
+      write.csv(best_http(), file)
+    }
+  )
 }
-
-#' UI for shinySNP Shiny Module
-#'
-#' UI for scan1 analyses and summaries to use in shiny module.
-#'
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
 #' @rdname shinySNP
 #' @export
 shinySNPUI <- function(id) {
   ns <- NS(id)
-  tagList(fluidRow(
-    column(10, tabsetPanel(
-      tabPanel("best",
-        dataTableOutput(ns("top_snps_best"))),
-      tabPanel("indels",
-        dataTableOutput(ns("top_indels"))),
-      tabPanel("peak",
-        dataTableOutput(ns("top_snps_peak"))),
-      tabPanel("range",
-        dataTableOutput(ns("top_snps_tbl")))
-    )),
-    column(2, downloadButton(ns("downloadData"), "CSV"))
-  ))
+  tagList(
+    selectInput(ns("snp_sum"), NULL, c("best","indels","peaks","range")),
+    downloadButton(ns("downloadData"), "CSV")
+  )
+}
+#' @rdname shinySNP
+#' @export
+shinySNPOutput <- function(id) {
+  ns <- NS(id)
+  uiOutput(ns("snp_sum"))
 }

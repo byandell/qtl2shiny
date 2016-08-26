@@ -73,16 +73,18 @@ shinyScan1Plot <- function(input, output, session,
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
 
+  output$scan_choice <- renderUI({
+    if(input$genome_scan == "Effects") {
+      uiOutput(ns("pheno_anal"))
+    }
+  })
   output$genome_scan <- renderUI({
     switch(req(input$genome_scan),
            LOD = {
              plotOutput(ns("scanPlot"))
            },
            Effects = {
-             tagList(
-               uiOutput(ns("pheno_anal")),
-               plotOutput(ns("effPlot"))
-             )
+             plotOutput(ns("effPlot"))
            },
            Summary = {
              dataTableOutput(ns("effSummary"))
@@ -119,16 +121,15 @@ shinyScan1Plot <- function(input, output, session,
 shinyScan1PlotUI <- function(id) {
   ns <- NS(id)
   tagList(
-    fluidRow(
-      column(3, 
-             h4(strong("Genome Scans")),
-             radioButtons(ns("genome_scan"), "",
-                          c("LOD","Effects","Summary")),
-             uiOutput(ns("scan_window")),
-             fluidRow(
-               column(6, downloadButton(ns("downloadData"), "CSV")),
-               column(6, downloadButton(ns("downloadPlot"), "Plots")))),
-      column(9,
-             uiOutput(ns("genome_scan"))))
-  )
+    sidebarPanel(
+      h4(strong("Genome Scans")),
+      radioButtons(ns("genome_scan"), "",
+                   c("LOD","Effects","Summary")),
+      uiOutput(ns("scan_choice")),
+      uiOutput(ns("scan_window")),
+      fluidRow(
+        column(6, downloadButton(ns("downloadData"), "CSV")),
+        column(6, downloadButton(ns("downloadPlot"), "Plots")))),
+    mainPanel(
+      uiOutput(ns("genome_scan"))))
 }
