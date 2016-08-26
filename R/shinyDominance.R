@@ -63,7 +63,7 @@ shinyDominanceUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(3,h4(strong("SNP Gene Action"))),
+      column(3,h4(strong("SNP/Gene Action"))),
       column(6, 
              selectInput(ns("snp_action"), "",
                          c("both","additive","dominance",

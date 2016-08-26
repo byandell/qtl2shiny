@@ -91,18 +91,18 @@ shinyPattern <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
   
   output$scan_choice <- renderUI({
-    tagList(
-      radioButtons(ns("genomescan"), "",
-                   c("LOD","Effects","Summary")),
-      uiOutput(ns("pheno")),
-      conditionalPanel( ## This is still not working properly. Always on.
-        condition = paste0("input.", ns("genomescan"), " == 'Effects'"),
+    scanchoice <- (input$genome_scan == "Effects")
+    if(scanchoice) {
+      tagList(
+        uiOutput(ns("pheno")),
         uiOutput(ns("pattern")))
-    )
+    } else {
+      uiOutput(ns("pheno"))
+    }
   })
   
   output$genome_scan <- renderUI({
-    switch(req(input$genomescan),
+    switch(req(input$genome_scan),
            LOD = {
              plotOutput(ns("scan_pat_lod"))
            },
@@ -148,6 +148,8 @@ shinyPatternUI <- function(id) {
     fluidRow(
       column(3, 
              h4(strong("Genome Scans")),
+             radioButtons(ns("genome_scan"), "",
+                          c("LOD","Effects","Summary")),
              uiOutput(ns("scan_choice")),
              fluidRow(
                column(6, downloadButton(ns("downloadData"), "CSV")),
