@@ -15,9 +15,10 @@ shinyWindow <- function(input, output, session, pmap_obj,
 
   # Select chromosome.
   output$choose_chr <- renderUI({
-    selectInput(ns("chr_id"), strong("Key Chromosome"),
+    selectInput(ns("chr_id"), strong("Chromosome"),
                 choices = names(pmap_obj()),
-                selected = input$chr_id)
+                selected = input$chr_id,
+                multiple = TRUE)
   })
 
   # Position slider
@@ -39,7 +40,7 @@ shinyWindow <- function(input, output, session, pmap_obj,
   output$choose_window <- renderUI({
     if(is.null(pos <- input$window_Mbp))
       pos <- 3
-    sliderInput(ns("window_Mbp"), "Window over Peak if Positive",
+    sliderInput(ns("window_Mbp"), "Window Half Width",
                 0, 6, pos, step=0.5)
   })
   observeEvent(hot_peak(), {
@@ -103,8 +104,8 @@ shinyWindowUI <- function(id) {
   ns <- NS(id)
   tagList(
     textInput(ns("chr_pos"),"Quick chr:pos or chr@pos"),
-    uiOutput(ns("choose_window")),
     uiOutput(ns("choose_chr")),
-    uiOutput(ns("choose_peak"))
+    uiOutput(ns("choose_peak")),
+    uiOutput(ns("choose_window"))
   )
 }

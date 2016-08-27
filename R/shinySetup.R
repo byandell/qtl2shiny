@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param pheno_type,peaks_tbl,analyses_tbl,hot_peak,win_par reactive arguments
+#' @param pheno_type,peaks_tbl,pmap_obj,analyses_tbl reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -13,13 +13,20 @@ shinySetup <- function(input, output, session,
                         pheno_type, peaks_tbl, pmap_obj, analyses_tbl) {
   ns <- session$ns
   
+  # Select phenotype dataset
+  output$dataset <- renderUI({
+    req(choices <- pheno_type())
+    if(is.null(selected <- input$dataset))
+      selected <- NULL
+    selectInput(ns("dataset"), "Phenotype Group",
+                choices = as.list(choices),
+                selected = selected,
+                multiple = TRUE)
+  })
+
   ## Peak counts.
-  hot_peak <- callModule(shinyPeaks, "shinypeaks",
-                         pheno_type, peaks_tbl, pmap_obj)
-  
-  ## Use peaks as input to shinyWindow.
-  win_par <- callModule(shinyWindow, "window",
-                        pmap_obj, hot_peak)
+  win_par <- callModule(shinyPeaks, "shinypeaks",
+                         input, pheno_type, peaks_tbl, pmap_obj)
   
   chr_pos <- reactive({
     make_chr_pos(win_par$chr_id, 
@@ -40,8 +47,8 @@ shinySetup <- function(input, output, session,
   
   ## Use window as input to shinyPhenos.
   pheno_anal <- callModule(shinyPhenos, "phenos",
-                           pheno_type, peaks_tbl, analyses_tbl,
-                           hot_peak, win_par)
+                           input, peaks_tbl, analyses_tbl,
+                           win_par)
   
   ## Density or scatter plot of phenotypes.
   analyses_df <- reactive({
@@ -114,8 +121,9 @@ shinySetupUI <- function(id) {
   ns <- NS(id)
   tagList(
     sidebarPanel(tagList(
+      h4(strong("Phenotypes")),
+      uiOutput(ns("dataset")),
       shinyPhenosUI(ns("phenos")),
-      shinyWindowUI(ns("window")),
       shinyPeaksInput(ns("shinypeaks")),
       radioButtons(ns("setup"), NULL,
                    c("Peak Count","Peaks","Raw Data","Trans Data","Covariates")))),

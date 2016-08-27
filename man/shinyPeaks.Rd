@@ -6,7 +6,7 @@
 \alias{shinyPeaksOutput}
 \title{Shiny peaks selection}
 \usage{
-shinyPeaks(input, output, session, pheno_type, peaks_tbl, pmap_obj)
+shinyPeaks(input, output, session, setup_par, pheno_type, peaks_tbl, pmap_obj)
 
 shinyPeaksInput(id)
 
@@ -18,24 +18,14 @@ shinyPeaksOutput(id)
 \item{pheno_type, peaks_tbl, pmap_obj}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1}} use}
-
-\item{id}{identifier for \code{\link{shinyScan1}} use}
 }
 \value{
 list of inputs and scan summary
 }
 \description{
 Shiny module for peaks selection. Does not yet have return.
-
-UI for peak selection to use in shiny module.
-
-UI for peak selection to use in shiny module.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}

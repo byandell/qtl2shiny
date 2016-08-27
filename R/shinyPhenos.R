@@ -3,66 +3,25 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param pheno_type,peaks_tbl,analyses_tbl,hot_peak,win_par reactive arguments
+#' @param setup_par,peaks_tbl,analyses_tbl,win_par reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 shinyPhenos <- function(input, output, session,
-                        pheno_type, peaks_tbl, analyses_tbl,
-                        hot_peak, win_par) {
+                        setup_par, peaks_tbl, analyses_tbl,
+                        win_par) {
   ns <- session$ns
-
-  # Drop-down selection box for which phenotype set
-  output$choose_dataset <- renderUI({
-    req(choices <- pheno_type())
-    if(is.null(selected <- input$dataset))
-      selected <- choices[2]
-    selectInput(ns("dataset"), "Phenotype Group",
-                choices = as.list(choices),
-                selected = selected)
-  })
-  observeEvent(hot_peak(), {
-    scan_tbl <- hot_peak() %>%
-      filter(lod==max(lod))
-    updateSelectInput(session, "dataset",
-                      choices = pheno_type(),
-                      selected = scan_tbl$pheno[1])
-  })
-
-  # Text box for selecting phenotypes
-  output$choose_analysis <- renderUI({
-    selectInput(ns("analysis"), "Analysis Type",
-                c("default","anal1","anal2","all"),
-                "all")
-  })
 
   ## Set up analyses data frame.
   analyses_df <- reactive({
-    dataset <- req(input$dataset)
-
     ## Filter by dataset.
+    dataset <- req(setup_par$dataset)
     dat <- analyses_tbl()
-    if(dataset != "all") {
+    if(!("all" %in% dataset)) {
       dat <- dat %>%
-        filter(pheno_type == dataset)
-    }
-
-    ## Filter by phename (partial match to phenotype names).
-#    phename <- input$phename
-#    dat <- dat %>%
-#      filter(grepl(tolower(phename), tolower(pheno)))
-
-    ## Filter by analysis type.
-    analysis_type <- req(input$analysis)
-    if(analysis_type == "default") {
-      dat <- dat %>%
-        filter(!grepl(paste(paste0("_anal", 1:2), collapse="|"), output))
-    } else {
-      if(analysis_type != "all")
-        dat <- dat %>%
-          filter(grepl(paste0("_", analysis_type), output))
+        filter(pheno_type %in% dataset)
     }
 
     ## Filter by Peak Position.
@@ -78,12 +37,6 @@ shinyPhenos <- function(input, output, session,
       }
     }
     dat
-  })
-
-  ## Update if dataset changes.
-  observeEvent(input$dataset, {
-    updateTextInput(session, "phename", value="")
-    updateSelectInput(session, "analysis", selected="all")
   })
 
   # Choose Phenotypes for Analysis.
@@ -130,8 +83,6 @@ shinyPhenos <- function(input, output, session,
 shinyPhenosUI <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("choose_dataset")),
-    uiOutput(ns("choose_analysis")),
     uiOutput(ns("choose_phenoanal")),
     checkboxInput(ns("use_pos"), "Filter Traits by Peak Region")
   )
