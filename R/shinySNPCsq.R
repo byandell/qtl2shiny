@@ -1,7 +1,7 @@
 #' Shiny SNP Consequence
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_scan_obj,chr_pos,snp_action reactive arguments
+#' @param win_par,snp_scan_obj,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -10,10 +10,15 @@
 #'
 #' @export
 shinySNPCsq <- function(input, output, session,
-                        snp_scan_obj, chr_pos,
+                        win_par, snp_scan_obj,
                         snp_action = reactive({"basic"})) {
   ns <- session$ns
   
+  chr_pos <- reactive({
+    make_chr_pos(win_par$chr_id, 
+                 win_par$peak_Mbp, win_par$window_Mbp)
+  })
+
   top_snps_tbl <- reactive({
     req(snp_action())
     withProgress(message = 'Get Top SNPs ...', value = 0, {

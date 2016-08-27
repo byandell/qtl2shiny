@@ -32,11 +32,6 @@ shinyPhenos <- function(input, output, session,
   })
 
   # Text box for selecting phenotypes
-#  output$choose_phename <- renderUI({
-#    textInput(ns("phename"), "Phenotype Name (partial match)", "")
-#  })
-
-  # Text box for selecting phenotypes
   output$choose_analysis <- renderUI({
     selectInput(ns("analysis"), "Analysis Type",
                 c("default","anal1","anal2","all"),
@@ -109,9 +104,10 @@ shinyPhenos <- function(input, output, session,
     phenames <- phenames[phenames != ""]
 
     choices <- c("all","none", phenames)
-    checkboxGroupInput(ns("pheno_anal"), "Choose phenotypes",
-                       choices = choices,
-                       selected=selected, inline=TRUE)
+    selectInput(ns("pheno_anal"), "Choose phenotypes",
+                choices = choices,
+                selected = selected,
+                multiple = TRUE)
   })
   reactive({
     pheno_anal <- req(input$pheno_anal)
@@ -128,23 +124,13 @@ shinyPhenos <- function(input, output, session,
     }
   })
 }
-
-#' UI for shinyPhenos Shiny Module
-#'
-#' UI for phenotype selection to use in shiny module.
-#'
 #' @param id identifier for \code{\link{shinyScan1}} use
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
 #' @rdname shinyPhenos
 #' @export
 shinyPhenosUI <- function(id) {
   ns <- NS(id)
   tagList(
     uiOutput(ns("choose_dataset")),
-#    uiOutput(ns("choose_phename")),
     uiOutput(ns("choose_analysis")),
     uiOutput(ns("choose_phenoanal")),
     checkboxInput(ns("use_pos"), "Filter Traits by Peak Region")

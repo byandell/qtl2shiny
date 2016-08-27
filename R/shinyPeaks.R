@@ -28,9 +28,10 @@ shinyPeaks <- function(input, output, session,
   })
   # Select chromosome
   output$peak_chr <- renderUI({
-    checkboxGroupInput(ns("peak_chr_id"), strong("Key Chromosome"),
-                       choices = as.list(c("all",names(pmap_obj()))),
-                       selected = "", inline=TRUE)
+    selectInput(ns("peak_chr_id"), strong("Key Chromosome"),
+                choices = as.list(c("all",names(pmap_obj()))),
+                selected = input$peak_chr_id, 
+                multiple = TRUE)
     })
 
   scan_obj_all <- reactive({
@@ -151,11 +152,9 @@ shinyPeaks <- function(input, output, session,
 shinyPeaksInput <- function(id) {
   ns <- NS(id)
   tagList(
-    fluidRow(
-      uiOutput(ns("choose_peakset")),
-      uiOutput(ns("peak_chr")),
-      sliderInput(ns("peak_window"), "Peak Window", 0, 6, 3)
-  ))
+    uiOutput(ns("choose_peakset")),
+    uiOutput(ns("peak_chr")),
+    sliderInput(ns("peak_window"), "Peak Window", 0, 6, 3))
 }
 #' UI for shinyPeaks output
 #'

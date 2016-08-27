@@ -6,7 +6,7 @@
 \alias{shinySNPCsqUI}
 \title{Shiny SNP Consequence}
 \usage{
-shinySNPCsq(input, output, session, snp_scan_obj, chr_pos,
+shinySNPCsq(input, output, session, win_par, snp_scan_obj,
   snp_action = reactive({     "basic" }))
 
 shinySNPCsqUI(id)
@@ -16,7 +16,7 @@ shinySNPCsqOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{snp_scan_obj, chr_pos, snp_action}{reactive arguments}
+\item{win_par, snp_scan_obj, snp_action}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }
