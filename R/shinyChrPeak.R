@@ -1,16 +1,16 @@
-#' Shiny window selection
+#' Shiny chromosome and peak selection
 #'
-#' Shiny module for window selection around key peak.
+#' Shiny module for chromosome and peak selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param pmap_obj reactive arguments
+#' @param hot_peak,pmap_obj reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
-shinyWindow <- function(input, output, session, pmap_obj,
-                        hot_peak=reactive({NULL})) {
+shinyChrPeak <- function(input, output, session,
+                        hot_peak=reactive({NULL}), pmap_obj) {
   ns <- session$ns
 
   # Select chromosome.
@@ -36,14 +36,8 @@ shinyWindow <- function(input, output, session, pmap_obj,
                 step=.5)
   })
 
-  ## Window slider
-  output$choose_window <- renderUI({
-    if(is.null(pos <- input$window_Mbp))
-      pos <- 3
-    sliderInput(ns("window_Mbp"), "Window Half Width",
-                0, 6, pos, step=0.5)
-  })
   observeEvent(hot_peak(), {
+    browser()
     scan_tbl <- hot_peak() %>%
       filter(lod==max(lod))
 
@@ -59,9 +53,6 @@ shinyWindow <- function(input, output, session, pmap_obj,
                       value=peak_Mbp)
     updateTextInput(session, "chr_pos",
                     value = paste(chr_id, round(peak_Mbp, 2), sep="@"))
-    window_Mbp <- scan_tbl$window[1]
-    updateSliderInput(session, "window_Mbp",
-                      value = window_Mbp)
   })
 
   observeEvent(input$chr_pos, {
@@ -88,24 +79,14 @@ shinyWindow <- function(input, output, session, pmap_obj,
   })
   input
 }
-
-#' UI for shinyWindow Shiny Module
-#'
-#' UI for window selection to use in shiny module.
-#'
 #' @param id identifier for \code{\link{shinyScan1}} use
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
-#' @rdname shinyWindow
+#' @rdname shinyChrPeak
 #' @export
-shinyWindowUI <- function(id) {
+shinyChrPeakUI <- function(id) {
   ns <- NS(id)
   tagList(
     textInput(ns("chr_pos"),"Quick chr:pos or chr@pos"),
     uiOutput(ns("choose_chr")),
-    uiOutput(ns("choose_peak")),
-    uiOutput(ns("choose_window"))
+    uiOutput(ns("choose_peak"))
   )
 }

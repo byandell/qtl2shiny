@@ -14,16 +14,23 @@
 shinyPeaks <- function(input, output, session,
                        setup_par, pheno_type, peaks_tbl, pmap_obj) {
   ns <- session$ns
-
-  ## Use peaks as input to shinyWindow.
-  win_par <- callModule(shinyWindow, "window",
-                        pmap_obj, hot_peak)
+  
+  # Select chromosomes and/or all.
+  output$chr_id <- renderUI({
+    if(is.null(selected <- input$chr_id))
+      selected <- "all"
+    selectInput(ns("chr_id"), strong("Chromosomes"),
+                choices = c("all", names(pmap_obj())),
+                selected = selected,
+                multiple = TRUE)
+  })
+  
   
   scan_obj_all <- reactive({
     out_peaks <- pmap_obj()
     map_chr <- names(out_peaks)
     n_chr <- length(map_chr)
-    peak_window <- isolate(win_par$window_Mbp)
+    peak_window <- req(setup_par$window_Mbp)
     if(is.null(peak_window)) {
       NULL
     } else {
@@ -64,14 +71,13 @@ shinyPeaks <- function(input, output, session,
   ## Now chr_id is isolated and does not respond to change.
   ## Need to allow change but avoid flip-flop.
   scan_obj <- reactive({
-    peak_all <- req(input$peak_all)
     out_peaks <- scan_obj_all()
-    withProgress(message = 'Hot peak filtering ...', value = 0,
+    withProgress(message = 'Hotspot search ...', value = 0,
     {
       setProgress(1)
       map_chr <- names(out_peaks$map)
-      if(!peak_all) {
-        chr_id <- isolate(win_par$chr_id)
+      chr_id <- input$chr_id
+      if(!("all" %in% chr_id)) {
         if(!is.null(chr_id)) {
           ## reduce to included chromosomes. Not quite there yet.
           len <- sapply(out_peaks$map, length)
@@ -91,7 +97,7 @@ shinyPeaks <- function(input, output, session,
     ## Here need scan1 object.
     peak_set <- req(setup_par$dataset)
     out_peaks <- scan_obj()
-    withProgress(message = 'Hot peak plot ...',
+    withProgress(message = 'Hotsplot show ...',
                  value = 0,
     {
       setProgress(1)
@@ -111,32 +117,31 @@ shinyPeaks <- function(input, output, session,
       }
       ## Want to add mtext for peak_set
       title(paste0("number of ", paste(peak_set, collapse=","),
-                   " in ", win_par$peak_Mbp, "Mbp window"))
+                   " in ", setup_par$window_Mbp, "Mbp window"))
     })
   })
   scan_tbl <- reactive({
     lodcol <- match(req(setup_par$dataset), pheno_type())
     scan <- scan_obj()
-    withProgress(message = 'Hot peak summary ...', value = 0,
+    withProgress(message = 'Hotspot summary ...', value = 0,
     {
       setProgress(1)
       chr <- names(scan$map)
       summary(scan, lodcol, chr)
     })
   })
-  output$peak_tbl <- renderDataTable({
-    scan_tbl()
-    }, 
-    escape = FALSE,
-    options = list(scrollX = TRUE, pageLength = 10))
-  hot_peak <- reactive({
-    out <- scan_tbl()
-    if(!is.null(window <- win_par$peak_Mbp))
-      out <- cbind(out,window=window)
+  output$peak_tbl <- renderTable({
+    out <- scan_tbl() %>%
+      arrange(desc(lod))
+    if(nrow(out) > 4) {
+      out <- out %>%
+      filter(row_number() < 4) %>%
+      add_row(pheno="...")
+    }
     out
   })
-  
-  win_par
+
+  scan_tbl
 }
 #' @param id identifier for \code{\link{shinyScan1}} use
 #' @rdname shinyPeaks
@@ -144,8 +149,7 @@ shinyPeaks <- function(input, output, session,
 shinyPeaksInput <- function(id) {
   ns <- NS(id)
   tagList(
-    checkboxInput(ns("peak_all"), "Show All Chr", TRUE),
-    shinyWindowUI(ns("window")))
+    uiOutput(ns("chr_id")))
 }
 #' @rdname shinyPeaks
 #' @export
@@ -153,6 +157,6 @@ shinyPeaksOutput <- function(id) {
   ns <- NS(id)
   tagList(
     plotOutput(ns("peak_show")),
-    dataTableOutput(ns("peak_tbl"))
+    tableOutput(ns("peak_tbl"))
   )
 }

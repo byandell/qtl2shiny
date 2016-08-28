@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param setup_par,peaks_tbl,analyses_tbl,win_par reactive arguments
+#' @param setup_par,peaks_tbl,analyses_tbl,chr_peak reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -11,7 +11,7 @@
 #' @export
 shinyPhenos <- function(input, output, session,
                         setup_par, peaks_tbl, analyses_tbl,
-                        win_par) {
+                        chr_peak) {
   ns <- session$ns
 
   ## Set up analyses data frame.
@@ -25,14 +25,14 @@ shinyPhenos <- function(input, output, session,
     }
 
     ## Filter by Peak Position.
-    chr_id <- win_par$chr_id
-    if(input$use_pos & !is.null(win_par$window_Mbp)) {
-      if(win_par$window_Mbp > 0) {
+    chr_id <- chr_peak$chr_id
+    if(input$use_pos & !is.null(setup_par$window_Mbp)) {
+      if(setup_par$window_Mbp > 0) {
         ## Filter peaks
         peaks <- peaks_tbl() %>%
           filter(chr == chr_id,
-                 pos >= win_par$peak_Mbp - win_par$window_Mbp,
-                 pos <= win_par$peak_Mbp + win_par$window_Mbp)
+                 pos >= chr_peak$peak_Mbp - setup_par$window_Mbp,
+                 pos <= chr_peak$peak_Mbp + setup_par$window_Mbp)
         dat <- dat[dat$output %in% peaks$output,]
       }
     }

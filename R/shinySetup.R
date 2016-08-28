@@ -3,14 +3,14 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param pheno_type,peaks_tbl,pmap_obj,analyses_tbl reactive arguments
+#' @param pheno_type,peaks_tbl,pmap_obj,analyses_tbl,cov_mx reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 shinySetup <- function(input, output, session,
-                        pheno_type, peaks_tbl, pmap_obj, analyses_tbl) {
+                        pheno_type, peaks_tbl, pmap_obj, analyses_tbl, cov_mx) {
   ns <- session$ns
   
   # Select phenotype dataset
@@ -23,14 +23,26 @@ shinySetup <- function(input, output, session,
                 selected = selected,
                 multiple = TRUE)
   })
-
+  
+  ## Window slider
+  output$window_Mbp <- renderUI({
+    if(is.null(pos <- input$window_Mbp))
+      pos <- 3
+    sliderInput(ns("window_Mbp"), "Window Half Width",
+                0, 6, pos, step=0.5)
+  })
+  
   ## Peak counts.
-  win_par <- callModule(shinyPeaks, "shinypeaks",
+  hot_peak <- callModule(shinyPeaks, "shinypeaks",
                          input, pheno_type, peaks_tbl, pmap_obj)
+
+  ## Use peaks as input to shinyChrPeak.
+  chr_peak <- callModule(shinyChrPeak, "chr_peak",
+                        hot_peak, pmap_obj)
   
   chr_pos <- reactive({
-    make_chr_pos(win_par$chr_id, 
-                 win_par$peak_Mbp, win_par$window_Mbp)
+    make_chr_pos(chr_peak$chr_id, 
+                 chr_peak$peak_Mbp, input$window_Mbp)
   })
   output$chr_pos <- renderText({
     paste0("Region: ", chr_pos(), "Mbp")
@@ -48,7 +60,7 @@ shinySetup <- function(input, output, session,
   ## Use window as input to shinyPhenos.
   pheno_anal <- callModule(shinyPhenos, "phenos",
                            input, peaks_tbl, analyses_tbl,
-                           win_par)
+                           chr_peak)
   
   ## Density or scatter plot of phenotypes.
   analyses_df <- reactive({
@@ -88,21 +100,58 @@ shinySetup <- function(input, output, session,
       select(pheno,chr,pos,lod)
   }, options = list(scrollX = TRUE, pageLength = 10))
   
-  output$setup <- renderUI({
+  output$sidebar_setup <- renderUI({
+    side <- req(input$setup)
+    if(side != "Show Data") {
+      
+    }
+    switch(side,
+           "Select Data" = {
+             tagList(
+               uiOutput(ns("dataset")),
+               shinyPhenosUI(ns("phenos")),
+               shinyChrPeakUI(ns("chr_peak")),
+               uiOutput(ns("window_Mbp"))
+             )
+           },
+           "Explore Hotspots" = {
+             tagList(
+               uiOutput(ns("dataset")),
+               shinyPeaksInput(ns("shinypeaks")),
+               uiOutput(ns("window_Mbp"))
+             )
+           },
+           "Show Data" = {
+             tagList(
+               shinyPhenosUI(ns("phenos")),
+               radioButtons(ns("show_data"), NULL,
+                            c("Raw Data","Trans Data",
+                              "LOD Peaks","Covariates"))
+             )
+           })
+  })
+  output$main_setup <- renderUI({
     switch(input$setup,
-           "Peak Count" = shinyPeaksOutput(ns("shinypeaks")),
-           "Peaks"      = dataTableOutput(ns("peaks_tbl")),
-           "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
-           "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
-           "Covariates" = dataTableOutput(ns("analyses_tbl")))
+           "Select Data" = {
+           },
+           "Explore Hotspots" = {
+             shinyPeaksOutput(ns("shinypeaks"))
+           },
+           "Show Data" = {
+             switch(input$setup,
+                    "LOD Peaks"  = dataTableOutput(ns("peaks_tbl")),
+                    "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
+                    "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
+                    "Covariates" = dataTableOutput(ns("analyses_tbl")))
+           })
   })
   
   ## Return.
   reactive({
     list(pheno_anal = pheno_anal(),
-         win_par = list(chr_id     = win_par$chr_id,
-                        peak_Mbp   = win_par$peak_Mbp,
-                        window_Mbp = win_par$window_Mbp))
+         win_par = list(chr_id     = chr_peak$chr_id,
+                        peak_Mbp   = chr_peak$peak_Mbp,
+                        window_Mbp = input$window_Mbp))
   })
 }
 #' @param id identifier for \code{\link{shinyScan1}} use
@@ -122,11 +171,12 @@ shinySetupUI <- function(id) {
   tagList(
     sidebarPanel(tagList(
       h4(strong("Phenotypes")),
-      uiOutput(ns("dataset")),
-      shinyPhenosUI(ns("phenos")),
-      shinyPeaksInput(ns("shinypeaks")),
       radioButtons(ns("setup"), NULL,
-                   c("Peak Count","Peaks","Raw Data","Trans Data","Covariates")))),
-    mainPanel(uiOutput(ns("setup")))
+                   c("Select Data",
+                     "Explore Hotspots",
+                     "Show Data"))),
+      uiOutput(ns("sidebar_setup"))
+    ),
+    mainPanel(uiOutput(ns("main_setup")))
   )
 }

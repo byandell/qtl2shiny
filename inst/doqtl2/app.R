@@ -90,10 +90,10 @@ server <- function(input, output, session) {
   
   out <- callModule(shinySetup, "setup", 
                     pheno_typer, peaks_tbl, 
-                    pmap_obj, analyses_tblr)
+                    pmap_obj, analyses_tblr, cov_mx)
   
-  pheno_anal <- reactive({out$pheno_anal})
-  win_par <- reactive({out$win_par})
+  pheno_anal <- reactive({out()$pheno_anal})
+  win_par <- reactive({out()$win_par})
 
   ## Continue with Plots and Analysis.
 
