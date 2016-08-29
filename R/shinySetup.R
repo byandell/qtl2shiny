@@ -24,25 +24,13 @@ shinySetup <- function(input, output, session,
                 multiple = TRUE)
   })
   
-  ## Window slider
-  output$window_Mbp <- renderUI({
-    if(is.null(pos <- input$window_Mbp))
-      pos <- 3
-    sliderInput(ns("window_Mbp"), "Window Half Width",
-                0, 6, pos, step=0.5)
-  })
-  
-  ## Peak counts.
-  hot_peak <- callModule(shinyPeaks, "shinypeaks",
+  ## Locate Peak.
+  chr_peak <- callModule(shinyPeaks, "shinypeaks",
                          input, pheno_type, peaks_tbl, pmap_obj)
-
-  ## Use peaks as input to shinyChrPeak.
-  chr_peak <- callModule(shinyChrPeak, "chr_peak",
-                        hot_peak, pmap_obj)
   
   chr_pos <- reactive({
     make_chr_pos(chr_peak$chr_id, 
-                 chr_peak$peak_Mbp, input$window_Mbp)
+                 chr_peak$peak_Mbp, chr_peak$window_Mbp)
   })
   output$chr_pos <- renderText({
     paste0("Region: ", chr_pos(), "Mbp")
@@ -100,50 +88,37 @@ shinySetup <- function(input, output, session,
       select(pheno,chr,pos,lod)
   }, options = list(scrollX = TRUE, pageLength = 10))
   
-  output$sidebar_setup <- renderUI({
-    side <- req(input$setup)
-    if(side != "Show Data") {
-      
+  ## Setup input logic.
+  output$title <- renderUI({
+    if(req(input$setup) == "Phenotypes") {
+      mytitle <- "Phenotypes"
+    } else {
+      mytitle <- "Region"
     }
-    switch(side,
-           "Select Data" = {
-             tagList(
-               uiOutput(ns("dataset")),
-               shinyPhenosUI(ns("phenos")),
-               shinyChrPeakUI(ns("chr_peak")),
-               uiOutput(ns("window_Mbp"))
-             )
-           },
-           "Explore Hotspots" = {
-             tagList(
-               uiOutput(ns("dataset")),
-               shinyPeaksInput(ns("shinypeaks")),
-               uiOutput(ns("window_Mbp"))
-             )
-           },
-           "Show Data" = {
-             tagList(
-               shinyPhenosUI(ns("phenos")),
-               radioButtons(ns("show_data"), NULL,
-                            c("Raw Data","Trans Data",
-                              "LOD Peaks","Covariates"))
-             )
-           })
+    h4(strong(mytitle))
+  })
+  output$sidebar_setup <- renderUI({
+    if(req(input$setup) == "Phenotypes") {
+      tagList(
+        shinyPhenosUI(ns("phenos")),
+        radioButtons(ns("show_data"), NULL,
+                     c("Raw Data","Trans Data",
+                       "LOD Peaks","Covariates"))
+      )
+    } else {
+      shinyPeaksInput(ns("shinypeaks"))
+    }
   })
   output$main_setup <- renderUI({
-    switch(input$setup,
-           "Select Data" = {
-           },
-           "Explore Hotspots" = {
-             shinyPeaksOutput(ns("shinypeaks"))
-           },
-           "Show Data" = {
-             switch(input$setup,
-                    "LOD Peaks"  = dataTableOutput(ns("peaks_tbl")),
-                    "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
-                    "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
-                    "Covariates" = dataTableOutput(ns("analyses_tbl")))
-           })
+    if(req(input$setup) == "Phenotypes") {
+      switch(req(input$show_data),
+             "LOD Peaks"  = dataTableOutput(ns("peaks_tbl")),
+             "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
+             "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
+             "Covariates" = dataTableOutput(ns("analyses_tbl")))
+    } else {
+      shinyPeaksOutput(ns("shinypeaks"))
+    }
   })
   
   ## Return.
@@ -151,7 +126,7 @@ shinySetup <- function(input, output, session,
     list(pheno_anal = pheno_anal(),
          win_par = list(chr_id     = chr_peak$chr_id,
                         peak_Mbp   = chr_peak$peak_Mbp,
-                        window_Mbp = input$window_Mbp))
+                        window_Mbp = chr_peak$window_Mbp))
   })
 }
 #' @param id identifier for \code{\link{shinyScan1}} use
@@ -170,11 +145,12 @@ shinySetupUI <- function(id) {
   ns <- NS(id)
   tagList(
     sidebarPanel(tagList(
-      h4(strong("Phenotypes")),
+      uiOutput(ns("title")),
       radioButtons(ns("setup"), NULL,
-                   c("Select Data",
-                     "Explore Hotspots",
-                     "Show Data"))),
+                   c("Phenotypes",
+                     "Region"),
+                   inline=TRUE)),
+      uiOutput(ns("dataset")),
       uiOutput(ns("sidebar_setup"))
     ),
     mainPanel(uiOutput(ns("main_setup")))

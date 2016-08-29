@@ -14,23 +14,109 @@
 shinyPeaks <- function(input, output, session,
                        setup_par, pheno_type, peaks_tbl, pmap_obj) {
   ns <- session$ns
-  
-  # Select chromosomes and/or all.
+
+  # Select chromosome.
   output$chr_id <- renderUI({
-    if(is.null(selected <- input$chr_id))
-      selected <- "all"
-    selectInput(ns("chr_id"), strong("Chromosomes"),
-                choices = c("all", names(pmap_obj())),
-                selected = selected,
-                multiple = TRUE)
+    choices <- names(pmap_obj())
+    selected <- input$chr_id
+    selectInput(ns("chr_id"), strong("Chromosome"),
+                choices = choices,
+                selected = selected)
   })
   
+  ## Window slider
+  output$window_Mbp <- renderUI({
+    if(is.null(pos <- input$window_Mbp))
+      pos <- 3
+    sliderInput(ns("window_Mbp"), "Window Half Width",
+                0, 6, pos, step=0.5)
+  })
   
+  # Peak position slider.
+  output$peak_Mbp <- renderUI({
+    chr_id <- req(input$chr_id)
+    rng <- round(range(pmap_obj()[[chr_id]]), 2)
+    pos <- input$peak_Mbp
+    if(is.null(pos)) {
+      pos <- mean(rng)
+    } else {
+      if(pos < rng[1] | pos > rng[2])
+        pos <- mean(rng)
+    }
+    sliderInput(ns("peak_Mbp"), "Peak Position (Mbp)", rng[1], rng[2], pos,
+                step=.5)
+  })
+  
+  ## shorthand 
+  output$chr_pos <- renderUI({
+    textInput(ns("chr_pos"), "chr:pos", input$chr_pos)
+  })
+  
+  observeEvent(scan_tbl(), update_region())
+  observeEvent(input$chr_id, update_region())
+  update_region <- function() {
+    scan_in <- req(scan_tbl())
+    scan_in <- scan_in %>%
+      filter(lod==max(lod))
+    
+    chr_ct <- as.character(scan_in$chr)
+    if(any(chr_ct == req(input$chr_id))) {
+      chr_ct <- as.character(input$chr_id)
+      scan_in <- scan_in %>%
+        filter(chr == chr_ct)
+      pmap <- pmap_obj()
+      peak_Mbp <- scan_in$pos[1]
+      rng <- round(range(pmap[[chr_ct]]), 2)
+      updateSliderInput(session, "peak_Mbp",
+                        min=rng[1], max=rng[2],
+                        value=peak_Mbp)
+      updateTextInput(session, "chr_pos",
+                      value = paste(chr_ct, round(peak_Mbp, 2), sep="@"))
+    }
+  }
+  observeEvent(input$chr_pos, {
+    chr_pos <- strsplit(input$chr_pos, ":|@|_| |,")[[1]]
+    if(length(chr_pos) == 2) {
+      chr <- chr_pos[1]
+      pmap <- pmap_obj()
+      choices <- names(pmap)
+      if(chr %in% choices) {
+        pos <- as.numeric(chr_pos[2])
+        if(is.numeric(pos)) {
+          if(!is.na(pos)) {
+            rng <- round(range(pmap[[chr]]), 2)
+            if(pos >= rng[1] & pos <= rng[2]) {
+              up <- is.null(input$chr_id)
+              if(!up) {
+                up <- (chr != input$chr_id)
+              }
+              if(up) {
+                updateSelectInput(session, "chr_id",
+                                  selected=chr, choices=choices)
+              }
+              updateSliderInput(session, "peak_Mbp",
+                                value=pos, min=rng[1], max=rng[2])
+            }
+          }
+        }
+      }
+    }
+  })
+  
+  # Select chromosome.
+  output$chr_ct <- renderUI({
+    choices <- names(pmap_obj())
+    if(is.null(selected <- input$chr_ct))
+      selected <- "all"
+    selectInput(ns("chr_ct"), strong("Hotspot Search"),
+                choices = c("all", choices),
+                selected = selected)
+  })
   scan_obj_all <- reactive({
     out_peaks <- pmap_obj()
     map_chr <- names(out_peaks)
     n_chr <- length(map_chr)
-    peak_window <- req(setup_par$window_Mbp)
+    peak_window <- req(input$window_Mbp)
     if(is.null(peak_window)) {
       NULL
     } else {
@@ -68,24 +154,22 @@ shinyPeaks <- function(input, output, session,
     }
   })
   
-  ## Now chr_id is isolated and does not respond to change.
-  ## Need to allow change but avoid flip-flop.
   scan_obj <- reactive({
     out_peaks <- scan_obj_all()
     withProgress(message = 'Hotspot search ...', value = 0,
     {
       setProgress(1)
       map_chr <- names(out_peaks$map)
-      chr_id <- input$chr_id
-      if(!("all" %in% chr_id)) {
-        if(!is.null(chr_id)) {
+      chr_ct <- input$chr_ct
+      if(!("all" %in% chr_ct)) {
+        if(!is.null(chr_ct)) {
           ## reduce to included chromosomes. Not quite there yet.
           len <- sapply(out_peaks$map, length)
           index <- split(seq_len(nrow(out_peaks$lod)),
                          ordered(rep(map_chr, times=len), map_chr))
-          index <- unlist(index[map_chr %in% chr_id])
+          index <- unlist(index[map_chr %in% chr_ct])
           out_peaks$lod <- out_peaks$lod[index,]
-          out_peaks$map <- out_peaks$map[map_chr %in% chr_id]
+          out_peaks$map <- out_peaks$map[map_chr %in% chr_ct]
         }
       }
     })
@@ -97,7 +181,7 @@ shinyPeaks <- function(input, output, session,
     ## Here need scan1 object.
     peak_set <- req(setup_par$dataset)
     out_peaks <- scan_obj()
-    withProgress(message = 'Hotsplot show ...',
+    withProgress(message = 'Hotspot show ...',
                  value = 0,
     {
       setProgress(1)
@@ -117,7 +201,7 @@ shinyPeaks <- function(input, output, session,
       }
       ## Want to add mtext for peak_set
       title(paste0("number of ", paste(peak_set, collapse=","),
-                   " in ", setup_par$window_Mbp, "Mbp window"))
+                   " in ", input$window_Mbp, "Mbp window"))
     })
   })
   scan_tbl <- reactive({
@@ -141,7 +225,7 @@ shinyPeaks <- function(input, output, session,
     out
   })
 
-  scan_tbl
+  input
 }
 #' @param id identifier for \code{\link{shinyScan1}} use
 #' @rdname shinyPeaks
@@ -149,7 +233,13 @@ shinyPeaks <- function(input, output, session,
 shinyPeaksInput <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("chr_id")))
+    fluidRow(
+      column(6, uiOutput(ns("chr_pos"))),
+      column(6, uiOutput(ns("chr_id")))
+    ),
+    uiOutput(ns("window_Mbp")),
+    uiOutput(ns("peak_Mbp")),
+    uiOutput(ns("chr_ct")))
 }
 #' @rdname shinyPeaks
 #' @export

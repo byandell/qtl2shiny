@@ -15,31 +15,19 @@ shinyChrPeak <- function(input, output, session,
 
   # Select chromosome.
   output$choose_chr <- renderUI({
+    choices <- names(pmap_obj())
+    selected <- input$chr_id
     selectInput(ns("chr_id"), strong("Chromosome"),
-                choices = names(pmap_obj()),
-                selected = input$chr_id,
+                choices = choices,
+                selected = selected,
                 multiple = TRUE)
-  })
-
-  # Position slider
-  output$choose_peak <- renderUI({
-    req(input$chr_id)
-    rng <- round(range(pmap_obj()[[input$chr_id]]), 2)
-    pos <- input$peak_Mbp
-    if(is.null(pos)) {
-      pos <- mean(rng)
-    } else {
-      if(pos < rng[1] | pos > rng[2])
-        pos <- mean(rng)
-    }
-    sliderInput(ns("peak_Mbp"), "Peak Position (Mbp)", rng[1], rng[2], pos,
-                step=.5)
   })
 
   observeEvent(hot_peak(), {
     browser()
     scan_tbl <- hot_peak() %>%
-      filter(lod==max(lod))
+      filter(lod==max(lod),
+             row_number() ==1)
 
     chr_id <- as.character(scan_tbl$chr[1])
     pmap <- pmap_obj()
@@ -63,15 +51,21 @@ shinyChrPeak <- function(input, output, session,
       choices <- names(pmap)
       if(chr %in% choices) {
         pos <- as.numeric(chr_pos[2])
-        if(!is.null(pos)) {
-           rng <- round(range(pmap[[chr]]), 2)
-          if(pos >= rng[1] & pos <= rng[2]) {
-            if(chr != req(input$chr_id)) {
-              updateSelectInput(session, "chr_id",
-                                selected=chr, choices=choices)
+        if(is.numeric(pos)) {
+          if(!is.na(pos)) {
+            rng <- round(range(pmap[[chr]]), 2)
+            if(pos >= rng[1] & pos <= rng[2]) {
+              up <- is.null(input$chr_id)
+              if(!up) {
+                up <- (chr != input$chr_id)
+              }
+              if(up) {
+                updateSelectInput(session, "chr_id",
+                                  selected=chr, choices=choices)
+              }
+              updateSliderInput(session, "peak_Mbp",
+                                value=pos, min=rng[1], max=rng[2])
             }
-            updateSliderInput(session, "peak_Mbp",
-                              value=pos, min=rng[1], max=rng[2])
           }
         }
       }
@@ -85,7 +79,7 @@ shinyChrPeak <- function(input, output, session,
 shinyChrPeakUI <- function(id) {
   ns <- NS(id)
   tagList(
-    textInput(ns("chr_pos"),"Quick chr:pos or chr@pos"),
+    textInput(ns("chr_pos"), "chr:pos or chr@pos"),
     uiOutput(ns("choose_chr")),
     uiOutput(ns("choose_peak"))
   )

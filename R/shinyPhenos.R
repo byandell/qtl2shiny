@@ -40,7 +40,7 @@ shinyPhenos <- function(input, output, session,
   })
 
   # Choose Phenotypes for Analysis.
-  output$choose_phenoanal <- renderUI({
+  output$pheno_anal <- renderUI({
     phenames <- sort(analyses_df()$output)
 
     selected <- input$pheno_anal
@@ -62,6 +62,18 @@ shinyPhenos <- function(input, output, session,
                 selected = selected,
                 multiple = TRUE)
   })
+  output$chr_pos <- renderText({
+    paste0(chr_peak$chr_id, ":",
+           paste(chr_peak$peak_Mbp + c(-1,1) * chr_peak$window_Mbp,
+                 collapse = "-"))
+  })
+  output$filter <- renderUI({
+    fluidRow(
+      column(6, checkboxInput(ns("use_pos"), "In region")),
+      column(6, textOutput(ns("chr_pos")))
+    )
+  })
+  
   reactive({
     pheno_anal <- req(input$pheno_anal)
     dat <- analyses_tbl() %>%
@@ -83,7 +95,7 @@ shinyPhenos <- function(input, output, session,
 shinyPhenosUI <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("choose_phenoanal")),
-    checkboxInput(ns("use_pos"), "Filter Traits by Peak Region")
+    uiOutput(ns("pheno_anal")),
+    uiOutput(ns("filter"))
   )
 }
