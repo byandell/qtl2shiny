@@ -14,7 +14,7 @@ shinyPattern <- function(input, output, session,
   ## lod values too small--getting wrong one?
   ## error with replacement having 1 row briefly when switch pheno
   ns <- session$ns
-  
+
   ## Select phenotype for plots.
   output$pheno <- renderUI({
     selectInput(ns("pheno"), NULL,
@@ -27,7 +27,7 @@ shinyPattern <- function(input, output, session,
     pats <- patterns() %>%
       filter(pheno == input$pheno)
     if(nrow(pats)) {
-      choices <- pats$AB1NZCPW
+      choices <- snp_to_pattern(pats$sdp)
     } else {
       choices <- input$pattern
     }
@@ -38,7 +38,7 @@ shinyPattern <- function(input, output, session,
 
   ## Names of haplos and diplos in terms of founders.
   haplos <- reactive({
-    str_split("AB1NZCPW","")[[1]]
+    unique(unlist(str_split(diplos(), "")))
   })
   diplos <- reactive({
     dimnames(probs1()$probs[[1]])[[2]]
@@ -56,12 +56,15 @@ shinyPattern <- function(input, output, session,
                    haplos(), diplos())
     })
   })
-  
+
   scan_pat_lod <- reactive({
     req(scan_pat())
     p <- plot(scan_pat(), "lod")
-    if(nrow(patterns()) == 1)
-      p <- p + theme(legend.position="none")
+    if(nrow(patterns()) == 1) {
+      p <- p + 
+        theme(legend.position="none") +
+        ggtitle(names(scan_pat()$scans))
+    }
     p
   })
 
@@ -77,7 +80,7 @@ shinyPattern <- function(input, output, session,
     withProgress(message = 'Pattern Effects ...', value = 0, {
       setProgress(1)
       pattern_cont <- (scan_in$patterns %>%
-                         filter(AB1NZCPW == pattern_in))$contrast
+                         filter(sdp_to_pattern(sdp) == pattern_in))$contrast
       plot(scan_in, "coef", pattern_cont)
     })
   })
@@ -89,7 +92,7 @@ shinyPattern <- function(input, output, session,
     })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
-  
+
   output$scan_choice <- renderUI({
     scanchoice <- (input$genome_scan == "Effects")
     if(scanchoice) {
@@ -100,7 +103,7 @@ shinyPattern <- function(input, output, session,
       uiOutput(ns("pheno"))
     }
   })
-  
+
   output$genome_scan <- renderUI({
     switch(req(input$genome_scan),
            LOD = {
@@ -115,7 +118,7 @@ shinyPattern <- function(input, output, session,
              dataTableOutput(ns("scanSummary"))
            })
   })
-  
+
   ## Downloads
   output$downloadData <- downloadHandler(
     filename = function() {

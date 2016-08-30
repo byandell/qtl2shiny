@@ -23,7 +23,7 @@ shinyScan1SNP <- function(input, output, session,
       setProgress(1)
       get_snpprobs(chr_id(), win_par()$peak_Mbp, win_par()$window_Mbp,
                    names(phe_df()), probs_obj(),
-                   pattern = "AB1NZCPW", datapath)
+                   datapath)
     })
   })
 
@@ -144,7 +144,7 @@ shinyScan1SNP <- function(input, output, session,
     if(snp_action() == "basic")
       h4(strong("SNP Plots"))
   })
-  
+
   ## Downloads
   output$downloadData <- downloadHandler(
     filename = function() {
@@ -162,13 +162,13 @@ shinyScan1SNP <- function(input, output, session,
       phenos <- req(phename())
       pdf(file)
       ## Plots over all phenotypes
-      print(top_pat_plot(phenos, scans, snp_w, 
+      print(top_pat_plot(phenos, scans, snp_w,
                          group = "pheno", snp_action = snp_action()))
-      print(top_pat_plot(phenos, scans, snp_w, 
+      print(top_pat_plot(phenos, scans, snp_w,
                          group = "pattern", snp_action = snp_action()))
       ## Plots by phenotype.
       for(pheno in phenos) {
-        print(top_pat_plot(pheno, scans, snp_w, FALSE, 
+        print(top_pat_plot(pheno, scans, snp_w, FALSE,
                            snp_action = snp_action()))
         top_snp_asso(pheno, scans, snp_w)
       }
