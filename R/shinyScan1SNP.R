@@ -45,8 +45,10 @@ shinyScan1SNP <- function(input, output, session,
   output$scan_window <- renderUI({
     req(chr_id(),pheno_anal(),snpprobs_obj())
     rng <- round(range(snpprobs_obj()$map[[chr_id()]]), 2)
+    if(is.null(selected <- input$scan_window))
+      selected <- round(10 * rng) / 10
     sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
-                rng, step=.1)
+                selected, step=.1)
   })
 
   ## Select phenotype for plots.

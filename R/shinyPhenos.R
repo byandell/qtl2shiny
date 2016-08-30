@@ -26,13 +26,13 @@ shinyPhenos <- function(input, output, session,
 
     ## Filter by Peak Position.
     chr_id <- chr_peak$chr_id
-    if(input$use_pos & !is.null(setup_par$window_Mbp)) {
-      if(setup_par$window_Mbp > 0) {
+    if(input$use_pos & !is.null(chr_peak$window_Mbp)) {
+      if(chr_peak$window_Mbp > 0) {
         ## Filter peaks
         peaks <- peaks_tbl() %>%
           filter(chr == chr_id,
-                 pos >= chr_peak$peak_Mbp - setup_par$window_Mbp,
-                 pos <= chr_peak$peak_Mbp + setup_par$window_Mbp)
+                 pos >= chr_peak$peak_Mbp - chr_peak$window_Mbp,
+                 pos <= chr_peak$peak_Mbp + chr_peak$window_Mbp)
         dat <- dat[dat$output %in% peaks$output,]
       }
     }

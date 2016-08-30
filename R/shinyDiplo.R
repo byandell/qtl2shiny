@@ -1,19 +1,19 @@
-#' Shiny Dominance module
+#' Shiny Diplotype module
 #'
+#' Shiny diplotype SNP/Gene action analysis.
+#' 
 #' @param input,output,session standard shiny arguments
-#' @param plot_type,chr_id,phe_df,cov_mx,pheno_anal,probs_obj,K_chr reactive arguments
+#' @param plot_type,chr_id,phe_df,cov_mx,pheno_anal,K_chr reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
-shinyDominance <- function(input, output, session,
+shinyDiplo <- function(input, output, session,
                        win_par, phe_df, cov_mx,
-                       pheno_anal, probs_obj, K_chr) {
-
-  ## This is basically obsolete now.
-
+                       pheno_anal, K_chr) {
   ns <- session$ns
+
   chr_id <- reactive({win_par()$chr_id})
   range_val <- reactive({
     req(win_par()$peak_Mbp, win_par()$window_Mbp)
@@ -64,24 +64,20 @@ shinyDominance <- function(input, output, session,
   })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinyDominance
+#' @rdname shinyDiplo
 #' @export
-shinyDominanceUI <- function(id) {
+shinyDiploUI <- function(id) {
   ns <- NS(id)
   tagList(
-    h4(strong("SNP/Gene Action")),
-    radioButtons(ns("snp_dip"), "",
-                 c("SNP Plots","Consequence","Genome Scans")),
-    selectInput(ns("snp_action"), "",
-                c("add+dom","additive","non-add",
-                  "recessive","dominant")),
-    uiOutput(ns("snp_choice")))
-}
-#' @rdname shinyDominance
-#' @export
-shinyDominanceOutput <- function(id) {
-  ns <- NS(id)
-  fluidRow(
-    uiOutput(ns("snp_dip"))
+    sidebarPanel(
+      h4(strong("SNP/Gene Action")),
+      radioButtons(ns("snp_dip"), "",
+                   c("SNP Plots","Consequence","Genome Scans")),
+      selectInput(ns("snp_action"), "",
+                  c("add+dom","additive","non-add",
+                    "recessive","dominant")),
+      uiOutput(ns("snp_choice"))),
+  mainPanel(
+    uiOutput(ns("snp_dip")))
   )
 }

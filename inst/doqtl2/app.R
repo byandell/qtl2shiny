@@ -39,11 +39,7 @@ ui <- dashboardPage(skin="red",
       shinySetupOutput("setup"),
       menuItem("Phenotypes and Region", tabName = "phenos",
                icon = icon("dashboard")),
-      menuItem("Genome Scans", tabName = "scans",
-               icon = icon("dashboard")),
-      menuItem("SNP Scans", tabName = "snps",
-               icon = icon("dashboard")),
-      menuItem("SNP Consequence", tabName = "snp_detail", 
+      menuItem("Haplotype Scans", tabName = "hap_scan",
                icon = icon("dashboard")),
       menuItem("SNP/Gene Action", tabName = "dip_scan", 
                icon = icon("dashboard")),
@@ -58,24 +54,12 @@ ui <- dashboardPage(skin="red",
       ## Phenotypes and Region
       tabItem(tabName = "phenos", 
               shinySetupUI("setup")),
-
       ## Scans
-      tabItem(tabName="scans", fluidRow(
-        shinyScan1PlotUI("hap_scan"))),
-
-      tabItem(tabName="snps", tagList(
-        sidebarPanel(shinyScan1SNPUI("snp_scan")),
-        mainPanel(shinyScan1SNPOutput("snp_scan")))),
-
-      ## Diploid Scan
-      tabItem(tabName="dip_scan", tagList(
-        sidebarPanel(shinyDominanceUI("dip_scan")),
-        mainPanel(shinyDominanceOutput("dip_scan")))),
-
-      ## SNP Detail
-      tabItem(tabName="snp_detail", tagList(
-        sidebarPanel(shinySNPCsqUI("snp_csq")),
-        mainPanel(shinySNPCsqOutput("snp_csq"))))
+      tabItem(tabName="hap_scan",
+              shinyHaploUI("hap_scan")),
+      ## Diploid Analysis
+      tabItem(tabName="dip_scan", 
+              shinyDiploUI("dip_scan"))
     )
   )
 )
@@ -113,36 +97,15 @@ server <- function(input, output, session) {
   })
   
   ## Set up reactives for scan1 module.
-  chr_id <- reactive({as.character(req(win_par()$chr_id))})
-  K_chr <- reactive({K[chr_id()]})
+  K_chr <- reactive({K[win_par()$chr_id]})
 
-  ## Genotype Probabilities.
-  probs_obj <- reactive({
-    req(chr_id())
-    withProgress(message = 'Read probs ...', value = 0, {
-      setProgress(1)
-      read_probs(chr_id(), datapath)
-    })
-  })
-  
-  ## Genome Scan.
-  callModule(shinyScan1Plot, "hap_scan", 
-                             chr_id, phe_df, cov_mx,
-                             pheno_anal, probs_obj, K_chr)
-  
-  ## SNP Scan.
-  snp_scan_obj <- callModule(shinyScan1SNP, "snp_scan",
-                             win_par, phe_df, cov_mx, 
-                             pheno_anal, probs_obj, K_chr)
-  
-  ## SNP Consequence.
-  callModule(shinySNPCsq, "snp_csq", 
-             win_par, snp_scan_obj)
-  
-  ## SNP/Gene Action.
-  callModule(shinyDominance, "dip_scan",
-             win_par, phe_df, cov_mx,
-             pheno_anal, probs_obj, K_chr)
+  ## Haplotype Analysis.
+  callModule(shinyHaplo, "hap_scan", 
+             win_par, phe_df, cov_mx, pheno_anal, K_chr)
+
+  ## Diplotype Analysis.
+  callModule(shinyDiplo, "dip_scan",
+             win_par, phe_df, cov_mx, pheno_anal, K_chr)
 }
 
 shinyApp(ui, server)

@@ -27,8 +27,10 @@ shinyScan1Plot <- function(input, output, session,
   output$scan_window <- renderUI({
     req(chr_id(), pheno_anal(), probs_obj())
     rng <- round(range(probs_obj()$map[[chr_id()]]), 2)
+    if(is.null(selected <- input$scan_window))
+      selected <- round(2 * rng) / 2
     sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
-                rng, step=.1)
+                selected, step=.5)
   })
   
   ## Select phenotype for plots.
@@ -116,20 +118,25 @@ shinyScan1Plot <- function(input, output, session,
     }
   )
 }
+#' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyScan1Plot
 #' @export
 shinyScan1PlotUI <- function(id) {
   ns <- NS(id)
   tagList(
-    sidebarPanel(
-      h4(strong("Genome Scans")),
-      radioButtons(ns("genome_scan"), "",
-                   c("LOD","Effects","Summary")),
-      uiOutput(ns("scan_choice")),
-      uiOutput(ns("scan_window")),
-      fluidRow(
-        column(6, downloadButton(ns("downloadData"), "CSV")),
-        column(6, downloadButton(ns("downloadPlot"), "Plots")))),
-    mainPanel(
-      uiOutput(ns("genome_scan"))))
+    h4(strong("Genome Scans")),
+    radioButtons(ns("genome_scan"), "",
+                 c("LOD","Effects","Summary")),
+    uiOutput(ns("scan_choice")),
+    uiOutput(ns("scan_window")),
+    fluidRow(
+      column(6, downloadButton(ns("downloadData"), "CSV")),
+      column(6, downloadButton(ns("downloadPlot"), "Plots"))))
+}
+#' @rdname shinyScan1Plot
+#' @export
+shinyScan1PlotOutput <- function(id) {
+  ns <- NS(id)
+  tagList(
+    uiOutput(ns("genome_scan")))
 }

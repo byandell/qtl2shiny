@@ -49,7 +49,7 @@ shinyPeaks <- function(input, output, session,
   
   ## shorthand 
   output$chr_pos <- renderUI({
-    textInput(ns("chr_pos"), "chr:pos", input$chr_pos)
+    textInput(ns("chr_pos"), "Position", input$chr_pos)
   })
   
   observeEvent(scan_tbl(), update_region())
@@ -70,18 +70,20 @@ shinyPeaks <- function(input, output, session,
       updateSliderInput(session, "peak_Mbp",
                         min=rng[1], max=rng[2],
                         value=peak_Mbp)
-      updateTextInput(session, "chr_pos",
-                      value = paste(chr_ct, round(peak_Mbp, 2), sep="@"))
+#      updateTextInput(session, "chr_pos",
+#                      value = paste(chr_ct, round(peak_Mbp, 2), sep="@"))
     }
   }
   observeEvent(input$chr_pos, {
-    chr_pos <- strsplit(input$chr_pos, ":|@|_| |,")[[1]]
-    if(length(chr_pos) == 2) {
-      chr <- chr_pos[1]
-      pmap <- pmap_obj()
-      choices <- names(pmap)
-      if(chr %in% choices) {
-        pos <- as.numeric(chr_pos[2])
+#    chr_pos <- strsplit(input$chr_pos, ":|@|_| |,")[[1]]
+#    if(length(chr_pos) == 2) {
+#      chr <- chr_pos[1]
+#      pmap <- pmap_obj()
+#      choices <- names(pmap)
+#      if(chr %in% choices) {
+#        pos <- as.numeric(chr_pos[2])
+    chr <- req(input$chr_id)
+        pos <- as.numeric(input$chr_pos)
         if(is.numeric(pos)) {
           if(!is.na(pos)) {
             rng <- round(range(pmap[[chr]]), 2)
@@ -99,8 +101,8 @@ shinyPeaks <- function(input, output, session,
             }
           }
         }
-      }
-    }
+#      }
+#    }
   })
   
   # Hotspot Search (if desired)
@@ -236,11 +238,11 @@ shinyPeaksInput <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(6, uiOutput(ns("chr_pos"))),
-      column(6, uiOutput(ns("chr_id")))
+      column(6, uiOutput(ns("chr_id"))),
+      column(6, uiOutput(ns("chr_pos")))
     ),
-    uiOutput(ns("window_Mbp")),
     uiOutput(ns("peak_Mbp")),
+    uiOutput(ns("window_Mbp")),
     fluidRow(
       column(6, checkboxInput("hotspot", "Search Hotspots?")),
       column(6, uiOutput(ns("chr_ct"))))
