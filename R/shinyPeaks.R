@@ -27,9 +27,9 @@ shinyPeaks <- function(input, output, session,
   ## Window slider
   output$window_Mbp <- renderUI({
     if(is.null(pos <- input$window_Mbp))
-      pos <- 3
+      pos <- 5
     sliderInput(ns("window_Mbp"), "Window Half Width",
-                0, 6, pos, step=0.5)
+                0, 10, pos, step=0.5)
   })
   
   # Peak position slider.
@@ -103,16 +103,18 @@ shinyPeaks <- function(input, output, session,
     }
   })
   
+  # Hotspot Search (if desired)
   # Select chromosome.
   output$chr_ct <- renderUI({
     choices <- names(pmap_obj())
     if(is.null(selected <- input$chr_ct))
       selected <- "all"
-    selectInput(ns("chr_ct"), strong("Hotspot Search"),
+    selectInput(ns("chr_ct"), strong("Chr"),
                 choices = c("all", choices),
                 selected = selected)
   })
   scan_obj_all <- reactive({
+    req(input$hotspot)
     out_peaks <- pmap_obj()
     map_chr <- names(out_peaks)
     n_chr <- length(map_chr)
@@ -239,7 +241,10 @@ shinyPeaksInput <- function(id) {
     ),
     uiOutput(ns("window_Mbp")),
     uiOutput(ns("peak_Mbp")),
-    uiOutput(ns("chr_ct")))
+    fluidRow(
+      column(6, checkboxInput("hotspot", "Search Hotspots?")),
+      column(6, uiOutput(ns("chr_ct"))))
+    )
 }
 #' @rdname shinyPeaks
 #' @export

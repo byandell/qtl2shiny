@@ -15,13 +15,13 @@ shinyScan1SNP <- function(input, output, session,
                           snp_action = reactive({"basic"})) {
   ns <- session$ns
 
-  chr_id <- reactive({win_par$chr_id})
+  chr_id <- reactive({win_par()$chr_id})
 
   ## SNP analyses.
   snpprobs_obj <- reactive({
     withProgress(message = 'SNP Probs ...', value = 0, {
       setProgress(1)
-      get_snpprobs(chr_id(), win_par$peak_Mbp, win_par$window_Mbp,
+      get_snpprobs(chr_id(), win_par()$peak_Mbp, win_par()$window_Mbp,
                    names(phe_df()), probs_obj(),
                    pattern = "AB1NZCPW", datapath)
     })

@@ -5,7 +5,7 @@ Yandell R/qtl2shiny project.
 ### What is this repository for? ###
 
 * Code to create shiny interface for [R/doqtl2](https://bitbucket.org/byandell/doqtl2).
-* Version 0.1
+* Version 0.2
 
 ### What has been done ###
 
@@ -20,7 +20,7 @@ Yandell R/qtl2shiny project.
 
 Major issues
 
-* Navigation across panels
+* Navigation across panels imporved
 * keeping dependencies in reactives straight
 * speed up access
 * save intermediate calculations that are reused

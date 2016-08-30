@@ -23,7 +23,8 @@ shinyGeneExon <- function(input, output, session,
   output$gene_name <- renderUI({
     gene_exon <- req(gene_exon_tbl())
     selectInput(ns("gene_name"), NULL,
-                choices = unique(gene_exon$gene))
+                choices = unique(gene_exon$gene),
+                selected = input$gene_name)
   })
   plot_gene_exon <- function(gene_name) {
     plot(gene_exon_tbl(), top_snps_tbl(), genes = gene_name)

@@ -62,16 +62,11 @@ shinyPhenos <- function(input, output, session,
                 selected = selected,
                 multiple = TRUE)
   })
-  output$chr_pos <- renderText({
-    paste0(chr_peak$chr_id, ":",
-           paste(chr_peak$peak_Mbp + c(-1,1) * chr_peak$window_Mbp,
-                 collapse = "-"))
-  })
   output$filter <- renderUI({
-    fluidRow(
-      column(6, checkboxInput(ns("use_pos"), "In region")),
-      column(6, textOutput(ns("chr_pos")))
-    )
+    checkboxInput(ns("use_pos"),
+                  paste("Peak on chr", chr_peak$chr_id, "in",
+                        paste(chr_peak$peak_Mbp + c(-1,1) * chr_peak$window_Mbp,
+                              collapse = "-")))
   })
   
   reactive({

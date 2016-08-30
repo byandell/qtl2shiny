@@ -14,10 +14,10 @@ shinyDominance <- function(input, output, session,
   ## This is basically obsolete now.
 
   ns <- session$ns
-  chr_id <- reactive({win_par$chr_id})
+  chr_id <- reactive({win_par()$chr_id})
   range_val <- reactive({
-    req(win_par$peak_Mbp, win_par$window_Mbp)
-    c(win_par$peak_Mbp + c(-1,1) * win_par$window_Mbp)
+    req(win_par()$peak_Mbp, win_par()$window_Mbp)
+    c(win_par()$peak_Mbp + c(-1,1) * win_par()$window_Mbp)
   })
 
   ## Probs object for 36 diplotypes.
@@ -36,11 +36,11 @@ shinyDominance <- function(input, output, session,
                              snp_action)
 
   chr_pos <- reactive({
-    make_chr_pos (win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
+    make_chr_pos (win_par()$chr_id, win_par()$peak_Mbp, win_par()$window_Mbp)
   })
 
   patterns <- callModule(shinySNPCsq, "dip_csq",
-                             snp_scan_obj, chr_pos,
+                             win_par, snp_scan_obj,
                              snp_action)
 
   callModule(shinyPattern, "dip_pat",

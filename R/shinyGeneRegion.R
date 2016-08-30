@@ -32,8 +32,10 @@ shinyGeneRegion <- function(input, output, session,
   # Scan Window slider
   output$scan_window <- renderUI({
     wrng <- round(rng(), 2)
+    if(is.null(selected <- input$scan_window))
+      selected <- round(2 * wrng) / 2
     sliderInput(ns("scan_window"), NULL, wrng[1], wrng[2],
-                wrng, step=.5)
+                selected, step=.5)
   })
   chr_pos_all <- reactive({
     chr <- req(chr_id())
