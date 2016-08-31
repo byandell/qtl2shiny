@@ -27,7 +27,7 @@ shinyPattern <- function(input, output, session,
     pats <- patterns() %>%
       filter(pheno == input$pheno)
     if(nrow(pats)) {
-      choices <- snp_to_pattern(pats$sdp)
+      choices <- sdp_to_pattern(pats$sdp)
     } else {
       choices <- input$pattern
     }
