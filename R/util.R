@@ -244,19 +244,3 @@ top_snp_asso <- function(pheno, scan_obj, xlim, snp_action="basic") {
     mytitle <- paste(mytitle, snp_action)
   title(mytitle)
 }
-#' CC Names
-#'
-#' CC Haplotype codes.
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @export
-CC_names <- function() {
-  c(A="AJ",
-    B="B6",
-    C="129",
-    D="NOD",
-    E="NZO",
-    F="CAST",
-    G="PWK",
-    H="WSB")
-}

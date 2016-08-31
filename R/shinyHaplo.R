@@ -40,8 +40,8 @@ shinyHaplo <- function(input, output, session,
   
   ## CC names
   output$cc_names <- renderText({
-    ccn <- CC_names()
-    paste(names(ccn), ccn, sep = "=", collapse = ", ")
+    cc <- CCcolors
+    paste(LETTERS[seq_along(cc)], names(cc), sep = "=", collapse = ", ")
   })
 
   output$hap_choice <- renderUI({
