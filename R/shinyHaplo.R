@@ -38,6 +38,12 @@ shinyHaplo <- function(input, output, session,
   callModule(shinySNPCsq, "snp_csq", 
              win_par, snp_scan_obj)
   
+  ## CC names
+  output$cc_names <- renderText({
+    ccn <- CC_names()
+    paste(names(ccn), ccn, sep = "=", collapse = ", ")
+  })
+
   output$hap_choice <- renderUI({
     switch(input$snp_hap,
            "Genome Scans" = shinyScan1PlotUI(ns("hap_scan")),
@@ -62,7 +68,8 @@ shinyHaploUI <- function(id) {
       h4(strong("SNP/Gene Haplo Analysis")),
       radioButtons(ns("snp_hap"), "",
                    c("Genome Scans","SNP Plots","Consequence")),
-      uiOutput(ns("hap_choice"))),
+      uiOutput(ns("hap_choice")),
+      textOutput(ns("cc_names"))),
     mainPanel(
       uiOutput(ns("snp_hap")))
   )

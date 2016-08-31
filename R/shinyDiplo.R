@@ -49,6 +49,11 @@ shinyDiplo <- function(input, output, session,
              snp_action)
 
 
+  ## CC names
+  output$cc_names <- renderText({
+    ccn <- CC_names()
+    paste(names(ccn), ccn, sep = "=", collapse = ", ")
+  })
   snp_action <- reactive({input$snp_action})
   output$snp_choice <- renderUI({
     switch(input$snp_dip,
@@ -76,7 +81,8 @@ shinyDiploUI <- function(id) {
       selectInput(ns("snp_action"), "",
                   c("add+dom","additive","non-add",
                     "recessive","dominant")),
-      uiOutput(ns("snp_choice"))),
+      uiOutput(ns("snp_choice")),
+      textOutput(ns("cc_names"))),
   mainPanel(
     uiOutput(ns("snp_dip")))
   )
