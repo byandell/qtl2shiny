@@ -104,8 +104,7 @@ shinyScan1SNP <- function(input, output, session,
   })
   snp_coef <- reactive({
     req(pheno_anal())
-    phename <- dimnames(scan_obj()$lod)[[2]]
-    coef_topsnp(scan_obj(),probs_obj(),phe_df(),K_chr(),cov_mx())
+    coef_topsnp(scan_obj(),snpprobs_act(),phe_df(),K_chr(),cov_mx())
   })
   output$scanTable <- renderDataTable({
     snp_coef()

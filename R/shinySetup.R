@@ -102,8 +102,8 @@ shinySetup <- function(input, output, session,
       tagList(
         shinyPhenosUI(ns("phenos")),
         radioButtons(ns("show_data"), NULL,
-                     c("Raw Data","Trans Data",
-                       "LOD Peaks","Covariates"))
+                     c("LOD Peaks","Covariates",
+                       "Trans Data","Raw Data"))
       )
     } else {
       shinyPeaksInput(ns("shinypeaks"))

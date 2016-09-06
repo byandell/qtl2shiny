@@ -134,16 +134,18 @@ plot_sex <- function(phe, cov) {
     
     if(length(phename) == 1) {
       ggplot(insex, aes_string(phename, col="sex")) +
-        geom_density() + geom_rug()
+        geom_density(na.rm = TRUE) + geom_rug()
     } else {
-      ggscatmat(insex, seq_along(phe), color="sex")
+      any.na <- apply(insex, 1, function(x) any(is.na(x)))
+      ggscatmat(insex[!any.na,], seq_along(phe), color="sex")
     }
   } else {
     if(length(phename) == 1) {
       ggplot(phe, aes_string(phename)) +
-        geom_density() + geom_rug()
+        geom_density(na.rm = TRUE) + geom_rug()
     } else {
-      ggscatmat(phe, seq_along(phe))
+      any.na <- apply(phe, 1, function(x) any(is.na(x)))
+      ggscatmat(phe[!any.na,], seq_along(phe))
     }
   }
 }
@@ -204,11 +206,14 @@ top_pat_plot <- function(pheno,
       return()
   }
   chr_id <- names(scan_obj$map)[1]
-  mytitle <- paste(pheno, "chr", chr_id)
-  if(snp_action != "basic")
-    mytitle <- paste(mytitle, snp_action)
-  plot(top_pattern, group=group) + xlim(xlim) +
-    ggtitle(mytitle)
+  p <- plot(top_pattern, group=group) + xlim(xlim)
+  if(length(pheno) == 1) {
+    mytitle <- paste(pheno, "chr", chr_id)
+    if(snp_action != "basic")
+      mytitle <- paste(mytitle, snp_action)
+    p <- p + ggtitle(mytitle)
+  }
+  p
 }
 #' @export
 plot_null <- function() {
