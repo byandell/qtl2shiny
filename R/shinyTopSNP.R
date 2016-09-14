@@ -9,77 +9,74 @@
 #' @keywords utilities
 #'
 #' @export
-shinyScan1SNP <- function(input, output, session,
+shinyTopSNP <- function(input, output, session,
                           win_par, phe_df, cov_mx,
-                          pheno_anal, probs_obj, K_chr,
+                          snp_scan_obj,
                           snp_action = reactive({"basic"})) {
   ns <- session$ns
 
   chr_id <- reactive({win_par()$chr_id})
+  phename <- reactive({dimnames(snp_scan_obj()$lod)[[2]]})
 
-  ## SNP analyses.
-  snpprobs_obj <- reactive({
-    withProgress(message = 'SNP Probs ...', value = 0, {
+  top_snps_tbl <- reactive({
+    req(snp_action())
+    withProgress(message = 'Get Top SNPs ...', value = 0, {
       setProgress(1)
-      get_snpprobs(chr_id(), win_par()$peak_Mbp, win_par()$window_Mbp,
-                   names(phe_df()), probs_obj(),
-                   datapath)
+      get_top_snps_tbl(snp_scan_obj())
     })
   })
-
-  snpprobs_act <- reactive({
-    snpprobs <- req(snpprobs_obj())
-    snpprob_collapse(snpprobs, snp_action())
+  callModule(shinyTopFeature, "top_feature",
+             chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl)
+  
+  sum_top_pat <- reactive({
+    req(pheno_id())
+    scan_snp <- req(snp_scan_obj())
+    if(max(scan_snp$lod) <= 1.5)
+      return(NULL)
+    summary(topsnp_pattern(scan_snp, pheno_id()))
   })
-
-  ## Scan1
-  scan_obj <- reactive({
-    req(pheno_anal())
-    withProgress(message = "SNP Scan ...", value = 0, {
-      setProgress(1)
-      scan1(snpprobs_act(), phe_df(), K_chr(), cov_mx())
-    })
-  })
-
-  # Scan Window slider
-  output$scan_window <- renderUI({
-    req(chr_id(),pheno_anal(),snpprobs_obj())
-    rng <- round(range(snpprobs_obj()$map[[chr_id()]]), 2)
-    if(is.null(selected <- input$scan_window))
-      selected <- round(10 * rng) / 10
-    sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
-                selected, step=.1)
-  })
-
-  ## Select phenotype for plots.
-  output$pheno_assoc <- renderUI({
-    req(pheno_anal())
-    selectInput(ns("pheno_assoc"), NULL,
-                choices = names(pheno_anal()),
-                selected = input$pheno_assoc)
-  })
-  pheno_id <- reactive({
-    pheno_anal <- req(input$pheno_assoc)
-    pheno_anal()[pheno_anal]
-  })
-
-  ## Reactives for SNP analysis.
-  ## Want to have slider for snp_w
-  phename <- reactive({dimnames(scan_obj()$lod)[[2]]})
-  output$snpPlot <- renderPlot({
-    if(is.null(pheno_id()) | is.null(scan_obj()) |
+  output$snpPatternSum <- renderDataTable({
+    sum_top_pat()
+  }, escape = FALSE,
+  options = list(scrollX = TRUE, pageLength = 10))
+  output$snpPatternPlot <- renderPlot({
+    if(is.null(pheno_id()) | is.null(snp_scan_obj()) |
        is.null(input$scan_window) | is.null(snp_action()))
       return(plot_null())
-    withProgress(message = 'SNP plots ...', value = 0, {
+    withProgress(message = 'SNP pattern plots ...', value = 0, {
       setProgress(1)
-      top_snp_asso(pheno_id(), scan_obj(), input$scan_window, snp_action())
+      top_pat_plot(pheno_id(), snp_scan_obj(), input$scan_window, TRUE,
+                   snp_action = snp_action())
     })
   })
-  
-  ## Call TopSNP module
-  top_snps_tbl <- callModule(shinyTopSNP, "snp_scan",
-                             win_par, phe_df, cov_mx, 
-                             pheno_anal, snp_scan_obj)
+  output$snp_phe_pat <- renderPlot({
+    if(is.null(phename()) | is.null(snp_scan_obj()) |
+       is.null(input$scan_window) | is.null(snp_action()))
+      return(plot_null())
+    withProgress(message = 'SNP Pheno patterns ...', value = 0, {
+      setProgress(1)
+      top_pat_plot(phename(), snp_scan_obj(), input$scan_window,
+                   group = "pheno", snp_action = snp_action())
+    })
+  })
+  output$snp_pat_phe <- renderPlot({
+    if(is.null(phename()) | is.null(snp_scan_obj()) |
+       is.null(input$scan_window) | is.null(snp_action()))
+      return(plot_null())
+    withProgress(message = 'SNP Pattern phenos ...', value = 0, {
+      setProgress(1)
+      top_pat_plot(phename(), snp_scan_obj(), input$scan_window,
+                   group = "pattern", snp_action = snp_action())
+    })
+  })
+  snp_coef <- reactive({
+    req(pheno_anal())
+    coef_topsnp(snp_scan_obj(),snpprobs_act(),phe_df(),K_chr(),cov_mx())
+  })
+  output$scanTable <- renderDataTable({
+    snp_coef()
+  }, escape = FALSE,
+  options = list(scrollX = TRUE, pageLength = 10))
 
   ## Downloads.
   chr_pos <- reactive({
@@ -126,7 +123,7 @@ shinyScan1SNP <- function(input, output, session,
     filename = function() {
       file.path(paste0("snp_scan_", chr_pos(), ".pdf")) },
     content = function(file) {
-      scans <- req(scan_obj())
+      scans <- req(snp_scan_obj())
       snp_w <- req(input$scan_window)
       phenos <- req(phename())
       pdf(file)
@@ -144,12 +141,11 @@ shinyScan1SNP <- function(input, output, session,
       dev.off()
     }
   )
-  top_snps_tbl
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinyScan1SNP
+#' @param id identifier for \code{\link{shinyTopSNP}} use
+#' @rdname shinyTopSNP
 #' @export
-shinyScan1SNPUI <- function(id) {
+shinyTopSNPUI <- function(id) {
   ns <- NS(id)
   tagList(
     uiOutput(ns("title")),
@@ -163,9 +159,9 @@ shinyScan1SNPUI <- function(id) {
        column(6, downloadButton(ns("downloadData"), "CSV")),
        column(6, downloadButton(ns("downloadPlot"), "Plots"))))
 }
-#' @rdname shinyScan1SNP
+#' @rdname shinyTopSNP
 #' @export
-shinyScan1SNPOutput <- function(id) {
+shinyTopSNPOutput <- function(id) {
   ns <- NS(id)
   uiOutput(ns("snp_scan"))
 }

@@ -46,15 +46,15 @@ shinyHaplo <- function(input, output, session,
 
   output$hap_choice <- renderUI({
     switch(input$snp_hap,
-           "Genome Scans" = shinyScan1PlotUI(ns("hap_scan")),
-           "SNP Plots"    = shinyScan1SNPUI(ns("snp_scan")),
-           Consequence    = shinySNPCsqUI(ns("snp_csq")))
+           "Genome Scans"    = shinyScan1PlotUI(ns("hap_scan")),
+           "SNP Association" = shinyScan1SNPUI(ns("snp_scan")),
+           "Allele Pattern"  = shinySNPCsqUI(ns("snp_csq")))
   })
   output$snp_hap <- renderUI({
     switch(input$snp_hap,
-           "Genome Scans" = shinyScan1PlotOutput(ns("hap_scan")),
-           "SNP Plots"    = shinyScan1SNPOutput(ns("snp_scan")),
-           Consequence    = shinySNPCsqOutput(ns("snp_csq")))
+           "Genome Scans"    = shinyScan1PlotOutput(ns("hap_scan")),
+           "SNP Association" = shinyScan1SNPOutput(ns("snp_scan")),
+           "Allele Pattern"  = shinySNPCsqOutput(ns("snp_csq")))
   })
   
 }
@@ -67,7 +67,7 @@ shinyHaploUI <- function(id) {
     sidebarPanel(
       h4(strong("SNP/Gene Haplo Analysis")),
       radioButtons(ns("snp_hap"), "",
-                   c("Genome Scans","SNP Plots","Consequence")),
+                   c("Genome Scans","SNP Association","Allele Pattern")),
       uiOutput(ns("hap_choice")),
       textOutput(ns("cc_names"))),
     mainPanel(

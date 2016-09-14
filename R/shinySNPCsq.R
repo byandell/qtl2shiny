@@ -19,13 +19,6 @@ shinySNPCsq <- function(input, output, session,
                  win_par()$peak_Mbp, win_par()$window_Mbp)
   })
 
-  top_snps_tbl <- reactive({
-    req(snp_action())
-    withProgress(message = 'Get Top SNPs ...', value = 0, {
-      setProgress(1)
-      get_top_snps_tbl(snp_scan_obj())
-    })
-  })
   callModule(shinySNP, "best_snp", chr_pos, top_snps_tbl)
   feature_file <- reactive({file.path(datapath, "mgi_db.sqlite")})
   callModule(shinyGeneRegion, "gene_region",
@@ -38,8 +31,6 @@ shinySNPCsq <- function(input, output, session,
       get_gene_exon_snp(top_snps_set, sql_filename)
     })
   })
-  callModule(shinyTopFeature, "top_feature",
-             chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl)
   callModule(shinyGeneExon, "gene_exon",
              chr_pos, top_snps_tbl, gene_exon_tbl)
   
