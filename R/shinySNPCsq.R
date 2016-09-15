@@ -1,7 +1,7 @@
 #' Shiny SNP Consequence
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,snp_scan_obj,snp_action reactive arguments
+#' @param chr_pos,top_snps_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -10,19 +10,17 @@
 #'
 #' @export
 shinySNPCsq <- function(input, output, session,
-                        win_par, snp_scan_obj,
+                        chr_pos, top_snps_tbl,
                         snp_action = reactive({"basic"})) {
   ns <- session$ns
-  
-  chr_pos <- reactive({
-    make_chr_pos(win_par()$chr_id, 
-                 win_par()$peak_Mbp, win_par()$window_Mbp)
-  })
 
-  callModule(shinySNP, "best_snp", chr_pos, top_snps_tbl)
+  ## Shiny Modules
+  
+  ## Gene Region
   feature_file <- reactive({file.path(datapath, "mgi_db.sqlite")})
   callModule(shinyGeneRegion, "gene_region",
              top_snps_tbl, feature_file)
+  ## Gene Exon
   gene_exon_tbl <- reactive({
     withProgress(message = 'Gene Exon Calc ...', value = 0, {
       setProgress(1)
@@ -36,23 +34,23 @@ shinySNPCsq <- function(input, output, session,
   
   output$snp_csq <- renderUI({
     switch(req(input$snp_csq),
-           "Top Features" = {
-             shinyTopFeatureOutput(ns("top_feature"))
-             },
+           Scan = {
+             shinyScan1SNPOutput(ns("snp_scan"))
+           },
            Genes = {
              shinyGeneRegionOutput(ns("gene_region"))
              },
            Exons = {
              shinyGeneExonOutput(ns("gene_exon"))
              },
-          Summary = {
-            shinySNPOutput(ns("best_snp"))
-            })
+           Summary = {
+             shinySNPOutput(ns("best_snp"))
+             })
   })
   output$snp_choice <- renderUI({
     switch(req(input$snp_csq),
-           "Top Features" = {
-             shinyTopFeatureUI(ns("top_feature"))
+           Scan = {
+             shinyScan1SNPUI(ns("snp_scan"))
            },
            Genes = {
              shinyGeneRegionUI(ns("gene_region"))
@@ -66,15 +64,10 @@ shinySNPCsq <- function(input, output, session,
   })
   output$title <- renderUI({
     if(snp_action() == "basic")
-      h4(strong("SNP Consequence"))
+      h4(strong("SNP Association"))
   })
   
-  reactive({
-    summary(top_snps_tbl()) %>%
-      filter(max_lod >= 3) %>%
-      mutate(contrast = snp_action()) %>%
-      arrange(desc(max_lod))
-  })
+  gene_exon_tbl
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinySNPCsq
@@ -84,8 +77,7 @@ shinySNPCsqUI <- function(id) {
   tagList(
     uiOutput(ns("title")),
     radioButtons(ns("snp_csq"), "",
-                 c("Top Features","Genes",
-                   "Exons", "Summary")),
+                 c("Scan", "Genes", "Exons", "Summary")),
     uiOutput(ns("snp_choice")))
 }
 #' @rdname shinySNPCsq

@@ -1,32 +1,21 @@
-#' Shiny scan1 SNP analysis and plot module
+#' Shiny top SNP analysis and plot module
 #'
-#' Shiny module for scan1 analysis and plots.
+#' Shiny module for top SNP analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,pheno_anal,probs_obj,K_chr,snp_action reactive arguments
+#' @param chr_pos,snp_scan_obj,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
-#'
+#' 
 #' @export
 shinyTopSNP <- function(input, output, session,
-                          win_par, phe_df, cov_mx,
-                          snp_scan_obj,
+                          chr_pos, snp_scan_obj,
                           snp_action = reactive({"basic"})) {
   ns <- session$ns
 
-  chr_id <- reactive({win_par()$chr_id})
   phename <- reactive({dimnames(snp_scan_obj()$lod)[[2]]})
 
-  top_snps_tbl <- reactive({
-    req(snp_action())
-    withProgress(message = 'Get Top SNPs ...', value = 0, {
-      setProgress(1)
-      get_top_snps_tbl(snp_scan_obj())
-    })
-  })
-  callModule(shinyTopFeature, "top_feature",
-             chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl)
   
   sum_top_pat <- reactive({
     req(pheno_id())
@@ -35,10 +24,12 @@ shinyTopSNP <- function(input, output, session,
       return(NULL)
     summary(topsnp_pattern(scan_snp, pheno_id()))
   })
+  
   output$snpPatternSum <- renderDataTable({
     sum_top_pat()
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
+  
   output$snpPatternPlot <- renderPlot({
     if(is.null(pheno_id()) | is.null(snp_scan_obj()) |
        is.null(input$scan_window) | is.null(snp_action()))
@@ -49,6 +40,8 @@ shinyTopSNP <- function(input, output, session,
                    snp_action = snp_action())
     })
   })
+  
+  ## SNP Pheno patterns
   output$snp_phe_pat <- renderPlot({
     if(is.null(phename()) | is.null(snp_scan_obj()) |
        is.null(input$scan_window) | is.null(snp_action()))
@@ -59,6 +52,8 @@ shinyTopSNP <- function(input, output, session,
                    group = "pheno", snp_action = snp_action())
     })
   })
+  
+  ## SNP Pattern phenos
   output$snp_pat_phe <- renderPlot({
     if(is.null(phename()) | is.null(snp_scan_obj()) |
        is.null(input$scan_window) | is.null(snp_action()))
@@ -69,30 +64,20 @@ shinyTopSNP <- function(input, output, session,
                    group = "pattern", snp_action = snp_action())
     })
   })
-  snp_coef <- reactive({
-    req(pheno_anal())
-    coef_topsnp(snp_scan_obj(),snpprobs_act(),phe_df(),K_chr(),cov_mx())
-  })
-  output$scanTable <- renderDataTable({
-    snp_coef()
-  }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10))
 
-  ## Downloads.
-  chr_pos <- reactive({
-    make_chr_pos(chr_id(), range = input$scan_window)
-  })
-
+  ## SNP output choice
   output$snp_choice <- renderUI({
-    if(req(input$snp_scan) %in% c("Association","Pattern")) {
+    if(req(input$snp_scan) %in% c("Top SNPs","Pattern")) {
       uiOutput(ns("pheno_assoc"))
     }
+    if(req(input$snp_scan) == "Top SNPs")
+      shinyTopFeatureUI(ns("top_feature"))
   })
   output$snp_scan <- renderUI({
     switch(req(input$snp_scan),
-           Association = {
-             plotOutput(ns("snpPlot"))
-             },
+           "Top SNPs" = {
+             shinyTopFeatureOutput(ns("top_feature"))
+           },
            Pattern = {
              plotOutput(ns("snpPatternPlot"))
              },
@@ -150,7 +135,7 @@ shinyTopSNPUI <- function(id) {
   tagList(
     uiOutput(ns("title")),
     radioButtons(ns("snp_scan"), "",
-                 c("Association","Pattern",
+                 c("Top SNPs","Pattern",
                     "All Phenos","All Patterns",
                    "Summary")),
     uiOutput(ns("snp_choice")),

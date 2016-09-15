@@ -14,7 +14,11 @@ shinyHaplo <- function(input, output, session,
   ns <- session$ns
 
   chr_id <- reactive({as.character(req(win_par()$chr_id))})
-  
+  chr_pos <- reactive({
+    make_chr_pos(win_par()$chr_id, 
+                 win_par()$peak_Mbp, win_par()$window_Mbp)
+  })
+
   ## Genotype Probabilities.
   probs_obj <- reactive({
     req(chr_id())
@@ -29,14 +33,12 @@ shinyHaplo <- function(input, output, session,
              chr_id, phe_df, cov_mx,
              pheno_anal, probs_obj, K_chr)
   
-  ## SNP Scan.
-  snp_scan_obj <- callModule(shinyScan1SNP, "snp_scan",
+  ## SNP Association
+  top_snps_tbl <- callModule(shinySNPAssoc, "snp_assoc",
                              win_par, phe_df, cov_mx, 
                              pheno_anal, probs_obj, K_chr)
   
-  ## SNP Consequence.
-  callModule(shinySNPCsq, "snp_csq", 
-             win_par, snp_scan_obj)
+  
   
   ## CC names
   output$cc_names <- renderText({
@@ -47,14 +49,18 @@ shinyHaplo <- function(input, output, session,
   output$hap_choice <- renderUI({
     switch(input$snp_hap,
            "Genome Scans"    = shinyScan1PlotUI(ns("hap_scan")),
-           "SNP Association" = shinyScan1SNPUI(ns("snp_scan")),
-           "Allele Pattern"  = shinySNPCsqUI(ns("snp_csq")))
+           "SNP Association" = tagList(
+             shinyScan1SNPUI(ns("snp_scan")),
+             shinySNPCsqUI(ns("snp_csq"))),
+           "Allele Pattern"  = shinyTopSNPUI(ns("top_snp")))
   })
   output$snp_hap <- renderUI({
     switch(input$snp_hap,
            "Genome Scans"    = shinyScan1PlotOutput(ns("hap_scan")),
-           "SNP Association" = shinyScan1SNPOutput(ns("snp_scan")),
-           "Allele Pattern"  = shinySNPCsqOutput(ns("snp_csq")))
+           "SNP Association" = tagList(
+             shinyScan1SNPOutput(ns("snp_scan")),
+             shinySNPCsqOutput(ns("snp_csq"))),
+           "Allele Pattern"  = shinyTopSNPOutput(ns("top_snp")))
   })
   
 }

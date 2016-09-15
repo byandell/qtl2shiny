@@ -12,8 +12,7 @@
 shinyTopFeature <- function(input, output, session,
                      chr_pos, scan_obj, top_snps_tbl, gene_exon_tbl) {
   ns <- session$ns
-  ## This is just repeat of GeneRegion for now
-  ## See child/tests/top_feature.R for filler.
+
   top_feature <- reactive({
     req(top_snps_tbl(),scan_obj(),gene_exon_tbl())
     withProgress(message = 'Merging gene info ...', value = 0,

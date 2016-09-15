@@ -10,7 +10,7 @@
 #'
 #' @export
 shinyScan1SNP <- function(input, output, session,
-                          win_par, phe_df, cov_mx,
+                          win_par, snp_par, phe_df, cov_mx,
                           pheno_anal, probs_obj, K_chr,
                           snp_action = reactive({"basic"})) {
   ns <- session$ns
@@ -33,101 +33,56 @@ shinyScan1SNP <- function(input, output, session,
   })
 
   ## Scan1
-  scan_obj <- reactive({
+  snp_scan_obj <- reactive({
     req(pheno_anal())
     withProgress(message = "SNP Scan ...", value = 0, {
       setProgress(1)
       scan1(snpprobs_act(), phe_df(), K_chr(), cov_mx())
     })
   })
-
-  # Scan Window slider
-  output$scan_window <- renderUI({
-    req(chr_id(),pheno_anal(),snpprobs_obj())
-    rng <- round(range(snpprobs_obj()$map[[chr_id()]]), 2)
-    if(is.null(selected <- input$scan_window))
-      selected <- round(10 * rng) / 10
-    sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
-                selected, step=.1)
-  })
-
-  ## Select phenotype for plots.
-  output$pheno_assoc <- renderUI({
+  
+  #################################################
+  ## THIS IS NOT USED RIGHT NOT. WHY NOT?
+  ## Scan1 of coefficients/effects
+  snp_coef <- reactive({
     req(pheno_anal())
-    selectInput(ns("pheno_assoc"), NULL,
-                choices = names(pheno_anal()),
-                selected = input$pheno_assoc)
+    coef_topsnp(snp_scan_obj(),snpprobs_act(),phe_df(),K_chr(),cov_mx())
   })
+  output$scanTable <- renderDataTable({
+    snp_coef()
+  }, escape = FALSE,
+  options = list(scrollX = TRUE, pageLength = 10))
+  #################################################
+
   pheno_id <- reactive({
-    pheno_anal <- req(input$pheno_assoc)
+    pheno_anal <- req(snp_par$pheno_assoc)
     pheno_anal()[pheno_anal]
   })
 
   ## Reactives for SNP analysis.
   ## Want to have slider for snp_w
-  phename <- reactive({dimnames(scan_obj()$lod)[[2]]})
+  phename <- reactive({dimnames(snp_scan_obj()$lod)[[2]]})
   output$snpPlot <- renderPlot({
-    if(is.null(pheno_id()) | is.null(scan_obj()) |
-       is.null(input$scan_window) | is.null(snp_action()))
+    if(is.null(pheno_id()) | is.null(snp_scan_obj()) |
+       is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     withProgress(message = 'SNP plots ...', value = 0, {
       setProgress(1)
-      top_snp_asso(pheno_id(), scan_obj(), input$scan_window, snp_action())
+      top_snp_asso(pheno_id(), snp_scan_obj(), snp_par$scan_window, snp_action())
     })
   })
   
-  ## Call TopSNP module
-  top_snps_tbl <- callModule(shinyTopSNP, "snp_scan",
-                             win_par, phe_df, cov_mx, 
-                             pheno_anal, snp_scan_obj)
 
   ## Downloads.
   chr_pos <- reactive({
-    make_chr_pos(chr_id(), range = input$scan_window)
+    make_chr_pos(chr_id(), range = snp_par$scan_window)
   })
-
-  output$snp_choice <- renderUI({
-    if(req(input$snp_scan) %in% c("Association","Pattern")) {
-      uiOutput(ns("pheno_assoc"))
-    }
-  })
-  output$snp_scan <- renderUI({
-    switch(req(input$snp_scan),
-           Association = {
-             plotOutput(ns("snpPlot"))
-             },
-           Pattern = {
-             plotOutput(ns("snpPatternPlot"))
-             },
-           "All Phenos" = {
-             plotOutput(ns("snp_phe_pat"))
-             },
-           "All Patterns" = {
-            plotOutput(ns("snp_pat_phe"))
-            },
-          Summary = {
-             dataTableOutput(ns("snpPatternSum"))
-            })
-  })
-  output$title <- renderUI({
-    if(snp_action() == "basic")
-      h4(strong("SNP Plots"))
-  })
-
-  ## Downloads
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      file.path(paste0("snp_effects_", chr_pos(), ".csv")) },
-    content = function(file) {
-      write.csv(sum_top_pat(), file)
-    }
-  )
   output$downloadPlot <- downloadHandler(
     filename = function() {
       file.path(paste0("snp_scan_", chr_pos(), ".pdf")) },
     content = function(file) {
-      scans <- req(scan_obj())
-      snp_w <- req(input$scan_window)
+      scans <- req(snp_scan_obj())
+      snp_w <- req(snp_par$scan_window)
       phenos <- req(phename())
       pdf(file)
       ## Plots over all phenotypes
@@ -144,7 +99,7 @@ shinyScan1SNP <- function(input, output, session,
       dev.off()
     }
   )
-  top_snps_tbl
+  snp_scan_obj
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyScan1SNP
@@ -152,20 +107,11 @@ shinyScan1SNP <- function(input, output, session,
 shinyScan1SNPUI <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("title")),
-    radioButtons(ns("snp_scan"), "",
-                 c("Association","Pattern",
-                    "All Phenos","All Patterns",
-                   "Summary")),
-    uiOutput(ns("snp_choice")),
-    uiOutput(ns("scan_window")),
-    fluidRow(
-       column(6, downloadButton(ns("downloadData"), "CSV")),
-       column(6, downloadButton(ns("downloadPlot"), "Plots"))))
+    downloadButton(ns("downloadPlot"), "Plots"))
 }
 #' @rdname shinyScan1SNP
 #' @export
 shinyScan1SNPOutput <- function(id) {
   ns <- NS(id)
-  uiOutput(ns("snp_scan"))
+  plotOutput(ns("snpPlot")),
 }
