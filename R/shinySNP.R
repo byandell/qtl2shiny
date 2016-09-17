@@ -114,12 +114,17 @@ shinySNP <- function(input, output, session,
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinySNP
 #' @export
-shinySNPUI <- function(id) {
+shinySNPInput <- function(id) {
   ns <- NS(id)
   tagList(
-    selectInput(ns("snp_sum"), NULL, c("best","indels","peaks","range")),
-    downloadButton(ns("downloadData"), "CSV")
+    selectInput(ns("snp_sum"), NULL, c("best","indels","peaks","range"))
   )
+}
+#' @rdname shinySNP
+#' @export
+shinySNPUI <- function(id) {
+  ns <- NS(id)
+  downloadButton(ns("downloadData"), "CSV")
 }
 #' @rdname shinySNP
 #' @export

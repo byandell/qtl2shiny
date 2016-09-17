@@ -3,22 +3,22 @@
 #' Shiny module for scan1 analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param scan_obj,top_snps_tbl,gene_exon_tbl reactive arguments
+#' @param snp_scan_obj,top_snps_tbl,gene_exon_tbl reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 shinyTopFeature <- function(input, output, session,
-                     chr_pos, scan_obj, top_snps_tbl, gene_exon_tbl) {
+                     chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl) {
   ns <- session$ns
 
   top_feature <- reactive({
-    req(top_snps_tbl(),scan_obj(),gene_exon_tbl())
+    req(top_snps_tbl(),snp_scan_obj(),gene_exon_tbl())
     withProgress(message = 'Merging gene info ...', value = 0,
     {
       setProgress(1)
-      merge_feature(top_snps_tbl(), scan_obj(), 1.5, 0, gene_exon_tbl())
+      merge_feature(top_snps_tbl(), snp_scan_obj(), 1.5, 0, gene_exon_tbl())
     })
   })
   output$top_snp_type <- renderDataTable({
@@ -28,7 +28,7 @@ shinyTopFeature <- function(input, output, session,
   output$top_pattern <- renderDataTable({
     summary(top_feature(), "pattern")
   }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
-  phename <- reactive({dimnames(scan_obj()$lod)[[2]]})
+  phename <- reactive({dimnames(snp_scan_obj()$lod)[[2]]})
   output$top_names <- renderUI({
     selectInput(ns("top_name"), NULL, phename())
   })

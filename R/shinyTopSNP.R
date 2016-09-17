@@ -10,7 +10,7 @@
 #' 
 #' @export
 shinyTopSNP <- function(input, output, session,
-                          chr_pos, snp_scan_obj,
+                          snp_par, chr_pos, snp_scan_obj,
                           snp_action = reactive({"basic"})) {
   ns <- session$ns
 
@@ -32,11 +32,11 @@ shinyTopSNP <- function(input, output, session,
   
   output$snpPatternPlot <- renderPlot({
     if(is.null(pheno_id()) | is.null(snp_scan_obj()) |
-       is.null(input$scan_window) | is.null(snp_action()))
+       is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     withProgress(message = 'SNP pattern plots ...', value = 0, {
       setProgress(1)
-      top_pat_plot(pheno_id(), snp_scan_obj(), input$scan_window, TRUE,
+      top_pat_plot(pheno_id(), snp_scan_obj(), snp_par$scan_window, TRUE,
                    snp_action = snp_action())
     })
   })
@@ -44,11 +44,11 @@ shinyTopSNP <- function(input, output, session,
   ## SNP Pheno patterns
   output$snp_phe_pat <- renderPlot({
     if(is.null(phename()) | is.null(snp_scan_obj()) |
-       is.null(input$scan_window) | is.null(snp_action()))
+       is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     withProgress(message = 'SNP Pheno patterns ...', value = 0, {
       setProgress(1)
-      top_pat_plot(phename(), snp_scan_obj(), input$scan_window,
+      top_pat_plot(phename(), snp_scan_obj(), snp_par$scan_window,
                    group = "pheno", snp_action = snp_action())
     })
   })
@@ -56,28 +56,17 @@ shinyTopSNP <- function(input, output, session,
   ## SNP Pattern phenos
   output$snp_pat_phe <- renderPlot({
     if(is.null(phename()) | is.null(snp_scan_obj()) |
-       is.null(input$scan_window) | is.null(snp_action()))
+       is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     withProgress(message = 'SNP Pattern phenos ...', value = 0, {
       setProgress(1)
-      top_pat_plot(phename(), snp_scan_obj(), input$scan_window,
+      top_pat_plot(phename(), snp_scan_obj(), snp_par$scan_window,
                    group = "pattern", snp_action = snp_action())
     })
   })
 
-  ## SNP output choice
-  output$snp_choice <- renderUI({
-    if(req(input$snp_scan) %in% c("Top SNPs","Pattern")) {
-      uiOutput(ns("pheno_assoc"))
-    }
-    if(req(input$snp_scan) == "Top SNPs")
-      shinyTopFeatureUI(ns("top_feature"))
-  })
   output$snp_scan <- renderUI({
-    switch(req(input$snp_scan),
-           "Top SNPs" = {
-             shinyTopFeatureOutput(ns("top_feature"))
-           },
+    switch(req(snp_par$allele_pat),
            Pattern = {
              plotOutput(ns("snpPatternPlot"))
              },
@@ -109,7 +98,7 @@ shinyTopSNP <- function(input, output, session,
       file.path(paste0("snp_scan_", chr_pos(), ".pdf")) },
     content = function(file) {
       scans <- req(snp_scan_obj())
-      snp_w <- req(input$scan_window)
+      snp_w <- req(snp_par$scan_window)
       phenos <- req(phename())
       pdf(file)
       ## Plots over all phenotypes
@@ -132,17 +121,9 @@ shinyTopSNP <- function(input, output, session,
 #' @export
 shinyTopSNPUI <- function(id) {
   ns <- NS(id)
-  tagList(
-    uiOutput(ns("title")),
-    radioButtons(ns("snp_scan"), "",
-                 c("Top SNPs","Pattern",
-                    "All Phenos","All Patterns",
-                   "Summary")),
-    uiOutput(ns("snp_choice")),
-    uiOutput(ns("scan_window")),
-    fluidRow(
-       column(6, downloadButton(ns("downloadData"), "CSV")),
-       column(6, downloadButton(ns("downloadPlot"), "Plots"))))
+  fluidRow(
+    column(6, downloadButton(ns("downloadData"), "CSV")),
+    column(6, downloadButton(ns("downloadPlot"), "Plots")))
 }
 #' @rdname shinyTopSNP
 #' @export

@@ -10,7 +10,7 @@
 #'
 #' @export
 shinyGeneRegion <- function(input, output, session,
-                     top_snps_tbl, feature_file) {
+                     snp_par, top_snps_tbl, feature_file) {
   ns <- session$ns
 
   rng <- reactive({range(req(top_snps_tbl())$pos_Mbp)})
@@ -28,15 +28,6 @@ shinyGeneRegion <- function(input, output, session,
   output$gene_sum <- renderTable({
     summary(gene_region_tbl())
   })
-
-  # Scan Window slider
-  output$scan_window <- renderUI({
-    wrng <- round(rng(), 2)
-    if(is.null(selected <- input$scan_window))
-      selected <- round(2 * wrng) / 2
-    sliderInput(ns("scan_window"), NULL, wrng[1], wrng[2],
-                selected, step=.5)
-  })
   chr_pos_all <- reactive({
     chr <- req(chr_id())
     scan_w <- round(rng(), 2)
@@ -44,17 +35,17 @@ shinyGeneRegion <- function(input, output, session,
   })
   chr_pos <- reactive({
     chr <- req(chr_id())
-    scan_w <- req(input$scan_window)
+    scan_w <- req(snp_par$scan_window)
     scan_w <- round(scan_w, 2)
     paste(chr, scan_w[1], scan_w[2], sep = "_")
   })
 
   plot_gene_region <- function() {
-    req(gene_region_tbl(),input$scan_window)
+    req(gene_region_tbl(),snp_par$scan_window)
     ## Plot pseudogene and gene locations along with SNPs.
     ## Ordered by pseudogenes first, then genes
     ## negative (blue) strand, then unknown (grey), then positive (red) strand.
-    wrng <- input$scan_window
+    wrng <- snp_par$scan_window
     ## Filtering removes feature_tbl class, so need to be explicit.
     plot(subset(gene_region_tbl(), wrng[1], wrng[2]),
          top_snps_tbl=subset(top_snps_tbl(), wrng[1], wrng[2]))
@@ -76,7 +67,6 @@ shinyGeneRegion <- function(input, output, session,
       ggsave(file, plot = plot_gene_region(), device = "pdf")
     }
   )
-  reactive({input$scan_window})
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyGeneRegion
@@ -84,7 +74,6 @@ shinyGeneRegion <- function(input, output, session,
 shinyGeneRegionUI <- function(id) {
   ns <- NS(id)
   fluidRow(
-    uiOutput(ns("scan_window")),
     fluidRow(
       column(6, downloadButton(ns("downloadData"), "CSV")),
       column(6, downloadButton(ns("downloadPlot"), "Plot"))))
