@@ -107,7 +107,7 @@ shinySNPAllele <- function(input, output, session,
     if((ui_task() == "SNP Association" & 
         ass_par$button %in% c("Scan")) |
        (ui_task() == "Allele Pattern" &
-        input$allele_pat %in% c("Pattern","Top SNPs"))) {
+        pat_par$button %in% c("Pattern","Top SNPs"))) {
       uiOutput(ns("pheno_assoc"))
     }
   })
@@ -116,7 +116,7 @@ shinySNPAllele <- function(input, output, session,
     if((ui_task() == "SNP Association" & 
         ass_par$button %in% c("Scan","Genes")) |
        (ui_task() == "Allele Pattern" &
-        input$allele_pat %in% c("Pattern","All Phenos","All Patterns"))) {
+        pat_par$button %in% c("Pattern","All Phenos","All Patterns"))) {
       uiOutput(ns("scan_window"))
     }
   })
@@ -159,9 +159,9 @@ shinySNPAlleleUI <- function(id) {
   ns <- NS(id)
   tagList(
     uiOutput(ns("title")),
+    uiOutput(ns("snp_choice")),
     uiOutput(ns("phe_choice")),
     uiOutput(ns("win_choice")),
-    uiOutput(ns("snp_choice")),
     uiOutput(ns("download_csv_plot")))
 }
 #' @rdname shinySNPAllele

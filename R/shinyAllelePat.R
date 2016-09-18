@@ -89,11 +89,11 @@ shinyAllelePat <- function(input, output, session,
   })
 
   output$pat_input <- renderUI({
-    switch(req(input$allele_pat),
+    switch(req(input$button),
            "Top SNPs"     = shinyTopFeatureUI(ns("top_feature")))
   })
   output$pat_output <- renderUI({
-    switch(req(input$allele_pat),
+    switch(req(input$button),
            "Top SNPs"     = shinyTopFeatureOutput(ns("top_feature")),
            Pattern        = plotOutput(ns("snpPatternPlot")),
            "All Phenos"   = plotOutput(ns("snp_phe_pat")),
@@ -135,6 +135,7 @@ shinyAllelePat <- function(input, output, session,
       dev.off()
     }
   )
+  input
 }
 #' @param id identifier for \code{\link{shinyAllelePat}} use
 #' @rdname shinyAllelePat
@@ -142,7 +143,7 @@ shinyAllelePat <- function(input, output, session,
 shinyAllelePatInput <- function(id) {
   ns <- NS(id)
   tagList(
-    radioButtons(ns("allele_pat"), "",
+    radioButtons(ns("button"), "",
                  c("Top SNPs","Pattern",
                    "All Phenos","All Patterns",
                    "Summary")),
