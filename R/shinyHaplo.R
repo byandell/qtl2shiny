@@ -34,7 +34,7 @@ shinyHaplo <- function(input, output, session,
              pheno_anal, probs_obj, K_chr)
   
   ## SNP Association
-  top_snps_tbl <- callModule(shinySNPAssoc, "snp_assoc",
+  top_snps_tbl <- callModule(shinySNPAllele, "snp_assoc",
                              win_par, phe_df, cov_mx, 
                              pheno_anal, probs_obj, K_chr)
   

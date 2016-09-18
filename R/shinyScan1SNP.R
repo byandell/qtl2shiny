@@ -10,7 +10,7 @@
 #'
 #' @export
 shinyScan1SNP <- function(input, output, session,
-                          snp_par, chr_pos, snp_scan_obj,
+                          snp_par, chr_pos, pheno_anal, snp_scan_obj,
                           snp_action = reactive({"basic"})) {
   ns <- session$ns
 

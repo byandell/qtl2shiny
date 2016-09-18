@@ -9,13 +9,36 @@
 #' @keywords utilities
 #' 
 #' @export
-shinyTopSNP <- function(input, output, session,
-                          snp_par, chr_pos, snp_scan_obj,
-                          snp_action = reactive({"basic"})) {
+shinyAllelePat <- function(input, output, session,
+                        snp_par, chr_pos, pheno_anal, snp_scan_obj, 
+                        top_snps_tbl, gene_exon_tbl, 
+                        snp_action = reactive({"basic"})) {
   ns <- session$ns
 
-  phename <- reactive({dimnames(snp_scan_obj()$lod)[[2]]})
+  ## Phenotype names.
+  phename <- reactive({
+    dimnames(req(snp_scan_obj())$lod)[[2]]
+  })
+  pheno_id <- reactive({
+    pheno_anal <- req(phename)
+    pheno_anal()[pheno_anal]
+  })
+  observeEvent(phename(), {
+    button_val <- c("Top SNPs","Pattern",
+                    "All Phenos","All Patterns",
+                    "Summary")
+    if(length(phename() == 1)) {
+      button_val <- button_val[-(3:4)]
+    }
+    updateRadioButtons(session, "snp_assoc", 
+                       selected = button_val[1],
+                       choices = button_val)
+  })
+  
 
+  ## Shiny Module
+  callModule(shinyTopFeature, "top_feature",
+             chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl)
   
   sum_top_pat <- reactive({
     req(pheno_id())
@@ -65,20 +88,17 @@ shinyTopSNP <- function(input, output, session,
     })
   })
 
-  output$snp_scan <- renderUI({
-    switch(req(snp_par$allele_pat),
-           Pattern = {
-             plotOutput(ns("snpPatternPlot"))
-             },
-           "All Phenos" = {
-             plotOutput(ns("snp_phe_pat"))
-             },
-           "All Patterns" = {
-            plotOutput(ns("snp_pat_phe"))
-            },
-          Summary = {
-             dataTableOutput(ns("snpPatternSum"))
-            })
+  output$pat_input <- renderUI({
+    switch(req(input$allele_pat),
+           "Top SNPs"     = shinyTopFeatureUI(ns("top_feature")))
+  })
+  output$pat_output <- renderUI({
+    switch(req(input$allele_pat),
+           "Top SNPs"     = shinyTopFeatureOutput(ns("top_feature")),
+           Pattern        = plotOutput(ns("snpPatternPlot")),
+           "All Phenos"   = plotOutput(ns("snp_phe_pat")),
+           "All Patterns" = plotOutput(ns("snp_pat_phe")),
+           Summary        = dataTableOutput(ns("snpPatternSum")))
   })
   output$title <- renderUI({
     if(snp_action() == "basic")
@@ -88,14 +108,14 @@ shinyTopSNP <- function(input, output, session,
   ## Downloads
   output$downloadData <- downloadHandler(
     filename = function() {
-      file.path(paste0("snp_effects_", chr_pos(), ".csv")) },
+      file.path(paste0("pattern_", chr_pos(), ".csv")) },
     content = function(file) {
       write.csv(sum_top_pat(), file)
     }
   )
   output$downloadPlot <- downloadHandler(
     filename = function() {
-      file.path(paste0("snp_scan_", chr_pos(), ".pdf")) },
+      file.path(paste0("pattern_", chr_pos(), ".pdf")) },
     content = function(file) {
       scans <- req(snp_scan_obj())
       snp_w <- req(snp_par$scan_window)
@@ -116,18 +136,30 @@ shinyTopSNP <- function(input, output, session,
     }
   )
 }
-#' @param id identifier for \code{\link{shinyTopSNP}} use
-#' @rdname shinyTopSNP
+#' @param id identifier for \code{\link{shinyAllelePat}} use
+#' @rdname shinyAllelePat
 #' @export
-shinyTopSNPUI <- function(id) {
+shinyAllelePatInput <- function(id) {
+  ns <- NS(id)
+  tagList(
+    radioButtons(ns("allele_pat"), "",
+                 c("Top SNPs","Pattern",
+                   "All Phenos","All Patterns",
+                   "Summary")),
+    uiOutput(ns("pat_input"))
+  )
+}
+#' @rdname shinyAllelePat
+#' @export
+shinyAllelePatUI <- function(id) {
   ns <- NS(id)
   fluidRow(
     column(6, downloadButton(ns("downloadData"), "CSV")),
     column(6, downloadButton(ns("downloadPlot"), "Plots")))
 }
-#' @rdname shinyTopSNP
+#' @rdname shinyAllelePat
 #' @export
-shinyTopSNPOutput <- function(id) {
+shinyAllelePatOutput <- function(id) {
   ns <- NS(id)
-  uiOutput(ns("snp_scan"))
+  uiOutput(ns("pat_output"))
 }
