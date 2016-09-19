@@ -2,11 +2,14 @@
 % Please edit documentation in R/shinySNP.R
 \name{shinySNP}
 \alias{shinySNP}
+\alias{shinySNPInput}
 \alias{shinySNPOutput}
 \alias{shinySNPUI}
 \title{Shiny SNP analysis and plot module}
 \usage{
 shinySNP(input, output, session, chr_pos, top_snps_tbl)
+
+shinySNPInput(id)
 
 shinySNPUI(id)
 

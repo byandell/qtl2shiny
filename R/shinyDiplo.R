@@ -13,7 +13,6 @@ shinyDiplo <- function(input, output, session,
                        win_par, phe_df, cov_mx, K_chr) {
   ns <- session$ns
 
-  chr_id <- reactive({win_par()$chr_id})
   chr_pos <- reactive({
     make_chr_pos (win_par()$chr_id, win_par()$peak_Mbp, win_par()$window_Mbp)
   })
@@ -25,10 +24,11 @@ shinyDiplo <- function(input, output, session,
 
   ## Probs object for 36 diplotypes.
   probs36_obj <- reactive({
-    req(chr_id())
+    req(input$button)
+    chr_id <- req(win_par()$chr_id)
     withProgress(message = 'Diplotype Probs ...', value = 0, {
       setProgress(1)
-      read_probs36(chr_id(), range_val()[1], range_val()[2],
+      read_probs36(chr_id, range_val()[1], range_val()[2],
                    datapath)
     })
   })
@@ -72,7 +72,7 @@ shinyDiploUI <- function(id) {
     sidebarPanel(
       h4(strong("SNP/Gene Action")),
       radioButtons(ns("button"), "",
-                   c("SNP Plots","Consequence","Genome Scans")),
+                   c("SNP Association","Allele Pattern","Genome Scans")),
       selectInput(ns("snp_action"), "",
                   c("add+dom","additive","non-add",
                     "recessive","dominant")),

@@ -13,6 +13,13 @@ shinyScan1Plot <- function(input, output, session,
                   chr_pos, phe_df, cov_mx, probs_obj, K_chr) {
   ns <- session$ns
   
+  chr_id <- reactive({
+    names(req(scan_obj())$map)[1]
+  })
+  pheno_names <- reactive({
+    names(phe_df())
+  })
+  
   ## Scan1
   scan_obj <- reactive({
     req(phe_df())
@@ -36,7 +43,7 @@ shinyScan1Plot <- function(input, output, session,
   output$pheno_name <- renderUI({
     req(phe_df())
     selectInput(ns("pheno_name"), NULL,
-                choices = names(phe_df()))
+                choices = pheno_names())
   })
 
   ## Scan1 plot
@@ -56,10 +63,10 @@ shinyScan1Plot <- function(input, output, session,
     })
   })
   output$effPlot <- renderPlot({
-    req(pheno_id(),eff_obj())
+    req(pheno_names(),eff_obj())
     withProgress(message = 'Effect plots ...', value = 0, {
       setProgress(1)
-      plot_eff(pheno_id(), scan_obj(), eff_obj(), input$scan_window)
+      plot_eff(pheno_names(), scan_obj(), eff_obj(), input$scan_window)
     })
   })
   output$effSummary <- renderDataTable({
@@ -97,9 +104,8 @@ shinyScan1Plot <- function(input, output, session,
       file.path(paste0("genome_scan_", chr_pos(), ".pdf")) },
     content = function(file) {
       req(eff_obj())
-      chr_id <- names(req(scan_obj())$map)[1]
       pdf(file)
-      show_peaks(chr_id, scan_obj(), mytitle="", xlim=input$scan_window)
+      show_peaks(chr_id(), scan_obj(), mytitle="", xlim=input$scan_window)
       for(pheno in names(eff_obj()))
         plot_eff(pheno)
       dev.off()

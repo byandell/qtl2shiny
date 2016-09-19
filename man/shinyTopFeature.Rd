@@ -2,12 +2,15 @@
 % Please edit documentation in R/shinyTopFeature.R
 \name{shinyTopFeature}
 \alias{shinyTopFeature}
+\alias{shinyTopFeatureInput}
 \alias{shinyTopFeatureOutput}
 \alias{shinyTopFeatureUI}
 \title{Shiny Top Features in SNP Region module}
 \usage{
-shinyTopFeature(input, output, session, chr_pos, scan_obj, top_snps_tbl,
+shinyTopFeature(input, output, session, chr_pos, snp_scan_obj, top_snps_tbl,
   gene_exon_tbl)
+
+shinyTopFeatureInput(id)
 
 shinyTopFeatureUI(id)
 
@@ -16,7 +19,7 @@ shinyTopFeatureOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{scan_obj, top_snps_tbl, gene_exon_tbl}{reactive arguments}
+\item{snp_scan_obj, top_snps_tbl, gene_exon_tbl}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

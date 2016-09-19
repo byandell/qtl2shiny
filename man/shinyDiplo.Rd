@@ -5,16 +5,16 @@
 \alias{shinyDiploUI}
 \title{Shiny Diplotype module}
 \usage{
-shinyDiplo(input, output, session, win_par, phe_df, cov_mx, pheno_anal, K_chr)
+shinyDiplo(input, output, session, win_par, phe_df, cov_mx, K_chr)
 
 shinyDiploUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{win_par, phe_df, cov_mx, K_chr}{reactive arguments}
 
-\item{plot_type, chr_id, phe_df, cov_mx, pheno_anal, K_chr}{reactive arguments}
+\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }
 \description{
 Shiny diplotype SNP/Gene action analysis.

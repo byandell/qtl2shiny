@@ -76,8 +76,9 @@ shinySetup <- function(input, output, session,
   
   ## Set up peaks data frame.
   peaks_df <- reactive({
+    phename <- req(phe_par$pheno_names) 
     peaks %>%
-      filter(pheno %in% req(phe_par$pheno_names))
+      filter(pheno %in% phename)
   })
   output$peaks_tbl <- renderDataTable({
     peaks_df() %>%

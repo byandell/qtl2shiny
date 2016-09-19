@@ -6,7 +6,7 @@
 \alias{shinyGeneRegionUI}
 \title{Shiny Genes in SNP Region module}
 \usage{
-shinyGeneRegion(input, output, session, top_snps_tbl, feature_file)
+shinyGeneRegion(input, output, session, snp_par, top_snps_tbl, feature_file)
 
 shinyGeneRegionUI(id)
 

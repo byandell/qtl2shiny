@@ -85,7 +85,7 @@ shinyAllelePat <- function(input, output, session,
 
   output$pat_input <- renderUI({
     switch(req(input$button),
-           "Top SNPs"     = shinyTopFeatureUI(ns("top_feature")))
+           "Top SNPs"     = shinyTopFeatureInput(ns("top_feature")))
   })
   output$pat_output <- renderUI({
     switch(req(input$button),
@@ -101,6 +101,13 @@ shinyAllelePat <- function(input, output, session,
   })
 
   ## Downloads
+  output$download_csv_plot <- renderUI({
+    switch(req(input$button),
+           "Top SNPs"     = shinyTopFeatureUI(ns("top_feature")),
+           tagList(fluidRow(
+             column(6, downloadButton(ns("downloadData"), "CSV")),
+             column(6, downloadButton(ns("downloadPlot"), "Plots")))))
+  })
   output$downloadData <- downloadHandler(
     filename = function() {
       file.path(paste0("pattern_", chr_pos(), ".csv")) },
@@ -149,9 +156,7 @@ shinyAllelePatInput <- function(id) {
 #' @export
 shinyAllelePatUI <- function(id) {
   ns <- NS(id)
-  fluidRow(
-    column(6, downloadButton(ns("downloadData"), "CSV")),
-    column(6, downloadButton(ns("downloadPlot"), "Plots")))
+  uiOutput(ns("download_csv_plot"))
 }
 #' @rdname shinyAllelePat
 #' @export

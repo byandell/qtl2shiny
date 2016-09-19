@@ -79,14 +79,19 @@ shinyTopFeature <- function(input, output, session,
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyTopFeature
 #' @export
-shinyTopFeatureUI <- function(id) {
+shinyTopFeatureInput <- function(id) {
   ns <- NS(id)
   fluidRow(
     uiOutput(ns("top_names")),
-    selectInput(ns("by_choice"), NULL, c("Pattern","Consequence")),
-    fluidRow(
-      column(6, downloadButton(ns("downloadData"), "CSV")),
-      column(6, downloadButton(ns("downloadPlot"), "Plots"))))
+    selectInput(ns("by_choice"), NULL, c("Pattern","Consequence")))
+}
+#' @rdname shinyTopFeature
+#' @export
+shinyTopFeatureUI <- function(id) {
+  ns <- NS(id)
+  fluidRow(
+    column(6, downloadButton(ns("downloadData"), "CSV")),
+    column(6, downloadButton(ns("downloadPlot"), "Plots")))
 }
 #' @rdname shinyTopFeature
 #' @export

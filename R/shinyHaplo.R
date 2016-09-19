@@ -13,7 +13,6 @@ shinyHaplo <- function(input, output, session,
                        win_par, phe_df, cov_mx, K_chr) {
   ns <- session$ns
 
-  chr_id <- reactive({as.character(req(win_par()$chr_id))})
   chr_pos <- reactive({
     make_chr_pos(win_par()$chr_id, 
                  win_par()$peak_Mbp, win_par()$window_Mbp)
@@ -21,10 +20,11 @@ shinyHaplo <- function(input, output, session,
 
   ## Genotype Probabilities.
   probs_obj <- reactive({
-    req(chr_id())
+    req(input$button)
+    chr_id <- req(win_par()$chr_id)
     withProgress(message = 'Read probs ...', value = 0, {
       setProgress(1)
-      read_probs(chr_id(), datapath)
+      read_probs(chr_id, datapath)
     })
   })
   

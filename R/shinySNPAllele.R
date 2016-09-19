@@ -35,9 +35,11 @@ shinySNPAllele <- function(input, output, session,
   ## Reactives
   ## SNP Probabilities.
   snpprobs_obj <- reactive({
+    req(win_par()$chr_id,win_par()$peak_Mbp,win_par()$window_Mbp)
+    req(pheno_names(),probs_obj())
     withProgress(message = 'SNP Probs ...', value = 0, {
       setProgress(1)
-      get_snpprobs(chr_id(), 
+      get_snpprobs(win_par()$chr_id, 
                    win_par()$peak_Mbp, 
                    win_par()$window_Mbp,
                    pheno_names(), 
@@ -105,19 +107,39 @@ shinySNPAllele <- function(input, output, session,
   ## Button Options.
   output$phe_choice <- renderUI({
     ## Show Phenotype Choice for Scan, Pattern, Top SNPs
-    if((job_par$button == "SNP Association" & 
-        ass_par$button %in% c("Scan")) |
-       (job_par$button == "Allele Pattern" &
-        pat_par$button %in% c("Pattern","Top SNPs"))) {
+    pheno_choice <- FALSE
+    switch(req(job_par$button),
+           "SNP Association" = {
+             if(!is.null(ass_par$button)) {
+               pheno_choice <- (ass_par$button %in% c("Scan"))
+             }
+           },
+           "Allele Pattern" = {
+             if(!is.null(pat_par$button)) {
+               pheno_choice <- (pat_par$button %in% c("Pattern","Top SNPs"))
+             }
+           })
+    if(pheno_choice) {
       uiOutput(ns("pheno_assoc"))
     }
   })
   output$win_choice <- renderUI({
     ## Show Window for Scan, Genes, Pattern, Alls
-    if((job_par$button == "SNP Association" & 
-        ass_par$button %in% c("Scan","Genes")) |
-       (job_par$button == "Allele Pattern" &
-        pat_par$button %in% c("Pattern","All Phenos","All Patterns"))) {
+    win_choice <- FALSE
+    switch(req(job_par$button),
+           "SNP Association" = {
+             if(!is.null(ass_par$button)) {
+               win_choice <- (ass_par$button %in% c("Scan","Genes"))
+             }
+           },
+           "Allele Pattern" = {
+             if(!is.null(pat_par$button)) {
+               win_choice <- 
+                 (pat_par$button %in%
+                    c("Pattern","All Phenos","All Patterns"))
+             }
+           })
+    if(win_choice) {
       uiOutput(ns("scan_window"))
     }
   })
@@ -127,7 +149,7 @@ shinySNPAllele <- function(input, output, session,
     if(snp_action() == "basic")
       h4(strong(req(job_par$button)))
   })
-  output$snp_choice <- renderUI({
+  output$snp_input <- renderUI({
     switch(req(job_par$button),
            "SNP Association" = shinySNPAssocInput(ns("snp_assoc")),
            "Allele Pattern"  = shinyAllelePatInput(ns("allele_pat")))
@@ -160,7 +182,7 @@ shinySNPAlleleUI <- function(id) {
   ns <- NS(id)
   tagList(
     uiOutput(ns("title")),
-    uiOutput(ns("snp_choice")),
+    uiOutput(ns("snp_input")),
     uiOutput(ns("phe_choice")),
     uiOutput(ns("win_choice")),
     uiOutput(ns("download_csv_plot")))

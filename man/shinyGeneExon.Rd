@@ -2,11 +2,14 @@
 % Please edit documentation in R/shinyGeneExon.R
 \name{shinyGeneExon}
 \alias{shinyGeneExon}
+\alias{shinyGeneExonInput}
 \alias{shinyGeneExonOutput}
 \alias{shinyGeneExonUI}
 \title{Shiny Genes and Exons with nearby SNPs module}
 \usage{
 shinyGeneExon(input, output, session, chr_pos, top_snps_tbl, gene_exon_tbl)
+
+shinyGeneExonInput(id)
 
 shinyGeneExonUI(id)
 

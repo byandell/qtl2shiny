@@ -6,8 +6,8 @@
 \alias{shinyPatternUI}
 \title{Shiny Pattern module}
 \usage{
-shinyPattern(input, output, session, probs1, patterns, phe_df, K_chr, cov_mx,
-  chr_pos, snp_action = reactive({     NULL }))
+shinyPattern(input, output, session, chr_pos, phe_df, K_chr, cov_mx,
+  probs36_obj, patterns, snp_action = reactive({     NULL }))
 
 shinyPatternUI(id)
 
@@ -16,7 +16,7 @@ shinyPatternOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{probs1, patterns, phe_df, K_chr, cov_mx, chr_pos, snp_action}{reactive arguments}
+\item{chr_pos, phe_df, K_chr, cov_mx, probs36_obj, patterns, snp_action}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

@@ -15,7 +15,7 @@ num_pheno(pheno, analyses_tbl)
 Character string with number of phenotypes of total.
 }
 \examples{
-\dontrun{num_Pheno(pheno, analyses_tbl)}
+\dontrun{num_pheno(pheno, analyses_tbl)}
 
 }
 \author{

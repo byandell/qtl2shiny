@@ -39,14 +39,13 @@ shinyGeneExon <- function(input, output, session,
   })
   
   ## Outputs
-  output$exon_choice <- renderUI({
-    if(input$exon_choice == "Plot") {
-      uiOutput(ns("gene_name"))
-    }
+  output$exon_input <- renderUI({
+    switch(req(input$button),
+           Plot    = uiOutput(ns("gene_name")))
   })
   output$exon_output <- renderUI({
-    switch(input$exon_choice,
-           Plot = plotOutput(ns("gene_plot")),
+    switch(req(input$button),
+           Plot    = plotOutput(ns("gene_plot")),
            Summary = dataTableOutput(ns("gene_sum")))
   })
   
@@ -74,14 +73,19 @@ shinyGeneExon <- function(input, output, session,
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyGeneExon
 #' @export
+shinyGeneExonInput <- function(id) {
+  ns <- NS(id)
+  fluidRow(
+    selectInput(ns("button"), NULL, c("Plot","Summary")),
+    uiOutput(ns("exon_input")))
+}
+#' @rdname shinyGeneExon
+#' @export
 shinyGeneExonUI <- function(id) {
   ns <- NS(id)
   fluidRow(
-    selectInput(ns("exon_choice"), NULL, c("Plot","Summary")),
-    uiOutput(ns("exon_choice")),
-    fluidRow(
-      column(6, downloadButton(ns("downloadData"), "CSV")),
-      column(6, downloadButton(ns("downloadPlot"), "Plots"))))
+    column(6, downloadButton(ns("downloadData"), "CSV")),
+    column(6, downloadButton(ns("downloadPlot"), "Plots")))
 }
 #' @rdname shinyGeneExon
 #' @export

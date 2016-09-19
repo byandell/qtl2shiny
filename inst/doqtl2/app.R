@@ -83,9 +83,10 @@ server <- function(input, output, session) {
 
   ## Phenotypes and Covariates.
   analyses_df <- reactive({
+    phename <- req(pheno_names())
     ## The analyses_tbl should only have one row per pheno.
     analyses_tbl %>%
-      filter(pheno %in% req(pheno_names()))
+      filter(pheno %in% phename)
   })
   phe_df <- reactive({
     ## Make sure we get only one column per distinct pheno.
