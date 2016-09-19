@@ -38,23 +38,20 @@ shinySetup <- function(input, output, session,
   output$num_pheno <- renderText({
     num_pheno(character(), analyses_tbl())
   })
-  observeEvent(pheno_anal(), {
+  observeEvent(phe_par$pheno_names, {
     output$num_pheno <- renderText({
-      pheno <- req(pheno_anal())
-      num_pheno(pheno, analyses_tbl())
+      num_pheno(phe_par$pheno_names, analyses_tbl())
     })
   })
   
   ## Use window as input to shinyPhenos.
-  pheno_anal <- callModule(shinyPhenos, "phenos",
-                           input, peaks_tbl, analyses_tbl,
-                           chr_peak)
+  phe_par <- callModule(shinyPhenos, "phenos",
+             input, peaks_tbl, analyses_tbl, chr_peak)
   
   ## Density or scatter plot of phenotypes.
   analyses_df <- reactive({
-    phenos <- req(pheno_anal())
     analyses_tbl() %>%
-      filter(output %in% names(phenos))
+      filter(pheno %in% req(phe_par$pheno_names))
   })
   phe_df <- reactive({
     get_pheno(pheno_data,
@@ -79,9 +76,8 @@ shinySetup <- function(input, output, session,
   
   ## Set up peaks data frame.
   peaks_df <- reactive({
-    phenos <- req(pheno_anal())
     peaks %>%
-      filter(output %in% names(phenos))
+      filter(pheno %in% req(phe_par$pheno_names))
   })
   output$peaks_tbl <- renderDataTable({
     peaks_df() %>%
@@ -123,7 +119,7 @@ shinySetup <- function(input, output, session,
   
   ## Return.
   reactive({
-    list(pheno_anal = pheno_anal(),
+    list(pheno_names = phe_par$pheno_names,
          win_par = list(chr_id     = chr_peak$chr_id,
                         peak_Mbp   = chr_peak$peak_Mbp,
                         window_Mbp = chr_peak$window_Mbp))

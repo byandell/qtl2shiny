@@ -1,31 +1,29 @@
 #' Shiny Pattern module
 #'
 #' @param input,output,session standard shiny arguments
-#' @param probs1,patterns,phe_df,K_chr,cov_mx,chr_pos,snp_action reactive arguments
+#' @param chr_pos,phe_df,K_chr,cov_mx,probs36_obj,patterns,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 shinyPattern <- function(input, output, session,
-                         probs1, patterns,
-                         phe_df, K_chr, cov_mx, chr_pos,
+                         chr_pos, phe_df, K_chr, cov_mx,
+                         probs36_obj, patterns,
                          snp_action = reactive({NULL})) {
-  ## lod values too small--getting wrong one?
-  ## error with replacement having 1 row briefly when switch pheno
   ns <- session$ns
 
   ## Select phenotype for plots.
-  output$pheno <- renderUI({
-    selectInput(ns("pheno"), NULL,
+  output$pheno_name <- renderUI({
+    selectInput(ns("pheno_name"), NULL,
                 choices = names(phe_df()),
-                selected = input$pheno)
+                selected = input$pheno_name)
   })
   ## Select pattern for plots.
   output$pattern <- renderUI({
-    req(input$pheno,snp_action())
+    req(input$pheno_name,snp_action())
     pats <- patterns() %>%
-      filter(pheno == input$pheno)
+      filter(pheno == input$pheno_name)
     if(nrow(pats)) {
       choices <- sdp_to_pattern(pats$sdp)
     } else {
@@ -41,15 +39,15 @@ shinyPattern <- function(input, output, session,
     unique(unlist(str_split(diplos(), "")))
   })
   diplos <- reactive({
-    dimnames(probs1()$probs[[1]])[[2]]
+    dimnames(probs36_obj()$probs[[1]])[[2]]
   })
 
   scan_pat <- reactive({
-    pheno_in <- req(input$pheno)
+    pheno_in <- req(input$pheno_name)
     pats <- patterns()
     withProgress(message = 'Scan Patterns ...', value = 0, {
       setProgress(1)
-      scan_pattern(probs1(),
+      scan_pattern(probs36_obj(),
                    phe_df()[,pheno_in, drop=FALSE],
                    K_chr(), cov_mx(),
                    pats,
@@ -94,29 +92,15 @@ shinyPattern <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
 
   output$scan_choice <- renderUI({
-    scanchoice <- (input$genome_scan == "Effects")
-    if(scanchoice) {
-      tagList(
-        uiOutput(ns("pheno")),
-        uiOutput(ns("pattern")))
-    } else {
-      uiOutput(ns("pheno"))
-    }
+    switch(req(input$button),
+           Effects = uiOutput(ns("pattern")))
   })
 
-  output$genome_scan <- renderUI({
-    switch(req(input$genome_scan),
-           LOD = {
-             plotOutput(ns("scan_pat_lod"))
-           },
-           Effects = {
-             tagList(
-               plotOutput(ns("scan_pat_coef"))
-             )
-           },
-           Summary = {
-             dataTableOutput(ns("scanSummary"))
-           })
+  output$pat_output <- renderUI({
+    switch(req(input$button),
+           LOD     = plotOutput(ns("scan_pat_lod")),
+           Effects = plotOutput(ns("scan_pat_coef")),
+           Summary = dataTableOutput(ns("scanSummary")))
   })
 
   ## Downloads
@@ -149,8 +133,9 @@ shinyPattern <- function(input, output, session,
 shinyPatternUI <- function(id) {
   ns <- NS(id)
   tagList(
-    radioButtons(ns("genome_scan"), "",
+    radioButtons(ns("button"), "",
                  c("LOD","Effects","Summary")),
+    uiOutput(ns("pheno_name")),
     uiOutput(ns("scan_choice")),
     fluidRow(
       column(6, downloadButton(ns("downloadData"), "CSV")),
@@ -161,5 +146,5 @@ shinyPatternUI <- function(id) {
 #' @export
 shinyPatternOutput <- function(id) {
   ns <- NS(id)
-  uiOutput(ns("genome_scan"))
+  uiOutput(ns("pat_output"))
 }

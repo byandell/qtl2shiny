@@ -72,22 +72,23 @@ server <- function(input, output, session) {
   pmap_obj <- reactive({pmap})
   analyses_tblr <- reactive({analyses_tbl})
   
-  out <- callModule(shinySetup, "setup", 
+  set_list <- callModule(shinySetup, "setup", 
                     pheno_typer, peaks_tbl, 
                     pmap_obj, analyses_tblr, cov_mx)
   
-  pheno_anal <- reactive({out()$pheno_anal})
-  win_par <- reactive({out()$win_par})
+  pheno_names <- reactive({set_list()$pheno_names})
+  win_par <- reactive({set_list()$win_par})
 
   ## Continue with Plots and Analysis.
 
   ## Phenotypes and Covariates.
   analyses_df <- reactive({
-    phenos <- req(pheno_anal())
+    ## The analyses_tbl should only have one row per pheno.
     analyses_tbl %>%
-      filter(output %in% names(phenos))
+      filter(pheno %in% req(pheno_names()))
   })
   phe_df <- reactive({
+    ## Make sure we get only one column per distinct pheno.
     get_pheno(pheno_data,
               analyses_df() %>%
                 distinct(pheno, .keep_all=TRUE))
@@ -101,11 +102,11 @@ server <- function(input, output, session) {
 
   ## Haplotype Analysis.
   callModule(shinyHaplo, "hap_scan", 
-             win_par, phe_df, cov_mx, pheno_anal, K_chr)
+             win_par, phe_df, cov_mx, K_chr)
 
   ## Diplotype Analysis.
   callModule(shinyDiplo, "dip_scan",
-             win_par, phe_df, cov_mx, pheno_anal, K_chr)
+             win_par, phe_df, cov_mx, K_chr)
 }
 
 shinyApp(ui, server)

@@ -3,20 +3,19 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param chr_id,phe_df,cov_mx,pheno_anal,probs_obj,K_chr reactive arguments
+#' @param phe_df,cov_mx,probs_obj,K_chr reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 shinyScan1Plot <- function(input, output, session,
-                       chr_id, phe_df, cov_mx, 
-                       pheno_anal, probs_obj, K_chr) {
+                  chr_pos, phe_df, cov_mx, probs_obj, K_chr) {
   ns <- session$ns
   
   ## Scan1
   scan_obj <- reactive({
-    req(pheno_anal())
+    req(phe_df())
     withProgress(message = "Genome Scan ...", value = 0, {
       setProgress(1)
       scan1(probs_obj(), phe_df(), K_chr(), cov_mx())
@@ -25,8 +24,8 @@ shinyScan1Plot <- function(input, output, session,
   
   # Scan Window slider
   output$scan_window <- renderUI({
-    req(chr_id(), pheno_anal(), probs_obj())
-    rng <- round(range(probs_obj()$map[[chr_id()]]), 2)
+    req(probs_obj())
+    rng <- round(range(probs_obj()$map[[1]]), 2)
     if(is.null(selected <- input$scan_window))
       selected <- round(2 * rng) / 2
     sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
@@ -34,15 +33,12 @@ shinyScan1Plot <- function(input, output, session,
   })
   
   ## Select phenotype for plots.
-  output$pheno_anal <- renderUI({
-    req(pheno_anal())
-    selectInput(ns("pheno_anal"), NULL,
-                choices = names(pheno_anal()))
+  output$pheno_name <- renderUI({
+    req(phe_df())
+    selectInput(ns("pheno_name"), NULL,
+                choices = names(phe_df()))
   })
-  pheno_id <- reactive({
-    pheno_anal()[req(input$pheno_anal)]
-  })
-  
+
   ## Scan1 plot
   output$scanPlot <- renderPlot({
     withProgress(message = 'Genome LOD Plot ...', value = 0, {
@@ -77,26 +73,17 @@ shinyScan1Plot <- function(input, output, session,
 
   output$scan_choice <- renderUI({
     if(input$genome_scan == "Effects") {
-      uiOutput(ns("pheno_anal"))
+      uiOutput(ns("pheno_name"))
     }
   })
   output$genome_scan <- renderUI({
     switch(req(input$genome_scan),
-           LOD = {
-             plotOutput(ns("scanPlot"))
-           },
-           Effects = {
-             plotOutput(ns("effPlot"))
-           },
-           Summary = {
-             dataTableOutput(ns("effSummary"))
-           })
+           LOD     = plotOutput(ns("scanPlot")),
+           Effects = plotOutput(ns("effPlot")),
+           Summary = dataTableOutput(ns("effSummary")))
   })
 
   ## Downloads.
-  chr_pos <- reactive({
-    make_chr_pos(chr_id(), range = input$scan_window)
-  })
   output$downloadData <- downloadHandler(
     filename = function() {
       file.path(paste0("sum_effects_", chr_pos(), ".csv")) },
@@ -110,8 +97,9 @@ shinyScan1Plot <- function(input, output, session,
       file.path(paste0("genome_scan_", chr_pos(), ".pdf")) },
     content = function(file) {
       req(eff_obj())
+      chr_id <- names(req(scan_obj())$map)[1]
       pdf(file)
-      show_peaks(chr_id(), scan_obj(), mytitle="", xlim=input$scan_window)
+      show_peaks(chr_id, scan_obj(), mytitle="", xlim=input$scan_window)
       for(pheno in names(eff_obj()))
         plot_eff(pheno)
       dev.off()

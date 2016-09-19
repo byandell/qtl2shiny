@@ -9,9 +9,8 @@
 #' @return tbl with top SNPs
 #'
 #' @export
-shinySNPCsq <- function(input, output, session,
-                        snp_par, chr_pos, pheno_anal, 
-                        snp_scan_obj, 
+shinySNPAssoc <- function(input, output, session,
+                        snp_par, chr_pos, snp_scan_obj, 
                         top_snps_tbl, gene_exon_tbl,
                         snp_action = reactive({"basic"})) {
   ns <- session$ns
@@ -22,8 +21,7 @@ shinySNPCsq <- function(input, output, session,
   ## Shiny Modules
   ## SNP Association Scan
   callModule(shinyScan1SNP, "snp_scan",
-             snp_par, chr_pos, pheno_anal, snp_scan_obj, 
-             snp_action)
+             snp_par, chr_pos, snp_scan_obj, snp_action)
   ## SNP Summary
   callModule(shinySNP, "best_snp", 
              chr_pos, top_snps_tbl)
@@ -86,9 +84,9 @@ shinySNPCsq <- function(input, output, session,
   input
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinySNPCsq
+#' @rdname shinySNPAssoc
 #' @export
-shinySNPCsqInput <- function(id) {
+shinySNPAssocInput <- function(id) {
   ns <- NS(id)
   tagList(
     radioButtons(ns("button"), "",
@@ -96,15 +94,15 @@ shinySNPCsqInput <- function(id) {
     uiOutput(ns("snp_choice"))
   )
 }
-#' @rdname shinySNPCsq
+#' @rdname shinySNPAssoc
 #' @export
-shinySNPCsqUI <- function(id) {
+shinySNPAssocUI <- function(id) {
   ns <- NS(id)
   uiOutput(ns("download_csv_plot"))
 }
-#' @rdname shinySNPCsq
+#' @rdname shinySNPAssoc
 #' @export
-shinySNPCsqOutput <- function(id) {
+shinySNPAssocOutput <- function(id) {
   ns <- NS(id)
   uiOutput(ns("snp_output"))
 }

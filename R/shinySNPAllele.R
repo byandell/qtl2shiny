@@ -3,7 +3,7 @@
 #' Shiny module to coordinate SNP and allele analyses and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,pheno_anal,probs_obj,K_chr,snp_action reactive arguments
+#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -19,15 +19,17 @@
 ## Need to worry about what extra options are for each item.
 ## Need to worry about download.
 shinySNPAllele <- function(input, output, session,
-                          win_par, phe_df, cov_mx,
-                          pheno_anal, probs_obj, K_chr,
-                          ui_task, snp_action = reactive({"basic"})) {
+                          job_par, win_par, 
+                          phe_df, cov_mx,
+                          probs_obj, K_chr,
+                          snp_action = reactive({"basic"})) {
   ns <- session$ns
   
-  ##### Make sure snp_scan_obj gets pheno_anal right.
-
   chr_pos <- reactive({
     make_chr_pos(req(win_par()$chr_id), range = req(input$scan_window))
+  })
+  pheno_names <- reactive({
+    names(phe_df())
   })
   
   ## Reactives
@@ -38,14 +40,14 @@ shinySNPAllele <- function(input, output, session,
       get_snpprobs(chr_id(), 
                    win_par()$peak_Mbp, 
                    win_par()$window_Mbp,
-                   names(phe_df()), 
+                   pheno_names(), 
                    probs_obj(),
                    datapath)
     })
   })
   ## SNP Scan.
   snp_scan_obj <- reactive({
-    req(pheno_anal())
+    req(phe_df())
     snpprobs_act <- 
       snpprob_collapse(req(snpprobs_obj()), snp_action())
     withProgress(message = "SNP Scan ...", value = 0, {
@@ -78,7 +80,7 @@ shinySNPAllele <- function(input, output, session,
              gene_exon_tbl, snp_action)
   ## Allele Patterns
   pat_par <- callModule(shinyAllelePat, "allele_pat",
-             input, chr_pos, pheno_anal, snp_scan_obj, top_snps_tbl, 
+             input, chr_pos, snp_scan_obj, top_snps_tbl, 
              gene_exon_tbl, snp_action)
 
   # Scan Window slider
@@ -95,27 +97,26 @@ shinySNPAllele <- function(input, output, session,
 
   ## Select phenotype for plots.
   output$pheno_assoc <- renderUI({
-    req(pheno_anal())
     selectInput(ns("pheno_assoc"), NULL,
-                choices = names(pheno_anal()),
+                choices = req(pheno_names()),
                 selected = input$pheno_assoc)
   })
   
   ## Button Options.
   output$phe_choice <- renderUI({
     ## Show Phenotype Choice for Scan, Pattern, Top SNPs
-    if((ui_task() == "SNP Association" & 
+    if((job_par$button == "SNP Association" & 
         ass_par$button %in% c("Scan")) |
-       (ui_task() == "Allele Pattern" &
+       (job_par$button == "Allele Pattern" &
         pat_par$button %in% c("Pattern","Top SNPs"))) {
       uiOutput(ns("pheno_assoc"))
     }
   })
   output$win_choice <- renderUI({
     ## Show Window for Scan, Genes, Pattern, Alls
-    if((ui_task() == "SNP Association" & 
+    if((job_par$button == "SNP Association" & 
         ass_par$button %in% c("Scan","Genes")) |
-       (ui_task() == "Allele Pattern" &
+       (job_par$button == "Allele Pattern" &
         pat_par$button %in% c("Pattern","All Phenos","All Patterns"))) {
       uiOutput(ns("scan_window"))
     }
@@ -124,22 +125,22 @@ shinySNPAllele <- function(input, output, session,
   ## UI Logic
   output$title <- renderUI({
     if(snp_action() == "basic")
-      h4(strong(req(ui_task())))
+      h4(strong(req(job_par$button)))
   })
   output$snp_choice <- renderUI({
-    switch(req(ui_task()),
+    switch(req(job_par$button),
            "SNP Association" = shinySNPAssocInput(ns("snp_assoc")),
            "Allele Pattern"  = shinyAllelePatInput(ns("allele_pat")))
   })
   output$snp_output <- renderUI({
-    switch(req(ui_task()),
+    switch(req(job_par$button),
            "SNP Association" = shinySNPAssocOutput(ns("snp_assoc")),
            "Allele Pattern"  = shinyAllelePatOutput(ns("allele_pat")))
   })
 
   ## Downloads
   output$download_csv_plot <- renderUI({
-    switch(req(ui_task()),
+    switch(req(job_par$button),
            "SNP Association" = shinySNPAssocUI(ns("snp_assoc")),
            "Allele Pattern"  = shinyAllelePatUI(ns("allele_pat")))
   })

@@ -3,31 +3,27 @@
 #' Shiny module for top SNP analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param chr_pos,snp_scan_obj,snp_action reactive arguments
+#' @param snp_par,chr_pos,snp_scan_obj,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #' 
 #' @export
 shinyAllelePat <- function(input, output, session,
-                        snp_par, chr_pos, pheno_anal, snp_scan_obj, 
+                        snp_par, chr_pos, snp_scan_obj, 
                         top_snps_tbl, gene_exon_tbl, 
                         snp_action = reactive({"basic"})) {
   ns <- session$ns
 
   ## Phenotype names.
-  phename <- reactive({
+  pheno_names <- reactive({
     dimnames(req(snp_scan_obj())$lod)[[2]]
   })
-  pheno_id <- reactive({
-    pheno_anal <- req(phename)
-    pheno_anal()[pheno_anal]
-  })
-  observeEvent(phename(), {
+  observeEvent(pheno_names(), {
     button_val <- c("Top SNPs","Pattern",
                     "All Phenos","All Patterns",
                     "Summary")
-    if(length(phename() == 1)) {
+    if(length(pheno_names() == 1)) {
       button_val <- button_val[-(3:4)]
     }
     updateRadioButtons(session, "snp_assoc", 
@@ -41,11 +37,10 @@ shinyAllelePat <- function(input, output, session,
              chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl)
   
   sum_top_pat <- reactive({
-    req(pheno_id())
     scan_snp <- req(snp_scan_obj())
     if(max(scan_snp$lod) <= 1.5)
       return(NULL)
-    summary(topsnp_pattern(scan_snp, pheno_id()))
+    summary(topsnp_pattern(scan_snp, pheno_names()))
   })
   
   output$snpPatternSum <- renderDataTable({
@@ -54,36 +49,36 @@ shinyAllelePat <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
   
   output$snpPatternPlot <- renderPlot({
-    if(is.null(pheno_id()) | is.null(snp_scan_obj()) |
+    if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     withProgress(message = 'SNP pattern plots ...', value = 0, {
       setProgress(1)
-      top_pat_plot(pheno_id(), snp_scan_obj(), snp_par$scan_window, TRUE,
+      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window, TRUE,
                    snp_action = snp_action())
     })
   })
   
   ## SNP Pheno patterns
   output$snp_phe_pat <- renderPlot({
-    if(is.null(phename()) | is.null(snp_scan_obj()) |
+    if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     withProgress(message = 'SNP Pheno patterns ...', value = 0, {
       setProgress(1)
-      top_pat_plot(phename(), snp_scan_obj(), snp_par$scan_window,
+      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
                    group = "pheno", snp_action = snp_action())
     })
   })
   
   ## SNP Pattern phenos
   output$snp_pat_phe <- renderPlot({
-    if(is.null(phename()) | is.null(snp_scan_obj()) |
+    if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     withProgress(message = 'SNP Pattern phenos ...', value = 0, {
       setProgress(1)
-      top_pat_plot(phename(), snp_scan_obj(), snp_par$scan_window,
+      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
                    group = "pattern", snp_action = snp_action())
     })
   })
@@ -119,7 +114,7 @@ shinyAllelePat <- function(input, output, session,
     content = function(file) {
       scans <- req(snp_scan_obj())
       snp_w <- req(snp_par$scan_window)
-      phenos <- req(phename())
+      phenos <- req(pheno_names())
       pdf(file)
       ## Plots over all phenotypes
       print(top_pat_plot(phenos, scans, snp_w,

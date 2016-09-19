@@ -40,10 +40,10 @@ shinyPhenos <- function(input, output, session,
   })
 
   # Choose Phenotypes for Analysis.
-  output$pheno_anal <- renderUI({
-    phenames <- sort(analyses_df()$output)
+  output$pheno_names <- renderUI({
+    phenames <- sort(analyses_df()$pheno)
 
-    selected <- input$pheno_anal
+    selected <- input$pheno_names
     if("all" %in% selected)
       selected <- c(selected[!(selected %in% c("all","none"))],
                     phenames)
@@ -57,7 +57,7 @@ shinyPhenos <- function(input, output, session,
     phenames <- phenames[phenames != ""]
 
     choices <- c("all","none", phenames)
-    selectInput(ns("pheno_anal"), "Choose phenotypes",
+    selectInput(ns("pheno_names"), "Choose phenotypes",
                 choices = choices,
                 selected = selected,
                 multiple = TRUE)
@@ -68,21 +68,7 @@ shinyPhenos <- function(input, output, session,
                         paste(chr_peak$peak_Mbp + c(-1,1) * chr_peak$window_Mbp,
                               collapse = "-")))
   })
-  
-  reactive({
-    pheno_anal <- req(input$pheno_anal)
-    dat <- analyses_tbl() %>%
-      filter(output %in% pheno_anal) %>%
-      arrange(output) %>%
-      select(pheno,output)
-    if(nrow(dat)) {
-      pheno <- dat$pheno
-      names(pheno) <- dat$output
-      pheno
-    } else { ## all, none or some non-pheno
-      pheno_anal
-    }
-  })
+  input
 }
 #' @param id identifier for \code{\link{shinyScan1}} use
 #' @rdname shinyPhenos
@@ -90,7 +76,7 @@ shinyPhenos <- function(input, output, session,
 shinyPhenosUI <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("pheno_anal")),
+    uiOutput(ns("pheno_names")),
     uiOutput(ns("filter"))
   )
 }

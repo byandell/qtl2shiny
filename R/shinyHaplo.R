@@ -3,14 +3,14 @@
 #' Shiny module for analysis based on haplotype alleles.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,pheno_anal,K_chr reactive arguments
+#' @param win_par,phe_df,cov_mx,K_chr reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 shinyHaplo <- function(input, output, session,
-                       win_par, phe_df, cov_mx, pheno_anal, K_chr) {
+                       win_par, phe_df, cov_mx, K_chr) {
   ns <- session$ns
 
   chr_id <- reactive({as.character(req(win_par()$chr_id))})
@@ -30,37 +30,29 @@ shinyHaplo <- function(input, output, session,
   
   ## Genome Scan.
   callModule(shinyScan1Plot, "hap_scan", 
-             chr_id, phe_df, cov_mx,
-             pheno_anal, probs_obj, K_chr)
+             chr_pos, phe_df, cov_mx, probs_obj, K_chr)
   
   ## SNP Association
-  top_snps_tbl <- callModule(shinySNPAllele, "snp_assoc",
-                             win_par, phe_df, cov_mx, 
-                             pheno_anal, probs_obj, K_chr)
-  
-  
-  
+  patterns <- callModule(shinySNPAllele, "snp_allele",
+              input, win_par, phe_df, cov_mx, probs_obj, K_chr)
+
   ## CC names
   output$cc_names <- renderText({
     cc <- CCcolors
     paste(LETTERS[seq_along(cc)], names(cc), sep = "=", collapse = ", ")
   })
 
-  output$hap_choice <- renderUI({
-    switch(input$snp_hap,
+  output$hap_input <- renderUI({
+    switch(input$button,
            "Genome Scans"    = shinyScan1PlotUI(ns("hap_scan")),
-           "SNP Association" = tagList(
-             shinyScan1SNPUI(ns("snp_scan")),
-             shinySNPCsqUI(ns("snp_csq"))),
-           "Allele Pattern"  = shinyTopSNPUI(ns("top_snp")))
+           "SNP Association" =,
+           "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")))
   })
-  output$snp_hap <- renderUI({
-    switch(input$snp_hap,
+  output$hap_output <- renderUI({
+    switch(input$button,
            "Genome Scans"    = shinyScan1PlotOutput(ns("hap_scan")),
-           "SNP Association" = tagList(
-             shinyScan1SNPOutput(ns("snp_scan")),
-             shinySNPCsqOutput(ns("snp_csq"))),
-           "Allele Pattern"  = shinyTopSNPOutput(ns("top_snp")))
+           "SNP Association" = ,
+           "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")))
   })
   
 }
@@ -72,11 +64,11 @@ shinyHaploUI <- function(id) {
   tagList(
     sidebarPanel(
       h4(strong("SNP/Gene Haplo Analysis")),
-      radioButtons(ns("snp_hap"), "",
+      radioButtons(ns("button"), "",
                    c("Genome Scans","SNP Association","Allele Pattern")),
-      uiOutput(ns("hap_choice")),
+      uiOutput(ns("hap_input")),
       textOutput(ns("cc_names"))),
     mainPanel(
-      uiOutput(ns("snp_hap")))
+      uiOutput(ns("hap_output")))
   )
 }

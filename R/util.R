@@ -11,7 +11,7 @@
 #' @keywords utilities
 #'
 #' @examples
-#' \dontrun{num_Pheno(pheno, analyses_tbl)}
+#' \dontrun{num_pheno(pheno, analyses_tbl)}
 #' 
 #' @export
 num_pheno <- function(pheno, analyses_tbl) {
