@@ -17,21 +17,8 @@ shinyDiplo <- function(input, output, session,
     make_chr_pos (win_par()$chr_id, win_par()$peak_Mbp, win_par()$window_Mbp)
   })
 
-  range_val <- reactive({
-    req(win_par()$peak_Mbp, win_par()$window_Mbp)
-    c(win_par()$peak_Mbp + c(-1,1) * win_par()$window_Mbp)
-  })
-
   ## Probs object for 36 diplotypes.
-  probs36_obj <- reactive({
-    req(input$button)
-    chr_id <- req(win_par()$chr_id)
-    withProgress(message = 'Diplotype Probs ...', value = 0, {
-      setProgress(1)
-      read_probs36(chr_id, range_val()[1], range_val()[2],
-                   datapath)
-    })
-  })
+  probs36_obj <- callModule(shinyProbs36, "probs36", win_par)
 
   snp_action <- reactive({input$snp_action})
   
@@ -51,16 +38,21 @@ shinyDiplo <- function(input, output, session,
     paste(LETTERS[seq_along(cc)], names(cc), sep = "=", collapse = ", ")
   })
   output$dip_input <- renderUI({
-    switch(input$button,
-           "SNP Plots"       = shinyScan1SNPUI(ns("dip_scan")),
+    switch(req(input$button),
+           "SNP Plots"       = shinyPatternUI(ns("dip_scan")),
            "SNP Association" =,
            "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")))
   })
   output$dip_output <- renderUI({
-    switch(input$button,
-           "SNP Plots"       = shinyScan1SNPOutput(ns("dip_scan")),
+    switch(req(input$button),
+           "SNP Plots"       = shinyPatternOutput(ns("dip_scan")),
            "SNP Association" = ,
            "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")))
+  })
+  output$radio <- renderUI({
+    radioButtons(ns("button"), "",
+                 c("SNP Association","Allele Pattern","Genome Scans"),
+                 input$button)
   })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
@@ -71,8 +63,7 @@ shinyDiploUI <- function(id) {
   tagList(
     sidebarPanel(
       h4(strong("SNP/Gene Action")),
-      radioButtons(ns("button"), "",
-                   c("SNP Association","Allele Pattern","Genome Scans")),
+      uiOutput(ns("radio")),
       selectInput(ns("snp_action"), "",
                   c("add+dom","additive","non-add",
                     "recessive","dominant")),

@@ -56,6 +56,11 @@ shinySNPAssoc <- function(input, output, session,
            Genes   = shinyGeneRegionUI(ns("gene_region")),
            Exons   = shinyGeneExonUI(ns("gene_exon")))
   })
+  output$radio <- renderUI({
+    radioButtons(ns("button"), "",
+                 c("Scan", "Genes", "Exons", "Summary"),
+                 input$button)
+  })
   input
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
@@ -64,8 +69,7 @@ shinySNPAssoc <- function(input, output, session,
 shinySNPAssocInput <- function(id) {
   ns <- NS(id)
   tagList(
-    radioButtons(ns("button"), "",
-                 c("Scan", "Genes", "Exons", "Summary")),
+    uiOutput(ns("radio")),
     uiOutput(ns("snp_input"))
   )
 }

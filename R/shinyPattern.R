@@ -126,6 +126,11 @@ shinyPattern <- function(input, output, session,
       dev.off()
     }
   )
+  output$radio <- renderUI({
+    radioButtons(ns("button"), "",
+                 c("LOD","Effects","Summary"),
+                 input$button)
+  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyPattern
@@ -133,8 +138,7 @@ shinyPattern <- function(input, output, session,
 shinyPatternUI <- function(id) {
   ns <- NS(id)
   tagList(
-    radioButtons(ns("button"), "",
-                 c("LOD","Effects","Summary")),
+    uiOutput(ns("radio")),
     uiOutput(ns("pheno_name")),
     uiOutput(ns("scan_choice")),
     fluidRow(

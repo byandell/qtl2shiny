@@ -69,6 +69,10 @@ shinyGeneExon <- function(input, output, session,
       dev.off()
     }
   )
+  output$select <- renderUI({
+    selectInput(ns("button"), NULL, c("Plot","Summary"),
+                input$button)
+  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyGeneExon
@@ -76,7 +80,7 @@ shinyGeneExon <- function(input, output, session,
 shinyGeneExonInput <- function(id) {
   ns <- NS(id)
   fluidRow(
-    selectInput(ns("button"), NULL, c("Plot","Summary")),
+    uiOutput(ns("select")),
     uiOutput(ns("exon_input")))
 }
 #' @rdname shinyGeneExon

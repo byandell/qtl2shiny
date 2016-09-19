@@ -79,12 +79,12 @@ shinyScan1Plot <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
 
   output$scan_choice <- renderUI({
-    if(input$genome_scan == "Effects") {
+    if(req(input$button) == "Effects") {
       uiOutput(ns("pheno_name"))
     }
   })
-  output$genome_scan <- renderUI({
-    switch(req(input$genome_scan),
+  output$scan_output <- renderUI({
+    switch(req(input$button),
            LOD     = plotOutput(ns("scanPlot")),
            Effects = plotOutput(ns("effPlot")),
            Summary = dataTableOutput(ns("effSummary")))
@@ -101,16 +101,22 @@ shinyScan1Plot <- function(input, output, session,
   )
   output$downloadPlot <- downloadHandler(
     filename = function() {
-      file.path(paste0("genome_scan_", chr_pos(), ".pdf")) },
+      file.path(paste0("scan_", chr_pos(), ".pdf")) },
     content = function(file) {
       req(eff_obj())
       pdf(file)
-      show_peaks(chr_id(), scan_obj(), mytitle="", xlim=input$scan_window)
+      show_peaks(chr_id(), scan_obj(), mytitle="", 
+                 xlim=req(input$scan_window))
       for(pheno in names(eff_obj()))
         plot_eff(pheno)
       dev.off()
     }
   )
+  output$radio <- renderUI({
+    radioButtons(ns("button"), "",
+                 c("LOD","Effects","Summary"),
+                 input$button)
+  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyScan1Plot
@@ -119,8 +125,7 @@ shinyScan1PlotUI <- function(id) {
   ns <- NS(id)
   tagList(
     h4(strong("Genome Scans")),
-    radioButtons(ns("genome_scan"), "",
-                 c("LOD","Effects","Summary")),
+    uiOutput(ns("radio")),
     uiOutput(ns("scan_choice")),
     uiOutput(ns("scan_window")),
     fluidRow(
@@ -132,5 +137,5 @@ shinyScan1PlotUI <- function(id) {
 shinyScan1PlotOutput <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("genome_scan")))
+    uiOutput(ns("scan_output")))
 }

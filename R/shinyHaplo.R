@@ -19,15 +19,8 @@ shinyHaplo <- function(input, output, session,
   })
 
   ## Genotype Probabilities.
-  probs_obj <- reactive({
-    req(input$button)
-    chr_id <- req(win_par()$chr_id)
-    withProgress(message = 'Read probs ...', value = 0, {
-      setProgress(1)
-      read_probs(chr_id, datapath)
-    })
-  })
-  
+  probs_obj <- callModule(shinyProbs, "probs", win_par)
+
   ## Genome Scan.
   callModule(shinyScan1Plot, "hap_scan", 
              chr_pos, phe_df, cov_mx, probs_obj, K_chr)
@@ -43,18 +36,22 @@ shinyHaplo <- function(input, output, session,
   })
 
   output$hap_input <- renderUI({
-    switch(input$button,
+    switch(req(input$button),
            "Genome Scans"    = shinyScan1PlotUI(ns("hap_scan")),
            "SNP Association" =,
            "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")))
   })
   output$hap_output <- renderUI({
-    switch(input$button,
+    switch(req(input$button),
            "Genome Scans"    = shinyScan1PlotOutput(ns("hap_scan")),
            "SNP Association" = ,
            "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")))
   })
-  
+  output$radio <- renderUI({
+    radioButtons(ns("button"), "",
+                 c("Genome Scans","SNP Association","Allele Pattern"),
+                 input$button)
+  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyHaplo
@@ -64,8 +61,7 @@ shinyHaploUI <- function(id) {
   tagList(
     sidebarPanel(
       h4(strong("SNP/Gene Haplo Analysis")),
-      radioButtons(ns("button"), "",
-                   c("Genome Scans","SNP Association","Allele Pattern")),
+      uiOutput(ns("radio")),
       uiOutput(ns("hap_input")),
       textOutput(ns("cc_names"))),
     mainPanel(

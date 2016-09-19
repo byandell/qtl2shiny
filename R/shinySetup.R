@@ -100,7 +100,8 @@ shinySetup <- function(input, output, session,
         shinyPhenosUI(ns("phenos")),
         radioButtons(ns("show_data"), NULL,
                      c("LOD Peaks","Covariates",
-                       "Trans Data","Raw Data"))
+                       "Trans Data","Raw Data"),
+                     input$show_data)
       )
     } else {
       shinyPeaksInput(ns("shinypeaks"))
@@ -116,6 +117,13 @@ shinySetup <- function(input, output, session,
     } else {
       shinyPeaksOutput(ns("shinypeaks"))
     }
+  })
+  
+  output$radio <- renderUI({
+    radioButtons(ns("setup"), NULL,
+                 c("Phenotypes", "Region"),
+                 input$setup,
+                 inline=TRUE)
   })
   
   ## Return.
@@ -141,12 +149,9 @@ shinySetupOutput <- function(id) {
 shinySetupUI <- function(id) {
   ns <- NS(id)
   tagList(
-    sidebarPanel(tagList(
+    sidebarPanel(
       uiOutput(ns("title")),
-      radioButtons(ns("setup"), NULL,
-                   c("Phenotypes",
-                     "Region"),
-                   inline=TRUE)),
+      uiOutput(ns("radio")),
       uiOutput(ns("dataset")),
       uiOutput(ns("sidebar_setup"))
     ),

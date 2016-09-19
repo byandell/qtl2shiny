@@ -20,14 +20,20 @@ shinyAllelePat <- function(input, output, session,
     dimnames(req(snp_scan_obj())$lod)[[2]]
   })
   observeEvent(pheno_names(), {
+    cat(stderr(), "allele_pat", length(pheno_names()), "\n")
     button_val <- c("Top SNPs","Pattern",
                     "All Phenos","All Patterns",
                     "Summary")
     if(length(pheno_names() == 1)) {
       button_val <- button_val[-(3:4)]
     }
-    updateRadioButtons(session, "snp_assoc", 
-                       selected = button_val[1],
+    selected <- input$buttion
+    if(!is.null(selected)) {
+      if(!(selected %in% button_val))
+        selected <- button_val[1]
+    }
+    updateRadioButtons(session, "button", 
+                       selected = selected,
                        choices = button_val)
   })
   
@@ -40,7 +46,10 @@ shinyAllelePat <- function(input, output, session,
     scan_snp <- req(snp_scan_obj())
     if(max(scan_snp$lod) <= 1.5)
       return(NULL)
-    summary(topsnp_pattern(scan_snp, pheno_names()))
+#    summary(topsnp_pattern(scan_snp, pheno_names()))
+    topsnp_pattern(scan_snp, pheno_names()) %>%
+      mutate(pattern = sdp_to_pattern(sdp)) %>%
+      arrange(desc(lod))
   })
   
   output$snpPatternSum <- renderDataTable({
@@ -48,14 +57,17 @@ shinyAllelePat <- function(input, output, session,
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
   
+  snp_pat_plot <- reactive({
+    top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window, TRUE,
+                 snp_action = snp_action())
+  })
   output$snpPatternPlot <- renderPlot({
     if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     withProgress(message = 'SNP pattern plots ...', value = 0, {
       setProgress(1)
-      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window, TRUE,
-                   snp_action = snp_action())
+      snp_pat_plot()
     })
   })
   
@@ -64,23 +76,30 @@ shinyAllelePat <- function(input, output, session,
     if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
-    withProgress(message = 'SNP Pheno patterns ...', value = 0, {
-      setProgress(1)
-      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
-                   group = "pheno", snp_action = snp_action())
-    })
+    if(length(pheno_names()) == 1) {
+      snp_pat_plot()
+    } else {
+      withProgress(message = 'SNP Pheno patterns ...', value = 0, {
+        setProgress(1)
+        top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
+                     group = "pheno", snp_action = snp_action())
+      })
+    }
   })
-  
   ## SNP Pattern phenos
   output$snp_pat_phe <- renderPlot({
     if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
-    withProgress(message = 'SNP Pattern phenos ...', value = 0, {
-      setProgress(1)
-      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
-                   group = "pattern", snp_action = snp_action())
-    })
+    if(length(pheno_names()) == 1) {
+      snp_pat_plot()
+    } else {
+      withProgress(message = 'SNP Pattern phenos ...', value = 0, {
+        setProgress(1)
+        top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
+                     group = "pattern", snp_action = snp_action())
+      })
+    }
   })
 
   output$pat_input <- renderUI({
@@ -137,6 +156,13 @@ shinyAllelePat <- function(input, output, session,
       dev.off()
     }
   )
+  output$radio <- renderUI({
+    radioButtons(ns("button"), "",
+                 c("Top SNPs","Pattern",
+                   "All Phenos","All Patterns",
+                   "Summary"),
+                 input$button)
+  })
   input
 }
 #' @param id identifier for \code{\link{shinyAllelePat}} use
@@ -145,10 +171,7 @@ shinyAllelePat <- function(input, output, session,
 shinyAllelePatInput <- function(id) {
   ns <- NS(id)
   tagList(
-    radioButtons(ns("button"), "",
-                 c("Top SNPs","Pattern",
-                   "All Phenos","All Patterns",
-                   "Summary")),
+    uiOutput(ns("radio")),
     uiOutput(ns("pat_input"))
   )
 }
