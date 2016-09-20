@@ -34,19 +34,8 @@ shinySNPAllele <- function(input, output, session,
   
   ## Reactives
   ## SNP Probabilities.
-  snpprobs_obj <- reactive({
-    req(win_par()$chr_id,win_par()$peak_Mbp,win_par()$window_Mbp)
-    req(pheno_names(),probs_obj())
-    withProgress(message = 'SNP Probs ...', value = 0, {
-      setProgress(1)
-      get_snpprobs(win_par()$chr_id, 
-                   win_par()$peak_Mbp, 
-                   win_par()$window_Mbp,
-                   pheno_names(), 
-                   probs_obj(),
-                   datapath)
-    })
-  })
+  snpprobs_obj <- callModule(shinySNPProbs, "snp_probs",
+                  win_par, pheno_names, probs_obj)
   ## SNP Scan.
   snp_scan_obj <- reactive({
     req(phe_df())

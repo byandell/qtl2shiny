@@ -228,7 +228,7 @@ shinyPeaks <- function(input, output, session,
     }
     out
   })
-
+  ## Return.
   input
 }
 #' @param id identifier for \code{\link{shinyScan1}} use

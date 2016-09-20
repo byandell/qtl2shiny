@@ -54,6 +54,12 @@ shinyDiplo <- function(input, output, session,
                  c("SNP Association","Allele Pattern","Genome Scans"),
                  input$button)
   })
+  output$select <- renderUI({
+    selectInput(ns("snp_action"), "",
+                c("add+dom","additive","non-add",
+                  "recessive","dominant"),
+                input$select)
+  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyDiplo
@@ -64,9 +70,7 @@ shinyDiploUI <- function(id) {
     sidebarPanel(
       h4(strong("SNP/Gene Action")),
       uiOutput(ns("radio")),
-      selectInput(ns("snp_action"), "",
-                  c("add+dom","additive","non-add",
-                    "recessive","dominant")),
+      uiOutput(ns("select")),
       uiOutput(ns("dip_input")),
       textOutput(ns("cc_names"))),
   mainPanel(
