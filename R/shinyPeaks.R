@@ -15,10 +15,12 @@ shinyPeaks <- function(input, output, session,
                        set_par, pheno_type, peaks_tbl, pmap_obj) {
   ns <- session$ns
 
-  # Select chromosome.
+  # Select chromosome. Defaults to blank.
   output$chr_id <- renderUI({
     choices <- names(pmap_obj())
     selected <- input$chr_id
+    if(!isTruthy(selected))
+      choices <- c("", choices)
     selectInput(ns("chr_id"), strong("Chromosome"),
                 choices = choices,
                 selected = selected)
@@ -86,26 +88,24 @@ shinyPeaks <- function(input, output, session,
 #      if(chr %in% choices) {
 #        pos <- as.numeric(chr_pos[2])
     chr <- req(input$chr_id)
-        pos <- as.numeric(input$chr_pos)
-        if(is.numeric(pos)) {
-          if(!is.na(pos)) {
-            rng <- round(range(pmap[[chr]]), 2)
-            if(pos >= rng[1] & pos <= rng[2]) {
-              up <- is.null(input$chr_id)
-              if(!up) {
-                up <- (chr != input$chr_id)
-              }
-              if(up) {
-                updateSelectInput(session, "chr_id",
-                                  selected=chr, choices=choices)
-              }
-              updateSliderInput(session, "peak_Mbp",
-                                value=pos, min=rng[1], max=rng[2])
-            }
+    pos <- as.numeric(input$chr_pos)
+    if(is.numeric(pos)) {
+      if(!is.na(pos)) {
+        rng <- round(range(pmap[[chr]]), 2)
+        if(pos >= rng[1] & pos <= rng[2]) {
+          up <- is.null(input$chr_id)
+          if(!up) {
+            up <- (chr != input$chr_id)
           }
+          if(up) {
+            updateSelectInput(session, "chr_id",
+                              selected=chr, choices=choices)
+          }
+          updateSliderInput(session, "peak_Mbp",
+                            value=pos, min=rng[1], max=rng[2])
         }
-#      }
-#    }
+      }
+    }
   })
   ## Return.
   input

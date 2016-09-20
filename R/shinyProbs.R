@@ -15,7 +15,6 @@ shinyProbs <- function(input, output, session,
 
   probs_obj <- reactive({
     chr_id <- req(win_par$chr_id)
-    cat(file = stderr(), "probs", chr_id, "\n")
     withProgress(message = 'Read probs ...', value = 0, {
       setProgress(1)
       read_probs(chr_id, datapath)
@@ -35,7 +34,6 @@ shinyProbs36 <- function(input, output, session,
     chr_id <- req(win_par$chr_id)
     range_val <- req(win_par$peak_Mbp) + 
       c(-1,1) * req(win_par$window_Mbp)
-    cat(file = stderr(), "probs36", chr_id, range_val[1], range_val[2], "\n")
     withProgress(message = 'Diplotype Probs ...', value = 0, {
       setProgress(1)
       read_probs36(chr_id, range_val[1], range_val[2],

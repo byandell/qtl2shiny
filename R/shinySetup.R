@@ -87,41 +87,33 @@ shinySetup <- function(input, output, session,
   
   ## Setup input logic.
   output$title <- renderUI({
-    if(req(input$setup) == "Phenotypes") {
-      mytitle <- "Phenotypes"
-    } else {
-      mytitle <- "Region"
-    }
-    h4(strong(mytitle))
+    h4(strong(req(input$setup)))
   })
   output$sidebar_setup <- renderUI({
-    if(req(input$setup) == "Phenotypes") {
-      tagList(
-        shinyPhenosUI(ns("phenos")),
-        radioButtons(ns("show_data"), NULL,
-                     c("LOD Peaks","Covariates",
-                       "Trans Data","Raw Data"),
-                     input$show_data)
-      )
-    } else {
-      shinyPeaksInput(ns("shinypeaks"))
-    }
+    switch(req(input$setup),
+           Phenotypes = tagList(
+             shinyPhenosUI(ns("phenos")),
+             radioButtons(ns("show_data"), NULL,
+                          c("LOD Peaks","Covariates",
+                            "Trans Data","Raw Data"),
+                          input$show_data)),
+           Region = shinyPeaksInput(ns("shinypeaks")))
   })
   output$main_setup <- renderUI({
-    if(req(input$setup) == "Phenotypes") {
-      switch(req(input$show_data),
-             "LOD Peaks"  = dataTableOutput(ns("peaks_tbl")),
-             "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
-             "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
-             "Covariates" = dataTableOutput(ns("analyses_tbl")))
-    } else {
-      shinyPeaksOutput(ns("shinypeaks"))
-    }
+    switch(req(input$setup),
+           Phenotypes = {
+             switch(req(input$show_data),
+                    "LOD Peaks"  = dataTableOutput(ns("peaks_tbl")),
+                    "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
+                    "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
+                    "Covariates" = dataTableOutput(ns("analyses_tbl")))
+             },
+           Region = shinyPeaksOutput(ns("shinypeaks")))
   })
   
   output$radio <- renderUI({
     radioButtons(ns("setup"), NULL,
-                 c("Phenotypes", "Region"),
+                 c("Region", "Phenotypes"),
                  input$setup,
                  inline=TRUE)
   })

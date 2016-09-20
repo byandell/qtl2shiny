@@ -12,6 +12,8 @@ shinyPattern <- function(input, output, session,
                          probs36_obj, patterns,
                          snp_action = reactive({NULL})) {
   ns <- session$ns
+  
+  ###### Want title to have phenotype name.
 
   ## Select phenotype for plots.
   output$pheno_name <- renderUI({

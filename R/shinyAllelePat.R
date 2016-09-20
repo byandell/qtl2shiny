@@ -20,7 +20,6 @@ shinyAllelePat <- function(input, output, session,
     dimnames(req(snp_scan_obj())$lod)[[2]]
   })
   observeEvent(pheno_names(), {
-    cat(file = stderr(), "allele_pat", length(pheno_names()), input$button, "\n")
     button_val <- c("Top SNPs","Pattern",
                     "All Phenos","All Patterns",
                     "Summary")

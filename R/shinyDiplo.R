@@ -43,13 +43,13 @@ shinyDiplo <- function(input, output, session,
   })
   output$dip_input <- renderUI({
     switch(req(input$button),
-           "SNP Plots"       = shinyPatternUI(ns("dip_scan")),
+           "Genome Scans"    = shinyPatternUI(ns("dip_pat")),
            "SNP Association" =,
            "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")))
   })
   output$dip_output <- renderUI({
     switch(req(input$button),
-           "SNP Plots"       = shinyPatternOutput(ns("dip_scan")),
+           "Genome Scans"    = shinyPatternOutput(ns("dip_pat")),
            "SNP Association" = ,
            "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")))
   })
