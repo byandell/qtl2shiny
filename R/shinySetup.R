@@ -25,12 +25,12 @@ shinySetup <- function(input, output, session,
   })
   
   ## Locate Peak.
-  chr_peak <- callModule(shinyPeaks, "shinypeaks",
+  win_par <- callModule(shinyPeaks, "shinypeaks",
                          input, pheno_type, peaks_tbl, pmap_obj)
   
   chr_pos <- reactive({
-    make_chr_pos(chr_peak$chr_id, 
-                 chr_peak$peak_Mbp, chr_peak$window_Mbp)
+    make_chr_pos(win_par$chr_id, 
+                 win_par$peak_Mbp, win_par$window_Mbp)
   })
   output$chr_pos <- renderText({
     paste0("Region: ", chr_pos(), "Mbp")
@@ -46,7 +46,7 @@ shinySetup <- function(input, output, session,
   
   ## Use window as input to shinyPhenos.
   phe_par <- callModule(shinyPhenos, "phenos",
-             input, peaks_tbl, analyses_tbl, chr_peak)
+             input, peaks_tbl, analyses_tbl, win_par)
   
   ## Density or scatter plot of phenotypes.
   analyses_df <- reactive({
@@ -128,10 +128,8 @@ shinySetup <- function(input, output, session,
   
   ## Return.
   reactive({
-    list(pheno_names = phe_par$pheno_names,
-         win_par = list(chr_id     = chr_peak$chr_id,
-                        peak_Mbp   = chr_peak$peak_Mbp,
-                        window_Mbp = chr_peak$window_Mbp))
+    list(phe_par = phe_par,
+         win_par = win_par)
   })
 }
 #' @param id identifier for \code{\link{shinyScan1}} use

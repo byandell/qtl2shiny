@@ -14,7 +14,7 @@ shinyDiplo <- function(input, output, session,
   ns <- session$ns
 
   chr_pos <- reactive({
-    make_chr_pos (win_par()$chr_id, win_par()$peak_Mbp, win_par()$window_Mbp)
+    make_chr_pos (win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
   })
 
   ## Probs object for 36 diplotypes.

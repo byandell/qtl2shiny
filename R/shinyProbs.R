@@ -14,7 +14,7 @@ shinyProbs <- function(input, output, session,
   ns <- session$ns
   
   reactive({
-    chr_id <- req(win_par()$chr_id)
+    chr_id <- req(win_par$chr_id)
     cat(stderr(), "probs", chr_id, "\n")
     withProgress(message = 'Read probs ...', value = 0, {
       setProgress(1)
@@ -30,9 +30,9 @@ shinyProbs36 <- function(input, output, session,
 
   ## Probs object for 36 diplotypes.
   reactive({
-    chr_id <- req(win_par()$chr_id)
-    range_val <- req(win_par()$peak_Mbp) + 
-      c(-1,1) * req(win_par()$window_Mbp)
+    chr_id <- req(win_par$chr_id)
+    range_val <- req(win_par$peak_Mbp) + 
+      c(-1,1) * req(win_par$window_Mbp)
     cat(stderr(), "probs36", chr_id, range_val[1], range_val[2], "\n")
     withProgress(message = 'Diplotype Probs ...', value = 0, {
       setProgress(1)
@@ -48,13 +48,13 @@ shinySNPProbs <- function(input, output, session,
   ns <- session$ns
   
   reactive({
-    req(win_par()$chr_id, win_par()$peak_Mbp, win_par()$window_Mbp)
+    req(win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
     req(pheno_names(), probs_obj())
     withProgress(message = 'SNP Probs ...', value = 0, {
       setProgress(1)
-      get_snpprobs(win_par()$chr_id, 
-                   win_par()$peak_Mbp, 
-                   win_par()$window_Mbp,
+      get_snpprobs(win_par$chr_id, 
+                   win_par$peak_Mbp, 
+                   win_par$window_Mbp,
                    pheno_names(), 
                    probs_obj(),
                    datapath)

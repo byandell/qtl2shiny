@@ -3,11 +3,14 @@
 \name{shinyProbs}
 \alias{shinyProbs}
 \alias{shinyProbs36}
+\alias{shinySNPProbs}
 \title{Shiny Probability module}
 \usage{
 shinyProbs(input, output, session, win_par)
 
 shinyProbs36(input, output, session, win_par)
+
+shinySNPProbs(input, output, session, win_par, pheno_names, probs_obj)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}

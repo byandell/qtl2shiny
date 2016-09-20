@@ -26,7 +26,7 @@ shinySNPAllele <- function(input, output, session,
   ns <- session$ns
   
   chr_pos <- reactive({
-    make_chr_pos(req(win_par()$chr_id), range = req(input$scan_window))
+    make_chr_pos(req(win_par$chr_id), range = req(input$scan_window))
   })
   pheno_names <- reactive({
     names(phe_df())
@@ -76,9 +76,8 @@ shinySNPAllele <- function(input, output, session,
 
   # Scan Window slider
   output$scan_window <- renderUI({
-    req(win_par())
-    rng <- round(win_par()$peak_Mbp + 
-                   c(-1,1) * win_par()$window_Mbp, 
+    rng <- round(req(win_par$peak_Mbp) + 
+                   c(-1,1) * req(win_par$window_Mbp), 
                  1)
     if(is.null(selected <- input$scan_window))
       selected <- rng
