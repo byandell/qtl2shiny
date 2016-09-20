@@ -19,7 +19,8 @@ shinyHaplo <- function(input, output, session,
   })
 
   ## Genotype Probabilities.
-  probs_obj <- callModule(shinyProbs, "probs", win_par)
+  probs_obj <- callModule(shinyProbs, "probs", 
+                          win_par)
 
   ## Genome Scan.
   callModule(shinyScan1Plot, "hap_scan", 

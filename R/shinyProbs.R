@@ -3,7 +3,7 @@
 #' Shiny genotype probability access.
 #' 
 #' @param input,output,session standard shiny arguments
-#' @param win_par reactive arguments
+#' @param win_par,pheno_names,probs_obj reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -12,34 +12,37 @@
 shinyProbs <- function(input, output, session,
                        win_par) {
   ns <- session$ns
-  
-  reactive({
+
+  probs_obj <- reactive({
     chr_id <- req(win_par$chr_id)
-    cat(stderr(), "probs", chr_id, "\n")
+    cat(file = stderr(), "probs", chr_id, "\n")
     withProgress(message = 'Read probs ...', value = 0, {
       setProgress(1)
       read_probs(chr_id, datapath)
     })
   })
+  
+  probs_obj
 }
 #' @rdname shinyProbs
 #' @export
 shinyProbs36 <- function(input, output, session,
-                       win_par) {
+                         win_par) {
   ns <- session$ns
 
   ## Probs object for 36 diplotypes.
-  reactive({
+  probs_obj <- reactive({
     chr_id <- req(win_par$chr_id)
     range_val <- req(win_par$peak_Mbp) + 
       c(-1,1) * req(win_par$window_Mbp)
-    cat(stderr(), "probs36", chr_id, range_val[1], range_val[2], "\n")
+    cat(file = stderr(), "probs36", chr_id, range_val[1], range_val[2], "\n")
     withProgress(message = 'Diplotype Probs ...', value = 0, {
       setProgress(1)
       read_probs36(chr_id, range_val[1], range_val[2],
                    datapath)
     })
   })
+  probs_obj
 }
 #' @rdname shinyProbs
 #' @export

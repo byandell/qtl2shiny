@@ -15,7 +15,7 @@ shinySNPProbs(input, output, session, win_par, pheno_names, probs_obj)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par}{reactive arguments}
+\item{win_par, pheno_names, probs_obj}{reactive arguments}
 }
 \description{
 Shiny genotype probability access.

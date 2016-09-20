@@ -38,6 +38,7 @@ shinySNPAllele <- function(input, output, session,
                   win_par, pheno_names, probs_obj)
   ## SNP Scan.
   snp_scan_obj <- reactive({
+    cat(file = stderr(), "snp_scan_obj", snp_action(), "\n")
     req(phe_df())
     snpprobs_act <- 
       snpprob_collapse(req(snpprobs_obj()), snp_action())
@@ -157,6 +158,7 @@ shinySNPAllele <- function(input, output, session,
   
   ## Return patterns
   reactive({ # patterns
+    cat(file = stderr(), "patterns\n")
     summary(top_snps_tbl()) %>%
       filter(max_lod >= 3) %>%
       mutate(contrast = snp_action()) %>%

@@ -79,9 +79,13 @@ shinyScan1Plot <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
 
   output$scan_choice <- renderUI({
-    if(req(input$button) == "Effects") {
-      uiOutput(ns("pheno_name"))
-    }
+    switch(req(input$button),
+           Effects = uiOutput(ns("pheno_name")))
+  })
+  output$win_choice <- renderUI({
+    switch(req(input$button),
+           LOD     =,
+           Effects = uiOutput(ns("scan_window")))
   })
   output$scan_output <- renderUI({
     switch(req(input$button),
@@ -127,7 +131,7 @@ shinyScan1PlotUI <- function(id) {
     h4(strong("Genome Scans")),
     uiOutput(ns("radio")),
     uiOutput(ns("scan_choice")),
-    uiOutput(ns("scan_window")),
+    uiOutput(ns("win_choice")),
     fluidRow(
       column(6, downloadButton(ns("downloadData"), "CSV")),
       column(6, downloadButton(ns("downloadPlot"), "Plots"))))

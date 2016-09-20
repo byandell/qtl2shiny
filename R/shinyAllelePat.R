@@ -20,21 +20,21 @@ shinyAllelePat <- function(input, output, session,
     dimnames(req(snp_scan_obj())$lod)[[2]]
   })
   observeEvent(pheno_names(), {
-    cat(stderr(), "allele_pat", length(pheno_names()), "\n")
+    cat(file = stderr(), "allele_pat", length(pheno_names()), input$button, "\n")
     button_val <- c("Top SNPs","Pattern",
                     "All Phenos","All Patterns",
                     "Summary")
     if(length(pheno_names() == 1)) {
       button_val <- button_val[-(3:4)]
     }
-    selected <- input$buttion
+    selected <- input$button
     if(!is.null(selected)) {
       if(!(selected %in% button_val))
         selected <- button_val[1]
+      updateRadioButtons(session, "button", 
+                         selected = selected,
+                         choices = button_val)
     }
-    updateRadioButtons(session, "button", 
-                       selected = selected,
-                       choices = button_val)
   })
   
 
@@ -157,11 +157,18 @@ shinyAllelePat <- function(input, output, session,
     }
   )
   output$radio <- renderUI({
+    button_val <- c("Top SNPs","Pattern",
+                    "All Phenos","All Patterns",
+                    "Summary")
+    if(length(pheno_names() == 1)) {
+      button_val <- button_val[-(3:4)]
+    }
+    if(!is.null(selected <- input$button)) {
+      if(!(selected %in% button_val))
+        selected <- button_val[1]
+    }
     radioButtons(ns("button"), "",
-                 c("Top SNPs","Pattern",
-                   "All Phenos","All Patterns",
-                   "Summary"),
-                 input$button)
+                 button_val, selected)
   })
   input
 }

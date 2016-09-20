@@ -14,11 +14,14 @@ shinyDiplo <- function(input, output, session,
   ns <- session$ns
 
   chr_pos <- reactive({
-    make_chr_pos (win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
+    make_chr_pos(win_par$chr_id, 
+                 win_par$peak_Mbp, 
+                 win_par$window_Mbp)
   })
 
   ## Probs object for 36 diplotypes.
-  probs36_obj <- callModule(shinyProbs36, "probs36", win_par)
+  probs36_obj <- callModule(shinyProbs36, "probs36", 
+                            win_par)
 
   snp_action <- reactive({input$snp_action})
   
@@ -35,7 +38,8 @@ shinyDiplo <- function(input, output, session,
   ## CC names
   output$cc_names <- renderText({
     cc <- CCcolors
-    paste(LETTERS[seq_along(cc)], names(cc), sep = "=", collapse = ", ")
+    paste(LETTERS[seq_along(cc)], names(cc), 
+          sep = "=", collapse = ", ")
   })
   output$dip_input <- renderUI({
     switch(req(input$button),
