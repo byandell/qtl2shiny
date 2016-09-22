@@ -1,0 +1,94 @@
+---
+title: "Shine a Light on MAGIC Data"
+author: "Brian S Yandell, <http://www.stat.wisc.edu/~yandell>"
+date: "Jackson Labs, 18 October 2016"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## shine a light on MAGIC data | Shiny tool to study DO and other MAGIC crosses
+
+- What is MAGIC?
+- Allele vs SNP Scans
+- Additive Model is Quick & Easy
+- Gene/SNP Action
+- Shiny under the Hood
+
+## what is MAGIC?
+
+- Multiparent Advanced Generation Inter-Cross (MAGIC) 
+- experimental populations with >2 segregating alleles
+- de Koning DJ, McIntyre LM ([G3 2014](http://dx.doi.org/10.1534/g3.114.013680))
+- animals: mouse, Drosophila
+- plants: maize, wheat, rice, sorghum, Arabidopsis, Pigeonpea
+- mapping populations: AIL, CC, HS, DO, DSPR
+
+## allele vs SNP scans
+
+- allele-based genome scan: LOD maps
+    + continuous curve across loci
+    + interval mapping for missing data
+    + model by founder alleles
+- SNP-based genome scan: GWAS Manhattan plots
+    + discrete values across SNPs or other features
+    + model by number of copies of SNP reference 
+
+## allele-based genome scan
+
+- DO founder alleles: A,B,C,D,E,F,G,H
+- response ~ sum of effect of alleles
+- additive model
+    + y ~ a_1 + a_2
+    + test if all a's are the same
+    + 8 unknown parameters
+- full model
+    + y ~ a_1 + a_2 + d_12
+    + test of all a's and d's are the same
+    + 36 unknown parameters
+
+## SNP-based genome scan
+
+- SNP recorded as pair of DNA base pairs (A,C,G,T)
+    + SNPs typically have two values (G/T)
+    + individual has genotype GG, GT or TT
+- simplifed to number of copies of reference (s=0,1,2)
+    + DO reference is B = B6
+- additive model:
+    + y ~ a + b * s (2 unknowns)
+    + test if b is zero
+- full model
+    + y ~ a_s       (3 unknowns)
+    + test if all a's are the same
+
+## additive model is quick & easy
+
+- good news
+    + fewer parameters to understand
+    + easy to build tools
+    + fast to run
+    + relate LOD to allele effects directly
+    + likely good model for mRNA expression
+- bad news
+    + could miss important gene action information
+    + could miss loci (false negatives)
+    + could detect false positives
+    + LOD and allele effects may conflict due to dominance
+
+## Gene/SNP Action
+
+- 
+- 
+
+----
+
+![picture of spaghetti](images/spaghetti.jpg)
+
+## Shiny under the Hood
+
+- 
+- 

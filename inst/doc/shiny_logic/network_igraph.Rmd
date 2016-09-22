@@ -134,13 +134,13 @@ plot(net, vertex.shape="none", vertex.label=V(net)$media,
 
 ```{r}
 # Generate colors based on media type:
-colrs <- c("gray50", "tomato", "gold")
-V(net)$color <- colrs[V(net)$media.type]
+colrs <- c("skyblue", "tomato", "slategrey", "gold")
+V(net)$color <- colrs[factor(V(net)$logic)]
 
 # Compute node degree (#links) and use it to set node size:
 deg <- degree(net, mode="all")
 V(net)$size <- deg*3
-V(net)$size <- V(net)$audience.size*0.6
+#V(net)$size <- V(net)$audience.size*0.6
 
 # The labels are currently node IDs.
 # Setting them to NA will render no labels:
@@ -148,7 +148,7 @@ V(net)$label.color <- "black"
 V(net)$label <- NA
 
 # Set edge width based on weight:
-E(net)$width <- E(net)$weight/6
+#E(net)$width <- E(net)$weight/6
 
 #change arrow size and edge color:
 E(net)$arrow.size <- .2
@@ -176,6 +176,7 @@ Add legend explaining color meaning.
 * `ncol`: number of columns for legend
 
 ```{r}
+### NOT CHANGED YET.
 plot(net) 
 legend(x = -1.1, y = -1.1,
        c("Newspaper","Television", "Online News"), 
