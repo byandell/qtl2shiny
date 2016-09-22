@@ -1,0 +1,368 @@
+---
+title: "igraph Dataset 1"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+Examples pulled from **Network Visualization with R**, [Polnet 2016](http://www.kateto.net/polnet2016) by Katya Ognyanova.
+
+```{r}
+suppressPackageStartupMessages({
+  library(RColorBrewer)
+  library(readr)
+  library(dplyr)
+  library(igraph)
+})
+```
+
+```{r}
+data_dir <- file.path("inst", "doc", "shiny_logic")
+data_dir <- "."
+```
+
+For igraph plotting parameters, node options start with `vertex.` and edge options start with `edge.`. Get options with
+
+```{r eval=FALSE}
+?igraph.plotting
+```
+
+Set node & edge options in two ways:
+
+1. specify them in `plot()` function
+2. add them to the `igraph` object
+
+### Basic igraph with Dataset 1
+
+```{r}
+nodes <- 
+   read_csv(file.path(data_dir,
+                      "ShinyLogicNodes.csv"))
+links <- 
+   read_csv(file.path(data_dir, 
+                      "ShinyLogicEdges.csv"))
+```
+
+Convert dataset 1 to an igraph object.
+The `graph_from_data_frame()` function takes two data frames, `d` (edges of the network) and `vertices` (nodes).
+`d` has (at least) two columns with source and target node IDs for each network tie.
+`vertices` has (at least) a column of node IDs.
+Additional columns in either data frame are interpreted as attributes.
+
+```{r}
+(net <- graph_from_data_frame(d=links, vertices=nodes, directed=T)) 
+```
+
+Access nodes, edges, and attributes:
+
+```{r}
+E(net)
+```
+
+```{r}
+V(net)
+```
+
+Find specific nodes and edges by attribute
+
+```{r}
+V(net)[type=="shiny"]
+```
+
+Extract an edge list or matrix from igraph networks.
+
+```{r}
+tbl_df(as_edgelist(net, names=T))
+```
+
+```{r}
+as_adjacency_matrix(net, attr="weight")
+```
+
+Look at network matrix directly:
+
+```{r}
+net[1,]
+```
+
+```{r}
+net[5,7]
+```
+
+Plot graph, removing loops and labels, and reducing arrow size.
+
+```{r}
+net <- simplify(net, remove.multiple = F, remove.loops = T) 
+```
+
+```{r}
+plot(net, 
+     edge.arrow.size = 0.4,
+     vertex.label = NA)
+```
+
+### Annotating a graph
+
+#### Using options to plot
+
+Plot with curved edges (`edge.curved=.1`) and reduce arrow size.
+Using curved edges reveals multiple links between two nodes (e.g. links going in either direction, or multiplex links).
+
+```{r}
+plot(net, edge.arrow.size=.4, edge.curved=.1)
+```
+
+Set node color to `orange` and the border color to hex `#555555`.
+Replace the vertex label with the node names stored in `media`.
+
+```{r}
+plot(net, edge.arrow.size=.4, edge.curved=0,
+     vertex.color="orange", vertex.frame.color="#555555",
+     vertex.label=V(net)$media, vertex.label.color="black",
+     vertex.label.cex=.7) 
+```
+
+Semantic network with only node labels.
+
+```{r}
+plot(net, vertex.shape="none", vertex.label=V(net)$media, 
+     vertex.label.font=2, vertex.label.color="gray40",
+     vertex.label.cex=0.7, edge.color="gray90")
+```
+
+#### Using graph attributes
+
+```{r}
+# Generate colors based on media type:
+colrs <- c("gray50", "tomato", "gold")
+V(net)$color <- colrs[V(net)$media.type]
+
+# Compute node degree (#links) and use it to set node size:
+deg <- degree(net, mode="all")
+V(net)$size <- deg*3
+V(net)$size <- V(net)$audience.size*0.6
+
+# The labels are currently node IDs.
+# Setting them to NA will render no labels:
+V(net)$label.color <- "black"
+V(net)$label <- NA
+
+# Set edge width based on weight:
+E(net)$width <- E(net)$weight/6
+
+#change arrow size and edge color:
+E(net)$arrow.size <- .2
+E(net)$edge.color <- "gray80"
+
+plot(net) 
+```
+
+Override attributes explicitly in the plot
+
+```{r}
+plot(net, edge.color="orange", vertex.color="gray50") 
+```
+
+#### Legend
+
+Add legend explaining color meaning.
+
+* `x,y`: legend coordinates
+* `pch`: element symbol
+* `pt.bg`: background color
+* `col`:  border color, 
+* `pt.cex`: symbol size
+* `bty`: type of box around legend
+* `ncol`: number of columns for legend
+
+```{r}
+plot(net) 
+legend(x = -1.1, y = -1.1,
+       c("Newspaper","Television", "Online News"), 
+       pch = 21,
+       col = "#777777", pt.bg = colrs, 
+       pt.cex = 2.5, 
+       bty = "n", ncol = 1)
+```
+
+### Highlight Graph Aspects
+
+Color graph edges based on source node color.
+Here `ends()` gives us the start and end for each edge in `es`, and 
+`names` controls whether `ends()` will return node names or IDs.
+
+```{r}
+edge.start <- ends(net, es=E(net), names=F)[,1] # get the "from" node
+edge.col <- V(net)$color[edge.start]
+plot(net, edge.color = edge.col, edge.curved = .1)
+```
+
+Keep only edges with weight higher than network mean using `delete_edges(net, edges)`.
+
+```{r}
+cut.off <- mean(links$weight) 
+net.sp <- delete_edges(net, E(net)[weight<cut.off])
+plot(net.sp) 
+```
+
+Plot two tie types (`hyperlink` and `mention`) separately.
+
+```{r}
+E(net)$width <- 1.5
+net.m <- net - E(net)[E(net)$type=="hyperlink"] # another way to delete edges:
+net.h <- net - E(net)[E(net)$type=="mention"]   # using the minus operator
+par(mfrow=c(1,2))
+plot(net.h, vertex.color="orange", main="Tie: Hyperlink")
+plot(net.m, vertex.color="lightsteelblue2", main="Tie: Mention")
+```
+
+Force nodes to stay in place for both plots.
+
+```{r}
+l <- layout_with_fr(net)
+par(mfrow=c(1,2))
+plot(net.h, vertex.color="orange", layout=l, main="Tie: Hyperlink")
+plot(net.m, vertex.color="lightsteelblue2", layout=l, main="Tie: Mention")
+```
+
+Show network communities.
+
+```{r}
+par(mfrow=c(1,2))
+
+# Community detection based on label propagation:
+clp <- cluster_label_prop(net)
+class(clp)
+
+# Community detection returns an object of class "communities" 
+# which igraph knows how to plot: 
+plot(clp, net)
+ 
+# We can also plot the communities without relying on their built-in plot:
+V(net)$community <- clp$membership
+colrs <- adjustcolor( c("gray50", "tomato", "gold", "yellowgreen"), alpha=.6)
+plot(net, vertex.color=colrs[V(net)$community])
+```
+
+#### Highlight Distance to Node(s)
+
+Focus on a particular node or group of nodes. In the example media network, examine spread of information from the `NYT`.
+
+The `distances()` function returns a matrix of shortest paths from nodes listed in the `v` parameter to ones included in the `to` parameter.
+
+
+```{r}
+(dist.from.NYT <- distances(net, v=V(net)[media=="NY Times"], 
+                           to=V(net), weights=NA))
+```
+  
+Set colors to plot the distances
+
+```{r}
+oranges <- colorRampPalette(c("dark red", "gold"))
+col <- oranges(max(dist.from.NYT) + 1)
+col <- col[dist.from.NYT + 1]
+plot(net, vertex.color = col,
+     vertex.label = dist.from.NYT, 
+     edge.arrow.size = .6, 
+     vertex.label.color = "white")
+```
+
+#### Highlight a network path
+
+```{r}
+(news.path <- shortest_paths(net, 
+                            from = V(net)[media=="MSNBC"], 
+                             to  = V(net)[media=="New York Post"],
+                             output = "both")) # both path nodes and edges
+```
+
+Generate edge color and width and node color variables to plot path.
+Awkward, but it works.
+
+```{r}
+ecol <- rep("gray80", ecount(net))
+ecol[unlist(news.path$epath)] <- "orange"
+ew <- rep(2, ecount(net))
+ew[unlist(news.path$epath)] <- 4
+vcol <- rep("gray40", vcount(net))
+vcol[unlist(news.path$vpath)] <- "gold"
+```
+
+```{r}
+plot(net, 
+     vertex.color = vcol, 
+     edge.color = ecol, 
+     edge.width = ew, 
+     edge.arrow.mode = 0)
+```
+
+Highlight edges of a vertex, for instance the `WSJ`. For a single node, use `incident()`, for multiple nodes use `incident_edges()`.
+
+```{r}
+(inc.edges <- incident(net,  V(net)[media=="Wall Street Journal"], mode="all"))
+```
+
+Set colors to plot the selected edges.
+
+```{r}
+ecol <- rep("gray80", ecount(net))
+ecol[inc.edges] <- "orange"
+vcol <- rep("grey40", vcount(net))
+vcol[V(net)$media=="Wall Street Journal"] <- "gold"
+```
+
+```{r}
+plot(net, 
+     vertex.color = vcol, 
+     edge.color = ecol)
+```
+
+Highlight immediate neighbors of a vertex using `neighbors()` to find all nodes one step out from the focal actor. To find the neighbors for multiple nodes, use `adjacent_vertices()`. To find node neighborhoods going more than one step out, use function `ego()` with parameter order set to the number of steps out to go from the focal node(s).
+
+```{r}
+(neigh.nodes <- neighbors(net, V(net)[media=="Wall Street Journal"], mode="out"))
+```
+
+```{r}
+vcol[neigh.nodes] <- "#ff9d00"
+plot(net, vertex.color=vcol)
+```
+
+Highlight a group of nodes by `mark`ing them (recall network communities).
+
+```{r}
+par(mfrow=c(1,2))
+plot(net, 
+     mark.groups = c(1,4,5,8), 
+     mark.col = "#C5E5E7", 
+     mark.border = NA)
+
+# Mark multiple groups:
+plot(net, 
+     mark.groups = list(c(1,4,5,8), c(15:17)),
+     mark.col = c("#C5E5E7","#ECD89A"), 
+     mark.border = NA)
+```
+
+### Other Views of Networks besides Hairballs
+
+Heatmap of network matrix
+
+```{r}
+netm <- as_adjacency_matrix(net, attr="weight", sparse=F)
+colnames(netm) <- V(net)$media
+rownames(netm) <- V(net)$media
+
+palf <- colorRampPalette(c("gold", "dark orange")) 
+heatmap(netm[,17:1], Rowv = NA, Colv = NA, col = palf(100), 
+        scale="none", margins=c(10,10) )
+```
+
+Degree distribution for network.
+
+```{r}
+deg.dist <- degree_distribution(net, cumulative=T, mode="all")
+plot( x=0:max(deg), y=1-deg.dist, pch=19, cex=1.2, col="orange", 
+      xlab="Degree", ylab="Cumulative Frequency")
+```
