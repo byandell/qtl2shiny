@@ -64,6 +64,7 @@ ui <- dashboardPage(skin="red",
   )
 )
 
+#####################################################
 server <- function(input, output, session) {
   
   ## Data Setup
@@ -100,7 +101,7 @@ server <- function(input, output, session) {
 
   ## Haplotype Analysis.
   callModule(shinyHaplo, "hap_scan", 
-             set_par()$win_par, phe_df, cov_mx, K_chr)
+             set_par()$win_par, pmap_obj, phe_df, cov_mx, K_chr)
 
   ## Diplotype Analysis.
   callModule(shinyDiplo, "dip_scan",

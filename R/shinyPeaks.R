@@ -69,7 +69,7 @@ shinyPeaks <- function(input, output, session,
       chr_ct <- as.character(input$chr_id)
       scan_in <- scan_in %>%
         filter(chr == chr_ct)
-      pmap <- pmap_obj()
+      pmap <- req(pmap_obj())
       peak_Mbp <- scan_in$pos[1]
       rng <- round(range(pmap[[chr_ct]]), 2)
       updateSliderInput(session, "peak_Mbp",

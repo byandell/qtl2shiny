@@ -1,3 +1,4 @@
+
 ## Various utilities for qtl2shiny
 
 #' Number of phenotypes examined

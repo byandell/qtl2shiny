@@ -3,22 +3,20 @@
 #' Shiny module for top SNP analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_par,chr_pos,snp_scan_obj,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
+#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #' 
 #' @export
 shinyAllelePat <- function(input, output, session,
-                        snp_par, chr_pos, snp_scan_obj, 
-                        top_snps_tbl, gene_exon_tbl, 
+                        snp_par, chr_pos, pheno_names,
+                        snp_scan_obj, top_snps_tbl, 
+                        gene_exon_tbl, 
                         snp_action = reactive({"basic"})) {
   ns <- session$ns
 
-  ## Phenotype names.
-  pheno_names <- reactive({
-    dimnames(req(snp_scan_obj())$lod)[[2]]
-  })
+  ## Update Radio Button if 1 or >1 Phenotype Names.
   observeEvent(pheno_names(), {
     button_val <- c("Top SNPs","Pattern",
                     "All Phenos","All Patterns",
@@ -35,11 +33,11 @@ shinyAllelePat <- function(input, output, session,
                          choices = button_val)
     }
   })
-  
 
   ## Shiny Module
   callModule(shinyTopFeature, "top_feature",
-             chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl)
+             snp_par, chr_pos, 
+             snp_scan_obj, top_snps_tbl, gene_exon_tbl)
   
   sum_top_pat <- reactive({
     scan_snp <- req(snp_scan_obj())

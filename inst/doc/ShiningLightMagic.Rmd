@@ -4,7 +4,7 @@ author: "Brian S Yandell, <http://www.stat.wisc.edu/~yandell>"
 date: "Jackson Labs, 18 October 2016"
 output: 
   ioslides_presentation:
-    widescreen: true
+    widescreen: false
 ---
 
 ```{r setup, include=FALSE}
@@ -23,32 +23,36 @@ knitr::opts_chunk$set(echo = FALSE)
 
 - Multiparent Advanced Generation Inter-Cross (MAGIC) 
 - experimental populations with >2 segregating alleles
+- advanced generations for many meiotic events
+    + typically low linkage disequilibrium
+    + capable of fine mapping in one pass
 - de Koning DJ, McIntyre LM ([G3 2014](http://dx.doi.org/10.1534/g3.114.013680))
-- animals: mouse, Drosophila
-- plants: maize, wheat, rice, sorghum, Arabidopsis, Pigeonpea
-- mapping populations: AIL, CC, HS, DO, DSPR
+    + animals: mouse, Drosophila
+    + plants: maize, wheat, rice, sorghum, Arabidopsis, Pigeonpea
+    + mapping populations: AIL, CC, HS, DO, DSPR
 
 ## allele vs SNP scans
 
 - allele-based genome scan: LOD maps
     + continuous curve across loci
     + interval mapping for missing data
-    + model by founder alleles
+    + model effect of founder alleles
 - SNP-based genome scan: GWAS Manhattan plots
-    + discrete values across SNPs or other features
-    + model by number of copies of SNP reference 
+    + discrete tests of SNPs or other features
+    + typically 2 SNP alleles (1 is reference)
+    + model effect of number of non-ref SNP copies 
 
 ## allele-based genome scan
 
 - DO founder alleles: A,B,C,D,E,F,G,H
-- response ~ sum of effect of alleles
+- response ~ sum of effects of alleles
 - additive model
     + y ~ a_1 + a_2
     + test if all a's are the same
     + 8 unknown parameters
 - full model
     + y ~ a_1 + a_2 + d_12
-    + test of all a's and d's are the same
+    + test if all a's and d's are the same
     + 36 unknown parameters
 
 ## SNP-based genome scan
@@ -56,7 +60,8 @@ knitr::opts_chunk$set(echo = FALSE)
 - SNP recorded as pair of DNA base pairs (A,C,G,T)
     + SNPs typically have two values (G/T)
     + individual has genotype GG, GT or TT
-- simplifed to number of copies of reference (s=0,1,2)
+- simplifed to number of copies of non-reference allele
+    + s = 0,1,2
     + DO reference is B = B6
 - additive model:
     + y ~ a + b * s (2 unknowns)
@@ -81,9 +86,27 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Gene/SNP Action
 
-- 
-- 
+- study additive & dominance of single trait
+- compare co-mapping traits -- same gene action?
+- extend discrete SNP-based scan to continuous
+    + scan of particular allele contrasts
+    + LOD and allele contrast scans
 
+## SNP contrasts
+
+- identify 3-level SNP with strong LOD
+- interpret as contrast involving 36 allele pairs
+    + example AB:CDEFGH
+- divide subjects into 3 groups at each locus
+    + AA,AB,BB allele pairs (3)
+    + CC,CD,...,GH,HH allele pairs (21)
+    + rest allele from AB and allele from CDEFGH (12)
+- scan region for this set of contrasts
+    + LOD scan with 2 df of AB:het:CDEFGH
+    + allele group scan
+    
+## Slide for image
+    
 ----
 
 ![picture of spaghetti](images/spaghetti.jpg)

@@ -6,8 +6,8 @@
 \alias{shinyScan1SNPUI}
 \title{Shiny scan1 SNP analysis and plot module}
 \usage{
-shinyScan1SNP(input, output, session, snp_par, chr_pos, snp_scan_obj,
-  snp_action = reactive({     "basic" }))
+shinyScan1SNP(input, output, session, snp_par, chr_pos, pheno_names,
+  snp_scan_obj, snp_action = reactive({     "basic" }))
 
 shinyScan1SNPUI(id)
 
@@ -16,9 +16,9 @@ shinyScan1SNPOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{snp_par, chr_pos, pheno_names, snp_scan_obj, snp_action}{reactive arguments}
 
-\item{win_par, phe_df, cov_mx, probs_obj, K_chr, snp_action}{reactive arguments}
+\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }
 \description{
 Shiny module for scan1 analysis and plots.

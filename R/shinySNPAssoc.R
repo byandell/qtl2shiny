@@ -1,7 +1,7 @@
 #' Shiny SNP Consequence
 #'
 #' @param input,output,session standard shiny arguments
-#' @param chr_pos,top_snps_tbl,snp_action reactive arguments
+#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -10,18 +10,19 @@
 #'
 #' @export
 shinySNPAssoc <- function(input, output, session,
-                        snp_par, chr_pos, snp_scan_obj, 
-                        top_snps_tbl, gene_exon_tbl,
+                        snp_par, chr_pos, pheno_names,
+                        snp_scan_obj, top_snps_tbl, 
+                        gene_exon_tbl,
                         snp_action = reactive({"basic"})) {
   ns <- session$ns
-  phename <- reactive({dimnames(snp_scan_obj()$lod)[[2]]})
   feature_file <- reactive({file.path(datapath, 
                                       "mgi_db.sqlite")})
   
   ## Shiny Modules
   ## SNP Association Scan
   callModule(shinyScan1SNP, "snp_scan",
-             snp_par, chr_pos, snp_scan_obj, snp_action)
+             snp_par, chr_pos, pheno_names,
+             snp_scan_obj, snp_action)
   ## SNP Summary
   callModule(shinySNP, "best_snp", 
              chr_pos, top_snps_tbl)

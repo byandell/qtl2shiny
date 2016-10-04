@@ -10,7 +10,9 @@
 #'
 #' @export
 shinyTopFeature <- function(input, output, session,
-                     chr_pos, snp_scan_obj, top_snps_tbl, gene_exon_tbl) {
+                            snp_par, chr_pos, 
+                            snp_scan_obj, top_snps_tbl, 
+                            gene_exon_tbl) {
   ns <- session$ns
 
   top_feature <- reactive({
@@ -29,16 +31,13 @@ shinyTopFeature <- function(input, output, session,
     summary(top_feature(), "pattern")
   }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
   phename <- reactive({dimnames(snp_scan_obj()$lod)[[2]]})
-  output$top_names <- renderUI({
-    selectInput(ns("top_name"), NULL, phename())
-  })
   output$top_gene_by_snp <- renderPlot({
-    req(top_feature(), input$top_name)
-    plot(top_feature(), input$top_name, "consequence")
+    req(top_feature(), snp_par$pheno_name)
+    plot(top_feature(), snp_par$pheno_name, "consequence")
   })
   output$top_gene_by_pattern <- renderPlot({
-    req(top_feature(),input$top_name)
-    plot(top_feature(), input$top_name, "pattern")
+    req(top_feature(),snp_par$pheno_name)
+    plot(top_feature(), snp_par$pheno_name, "pattern")
   })
   output$by_choice <- renderUI({
     switch(input$by_choice,
@@ -81,9 +80,8 @@ shinyTopFeature <- function(input, output, session,
 #' @export
 shinyTopFeatureInput <- function(id) {
   ns <- NS(id)
-  fluidRow(
-    uiOutput(ns("top_names")),
-    selectInput(ns("by_choice"), NULL, c("Pattern","Consequence")))
+  selectInput(ns("by_choice"), NULL, 
+              c("Pattern","Consequence"))
 }
 #' @rdname shinyTopFeature
 #' @export

@@ -67,11 +67,13 @@ shinySNPAllele <- function(input, output, session,
   ## Shiny Modules
   ## SNP Association
   ass_par <- callModule(shinySNPAssoc, "snp_assoc",
-             input, chr_pos, snp_scan_obj, top_snps_tbl, 
+             input, chr_pos, pheno_names,
+             snp_scan_obj, top_snps_tbl, 
              gene_exon_tbl, snp_action)
   ## Allele Patterns
   pat_par <- callModule(shinyAllelePat, "allele_pat",
-             input, chr_pos, snp_scan_obj, top_snps_tbl, 
+             input, chr_pos, pheno_names,
+             snp_scan_obj, top_snps_tbl, 
              gene_exon_tbl, snp_action)
 
   # Scan Window slider
@@ -86,10 +88,10 @@ shinySNPAllele <- function(input, output, session,
   })
 
   ## Select phenotype for plots.
-  output$pheno_assoc <- renderUI({
-    selectInput(ns("pheno_assoc"), NULL,
+  output$pheno_name <- renderUI({
+    selectInput(ns("pheno_name"), NULL,
                 choices = req(pheno_names()),
-                selected = input$pheno_assoc)
+                selected = input$pheno_name)
   })
   
   ## Button Options.
@@ -108,7 +110,7 @@ shinySNPAllele <- function(input, output, session,
              }
            })
     if(pheno_choice) {
-      uiOutput(ns("pheno_assoc"))
+      uiOutput(ns("pheno_name"))
     }
   })
   output$win_choice <- renderUI({

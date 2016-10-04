@@ -7,8 +7,8 @@
 \alias{shinyTopFeatureUI}
 \title{Shiny Top Features in SNP Region module}
 \usage{
-shinyTopFeature(input, output, session, chr_pos, snp_scan_obj, top_snps_tbl,
-  gene_exon_tbl)
+shinyTopFeature(input, output, session, snp_par, chr_pos, snp_scan_obj,
+  top_snps_tbl, gene_exon_tbl)
 
 shinyTopFeatureInput(id)
 
