@@ -72,6 +72,7 @@ server <- function(input, output, session) {
   peaks_tbl <- reactive({peaks})
   pmap_obj <- reactive({pmap})
   analyses_tblr <- reactive({analyses_tbl})
+  data_path <- reactive({datapath})
   
   set_par <- callModule(shinySetup, "setup", 
                     pheno_typer, peaks_tbl, 
@@ -101,11 +102,15 @@ server <- function(input, output, session) {
 
   ## Haplotype Analysis.
   callModule(shinyHaplo, "hap_scan", 
-             set_par()$win_par, pmap_obj, phe_df, cov_mx, K_chr)
+             set_par()$win_par, pmap_obj, 
+             phe_df, cov_mx, K_chr,
+             data_path)
 
   ## Diplotype Analysis.
   callModule(shinyDiplo, "dip_scan",
-             set_par()$win_par, phe_df, cov_mx, K_chr)
+             set_par()$win_par, 
+             phe_df, cov_mx, K_chr,
+             data_path)
 }
 
 shinyApp(ui, server)

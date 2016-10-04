@@ -8,8 +8,8 @@
 \title{Shiny SNP Consequence}
 \usage{
 shinySNPAssoc(input, output, session, snp_par, chr_pos, pheno_names,
-  snp_scan_obj, top_snps_tbl, gene_exon_tbl, snp_action = reactive({    
-  "basic" }))
+  snp_scan_obj, top_snps_tbl, gene_exon_tbl, data_path,
+  snp_action = reactive({     "basic" }))
 
 shinySNPAssocInput(id)
 
@@ -20,7 +20,7 @@ shinySNPAssocOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{snp_par, chr_pos, pheno_names, snp_scan_obj, top_snps_tbl, gene_exon_tbl, snp_action}{reactive arguments}
+\item{snp_par, chr_pos, pheno_names, snp_scan_obj, top_snps_tbl, gene_exon_tbl, data_path, snp_action}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

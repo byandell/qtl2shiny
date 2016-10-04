@@ -3,7 +3,7 @@
 #' Shiny module to coordinate SNP and allele analyses and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,snp_action reactive arguments
+#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,data_path,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -22,6 +22,7 @@ shinySNPAllele <- function(input, output, session,
                           job_par, win_par, 
                           phe_df, cov_mx,
                           probs_obj, K_chr,
+                          data_path,
                           snp_action = reactive({"basic"})) {
   ns <- session$ns
   
@@ -35,7 +36,8 @@ shinySNPAllele <- function(input, output, session,
   ## Reactives
   ## SNP Probabilities.
   snpprobs_obj <- callModule(shinySNPProbs, "snp_probs",
-                  win_par, pheno_names, probs_obj)
+                  win_par, pheno_names, probs_obj,
+                  data_path)
   ## SNP Scan.
   snp_scan_obj <- reactive({
     req(phe_df())
@@ -60,7 +62,7 @@ shinySNPAllele <- function(input, output, session,
     withProgress(message = 'Gene Exon Calc ...', value = 0, {
       setProgress(1)
       get_gene_exon_snp(req(top_snps_tbl()),
-                        file.path(datapath, "mgi_db.sqlite"))
+                        file.path(data_path(), "mgi_db.sqlite"))
     })
   })
   
@@ -69,7 +71,8 @@ shinySNPAllele <- function(input, output, session,
   ass_par <- callModule(shinySNPAssoc, "snp_assoc",
              input, chr_pos, pheno_names,
              snp_scan_obj, top_snps_tbl, 
-             gene_exon_tbl, snp_action)
+             gene_exon_tbl, data_path,
+             snp_action)
   ## Allele Patterns
   pat_par <- callModule(shinyAllelePat, "allele_pat",
              input, chr_pos, pheno_names,

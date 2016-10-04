@@ -3,14 +3,16 @@
 #' Shiny diplotype SNP/Gene action analysis.
 #' 
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,K_chr reactive arguments
+#' @param win_par,phe_df,cov_mx,K_chr,data_path reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 shinyDiplo <- function(input, output, session,
-                       win_par, phe_df, cov_mx, K_chr) {
+                       win_par, 
+                       phe_df, cov_mx, K_chr,
+                       data_path) {
   ns <- session$ns
 
   chr_pos <- reactive({
@@ -21,14 +23,15 @@ shinyDiplo <- function(input, output, session,
 
   ## Probs object for 36 diplotypes.
   probs36_obj <- callModule(shinyProbs36, "probs36", 
-                            win_par)
+                            win_par, data_path)
 
   snp_action <- reactive({input$snp_action})
   
   ## SNP Association
   patterns <- callModule(shinySNPAllele, "snp_allele",
                          input, win_par, phe_df, cov_mx, 
-                         probs36_obj, K_chr, snp_action)
+                         probs36_obj, K_chr, data_path,
+                         snp_action)
   
   callModule(shinyPattern, "dip_pat",
              chr_pos, phe_df, K_chr, cov_mx,

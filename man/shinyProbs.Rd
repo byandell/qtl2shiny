@@ -6,16 +6,17 @@
 \alias{shinySNPProbs}
 \title{Shiny Probability module}
 \usage{
-shinyProbs(input, output, session, win_par)
+shinyProbs(input, output, session, win_par, data_path)
 
-shinyProbs36(input, output, session, win_par)
+shinyProbs36(input, output, session, win_par, data_path)
 
-shinySNPProbs(input, output, session, win_par, pheno_names, probs_obj)
+shinySNPProbs(input, output, session, win_par, pheno_names, probs_obj,
+  data_path)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, pheno_names, probs_obj}{reactive arguments}
+\item{win_par, pheno_names, probs_obj, data_path}{reactive arguments}
 }
 \description{
 Shiny genotype probability access.
