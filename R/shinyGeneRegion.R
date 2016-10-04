@@ -46,9 +46,11 @@ shinyGeneRegion <- function(input, output, session,
     ## Ordered by pseudogenes first, then genes
     ## negative (blue) strand, then unknown (grey), then positive (red) strand.
     wrng <- snp_par$scan_window
+    pheno <- top_snps_tbl()$pheno[1]
     ## Filtering removes feature_tbl class, so need to be explicit.
     plot(subset(gene_region_tbl(), wrng[1], wrng[2]),
-         top_snps_tbl=subset(top_snps_tbl(), wrng[1], wrng[2]))
+         top_snps_tbl=subset(top_snps_tbl(), wrng[1], wrng[2])) +
+      ggtitle(paste("SNPs for", pheno))
   }
   output$gene_plot <- renderPlot({
     plot_gene_region()
@@ -61,6 +63,8 @@ shinyGeneRegion <- function(input, output, session,
     }
   )
   output$downloadPlot <- downloadHandler(
+    ## This only gets plot with selected pheno_name.
+    ## Would have to move pheno_name subsetting in here to change.
     filename = function() {
       file.path(paste0("gene_region_", chr_pos(), ".pdf")) },
     content = function(file) {

@@ -35,8 +35,9 @@ shinyScan1Plot <- function(input, output, session,
   })
   ## Reset scan_window if chromosome changes.
   observeEvent(win_par$chr_id, {
-    map <- req(pmap_obj())[[win_par$chr_id]]
-    rng <- round(2 * range(map)) / 2
+    map <- req(pmap_obj())
+    chr <- req(win_par$chr_id)
+    rng <- round(2 * range(map[[chr]])) / 2
     updateSliderInput(session, "scan_window", NULL, rng, 
                       rng[1], rng[2], step=.5)
   })

@@ -27,11 +27,13 @@ shinyGeneExon <- function(input, output, session,
                 selected = input$gene_name)
   })
   plot_gene_exon <- function(gene_name) {
-    plot(gene_exon_tbl(), top_snps_tbl(), genes = gene_name)
+    pheno <- req(top_snps_tbl())$pheno[1]
+    p <- plot(gene_exon_tbl(), top_snps_tbl(), FALSE, genes = gene_name)
+    p[[1]] + ggtitle(paste("SNPs for", pheno))
   }
   output$gene_plot <- renderPlot({
     req(top_snps_tbl(),gene_exon_tbl())
-    gene_name <- input$gene_name
+    gene_name <- req(input$gene_name)
     withProgress(message = 'Gene Exon Plot ...', value = 0, {
       setProgress(1)
       plot_gene_exon(gene_name)

@@ -104,7 +104,7 @@ shinySNPAllele <- function(input, output, session,
     switch(req(job_par$button),
            "SNP Association" = {
              if(!is.null(ass_par$button)) {
-               pheno_choice <- (ass_par$button %in% c("Scan"))
+               pheno_choice <- (ass_par$button %in% c("Scan","Genes","Exons"))
              }
            },
            "Allele Pattern" = {
