@@ -13,10 +13,13 @@ shinyGeneRegion <- function(input, output, session,
                      snp_par, top_snps_tbl, feature_file) {
   ns <- session$ns
 
-  rng <- reactive({range(req(top_snps_tbl())$pos_Mbp)})
-  chr_id <- reactive({unique(top_snps_tbl()$chr)[1]})
+  rng <- reactive({
+    range(req(top_snps_tbl())$pos_Mbp)
+  })
+  chr_id <- reactive({
+    unique(top_snps_tbl()$chr)[1]
+  })
   gene_region_tbl <- reactive({
-    req(top_snps_tbl())
     wrng <- rng()
     withProgress(message = 'Extract gene features ...',
                  value = 0, {
@@ -40,20 +43,22 @@ shinyGeneRegion <- function(input, output, session,
     paste(chr, scan_w[1], scan_w[2], sep = "_")
   })
 
-  plot_gene_region <- function() {
+  plot_gene_region <- function(pheno) {
     req(gene_region_tbl(),snp_par$scan_window)
     ## Plot pseudogene and gene locations along with SNPs.
     ## Ordered by pseudogenes first, then genes
     ## negative (blue) strand, then unknown (grey), then positive (red) strand.
     wrng <- snp_par$scan_window
-    pheno <- top_snps_tbl()$pheno[1]
     ## Filtering removes feature_tbl class, so need to be explicit.
     plot(subset(gene_region_tbl(), wrng[1], wrng[2]),
-         top_snps_tbl=subset(top_snps_tbl(), wrng[1], wrng[2])) +
+         top_snps_tbl = subset(top_snps_tbl(), 
+                               wrng[1], wrng[2],
+                               pheno)) +
       ggtitle(paste("SNPs for", pheno))
   }
   output$gene_plot <- renderPlot({
-    plot_gene_region()
+    phename <- req(snp_par$pheno_name)
+    plot_gene_region(phename)
   })
   output$downloadData <- downloadHandler(
     filename = function() {
@@ -63,12 +68,15 @@ shinyGeneRegion <- function(input, output, session,
     }
   )
   output$downloadPlot <- downloadHandler(
-    ## This only gets plot with selected pheno_name.
-    ## Would have to move pheno_name subsetting in here to change.
     filename = function() {
       file.path(paste0("gene_region_", chr_pos(), ".pdf")) },
     content = function(file) {
-      ggsave(file, plot = plot_gene_region(), device = "pdf")
+      req(gene_region_tbl(),snp_par$scan_window)
+      pheno_names <- unique(req(top_snps_tbl())$pheno)
+      pdf(file)
+      for(pheno in pheno_names)
+        print(plot_gene_region(pheno))
+      dev.off()
     }
   )
 }

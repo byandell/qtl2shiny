@@ -32,7 +32,7 @@ helpPopup <- function(title, content,
 
 #####################################################
 ui <- dashboardPage(skin="red",
-  dashboardHeader(title = "DOQTL2 Dashboard"),
+  dashboardHeader(title = "DOQTL2 Wave 4"),
   dashboardSidebar(
     sidebarMenu(
       includeMarkdown("attieDO.md"),

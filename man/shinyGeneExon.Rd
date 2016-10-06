@@ -7,7 +7,8 @@
 \alias{shinyGeneExonUI}
 \title{Shiny Genes and Exons with nearby SNPs module}
 \usage{
-shinyGeneExon(input, output, session, chr_pos, top_snps_tbl, gene_exon_tbl)
+shinyGeneExon(input, output, session, snp_par, chr_pos, top_snps_tbl,
+  gene_exon_tbl)
 
 shinyGeneExonInput(id)
 
@@ -18,7 +19,7 @@ shinyGeneExonOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{chr_pos, top_snps_tbl, gene_exon_tbl}{reactive arguments}
+\item{snp_par, chr_pos, top_snps_tbl, gene_exon_tbl}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

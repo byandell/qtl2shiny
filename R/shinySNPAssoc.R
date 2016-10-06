@@ -18,15 +18,6 @@ shinySNPAssoc <- function(input, output, session,
   feature_file <- reactive({file.path(data_path(), 
                                       "mgi_db.sqlite")})
   
-  top_snps_pheno <- reactive({
-    phename <- req(snp_par$pheno_name)
-    out <- req(top_snps_tbl())
-    out <- subset(out, pheno_val = phename)
-    if(!nrow(out))
-      out <- NULL
-    out
-  })
-  
   ## Shiny Modules
   ## SNP Association Scan
   callModule(shinyScan1SNP, "snp_scan",
@@ -37,10 +28,12 @@ shinySNPAssoc <- function(input, output, session,
              chr_pos, top_snps_tbl)
   ## Gene Region
   callModule(shinyGeneRegion, "gene_region",
-             snp_par, top_snps_pheno, feature_file)
+             snp_par, 
+             top_snps_tbl, feature_file)
   ## Genes and Exons
   callModule(shinyGeneExon, "gene_exon",
-             chr_pos, top_snps_pheno, gene_exon_tbl)
+             snp_par, chr_pos, 
+             top_snps_tbl, gene_exon_tbl)
   
   output$snp_input <- renderUI({
     switch(req(input$button),

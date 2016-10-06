@@ -250,3 +250,12 @@ top_snp_asso <- function(pheno, scan_obj, xlim, snp_action="basic") {
     mytitle <- paste(mytitle, snp_action)
   title(mytitle)
 }
+#' @export
+plot_gene_exon <- function(gene_exon_tbl, top_snps_tbl, gene_name, pheno) {
+  if(nrow(top_snps_tbl)) {
+    p <- plot(gene_exon_tbl, top_snps_tbl,
+              FALSE, genes = gene_name)
+    p[[1]] + ggtitle(paste(gene_name, "SNPs for", pheno))
+  } else
+    plot_null()
+}
