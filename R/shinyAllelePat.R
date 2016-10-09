@@ -37,7 +37,8 @@ shinyAllelePat <- function(input, output, session,
   ## Shiny Module
   callModule(shinyTopFeature, "top_feature",
              snp_par, chr_pos, 
-             snp_scan_obj, top_snps_tbl, gene_exon_tbl)
+             snp_scan_obj, top_snps_tbl, 
+             gene_exon_tbl, snp_action)
   
   sum_top_pat <- reactive({
     scan_snp <- req(snp_scan_obj())
@@ -126,14 +127,14 @@ shinyAllelePat <- function(input, output, session,
   })
   output$downloadData <- downloadHandler(
     filename = function() {
-      file.path(paste0("pattern_", chr_pos(), ".csv")) },
+      file.path(paste0("pattern_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
       write.csv(sum_top_pat(), file)
     }
   )
   output$downloadPlot <- downloadHandler(
     filename = function() {
-      file.path(paste0("pattern_", chr_pos(), ".pdf")) },
+      file.path(paste0("pattern_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
       scans <- req(snp_scan_obj())
       snp_w <- req(snp_par$scan_window)

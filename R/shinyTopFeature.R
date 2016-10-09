@@ -3,7 +3,7 @@
 #' Shiny module for scan1 analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_scan_obj,top_snps_tbl,gene_exon_tbl reactive arguments
+#' @param snp_scan_obj,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -12,7 +12,8 @@
 shinyTopFeature <- function(input, output, session,
                             snp_par, chr_pos, 
                             snp_scan_obj, top_snps_tbl, 
-                            gene_exon_tbl) {
+                            gene_exon_tbl, 
+                            snp_action = reactive({"basic"})) {
   ns <- session$ns
 
   top_feature <- reactive({
@@ -56,14 +57,14 @@ shinyTopFeature <- function(input, output, session,
   ## Downloads.
   output$downloadData <- downloadHandler(
     filename = function() {
-      file.path(paste0("top_feature_", chr_pos(), ".csv")) },
+      file.path(paste0("top_feature_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
       write.csv(req(top_feature()), file)
     }
   )
   output$downloadPlot <- downloadHandler(
     filename = function() {
-      file.path(paste0("top_feature_", chr_pos(), ".pdf")) },
+      file.path(paste0("top_feature_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
       req(top_feature())
       pdf(file)

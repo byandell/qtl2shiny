@@ -10,7 +10,8 @@
 #'
 #' @export
 shinyGeneRegion <- function(input, output, session,
-                     snp_par, top_snps_tbl, feature_file) {
+                     snp_par, top_snps_tbl, feature_file,
+                     snp_action = reactive({"basic"})) {
   ns <- session$ns
 
   rng <- reactive({
@@ -54,7 +55,7 @@ shinyGeneRegion <- function(input, output, session,
          top_snps_tbl = subset(top_snps_tbl(), 
                                wrng[1], wrng[2],
                                pheno)) +
-      ggtitle(paste("SNPs for", pheno))
+      ggtitle(paste("SNPs for", pheno, snp_action()))
   }
   output$gene_plot <- renderPlot({
     phename <- req(snp_par$pheno_name)
@@ -62,14 +63,14 @@ shinyGeneRegion <- function(input, output, session,
   })
   output$downloadData <- downloadHandler(
     filename = function() {
-      file.path(paste0("gene_region_", chr_pos_all(), ".csv")) },
+      file.path(paste0("gene_region_", chr_pos_all(), "_", snp_action(), ".csv")) },
     content = function(file) {
       write.csv(req(gene_region_tbl()), file)
     }
   )
   output$downloadPlot <- downloadHandler(
     filename = function() {
-      file.path(paste0("gene_region_", chr_pos(), ".pdf")) },
+      file.path(paste0("gene_region_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
       req(gene_region_tbl(),snp_par$scan_window)
       pheno_names <- unique(req(top_snps_tbl())$pheno)

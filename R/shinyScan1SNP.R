@@ -27,7 +27,7 @@ shinyScan1SNP <- function(input, output, session,
   
   output$downloadPlot <- downloadHandler(
     filename = function() {
-      file.path(paste0("snp_scan_", chr_pos(), ".pdf")) },
+      file.path(paste0("snp_scan_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
       scans <- req(snp_scan_obj())
       snp_w <- req(snp_par$scan_window)

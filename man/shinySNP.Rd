@@ -7,7 +7,8 @@
 \alias{shinySNPUI}
 \title{Shiny SNP analysis and plot module}
 \usage{
-shinySNP(input, output, session, chr_pos, top_snps_tbl)
+shinySNP(input, output, session, chr_pos, top_snps_tbl,
+  snp_action = reactive({     "basic" }))
 
 shinySNPInput(id)
 

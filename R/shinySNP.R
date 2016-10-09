@@ -10,7 +10,8 @@
 #'
 #' @export
 shinySNP <- function(input, output, session,
-                     chr_pos, top_snps_tbl) {
+                     chr_pos, top_snps_tbl,
+                     snp_action = reactive({"basic"})) {
   ns <- session$ns
   
   ensembl_species <- reactive({"Mus_musculus"})
@@ -105,7 +106,7 @@ shinySNP <- function(input, output, session,
   ## Downloads.
   output$downloadData <- downloadHandler(
     filename = function() {
-      file.path(paste0("top_snps_", chr_pos(), ".csv")) },
+      file.path(paste0("top_snps_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
       write.csv(best_http(), file)
     }

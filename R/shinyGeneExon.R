@@ -3,14 +3,15 @@
 #' Shiny module for scan1 analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_par,chr_pos,top_snps_tbl,gene_exon_tbl reactive arguments
+#' @param snp_par,chr_pos,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 shinyGeneExon <- function(input, output, session,
-                     snp_par, chr_pos, top_snps_tbl, gene_exon_tbl) {
+                     snp_par, chr_pos, top_snps_tbl, gene_exon_tbl,
+                     snp_action = reactive({"basic"})) {
   ns <- session$ns
   
   pheno_names <- reactive({
@@ -71,7 +72,7 @@ shinyGeneExon <- function(input, output, session,
       plot_gene_exon(gene_exon_pheno(), 
                      top_snps_tbl() %>%
                        filter(pheno == pheno_name),
-                     gene_name, pheno_name)
+                     gene_name, paste(pheno_name, snp_action()))
     })
   })
   
@@ -89,14 +90,14 @@ shinyGeneExon <- function(input, output, session,
   ## Downloads.
   output$downloadData <- downloadHandler(
     filename = function() {
-      file.path(paste0("gene_exon_", chr_pos(), ".csv")) },
+      file.path(paste0("gene_exon_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
       write.csv(req(gene_exon_tbl()), file)
     }
   )
   output$downloadPlot <- downloadHandler(
     filename = function() {
-      file.path(paste0("gene_exon_", chr_pos(), ".pdf")) },
+      file.path(paste0("gene_exon_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
       gene_exon <- req(gene_exon_pheno())
       pheno_name <- req(snp_par$pheno_name)

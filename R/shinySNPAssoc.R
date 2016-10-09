@@ -25,15 +25,17 @@ shinySNPAssoc <- function(input, output, session,
              snp_scan_obj, snp_action)
   ## SNP Summary
   callModule(shinySNP, "best_snp", 
-             chr_pos, top_snps_tbl)
+             chr_pos, top_snps_tbl, snp_action)
   ## Gene Region
   callModule(shinyGeneRegion, "gene_region",
              snp_par, 
-             top_snps_tbl, feature_file)
+             top_snps_tbl, feature_file,
+             snp_action)
   ## Genes and Exons
   callModule(shinyGeneExon, "gene_exon",
              snp_par, chr_pos, 
-             top_snps_tbl, gene_exon_tbl)
+             top_snps_tbl, gene_exon_tbl,
+             snp_action)
   
   output$snp_input <- renderUI({
     switch(req(input$button),
