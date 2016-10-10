@@ -57,31 +57,29 @@ shinyPattern <- function(input, output, session,
     })
   })
 
-  scan_pat_lod <- reactive({
-    req(scan_pat())
-    p <- plot(scan_pat(), "lod")
-    if(nrow(patterns()) == 1) {
-      p <- p + 
-        theme(legend.position="none") +
-        ggtitle(names(scan_pat()$scans))
-    }
-    p
-  })
+  scan_pat_type <- function(scan_pat, type, pattern) {
+    pattern_cont <- 
+      (scan_pat$patterns %>%
+         filter(sdp_to_pattern(sdp) == pattern))$contrast
+    mytitle <- paste((scan_pat$patterns %>%
+                        filter(contrast == pattern_cont) %>%
+                        select(pheno,max_snp,contrast))[1,],
+                     collapse = " ")
+    plot(scan_pat, type, pattern_cont) 
+  }
 
   output$scan_pat_lod <- renderPlot({
+    req(scan_pat(),input$pattern)
     withProgress(message = 'Pattern LODs ...', value = 0, {
       setProgress(1)
-      scan_pat_lod()
+      scan_pat_type(scan_pat(), "lod", input$pattern)
     })
   })
   output$scan_pat_coef <- renderPlot({
-    scan_in <- req(scan_pat())
-    pattern_in <- req(input$pattern)
+    req(scan_pat(),input$pattern)
     withProgress(message = 'Pattern Effects ...', value = 0, {
       setProgress(1)
-      pattern_cont <- (scan_in$patterns %>%
-                         filter(sdp_to_pattern(sdp) == pattern_in))$contrast
-      plot(scan_in, "coef", pattern_cont)
+      scan_pat_type(scan_pat(), "coef", input$pattern)
     })
   })
   output$scanSummary <- renderDataTable({
@@ -95,6 +93,7 @@ shinyPattern <- function(input, output, session,
 
   output$scan_choice <- renderUI({
     switch(req(input$button),
+           LOD =,
            Effects = uiOutput(ns("pattern")))
   })
 
@@ -108,7 +107,7 @@ shinyPattern <- function(input, output, session,
   ## Downloads
   output$downloadData <- downloadHandler(
     filename = function() {
-      pheno_in <- req(input$pheno)
+      pheno_in <- req(input$pheno_name)
       file.path(paste0(pheno_in, "_", snp_action(), "_effects_", chr_pos(), ".csv"))
     },
     content = function(file) {
@@ -118,13 +117,14 @@ shinyPattern <- function(input, output, session,
   )
   output$downloadPlot <- downloadHandler(
     filename = function() {
-      pheno_in <- req(input$pheno)
+      pheno_in <- req(input$pheno_name)
       file.path(paste0(pheno_in, "_", snp_action(), "_scan_", chr_pos(), ".pdf"))
     },
     content = function(file) {
+      scan_in <- req(scan_pat())
       pdf(file)
-      print(scan_pat_lod())
-      plot(scan_pat(), "coef")
+      print(plot(scan_in, "lod"))
+      plot(scan_in, "coef")
       dev.off()
     }
   )

@@ -9,15 +9,6 @@
 #' @keywords utilities
 #'
 #' @export
-#' 
-# Still work in progress. Idea is that
-# server: callModule's Scan1SNP, TopSNP, SNPCsq, TopFeature
-# ui screens:
-#    1 Scan1SNP, SNPCsq
-#    2 TopFeature, TopSNP
-# Need to figure out download stuff as well.
-## Need to worry about what extra options are for each item.
-## Need to worry about download.
 shinySNPAllele <- function(input, output, session,
                           job_par, win_par, 
                           phe_df, cov_mx,

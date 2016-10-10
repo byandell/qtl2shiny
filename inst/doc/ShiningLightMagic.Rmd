@@ -2,16 +2,19 @@
 title: "Shine a Light on MAGIC Data"
 author: "Brian S Yandell, <http://www.stat.wisc.edu/~yandell>"
 date: "Jackson Labs, 18 October 2016"
-output: 
+output:
+  beamer_presentation: default
   ioslides_presentation:
-    widescreen: false
+    widescreen: no
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## shine a light on MAGIC data | Shiny tool to study DO and other MAGIC crosses
+## shine a light on MAGIC data
+
+Shiny tool to study DO and other MAGIC crosses
 
 - What is MAGIC?
 - Allele vs SNP Scans
@@ -30,6 +33,23 @@ knitr::opts_chunk$set(echo = FALSE)
     + animals: mouse, Drosophila
     + plants: maize, wheat, rice, sorghum, Arabidopsis, Pigeonpea
     + mapping populations: AIL, CC, HS, DO, DSPR
+
+## Attie/Jax DO Population
+
+- 8 CC founder strains (generation 19-21)
+- 400 mice in 4 waves
+- multiple traits measured
+    * clinical traits
+    * insulin secretion in islet cells
+    * 150K SNPs
+    * RNA-Seq
+    * proteomic, metabolomic, lipidomic
+
+![Valdar 2006 doi:10.1534/genetics.104.039313](images/valdar2006.gif)
+    
+----
+
+![http://compgen.unc.edu](images/ccmice.png)
 
 ## allele vs SNP scans
 
@@ -84,6 +104,35 @@ knitr::opts_chunk$set(echo = FALSE)
     + could detect false positives
     + LOD and allele effects may conflict due to dominance
 
+## Simple Story on Chr 1
+
+![AA chr 1 scan](images/scan_1.pdf)
+    
+----
+
+![AA chr 1 zoom](images/scan_1_24_44.pdf)
+
+----
+
+![](images/scan_1_24_44 2.pdf)
+
+----
+
+![SNP Scan](images/snp_scan_1_29_39_basic.pdf)
+
+----
+
+![Top Allele Patterns](images/pattern_1_29_39_basic.pdf)
+
+
+----
+
+![Scan of Allele Means](images/AA_G83_ins_secrete_add+dom_scan_1_29_39 2.pdf)
+
+----
+
+![LOD for Allele Contrast](images/AA_G83_ins_secrete_add+dom_scan_1_29_39.pdf)
+
 ## Gene/SNP Action
 
 - study additive & dominance of single trait
@@ -105,7 +154,27 @@ ggplot(data, aes(x,y)) +
   scale_x_continuous(breaks=0:2)
 ```
 
-## SNP contrasts
+## Genome Allele Scan
+
+![chr 3 scan](images/scan_3.pdf)
+    
+----
+
+![chr 3 zoom](images/scan_3_135_145.pdf)
+    
+----
+
+![Notice low PWD allele](images/effects_3_135_145.pdf)
+
+----
+
+![SNP scan](images/snp_scan_3_135_145_basic.pdf)
+
+----
+
+![Allele Patterns](images/pattern_3_135_145_basic.pdf)
+
+## General SNP Contrasts
 
 - identify 3-level SNP with strong LOD
 - interpret as contrast involving 36 allele pairs
@@ -117,12 +186,35 @@ ggplot(data, aes(x,y)) +
 - scan region for this set of contrasts
     + LOD scan with 2 df of AB:het:CDEFGH
     + allele group scan
-    
-## Slide for image
-    
+
+## General SNP Patterns
+
+![AA chr 3 Patterns](images/pattern_3_135_145_add+dom 1.pdf)
+
+## Additive BFGH:ACDE 
+
+![](images/AA_G83_ins_secrete_additive_scan_3_135_145 9.pdf)
+
 ----
 
-![picture of spaghetti](images/spaghetti.jpg)
+![](images/AA_G83_ins_secrete_additive_scan_3_135_145 3.pdf)
+
+## B=B6 Recessive, D=NOD Dominant
+
+![](images/AA_G83_ins_secrete_recessive_scan_3_135_145 2.pdf)
+
+----
+
+![](images/AA_G83_ins_secrete_recessive_scan_3_135_145 1.pdf)
+
+## B=B6 Dominant, G=PWK Recessive
+
+![unstable: few double recessive GG](images/AA_G83_ins_secrete_dominant_scan_3_135_145 2.pdf)
+
+----
+
+![](images/AA_G83_ins_secrete_dominant_scan_3_135_145 1.pdf)
+
 
 ## Shiny under the Hood
 

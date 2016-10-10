@@ -5,6 +5,7 @@
 *.pdf
 *.docx
 *.html
+*.csv
 *.Rproj
 *.sqlite3
 *.sqlite
@@ -13,3 +14,4 @@
 R/variants.R
 .DS_Store
 data/
+inst/doc/images

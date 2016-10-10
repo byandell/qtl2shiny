@@ -16,24 +16,6 @@ shinyAllelePat <- function(input, output, session,
                         snp_action = reactive({"basic"})) {
   ns <- session$ns
 
-  ## Update Radio Button if 1 or >1 Phenotype Names.
-  observeEvent(pheno_names(), {
-    button_val <- c("Top SNPs","Pattern",
-                    "All Phenos","All Patterns",
-                    "Summary")
-    if(length(pheno_names() == 1)) {
-      button_val <- button_val[-(3:4)]
-    }
-    selected <- input$button
-    if(!is.null(selected)) {
-      if(!(selected %in% button_val))
-        selected <- button_val[1]
-      updateRadioButtons(session, "button", 
-                         selected = selected,
-                         choices = button_val)
-    }
-  })
-
   ## Shiny Module
   callModule(shinyTopFeature, "top_feature",
              snp_par, chr_pos, 
@@ -55,17 +37,15 @@ shinyAllelePat <- function(input, output, session,
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
   
-  snp_pat_plot <- reactive({
-    top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window, TRUE,
-                 snp_action = snp_action())
-  })
   output$snpPatternPlot <- renderPlot({
-    if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
+    if(is.null(snp_par$pheno_name) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     withProgress(message = 'SNP pattern plots ...', value = 0, {
       setProgress(1)
-      snp_pat_plot()
+      top_pat_plot(snp_par$pheno_name, snp_scan_obj(), 
+                   snp_par$scan_window, TRUE,
+                   snp_action = snp_action())
     })
   })
   
@@ -74,30 +54,22 @@ shinyAllelePat <- function(input, output, session,
     if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
-    if(length(pheno_names()) == 1) {
-      snp_pat_plot()
-    } else {
-      withProgress(message = 'SNP Pheno patterns ...', value = 0, {
-        setProgress(1)
-        top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
-                     group = "pheno", snp_action = snp_action())
-      })
-    }
+    withProgress(message = 'SNP Pheno patterns ...', value = 0, {
+      setProgress(1)
+      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
+                   group = "pheno", snp_action = snp_action())
+    })
   })
   ## SNP Pattern phenos
   output$snp_pat_phe <- renderPlot({
     if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
-    if(length(pheno_names()) == 1) {
-      snp_pat_plot()
-    } else {
-      withProgress(message = 'SNP Pattern phenos ...', value = 0, {
-        setProgress(1)
-        top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
-                     group = "pattern", snp_action = snp_action())
-      })
-    }
+    withProgress(message = 'SNP Pattern phenos ...', value = 0, {
+      setProgress(1)
+      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
+                   group = "pattern", snp_action = snp_action())
+    })
   })
 
   output$pat_input <- renderUI({
@@ -158,7 +130,7 @@ shinyAllelePat <- function(input, output, session,
     button_val <- c("Top SNPs","Pattern",
                     "All Phenos","All Patterns",
                     "Summary")
-    if(length(pheno_names() == 1)) {
+    if(length(pheno_names()) == 1) {
       button_val <- button_val[-(3:4)]
     }
     if(!is.null(selected <- input$button)) {
@@ -168,6 +140,24 @@ shinyAllelePat <- function(input, output, session,
     radioButtons(ns("button"), "",
                  button_val, selected)
   })
+  ## Update Radio Button if 1 or >1 Phenotype Names.
+  observeEvent(pheno_names(), {
+    button_val <- c("Top SNPs","Pattern",
+                    "All Phenos","All Patterns",
+                    "Summary")
+    if(length(pheno_names()) == 1) {
+      button_val <- button_val[-(3:4)]
+    }
+    selected <- input$button
+    if(!is.null(selected)) {
+      if(!(selected %in% button_val))
+        selected <- button_val[1]
+      updateRadioButtons(session, "button", 
+                         selected = selected,
+                         choices = button_val)
+    }
+  })
+
   input
 }
 #' @param id identifier for \code{\link{shinyAllelePat}} use
