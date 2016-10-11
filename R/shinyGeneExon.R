@@ -103,7 +103,7 @@ shinyGeneExon <- function(input, output, session,
       pheno_name <- req(snp_par$pheno_name)
       top_snps <- req(top_snps_tbl()) %>%
         filter(pheno == pheno_name)
-      pdf(file)
+      pdf(file, width = 9)
       for(gene_name in req(gene_names())) {
         print(plot_gene_exon(gene_exon, top_snps,
                              gene_name, pheno_name))

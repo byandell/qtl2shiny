@@ -1,0 +1,112 @@
+---
+title: "Chr 1 Analysis"
+output: html_notebook
+---
+
+```{r message=FALSE}
+library(qtl2shiny)
+```
+
+```{r}
+source(file.path(system.file("doqtl2/setup.R", 
+                             package = "qtl2shiny")))
+```
+
+### Setup Phenotypes and Region
+
+```{r}
+phe_par <- list(pheno_names = "AA_G83_ins_secrete")
+win_par <- list(chr_id = 1,
+                peak_Mbp = 34,
+                window_Mbp = 5)
+```
+
+```{r}
+analyses_df <- analyses_tbl %>%
+  filter(pheno %in% phe_par$pheno_names)
+phe_df <- get_pheno(pheno_data,
+                    analyses_df %>%
+                      distinct(pheno, .keep_all=TRUE))
+cov_mx <- get_covar(covar, analyses_df)
+K_chr <- K[win_par$chr_id]
+```
+
+### Haplo Analysis
+
+```{r}
+probs_obj <- read_probs(win_par$chr_id, datapath)
+```
+
+```{r}
+scan_obj <- scan1(probs_obj, phe_df, K_chr, cov_mx)
+```
+
+```{r}
+scan_window <- win_par$peak_Mbp + 
+  c(-1,1) * win_par$window_Mbp
+```
+
+#### Allele LOD Scan
+
+```{r}
+show_peaks(win_par$chr_id, scan_obj, mytitle="")
+```
+
+```{r}
+show_peaks(win_par$chr_id, scan_obj, mytitle="", 
+           xlim = scan_window)
+```
+
+#### Allele Effect Scan
+
+```{r}
+eff_obj <- listof_scan1coefCC(phe_df, cov_mx, probs_obj, K_chr)
+```
+
+```{r}
+plot_eff(phe_par$pheno_names, scan_obj, eff_obj, scan_window)
+```
+
+#### SNP Scan
+
+```{r}
+snpprobs_obj <- get_snpprobs(win_par$chr_id, 
+                   win_par$peak_Mbp, 
+                   win_par$window_Mbp,
+                   phe_par$pheno_names, 
+                   probs_obj,
+                   datapath)
+snp_action <- "basic"
+```
+
+```{r}
+snp_scan_obj <- scan1(snpprob_collapse(snpprobs_obj,
+                                       snp_action), 
+                      phe_df, K_chr, cov_mx)
+```
+
+```{r}
+top_snps_tbl <- get_top_snps_tbl(snp_scan_obj)
+```
+
+```{r}
+gene_exon_tbl <- 
+  get_gene_exon_snp(top_snps_tbl,
+                    file.path(datapath, "mgi_db.sqlite"))
+```
+
+#### SNP Association
+
+```{r}
+top_snp_asso(phe_par$pheno_names, snp_scan_obj, 
+             scan_window, snp_action)
+```
+
+#### Allele Patterns
+
+```{r}
+top_pat_plot(phe_par$pheno_names, snp_scan_obj, 
+             scan_window, TRUE,
+             snp_action = snp_action)
+```
+

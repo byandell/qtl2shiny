@@ -243,7 +243,9 @@ top_snp_asso <- function(pheno, scan_obj, xlim, snp_action="basic") {
   plot_snpasso(subset(scan_obj,
                       lodcolumn=match(pheno, phename)),
                show_all_snps=FALSE, drop.hilit=1.5,
-               xlim=xlim)
+               xlim=xlim,
+               col = "#7570b3", col.hilit = "#d95f02",
+               pch = 1, cex = 0.75)
   mytitle <- paste(pheno, "chr", chr_id)
   if(snp_action != "basic")
     mytitle <- paste(mytitle, snp_action)

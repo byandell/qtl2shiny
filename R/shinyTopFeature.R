@@ -67,7 +67,7 @@ shinyTopFeature <- function(input, output, session,
       file.path(paste0("top_feature_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
       req(top_feature())
-      pdf(file)
+      pdf(file, width = 9)
       for(phenoi in phename()) {
         print(plot_top_feat_csq(phenoi))
         print(plot_top_feat_pat(phenoi))

@@ -74,7 +74,7 @@ shinyGeneRegion <- function(input, output, session,
     content = function(file) {
       req(gene_region_tbl(),snp_par$scan_window)
       pheno_names <- unique(req(top_snps_tbl())$pheno)
-      pdf(file)
+      pdf(file, width = 9)
       for(pheno in pheno_names)
         print(plot_gene_region(pheno))
       dev.off()

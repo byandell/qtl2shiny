@@ -115,7 +115,7 @@ shinyScan1Plot <- function(input, output, session,
       effs <- req(eff_obj())
       scans <- req(scan_obj())
       win <- req(input$scan_window)
-      pdf(file)
+      pdf(file, width = 9)
       show_peaks(win_par$chr_id, scans, mytitle="", 
                  xlim=win)
       for(pheno in names(effs))

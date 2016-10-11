@@ -122,7 +122,7 @@ shinyPattern <- function(input, output, session,
     },
     content = function(file) {
       scan_in <- req(scan_pat())
-      pdf(file)
+      pdf(file, width = 9)
       print(plot(scan_in, "lod"))
       plot(scan_in, "coef")
       dev.off()

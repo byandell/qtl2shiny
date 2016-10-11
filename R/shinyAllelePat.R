@@ -111,7 +111,7 @@ shinyAllelePat <- function(input, output, session,
       scans <- req(snp_scan_obj())
       snp_w <- req(snp_par$scan_window)
       phenos <- req(pheno_names())
-      pdf(file)
+      pdf(file, width = 9)
       ## Plots over all phenotypes
       print(top_pat_plot(phenos, scans, snp_w,
                          group = "pheno", snp_action = snp_action()))

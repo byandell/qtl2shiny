@@ -39,13 +39,11 @@ Shiny tool to study DO and other MAGIC crosses
 - 8 CC founder strains (generation 19-21)
 - 400 mice in 4 waves
 - multiple traits measured
-    * clinical traits
-    * insulin secretion in islet cells
-    * 150K SNPs
-    * RNA-Seq
+    * clinical traits (insulin secretion)
+    * 150K SNPs, 30K RNA-Seq
     * proteomic, metabolomic, lipidomic
 
-![Valdar 2006 doi:10.1534/genetics.104.039313](images/valdar2006.gif)
+![Valdar et al. 2006 doi:10.1534/genetics.104.039313](images/valdar2006.gif)
     
 ----
 
@@ -127,11 +125,11 @@ Shiny tool to study DO and other MAGIC crosses
 
 ----
 
-![Scan of Allele Means](images/AA_G83_ins_secrete_add+dom_scan_1_29_39 2.pdf)
+![Scan of Allele Means](images/AA_G83_ins_secrete_additive_scan_1_29_39 2.pdf)
 
 ----
 
-![LOD for Allele Contrast](images/AA_G83_ins_secrete_add+dom_scan_1_29_39.pdf)
+![LOD for Allele Contrast](images/AA_G83_ins_secrete_additive_scan_1_29_39.pdf)
 
 ## Gene/SNP Action
 
@@ -189,7 +187,11 @@ ggplot(data, aes(x,y)) +
 
 ## General SNP Patterns
 
-![AA chr 3 Patterns](images/pattern_3_135_145_add+dom 1.pdf)
+![SNP Scan](images/snp_scan_3_135_145_add+dom.pdf)
+
+----
+
+![AA chr 3 Patterns](images/pattern_3_135_145_add+dom.pdf)
 
 ## Additive BFGH:ACDE 
 
@@ -205,7 +207,7 @@ ggplot(data, aes(x,y)) +
 
 ----
 
-![](images/AA_G83_ins_secrete_recessive_scan_3_135_145 1.pdf)
+![](images/AA_G83_ins_secrete_recessive_scan_3_135_145.pdf)
 
 ## B=B6 Dominant, G=PWK Recessive
 
@@ -213,7 +215,7 @@ ggplot(data, aes(x,y)) +
 
 ----
 
-![](images/AA_G83_ins_secrete_dominant_scan_3_135_145 1.pdf)
+![](images/AA_G83_ins_secrete_dominant_scan_3_135_145.pdf)
 
 
 ## Shiny under the Hood
