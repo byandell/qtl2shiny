@@ -61,10 +61,6 @@ shinyPattern <- function(input, output, session,
     pattern_cont <- 
       (scan_pat$patterns %>%
          filter(sdp_to_pattern(sdp) == pattern))$contrast
-    mytitle <- paste((scan_pat$patterns %>%
-                        filter(contrast == pattern_cont) %>%
-                        select(pheno,max_snp,contrast))[1,],
-                     collapse = " ")
     plot(scan_pat, type, pattern_cont) 
   }
 
