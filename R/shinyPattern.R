@@ -87,9 +87,25 @@ shinyPattern <- function(input, output, session,
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
 
+  output$eff_lodPlot <- renderPlot({
+    req(scan_pat(), input$pattern)
+    withProgress(message = 'Pattern Effects & LOD ...', value = 0, {
+      setProgress(1)
+      par(mfrow=c(2,1))
+      scan_pat_type(scan_pat(), "coef", input$pattern)
+      plot.new()
+      vps <- baseViewports()
+      pushViewport(vps$figure)
+      vp1 <-plotViewport(c(1,1,1,1)) 
+      print(scan_pat_type(scan_pat(), "lod", input$pattern),
+            vp = vp1)
+    })
+  })
+  
   output$scan_choice <- renderUI({
     switch(req(input$button),
            LOD =,
+           "Effects & LOD" =,
            Effects = uiOutput(ns("pattern")))
   })
 
@@ -97,6 +113,7 @@ shinyPattern <- function(input, output, session,
     switch(req(input$button),
            LOD     = plotOutput(ns("scan_pat_lod")),
            Effects = plotOutput(ns("scan_pat_coef")),
+           "Effects & LOD" = plotOutput(ns("eff_lodPlot")),
            Summary = dataTableOutput(ns("scanSummary")))
   })
 
@@ -118,15 +135,32 @@ shinyPattern <- function(input, output, session,
     },
     content = function(file) {
       scan_in <- req(scan_pat())
-      pdf(file, width = 9)
-      print(plot(scan_in, "lod"))
-      plot(scan_in, "coef")
+      pats <- patterns() %>%
+        filter(pheno == input$pheno_name)
+      if(nrow(pats)) {
+        pdf(file, width = 9, height = 9)
+        choices <- sdp_to_pattern(pats$sdp)
+        for(pattern in choices) {
+          par(mfrow=c(2,1))
+          scan_pat_type(scan_in, "coef", pattern)
+          plot.new()
+          if(pattern == choices[1]) {
+            vps <- baseViewports()
+            pushViewport(vps$figure)
+            vp1 <-plotViewport(c(0,0,0,0)) 
+          }
+          print(scan_pat_type(scan_in, "lod", pattern),
+                vp = vp1)
+        }
+#       plot(scan_in, "coef")
+#       print(plot(scan_in, "lod"))
+      }
       dev.off()
     }
   )
   output$radio <- renderUI({
     radioButtons(ns("button"), "",
-                 c("LOD","Effects","Summary"),
+                 c("Effects","LOD","Effects & LOD","Summary"),
                  input$button)
   })
 }

@@ -68,7 +68,7 @@ shinyScan1Plot <- function(input, output, session,
     })
   })
   output$effPlot <- renderPlot({
-    req(input$pheno_name,eff_obj())
+    req(input$pheno_name, scan_obj(), eff_obj())
     withProgress(message = 'Effect plots ...', value = 0, {
       setProgress(1)
       plot_eff(input$pheno_name, scan_obj(), eff_obj(), input$scan_window)
@@ -82,20 +82,40 @@ shinyScan1Plot <- function(input, output, session,
     })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
-
+  
+  ## Effect and LOD Plot
+  output$lod_effPlot <- renderPlot({
+    req(win_par$chr_id, input$pheno_name, input$scan_window, 
+        scan_obj(), eff_obj())
+    eff_names <- names(eff_obj())
+    withProgress(message = 'Effect & LOD plots ...', value = 0, {
+      setProgress(1)
+      par(mfrow=c(2,1))
+      phenoi <- match(input$pheno_name, eff_names)
+      show_peaks(win_par$chr_id, 
+                 subset(scan_obj(), lodcolumn = phenoi),
+                 mytitle="", 
+                 xlim = input$scan_window)
+      plot_eff(input$pheno_name, scan_obj(), eff_obj(), input$scan_window)
+    })
+  })
+  
   output$scan_choice <- renderUI({
     switch(req(input$button),
+           "LOD & Effects" =,
            Effects = uiOutput(ns("pheno_name")))
   })
   output$win_choice <- renderUI({
     switch(req(input$button),
            LOD     =,
+           "LOD & Effects" =,
            Effects = uiOutput(ns("scan_window")))
   })
   output$scan_output <- renderUI({
     switch(req(input$button),
            LOD     = plotOutput(ns("scanPlot")),
            Effects = plotOutput(ns("effPlot")),
+           "LOD & Effects" = plotOutput(ns("lod_effPlot")),
            Summary = dataTableOutput(ns("effSummary")))
   })
 
@@ -115,17 +135,24 @@ shinyScan1Plot <- function(input, output, session,
       effs <- req(eff_obj())
       scans <- req(scan_obj())
       win <- req(input$scan_window)
-      pdf(file, width = 9)
+      pdf(file, width=9,height=9)
       show_peaks(win_par$chr_id, scans, mytitle="", 
                  xlim=win)
-      for(pheno in names(effs))
+      par(mfrow=c(2,1))
+      for(phenoi in seq_along(effs)) {
+        pheno <- names(effs)[phenoi]
+        show_peaks(win_par$chr_id, 
+                   subset(scans, lodcolumn = phenoi),
+                   mytitle="", 
+                   xlim = win)
         plot_eff(pheno, scans, effs, win)
+      }
       dev.off()
     }
   )
   output$radio <- renderUI({
     radioButtons(ns("button"), "",
-                 c("LOD","Effects","Summary"),
+                 c("LOD","Effects","LOD & Effects","Summary"),
                  input$button)
   })
 }
@@ -135,7 +162,7 @@ shinyScan1Plot <- function(input, output, session,
 shinyScan1PlotUI <- function(id) {
   ns <- NS(id)
   tagList(
-    h4(strong("Genome Scans")),
+    strong("Genome Scans"),
     uiOutput(ns("radio")),
     uiOutput(ns("scan_choice")),
     uiOutput(ns("win_choice")),

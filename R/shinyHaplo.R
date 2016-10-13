@@ -60,7 +60,7 @@ shinyHaploUI <- function(id) {
   ns <- NS(id)
   tagList(
     sidebarPanel(
-      h4(strong("SNP/Gene Haplo Analysis")),
+      strong("SNP/Gene Additive"),
       uiOutput(ns("radio")),
       uiOutput(ns("hap_input")),
       textOutput(ns("cc_names"))),

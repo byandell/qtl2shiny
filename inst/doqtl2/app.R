@@ -2,6 +2,8 @@
 suppressPackageStartupMessages({
   library(qtl2shiny)
   library(GGally)
+  library(grid)
+  library(gridBase)
 })
 
 source("setup.R")
