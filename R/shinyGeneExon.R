@@ -18,13 +18,18 @@ shinyGeneExon <- function(input, output, session,
     sort(unique(req(top_snps_tbl()$pheno)))
   })
   summary_gene_exon <- reactive({
-    summary(req(gene_exon_tbl()),,
-            req(top_snps_tbl()))
+    summary(req(gene_exon_tbl()),
+            top_snps_tbl = req(top_snps_tbl()))
   })
   gene_names <- reactive({
     pheno_name <- req(snp_par$pheno_name)
     gene_in <- summary_gene_exon()
-    as.data.frame(gene_in)[gene_in[[pheno_name]] > 0, "gene"]
+    gene_in <- gene_in[!is.na(gene_in[[pheno_name]]),]
+    ## Order by decreasing LOD.
+    if(nrow(gene_in))
+      gene_in$gene[order(-gene_in[[pheno_name]])]
+    else
+      NULL
   })
   gene_exon_pheno <- reactive({
     pheno_name <- req(snp_par$pheno_name)
@@ -92,7 +97,7 @@ shinyGeneExon <- function(input, output, session,
     filename = function() {
       file.path(paste0("gene_exon_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
-      write.csv(req(gene_exon_tbl()), file)
+      write.csv(req(summary_gene_exon()), file)
     }
   )
   output$downloadPlot <- downloadHandler(
