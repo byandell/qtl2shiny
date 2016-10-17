@@ -36,7 +36,7 @@ Shiny tool to study DO and other MAGIC crosses
     + plants: maize, wheat, rice, sorghum, Arabidopsis, Pigeonpea
     + mapping populations: AIL, CC, HS, DO, DSPR
 
-## Attie/Jax DO Population
+## Attie/Jax DO population
 
 - 8 CC founder strains (generation 19-21)
 - 400 mice in 4 waves
@@ -64,7 +64,7 @@ Shiny tool to study DO and other MAGIC crosses
     + test if all a's are the same
     + 8 unknown parameters
 
-## Simple Story on Chr 1
+## simple story on chr 1
 
 ![chr 1 scan](images/scan_1.pdf)
     
@@ -124,7 +124,7 @@ Shiny tool to study DO and other MAGIC crosses
     + test if all means are the same
     + 3 unknowns
 
-## Gene/SNP Action
+## gene/SNP action
 
 - study additive & dominance of single trait
 - compare co-mapping traits -- same gene action?
@@ -145,7 +145,7 @@ ggplot(data, aes(x,y)) +
   scale_x_continuous(breaks=0:2)
 ```
 
-## Complicated story on chr 3
+## complicated story on chr 3
 
 ![chr 3 scan](images/scan_3.pdf)
     
@@ -157,11 +157,11 @@ ggplot(data, aes(x,y)) +
 
 ![SNP scan & top pattern](images/snp_assoc_3_pattern.pdf)
 
-## Additive & Dominance together
+## additive & dominance together
 
 ![3-level SNP scan & top pattern](images/snp_assoc_3_pattern_add+dom.pdf)
 
-## General SNP Contrasts
+## general SNP contrasts
 
 - identify 3-level SNP with strong LOD
 - interpret as contrast involving 36 allele pairs
@@ -174,20 +174,20 @@ ggplot(data, aes(x,y)) +
     + LOD scan with 2 df of AB:het:CDEFGH
     + allele group scan
 
-## Additive BFGH:ACDE 
+## additive BFGH:ACDE 
 
 ![](images/snp_allele_3_BEFGH:ACD_additive.pdf)
 
-## B=B6 Recessive, D=NOD Dominant
+## B=B6 recessive, D=NOD dominant
 
 ![](images/snp_allele_3_ABCEFGH:D_recessive.pdf)
 
-## B=B6 Dominant, G=PWK Recessive
+## B=B6 dominant, G=PWK recessive
 
 ![unstable: few double recessive GG](images/snp_allele_3_ABCDEFH:G_dominant.pdf)
 
 
-## Shiny under the Hood
+## shiny under the hood
 
 - work flow
 - tools and resources
@@ -195,13 +195,13 @@ ggplot(data, aes(x,y)) +
 
 ![[lambda architecture](http://lambda-architecture.net/) (Nathan Marz, Twitter)](images/la-overview_small.png)
 
-## Lambda Architecture for DOQTL2
+## lambda architecture for doqtl2
 
-- batch layer
+- batch layer (DOQTL)
     + genotypes
     + phenotype LOD scans across genome
     + phenotype LOD & allele scans for chromosome
-    + phenotype SNP scans in peak region
+    + phenotype SNPs & genes in peak region
 - serving layer
     + [web serving layer](https://www.biostat.wisc.edu/~kbroman/attieDO/lodpeaks.html)
 - speed layer
@@ -209,11 +209,11 @@ ggplot(data, aes(x,y)) +
     + phenotype LOD & allele scan for chromosome
     + detailed look at peak region
 
-## Tools and Resources
+## tools & resources
 
 - Original batch pipeline: [DOQTL](http://dx.doi.org/10.1534/g3.114.013748) (Dan Gatti et al. 2014 G3)
 - [R/qtl2](http://kbroman.org/qtl2/assets/vignettes/user_guide.html) (Karl Broman) (Karl Broman et al. in progress)
-    + qtl2data, qtl2scan, qtl2plot
+    + qtl2geno, qtl2scan, qtl2plot
     + [web site](https://github.com/kbroman/qtl2/tree/gh-pages)
 - new R packages
     + [R/qtl2 package suite](http://kbroman.org/qtl2/assets/vignettes/user_guide.html) (Karl Broman)
@@ -224,7 +224,7 @@ ggplot(data, aes(x,y)) +
     + RDS R data objects for genotypes
     + CSV comma separated variable for phenotypes
 
-## Challenges Remaining
+## challenges remaining
 
 - Shiny user interface from Rstudio
     + translates from R to HTML via javascript
@@ -241,3 +241,39 @@ ggplot(data, aes(x,y)) +
 - visualizations
     + scalable & interactive (D3) visual displays
     + automated report generation
+    
+## data storage issues
+
+- raw data
+- derived data
+    + 3Gb gene, SNP & SVS features (mouse)
+    + 2Gb haplotype probabilities
+    + 10Gb diplotype probabilities
+    + 0.2Mb clinical phenotypes
+    + 1-2Gb molecular phenotypes
+    + spatial/image phenotypes?
+- intermediate data
+    + tables & summaries
+    + plot data (or saved plots)
+    + on-the-fly vs pre-stored vs as-needed
+- portability issues
+    + CSV vs RDS vs SQL vs ...
+    + common pool vs on-site
+    
+## software issues
+
+- R analysis & visualization
+    + QTL tools: qtl2 squite: geno, scan, plot
+    + discovery: doqtl2, qtl2shiny
+    + interactive: shiny, shinydashboard
+    + wrangle data: dplyr, tidyr, readr, stringr
+    + graphics: ggplot2, grid
+- phenotype & genotype pipelines
+    + variety of languages and formats
+    + in domain of biologists (or chemists or ...)
+- high volume pipelines
+    + hadoop/map-reduce technology
+    + high throughput phenotypes
+    + data resampling for thresholds
+- scaling up to muli-user interactive system
+    

@@ -24,7 +24,12 @@ shinyGeneExon <- function(input, output, session,
   gene_names <- reactive({
     pheno_name <- req(snp_par$pheno_name)
     gene_in <- summary_gene_exon()
-    gene_in <- gene_in[!is.na(gene_in[[pheno_name]]),]
+    if(nrow(gene_in)) {
+      if(pheno_name %in% names(gene_in))
+        gene_in <- gene_in[!is.na(gene_in[[pheno_name]]),]
+      else
+        return(NULL)
+    }
     ## Order by decreasing LOD.
     if(nrow(gene_in))
       gene_in$gene[order(-gene_in[[pheno_name]])]

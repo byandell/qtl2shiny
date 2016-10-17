@@ -4,7 +4,7 @@
 \alias{top_snp_asso}
 \title{Top SNP Association Plot Wrapper}
 \usage{
-top_snp_asso(pheno, scan_obj, xlim, snp_action = "basic")
+top_snp_asso(pheno, scan_obj, xlim, snp_action = "basic", drop.hilit = NULL)
 }
 \arguments{
 \item{pheno}{name of phenotype for effect scan}
@@ -14,6 +14,8 @@ top_snp_asso(pheno, scan_obj, xlim, snp_action = "basic")
 \item{xlim}{x limits for plot}
 
 \item{snp_action}{character string for plot}
+
+\item{drop.hilit}{hilight SNPs within this value of max}
 }
 \description{
 Top SNP Association Plot Wrapper

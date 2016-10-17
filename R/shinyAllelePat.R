@@ -23,13 +23,8 @@ shinyAllelePat <- function(input, output, session,
              gene_exon_tbl, snp_action)
   
   sum_top_pat <- reactive({
-    scan_snp <- req(snp_scan_obj())
-    if(max(scan_snp$lod) <= 1.5)
-      return(NULL)
-#    summary(topsnp_pattern(scan_snp, pheno_names()))
-    topsnp_pattern(scan_snp, pheno_names()) %>%
-      mutate(pattern = sdp_to_pattern(sdp)) %>%
-      arrange(desc(lod))
+    summary(topsnp_pattern(req(snp_scan_obj()), 
+                           pheno_names()))
   })
   
   output$snpPatternSum <- renderDataTable({

@@ -56,6 +56,8 @@ shinyGeneRegion <- function(input, output, session,
       top_snps_rng <- subset(top_snps_tbl(), 
                              wrng[1], wrng[2],
                              pheno)
+      if(!nrow(top_snps_rng))
+        top_snps_rng <- NULL
     } else {
       top_snps_rng <- NULL
     }
