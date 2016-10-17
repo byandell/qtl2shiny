@@ -37,9 +37,12 @@ shinySNPAssoc <- function(input, output, session,
              top_snps_tbl, gene_exon_tbl,
              snp_action)
   
+  output$snp_check <- renderUI({
+    switch(req(input$button),
+           Genes   = shinyGeneRegionInput(ns("gene_region")))
+  })
   output$snp_input <- renderUI({
     switch(req(input$button),
-           Genes   = shinyGeneRegionInput(ns("gene_region")),
            Exons   = shinyGeneExonInput(ns("gene_exon")),
            Summary = shinySNPInput(ns("best_snp")))
   })
@@ -74,7 +77,9 @@ shinySNPAssoc <- function(input, output, session,
 shinySNPAssocInput <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("radio")),
+    fluidRow(
+      column(6, uiOutput(ns("radio"))),
+      column(6, uiOutput(ns("snp_check")))),
     uiOutput(ns("snp_input"))
   )
 }

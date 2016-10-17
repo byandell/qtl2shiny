@@ -67,7 +67,7 @@ shinyGeneRegion <- function(input, output, session,
     p
   }
   output$SNP <- renderUI({
-    checkboxInput(ns("SNP"), "Include SNPs", input$SNP)
+    checkboxInput(ns("SNP"), "Add SNPs?", input$SNP)
   })
   output$gene_plot <- renderPlot({
     phename <- req(snp_par$pheno_name)

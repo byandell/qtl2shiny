@@ -87,7 +87,7 @@ shinySetup <- function(input, output, session,
   
   ## Setup input logic.
   output$title <- renderUI({
-    h4(strong(req(input$setup)))
+    strong(req(input$setup))
   })
   output$sidebar_setup <- renderUI({
     switch(req(input$setup),

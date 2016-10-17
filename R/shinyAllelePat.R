@@ -86,7 +86,7 @@ shinyAllelePat <- function(input, output, session,
   })
   output$title <- renderUI({
     if(snp_action() == "basic")
-      h4(strong("SNP Plots"))
+      strong("SNP Plots")
   })
 
   ## Downloads

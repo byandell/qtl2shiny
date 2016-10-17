@@ -75,7 +75,7 @@ shinyDiploUI <- function(id) {
   ns <- NS(id)
   tagList(
     sidebarPanel(
-      h4(strong("SNP/Gene Action")),
+      strong("SNP/Gene Action"),
       uiOutput(ns("radio")),
       uiOutput(ns("select")),
       uiOutput(ns("dip_input")),

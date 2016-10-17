@@ -131,7 +131,7 @@ shinySNPAllele <- function(input, output, session,
   ## UI Logic
   output$title <- renderUI({
     if(snp_action() == "basic")
-      h4(strong(req(job_par$button)))
+      strong(req(job_par$button))
   })
   output$snp_input <- renderUI({
     switch(req(job_par$button),
