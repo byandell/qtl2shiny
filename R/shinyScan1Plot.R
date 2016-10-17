@@ -100,7 +100,7 @@ shinyScan1Plot <- function(input, output, session,
     })
   })
   
-  output$scan_choice <- renderUI({
+  output$pheno_choice <- renderUI({
     switch(req(input$button),
            "LOD & Effects" =,
            Effects = uiOutput(ns("pheno_name")))
@@ -111,11 +111,18 @@ shinyScan1Plot <- function(input, output, session,
            "LOD & Effects" =,
            Effects = uiOutput(ns("scan_window")))
   })
-  output$scan_output <- renderUI({
+  output$LOD <- renderUI({
     switch(req(input$button),
-           LOD     = plotOutput(ns("scanPlot")),
-           Effects = plotOutput(ns("effPlot")),
-           "LOD & Effects" = plotOutput(ns("lod_effPlot")),
+           LOD             =,
+           "LOD & Effects" = plotOutput(ns("scanPlot")))
+  })
+  output$Effects <- renderUI({
+    switch(req(input$button),
+           Effects         =,
+           "LOD & Effects" = plotOutput(ns("effPlot")))
+  })
+  output$Summary <- renderUI({
+    switch(req(input$button),
            Summary = dataTableOutput(ns("effSummary")))
   })
 
@@ -164,7 +171,7 @@ shinyScan1PlotUI <- function(id) {
   tagList(
     strong("Genome Scans"),
     uiOutput(ns("radio")),
-    uiOutput(ns("scan_choice")),
+    uiOutput(ns("pheno_choice")),
     uiOutput(ns("win_choice")),
     fluidRow(
       column(6, downloadButton(ns("downloadData"), "CSV")),
@@ -175,5 +182,7 @@ shinyScan1PlotUI <- function(id) {
 shinyScan1PlotOutput <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("scan_output")))
+    uiOutput(ns("LOD")),
+    uiOutput(ns("Effects")),
+    uiOutput(ns("Summary")))
 }

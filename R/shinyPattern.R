@@ -102,18 +102,25 @@ shinyPattern <- function(input, output, session,
     })
   })
   
-  output$scan_choice <- renderUI({
+  output$pattern_choice <- renderUI({
     switch(req(input$button),
            LOD =,
-           "Effects & LOD" =,
+           "LOD & Effects" =,
            Effects = uiOutput(ns("pattern")))
   })
 
-  output$pat_output <- renderUI({
+  output$LOD <- renderUI({
     switch(req(input$button),
-           LOD     = plotOutput(ns("scan_pat_lod")),
-           Effects = plotOutput(ns("scan_pat_coef")),
-           "Effects & LOD" = plotOutput(ns("eff_lodPlot")),
+           LOD             =,
+           "LOD & Effects" = plotOutput(ns("scan_pat_lod")))
+  })
+  output$Effects <- renderUI({
+    switch(req(input$button),
+           Effects         =,
+           "LOD & Effects" = plotOutput(ns("scan_pat_coef")))
+  })
+  output$Summary <- renderUI({
+    switch(req(input$button),
            Summary = dataTableOutput(ns("scanSummary")))
   })
 
@@ -160,7 +167,7 @@ shinyPattern <- function(input, output, session,
   )
   output$radio <- renderUI({
     radioButtons(ns("button"), "",
-                 c("Effects","LOD","Effects & LOD","Summary"),
+                 c("LOD","Effects","LOD & Effects","Summary"),
                  input$button)
   })
 }
@@ -172,7 +179,7 @@ shinyPatternUI <- function(id) {
   tagList(
     uiOutput(ns("radio")),
     uiOutput(ns("pheno_name")),
-    uiOutput(ns("scan_choice")),
+    uiOutput(ns("pattern_choice")),
     fluidRow(
       column(6, downloadButton(ns("downloadData"), "CSV")),
       column(6, downloadButton(ns("downloadPlot"), "Plots")))
@@ -182,5 +189,9 @@ shinyPatternUI <- function(id) {
 #' @export
 shinyPatternOutput <- function(id) {
   ns <- NS(id)
-  uiOutput(ns("pat_output"))
+  tagList(
+    uiOutput(ns("LOD")),
+    uiOutput(ns("Effects")),
+    uiOutput(ns("Summary"))
+  )
 }

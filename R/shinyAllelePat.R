@@ -127,11 +127,11 @@ shinyAllelePat <- function(input, output, session,
     }
   )
   output$radio <- renderUI({
-    button_val <- c("Top SNPs","Pattern",
+    button_val <- c("Pattern",
                     "All Phenos","All Patterns",
-                    "Summary")
+                    "Top SNPs","Summary")
     if(length(pheno_names()) == 1) {
-      button_val <- button_val[-(3:4)]
+      button_val <- button_val[-(2:3)]
     }
     if(!is.null(selected <- input$button)) {
       if(!(selected %in% button_val))
@@ -142,11 +142,11 @@ shinyAllelePat <- function(input, output, session,
   })
   ## Update Radio Button if 1 or >1 Phenotype Names.
   observeEvent(pheno_names(), {
-    button_val <- c("Top SNPs","Pattern",
+    button_val <- c("Pattern",
                     "All Phenos","All Patterns",
-                    "Summary")
+                    "Top SNPs","Summary")
     if(length(pheno_names()) == 1) {
-      button_val <- button_val[-(3:4)]
+      button_val <- button_val[-(2:3)]
     }
     selected <- input$button
     if(!is.null(selected)) {
