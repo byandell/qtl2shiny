@@ -39,6 +39,7 @@ shinySNPAssoc <- function(input, output, session,
   
   output$snp_input <- renderUI({
     switch(req(input$button),
+           Genes   = shinyGeneRegionInput(ns("gene_region")),
            Exons   = shinyGeneExonInput(ns("gene_exon")),
            Summary = shinySNPInput(ns("best_snp")))
   })

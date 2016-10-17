@@ -2,12 +2,15 @@
 % Please edit documentation in R/shinyGeneRegion.R
 \name{shinyGeneRegion}
 \alias{shinyGeneRegion}
+\alias{shinyGeneRegionInput}
 \alias{shinyGeneRegionOutput}
 \alias{shinyGeneRegionUI}
 \title{Shiny Genes in SNP Region module}
 \usage{
 shinyGeneRegion(input, output, session, snp_par, top_snps_tbl, feature_file,
   snp_action = reactive({     "basic" }))
+
+shinyGeneRegionInput(id)
 
 shinyGeneRegionUI(id)
 

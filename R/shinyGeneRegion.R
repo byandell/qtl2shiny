@@ -51,12 +51,24 @@ shinyGeneRegion <- function(input, output, session,
     ## negative (blue) strand, then unknown (grey), then positive (red) strand.
     wrng <- snp_par$scan_window
     ## Filtering removes feature_tbl class, so need to be explicit.
-    plot(subset(gene_region_tbl(), wrng[1], wrng[2]),
-         top_snps_tbl = subset(top_snps_tbl(), 
-                               wrng[1], wrng[2],
-                               pheno)) +
-      ggtitle(paste("SNPs for", pheno, snp_action()))
+    use_snp <- isTruthy(input$SNP)
+    if(use_snp) {
+      top_snps_rng <- subset(top_snps_tbl(), 
+                             wrng[1], wrng[2],
+                             pheno)
+    } else {
+      top_snps_rng <- NULL
+    }
+    p <- plot(subset(gene_region_tbl(), wrng[1], wrng[2]),
+              top_snps_tbl = top_snps_rng)
+    if(use_snp)
+      p <- p + 
+        ggtitle(paste("SNPs for", pheno, snp_action()))
+    p
   }
+  output$SNP <- renderUI({
+    checkboxInput(ns("SNP"), "Include SNPs", input$SNP)
+  })
   output$gene_plot <- renderPlot({
     phename <- req(snp_par$pheno_name)
     plot_gene_region(phename)
@@ -82,6 +94,12 @@ shinyGeneRegion <- function(input, output, session,
   )
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
+#' @rdname shinyGeneRegion
+#' @export
+shinyGeneRegionInput <- function(id) {
+  ns <- NS(id)
+  uiOutput(ns("SNP"))
+}
 #' @rdname shinyGeneRegion
 #' @export
 shinyGeneRegionUI <- function(id) {
