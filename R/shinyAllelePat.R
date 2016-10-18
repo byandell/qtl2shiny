@@ -83,7 +83,7 @@ shinyAllelePat <- function(input, output, session,
     withProgress(message = 'SNP Pattern phenos ...', value = 0, {
       setProgress(1)
       top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
-                   top_pattern = top_pattern()[patterns == input$pattern,],
+                   top_pattern = top_pat[patterns == input$pattern,],
                    group = "pattern", snp_action = snp_action())
     })
   })

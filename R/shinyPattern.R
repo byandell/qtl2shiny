@@ -35,8 +35,10 @@ shinyPattern <- function(input, output, session,
                 choices = choices,
                 selected = input$pattern)
   })
-  observeEvent(input$pheno_name, {
-    req(snp_action())
+  observeEvent(patterns(), update_patterns())
+  observeEvent(input$pheno_name, update_patterns())
+  update_patterns <- function() {
+    req(snp_action(),input$pheno_name,patterns())
     pats <- patterns() %>%
       filter(pheno == input$pheno_name)
     if(nrow(pats)) {
@@ -50,7 +52,7 @@ shinyPattern <- function(input, output, session,
     }
     updateSelectInput(session, "pattern", NULL,
                       choices, selected)
-  })
+  }
   
   ## Names of haplos and diplos in terms of founders.
   haplos <- reactive({
@@ -76,7 +78,7 @@ shinyPattern <- function(input, output, session,
   scan_pat_type <- function(scan_pat, type, pattern) {
     pattern_cont <- 
       (scan_pat$patterns %>%
-         filter(sdp_to_pattern(sdp) == pattern))$contrast
+         filter(sdp_to_pattern(sdp) == pattern))$contrast[1]
     plot(scan_pat, type, pattern_cont) 
   }
 
