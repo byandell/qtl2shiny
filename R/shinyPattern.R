@@ -35,7 +35,23 @@ shinyPattern <- function(input, output, session,
                 choices = choices,
                 selected = input$pattern)
   })
-
+  observeEvent(input$pheno_name, {
+    req(snp_action())
+    pats <- patterns() %>%
+      filter(pheno == input$pheno_name)
+    if(nrow(pats)) {
+      choices <- sdp_to_pattern(pats$sdp)
+    } else {
+      choices <- input$pattern
+    }
+    if(!is.null(selected <- input$pattern)) {
+      if(!(selected %in% choices))
+        selected <- choices[1]
+    }
+    updateSelectInput(session, "pattern", NULL,
+                      choices, selected)
+  })
+  
   ## Names of haplos and diplos in terms of founders.
   haplos <- reactive({
     unique(unlist(str_split(diplos(), "")))
@@ -65,14 +81,14 @@ shinyPattern <- function(input, output, session,
   }
 
   output$scan_pat_lod <- renderPlot({
-    req(scan_pat(),input$pattern)
+    req(scan_pat(),input$pattern,input$pheno_name)
     withProgress(message = 'Pattern LODs ...', value = 0, {
       setProgress(1)
       scan_pat_type(scan_pat(), "lod", input$pattern)
     })
   })
   output$scan_pat_coef <- renderPlot({
-    req(scan_pat(),input$pattern)
+    req(scan_pat(),input$pattern,input$pheno_name)
     withProgress(message = 'Pattern Effects ...', value = 0, {
       setProgress(1)
       scan_pat_type(scan_pat(), "coef", input$pattern)
