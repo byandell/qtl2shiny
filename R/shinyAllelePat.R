@@ -55,20 +55,42 @@ shinyAllelePat <- function(input, output, session,
                    group = "pheno", snp_action = snp_action())
     })
   })
+
+  top_pattern <- reactive({
+    topsnp_pattern(snp_scan_obj(), pheno_names())
+  })
+  output$pattern <- renderUI({
+    req(snp_action())
+    top_pat <- req(top_pattern())
+    choices <- sdp_to_pattern((top_pat %>%
+                                distinct(sdp))$sdp)
+    if(!is.null(selected <- input$pattern)) {
+      if(!selected %in% choices)
+        selected <- NULL
+    }
+    selectInput(ns("pattern"), NULL,
+                choices = choices,
+                selected = selected)
+  })
   ## SNP Pattern phenos
   output$snp_pat_phe <- renderPlot({
     if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
+    req(input$pattern)
+    top_pat <- req(top_pattern())
+    patterns <- sdp_to_pattern(top_pat$sdp)
     withProgress(message = 'SNP Pattern phenos ...', value = 0, {
       setProgress(1)
       top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
+                   top_pattern = top_pattern()[patterns == input$pattern,],
                    group = "pattern", snp_action = snp_action())
     })
   })
 
   output$pat_input <- renderUI({
     switch(req(input$button),
+           "All Patterns" = uiOutput(ns("pattern")),
            "Top SNPs"     = shinyTopFeatureInput(ns("top_feature")))
   })
   output$pat_output <- renderUI({
@@ -109,9 +131,21 @@ shinyAllelePat <- function(input, output, session,
       pdf(file, width = 9)
       ## Plots over all phenotypes
       print(top_pat_plot(phenos, scans, snp_w,
+                         top_pattern = top_pattern(),
                          group = "pheno", snp_action = snp_action()))
-      print(top_pat_plot(phenos, scans, snp_w,
-                         group = "pattern", snp_action = snp_action()))
+
+      top_pat <- req(top_pattern())
+      patterns <- sdp_to_pattern(top_pat$sdp)
+      upat <- unique(patterns)
+      for(pattern in upat) {
+        print(top_pat_plot(pheno_names(), snp_scan_obj(), 
+                           snp_par$scan_window,
+                           top_pattern = 
+                             top_pattern()[patterns == pattern,],
+                           group = "pattern", 
+                           snp_action = snp_action()))
+      }
+      
       ## Plots by phenotype.
       for(pheno in phenos) {
         print(top_pat_plot(pheno, scans, snp_w, FALSE,

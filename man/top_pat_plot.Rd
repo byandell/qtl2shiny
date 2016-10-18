@@ -4,7 +4,8 @@
 \alias{top_pat_plot}
 \title{Top Pattern Plot}
 \usage{
-top_pat_plot(pheno, scan_obj, xlim, fill.null = TRUE, group = "pheno",
+top_pat_plot(pheno, scan_obj, xlim, fill.null = TRUE,
+  top_pattern = topsnp_pattern(scan_obj, pheno), group = "pheno",
   snp_action = "basic")
 }
 \arguments{

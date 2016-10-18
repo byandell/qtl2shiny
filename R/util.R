@@ -195,12 +195,10 @@ plot_eff <- function(pheno, scan_obj, eff_obj, xlim) {
 #' @export
 top_pat_plot <- function(pheno, 
                          scan_obj, xlim,
-                         fill.null=TRUE, group = "pheno",
+                         fill.null=TRUE, 
+                         top_pattern = topsnp_pattern(scan_obj, pheno),
+                         group = "pheno",
                          snp_action = "basic") {
-  ## Limit to values within drop of max LOD, but at least 3.
-  drop <- min(1.5, max(scan_obj$lod) - 3)
-  
-  top_pattern <- topsnp_pattern(scan_obj, pheno, drop)
   if(is.null(top_pattern)) {
     if(fill.null)
       return(plot_null())
