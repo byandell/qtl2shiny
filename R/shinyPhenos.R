@@ -24,18 +24,19 @@ shinyPhenos <- function(input, output, session,
         filter(pheno_type %in% dataset)
     }
 
-    ## Filter by Peak Position.
-    
-    chr_id <- req(chr_peak$chr_id)
-    peak_Mbp <- req(chr_peak$peak_Mbp)
-    window_Mbp <- req(chr_peak$window_Mbp)
-    if(window_Mbp > 0) {
-      ## Filter peaks
-      peaks <- peaks_tbl() %>%
-        filter(chr == chr_id,
-               pos >= peak_Mbp - window_Mbp,
-               pos <= peak_Mbp + window_Mbp)
-      dat <- dat[dat$output %in% peaks$output,]
+    ## Filter by Peak Position if use_pos=TRUE
+    if(isTruthy(input$use_pos)) {
+      chr_id <- req(chr_peak$chr_id)
+      peak_Mbp <- req(chr_peak$peak_Mbp)
+      window_Mbp <- req(chr_peak$window_Mbp)
+      if(window_Mbp > 0) {
+        ## Filter peaks
+        peaks <- peaks_tbl() %>%
+          filter(chr == chr_id,
+                 pos >= peak_Mbp - window_Mbp,
+                 pos <= peak_Mbp + window_Mbp)
+        dat <- dat[dat$output %in% peaks$output,]
+      }
     }
     dat
   })

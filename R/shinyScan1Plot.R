@@ -71,7 +71,8 @@ shinyScan1Plot <- function(input, output, session,
     req(input$pheno_name, scan_obj(), eff_obj())
     withProgress(message = 'Effect plots ...', value = 0, {
       setProgress(1)
-      plot_eff(input$pheno_name, scan_obj(), eff_obj(), input$scan_window)
+      plot_eff(input$pheno_name, scan_obj(), eff_obj(), 
+               input$scan_window)
     })
   })
   output$effSummary <- renderDataTable({
@@ -92,11 +93,12 @@ shinyScan1Plot <- function(input, output, session,
       setProgress(1)
       par(mfrow=c(2,1))
       phenoi <- match(input$pheno_name, eff_names)
-      show_peaks(win_par$chr_id, 
+      print(show_peaks(win_par$chr_id, 
                  subset(scan_obj(), lodcolumn = phenoi),
                  mytitle="", 
-                 xlim = input$scan_window)
-      plot_eff(input$pheno_name, scan_obj(), eff_obj(), input$scan_window)
+                 xlim = input$scan_window))
+      print(plot_eff(input$pheno_name, scan_obj(), eff_obj(), 
+                     input$scan_window))
     })
   })
   
@@ -143,16 +145,16 @@ shinyScan1Plot <- function(input, output, session,
       scans <- req(scan_obj())
       win <- req(input$scan_window)
       pdf(file, width=9,height=9)
-      show_peaks(win_par$chr_id, scans, mytitle="", 
-                 xlim=win)
+      print(show_peaks(win_par$chr_id, scans, mytitle="", 
+                       xlim=win))
       par(mfrow=c(2,1))
       for(phenoi in seq_along(effs)) {
         pheno <- names(effs)[phenoi]
-        show_peaks(win_par$chr_id, 
-                   subset(scans, lodcolumn = phenoi),
-                   mytitle="", 
-                   xlim = win)
-        plot_eff(pheno, scans, effs, win)
+        print(show_peaks(win_par$chr_id, 
+                         subset(scans, lodcolumn = phenoi),
+                         mytitle="", 
+                         xlim = win))
+        print(plot_eff(pheno, scans, effs, win))
       }
       dev.off()
     }

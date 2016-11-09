@@ -35,7 +35,7 @@ shinyScan1SNP <- function(input, output, session,
       pdf(file, width = 9)
       ## Plots by phenotype.
       for(pheno in phenos) {
-        top_snp_asso(pheno, scans, snp_w)
+        print(top_snp_asso(pheno, scans, snp_w))
       }
       dev.off()
     }
