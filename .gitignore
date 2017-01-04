@@ -16,3 +16,4 @@ R/variants.R
 .DS_Store
 data/
 inst/doc/images
+drop/
