@@ -9,20 +9,30 @@
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom dplyr filter
+#' @importFrom doqtl2 plot_gene_exon
+#' @importFrom qtl2ggplot sdp_to_pattern
+#' @importFrom shiny NS reactive req 
+#'   selectInput updateSelectInput
+#'   dataTableOutput plotOutput uiOutput
+#'   renderDataTable renderPlot renderUI
+#'   fluidRow column
+#'   withProgress setProgress
+#'   downloadButton downloadHandler
 shinyGeneExon <- function(input, output, session,
                      snp_par, chr_pos, top_snps_tbl, gene_exon_tbl,
-                     snp_action = reactive({"basic"})) {
+                     snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
   
-  pheno_names <- reactive({
-    sort(unique(req(top_snps_tbl()$pheno)))
+  pheno_names <- shiny::reactive({
+    sort(unique(shiny::req(top_snps_tbl()$pheno)))
   })
-  summary_gene_exon <- reactive({
-    summary(req(gene_exon_tbl()),
-            top_snps_tbl = req(top_snps_tbl()))
+  summary_gene_exon <- shiny::reactive({
+    summary(shiny::req(gene_exon_tbl()),
+            top_snps_tbl = shiny::req(top_snps_tbl()))
   })
-  gene_names <- reactive({
-    pheno_name <- req(snp_par$pheno_name)
+  gene_names <- shiny::reactive({
+    pheno_name <- shiny::req(snp_par$pheno_name)
     gene_in <- summary_gene_exon()
     if(nrow(gene_in)) {
       if(pheno_name %in% names(gene_in))
@@ -36,8 +46,8 @@ shinyGeneExon <- function(input, output, session,
     else
       NULL
   })
-  gene_exon_pheno <- reactive({
-    pheno_name <- req(snp_par$pheno_name)
+  gene_exon_pheno <- shiny::reactive({
+    pheno_name <- shiny::req(snp_par$pheno_name)
     gene_in <- gene_names()
     if(length(gene_in)) {
       subset(gene_exon_tbl(), gene_in)
@@ -46,20 +56,20 @@ shinyGeneExon <- function(input, output, session,
     }
   })
   
-  output$gene_sum <- renderDataTable({
-    withProgress(message = 'Gene Exon Table ...', value = 0, {
-      setProgress(1)
+  output$gene_sum <- shiny::renderDataTable({
+    shiny::withProgress(message = 'Gene Exon Table ...', value = 0, {
+      shiny::setProgress(1)
       summary_gene_exon()
     })
   }, options = list(scrollX = TRUE, pageLength = 5,
                     lengthMenu = list(c(5,10,20,-1),
                                       list("5","10","20","all"))))
-  output$gene_name <- renderUI({
+  output$gene_name <- shiny::renderUI({
     selected <- input$gene_name
     choices <- gene_names()
     if(!isTruthy(selected %in% choices))
       selected <- choices[1]
-    selectInput(ns("gene_name"), NULL,
+    shiny::selectInput(ns("gene_name"), NULL,
                 choices = choices,
                 selected = selected)
   })
@@ -68,61 +78,59 @@ shinyGeneExon <- function(input, output, session,
     choices <- gene_names()
     if(!isTruthy(selected %in% choices))
       selected <- choices[1]
-    updateSelectInput(session, "gene_name", NULL,
+    shiny::updateSelectInput(session, "gene_name", NULL,
                 choices = choices,
                 selected = selected)
   })
 
-  output$gene_plot <- renderPlot({
-    req(top_snps_tbl(), gene_exon_tbl(), gene_names())
-    gene_name <- req(input$gene_name)
-    pheno_name <- req(snp_par$pheno_name)
-    withProgress(message = 'Gene Exon Plot ...', value = 0, {
-      setProgress(1)
-      plot_gene_exon(gene_exon_pheno(), 
-                     top_snps_tbl() %>%
-                       filter(pheno == pheno_name),
+  output$gene_plot <- shiny::renderPlot({
+    shiny::req(top_snps_tbl(), gene_exon_tbl(), gene_names())
+    gene_name <- shiny::req(input$gene_name)
+    pheno_name <- shiny::req(snp_par$pheno_name)
+    shiny::withProgress(message = 'Gene Exon Plot ...', value = 0, {
+      shiny::setProgress(1)
+      doqtl2::plot_gene_exon(gene_exon_pheno(), 
+                     dplyr::filter(top_snps_tbl(), pheno == pheno_name),
                      gene_name, paste(pheno_name, snp_action()))
     })
   })
   
   ## Outputs
-  output$exon_input <- renderUI({
-    switch(req(input$button),
-           Plot    = uiOutput(ns("gene_name")))
+  output$exon_input <- shiny::renderUI({
+    switch(shiny::req(input$button),
+           Plot    = shiny::uiOutput(ns("gene_name")))
   })
-  output$exon_output <- renderUI({
-    switch(req(input$button),
-           Plot    = plotOutput(ns("gene_plot")),
-           Summary = dataTableOutput(ns("gene_sum")))
+  output$exon_output <- shiny::renderUI({
+    switch(shiny::req(input$button),
+           Plot    = shiny::plotOutput(ns("gene_plot")),
+           Summary = shiny::dataTableOutput(ns("gene_sum")))
   })
   
   ## Downloads.
-  output$downloadData <- downloadHandler(
+  output$downloadData <- shiny::downloadHandler(
     filename = function() {
       file.path(paste0("gene_exon_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
-      write.csv(req(summary_gene_exon()), file)
+      write.csv(shiny::req(summary_gene_exon()), file)
     }
   )
-  output$downloadPlot <- downloadHandler(
+  output$downloadPlot <- shiny::downloadHandler(
     filename = function() {
       file.path(paste0("gene_exon_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
-      gene_exon <- req(gene_exon_pheno())
-      pheno_name <- req(snp_par$pheno_name)
-      top_snps <- req(top_snps_tbl()) %>%
-        filter(pheno == pheno_name)
+      gene_exon <- shiny::req(gene_exon_pheno())
+      pheno_name <- shiny::req(snp_par$pheno_name)
+      top_snps <- dplyr::filter(shiny::req(top_snps_tbl()), pheno == pheno_name)
       pdf(file, width = 9)
-      for(gene_name in req(gene_names())) {
-        print(plot_gene_exon(gene_exon, top_snps,
+      for(gene_name in shiny::req(gene_names())) {
+        print(doqtl2::plot_gene_exon(gene_exon, top_snps,
                              gene_name, pheno_name))
       }
       dev.off()
     }
   )
-  output$select <- renderUI({
-    selectInput(ns("button"), NULL, c("Plot","Summary"),
+  output$select <- shiny::renderUI({
+    shiny::selectInput(ns("button"), NULL, c("Plot","Summary"),
                 input$button)
   })
 }
@@ -130,22 +138,22 @@ shinyGeneExon <- function(input, output, session,
 #' @rdname shinyGeneExon
 #' @export
 shinyGeneExonInput <- function(id) {
-  ns <- NS(id)
-  fluidRow(
-    uiOutput(ns("select")),
-    uiOutput(ns("exon_input")))
+  ns <- shiny::NS(id)
+  shiny::fluidRow(
+    shiny::uiOutput(ns("select")),
+    shiny::uiOutput(ns("exon_input")))
 }
 #' @rdname shinyGeneExon
 #' @export
 shinyGeneExonUI <- function(id) {
-  ns <- NS(id)
-  fluidRow(
-    column(6, downloadButton(ns("downloadData"), "CSV")),
-    column(6, downloadButton(ns("downloadPlot"), "Plots")))
+  ns <- shiny::NS(id)
+  shiny::fluidRow(
+    shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
+    shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
 }
 #' @rdname shinyGeneExon
 #' @export
 shinyGeneExonOutput <- function(id) {
-  ns <- NS(id)
-  uiOutput(ns("exon_output"))
+  ns <- shiny::NS(id)
+  shiny::uiOutput(ns("exon_output"))
 }

@@ -11,18 +11,23 @@
 #' @return 2-element vector of scan window
 #'
 #' @export
+#' @importFrom shiny NS 
+#'   plotOutput tableOutput
+#'   renderPlot renderTable
+#'   tagList
+#'   withProgress setProgress
 shinyPhenoPlot <- function(input, output, session,
                            phe_df, cov_mx) {
   ## Scatter plot or density
-  output$phe_sum <- renderTable({
-    withProgress(message = 'Pheno Summary ...', value = 0, {
-      setProgress(1)
+  output$phe_sum <- shiny::renderTable({
+    shiny::withProgress(message = 'Pheno Summary ...', value = 0, {
+      shiny::setProgress(1)
       summary_na(phe_df())
     })
   })
-  output$phePlot <- renderPlot({
-    withProgress(message = 'Pheno Plot ...', value = 0, {
-      setProgress(1)
+  output$phePlot <- shiny::renderPlot({
+    shiny::withProgress(message = 'Pheno Plot ...', value = 0, {
+      shiny::setProgress(1)
       plot_sex(phe_df(), cov_mx())
     })
   })
@@ -40,9 +45,9 @@ shinyPhenoPlot <- function(input, output, session,
 #' @rdname shinyPhenoPlot
 #' @export
 shinyPhenoPlotUI <- function(id) {
-  ns <- NS(id)
-  tagList(
-    plotOutput(ns("phePlot")),
-    tableOutput(ns("phe_sum"))
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::plotOutput(ns("phePlot")),
+    shiny::tableOutput(ns("phe_sum"))
   )
 }

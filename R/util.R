@@ -14,6 +14,7 @@
 #' \dontrun{num_pheno(pheno, analyses_tbl)}
 #' 
 #' @export
+#' @importFrom gdata humanReadable
 num_pheno <- function(pheno, analyses_tbl) {
   if(any(c("all","none") %in% pheno))
     return(NULL)
@@ -71,6 +72,8 @@ make_chr_pos <- function(chr_id=NULL, peak_Mbp=NULL, window_Mbp=NULL,
 #' \dontrun{collapse_covar(analyses_tbl)}
 #' 
 #' @export
+#' @importFrom dplyr mutate one_of select 
+#' @importFrom tidyr unite
 collapse_covar <- function(analyses_tbl) {
   if(is.null(analyses_tbl))
     return(NULL)
@@ -78,12 +81,14 @@ collapse_covar <- function(analyses_tbl) {
   ## Collapse covariates (past winsorize column).
   covar_names <- names(analyses_tbl)[-seq_len(match("winsorize",
                                            names(analyses_tbl)))]
-  analyses_tbl %>%
-    unite(covar, one_of(covar_names)) %>%
-    mutate(covar = sapply(strsplit(covar,"_"),
-                          function(x) paste(covar_names[as.logical(x)],
-                                            collapse=","))) %>%
-    select(pheno,covar,transf,offset,winsorize)
+  dplyr::select(
+    dplyr::mutate(
+      tidyr::unite(analyses_tbl, covar, 
+                   dplyr::one_of(covar_names)), 
+      covar = sapply(strsplit(covar,"_"),
+                     function(x) paste(covar_names[as.logical(x)],
+                                       collapse=","))),
+    pheno, covar, transf, offset, winsorize)
 }
 #' Summary across traits
 #'
@@ -120,6 +125,9 @@ summary_na <- function(phe) {
 #' \dontrun{plot_sex(phe)}
 #' 
 #' @export
+#' @importFrom dplyr mutate
+#' @importFrom ggplot2 ggplot aes_string geom_density geom_rug
+#' @importFrom GGally ggscatmat
 plot_sex <- function(phe, cov) {
   phename <- names(phe)
   if(length(phename) > 10) {
@@ -129,28 +137,35 @@ plot_sex <- function(phe, cov) {
   }
   if("sex" %in% dimnames(cov)[[2]]) {
     ## Assume sex in covar. Ignore actual covariates for analyses.
-    insex <- data.frame(phe,cov) %>%
-      mutate(sex=c("female","male")[1+sex])
+    insex <- dplyr::mutate(data.frame(phe, cov), 
+                           sex=c("female","male")[1+sex])
     
     if(length(phename) == 1) {
-      ggplot(insex, aes_string(phename, col="sex")) +
-        geom_density(na.rm = TRUE) + geom_rug()
+      ggplot2::ggplot(insex, 
+                      ggplot2::aes_string(phename, col="sex")) +
+        ggplot2::geom_density(na.rm = TRUE) + 
+        ggplot2::geom_rug()
     } else {
       any.na <- apply(insex, 1, function(x) any(is.na(x)))
-      ggscatmat(insex[!any.na,], seq_along(phe), color="sex")
+      GGally::ggscatmat(insex[!any.na,], seq_along(phe), color="sex")
     }
   } else {
     if(length(phename) == 1) {
-      ggplot(phe, aes_string(phename)) +
-        geom_density(na.rm = TRUE) + geom_rug()
+      ggplot2::ggplot(phe, 
+                      ggplot2::aes_string(phename)) +
+        ggplot2::geom_density(na.rm = TRUE) + 
+        ggplot2::geom_rug()
     } else {
       any.na <- apply(phe, 1, function(x) any(is.na(x)))
-      ggscatmat(phe[!any.na,], seq_along(phe))
+      GGally::ggscatmat(phe[!any.na,], seq_along(phe))
     }
   }
 }
 #' @export
+#' @importFrom ggplot2 ggplot aes geom_text theme_void
 plot_null <- function() {
-  ggplot(data.frame(x=1,y=1), aes(x,y,label="no data")) +
-    geom_text(size=10) + theme_void()
+  ggplot2::ggplot(data.frame(x=1,y=1), 
+                  ggplot2::aes(x,y,label="no data")) +
+    ggplot2::geom_text(size=10) + 
+    ggplot2::theme_void()
 }

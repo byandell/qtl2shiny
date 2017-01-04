@@ -9,15 +9,18 @@
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom doqtl2 get_snpprobs read_probs read_probs36
+#' @importFrom shiny reactive req 
+#'   withProgress setProgress
 shinyProbs <- function(input, output, session,
                        win_par, data_path) {
   ns <- session$ns
 
-  probs_obj <- reactive({
-    chr_id <- req(win_par$chr_id)
-    withProgress(message = 'Read probs ...', value = 0, {
-      setProgress(1)
-      read_probs(chr_id, data_path())
+  probs_obj <- shiny::reactive({
+    chr_id <- shiny::req(win_par$chr_id)
+    shiny::withProgress(message = 'Read probs ...', value = 0, {
+      shiny::setProgress(1)
+      doqtl2::read_probs(chr_id, data_path())
     })
   })
   
@@ -30,13 +33,13 @@ shinyProbs36 <- function(input, output, session,
   ns <- session$ns
 
   ## Probs object for 36 diplotypes.
-  probs_obj <- reactive({
-    chr_id <- req(win_par$chr_id)
-    range_val <- req(win_par$peak_Mbp) + 
-      c(-1,1) * req(win_par$window_Mbp)
-    withProgress(message = 'Diplotype Probs ...', value = 0, {
-      setProgress(1)
-      read_probs36(chr_id, range_val[1], range_val[2],
+  probs_obj <- shiny::reactive({
+    chr_id <- shiny::req(win_par$chr_id)
+    range_val <- shiny::req(win_par$peak_Mbp) + 
+      c(-1,1) * shiny::req(win_par$window_Mbp)
+    shiny::withProgress(message = 'Diplotype Probs ...', value = 0, {
+      shiny::setProgress(1)
+      doqtl2::read_probs36(chr_id, range_val[1], range_val[2],
                    data_path())
     })
   })
@@ -49,12 +52,12 @@ shinySNPProbs <- function(input, output, session,
                           data_path) {
   ns <- session$ns
   
-  reactive({
-    req(win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
-    req(pheno_names(), probs_obj())
-    withProgress(message = 'SNP Probs ...', value = 0, {
-      setProgress(1)
-      get_snpprobs(win_par$chr_id, 
+  shiny::reactive({
+    shiny::req(win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
+    shiny::req(pheno_names(), probs_obj())
+    shiny::withProgress(message = 'SNP Probs ...', value = 0, {
+      shiny::setProgress(1)
+      doqtl2::get_snpprobs(win_par$chr_id, 
                    win_par$peak_Mbp, 
                    win_par$window_Mbp,
                    pheno_names(), 

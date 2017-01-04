@@ -8,7 +8,7 @@
 \title{Shiny Top Features in SNP Region module}
 \usage{
 shinyTopFeature(input, output, session, snp_par, chr_pos, snp_scan_obj,
-  top_snps_tbl, gene_exon_tbl, snp_action = reactive({     "basic" }))
+  top_snps_tbl, gene_exon_tbl, snp_action = shiny::reactive({     "basic" }))
 
 shinyTopFeatureInput(id)
 

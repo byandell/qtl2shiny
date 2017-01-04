@@ -9,117 +9,120 @@
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom dplyr distinct filter select
+#' @importFrom doqtl2 get_pheno
+#' @importFrom shiny callModule NS reactive req 
+#'   radioButtons selectInput
+#'   dataTableOutput textOutput uiOutput
+#'   renderDataTable renderText renderUI
+#'   observeEvent
+#'   strong tagList
 shinySetup <- function(input, output, session,
                         pheno_type, peaks_tbl, pmap_obj, analyses_tbl, cov_mx) {
   ns <- session$ns
   
   # Select phenotype dataset
-  output$dataset <- renderUI({
-    req(choices <- pheno_type())
+  output$dataset <- shiny::renderUI({
+    shiny::req(choices <- pheno_type())
     if(is.null(selected <- input$dataset))
       selected <- NULL
-    selectInput(ns("dataset"), "Phenotype Group",
+    shiny::selectInput(ns("dataset"), "Phenotype Group",
                 choices = as.list(choices),
                 selected = selected,
                 multiple = TRUE)
   })
   
   ## Locate Peak.
-  win_par <- callModule(shinyPeaks, "shinypeaks",
+  win_par <- shiny::callModule(shinyPeaks, "shinypeaks",
                          input, pheno_type, peaks_tbl, pmap_obj)
   
-  chr_pos <- reactive({
+  chr_pos <- shiny::reactive({
     make_chr_pos(win_par$chr_id, 
                  win_par$peak_Mbp, win_par$window_Mbp)
   })
-  output$chr_pos <- renderText({
+  output$chr_pos <- shiny::renderText({
     paste0("Region: ", chr_pos(), "Mbp")
   })
-  output$num_pheno <- renderText({
+  output$num_pheno <- shiny::renderText({
     num_pheno(character(), analyses_tbl())
   })
-  observeEvent(phe_par$pheno_names, {
-    output$num_pheno <- renderText({
+  shiny::observeEvent(phe_par$pheno_names, {
+    output$num_pheno <- shiny::renderText({
       num_pheno(phe_par$pheno_names, analyses_tbl())
     })
   })
   
   ## Use window as input to shinyPhenos.
-  phe_par <- callModule(shinyPhenos, "phenos",
+  phe_par <- shiny::callModule(shinyPhenos, "phenos",
              input, peaks_tbl, analyses_tbl, win_par)
   
   ## Density or scatter plot of phenotypes.
-  analyses_df <- reactive({
-    analyses_tbl() %>%
-      filter(pheno %in% req(phe_par$pheno_names))
+  analyses_df <- shiny::reactive({
+    dplyr::filter(analyses_tbl(), pheno %in% shiny::req(phe_par$pheno_names))
   })
-  phe_df <- reactive({
-    get_pheno(pheno_data,
-              analyses_df() %>%
-                distinct(pheno, .keep_all=TRUE))
+  phe_df <- shiny::reactive({
+    doqtl2::get_pheno(pheno_data,
+              dplyr::distinct(analyses_df(), pheno, .keep_all=TRUE))
   })
-  raw_phe_df <- reactive({
-    get_pheno(pheno_data,
-              analyses_df() %>%
-                distinct(pheno, .keep_all=TRUE),
+  raw_phe_df <- shiny::reactive({
+    doqtl2::get_pheno(pheno_data,
+              dplyr::distinct(analyses_df(), pheno, .keep_all=TRUE),
               FALSE)
   })
-  callModule(shinyPhenoPlot, "PhenoPlotRaw", raw_phe_df, cov_mx)
-  callModule(shinyPhenoPlot, "PhenoPlotTrans", phe_df, cov_mx)
+  shiny::callModule(shinyPhenoPlot, "PhenoPlotRaw", raw_phe_df, cov_mx)
+  shiny::callModule(shinyPhenoPlot, "PhenoPlotTrans", phe_df, cov_mx)
   
   # Output the analyses table
-  output$analyses_tbl <- renderDataTable({
+  output$analyses_tbl <- shiny::renderDataTable({
     collapse_covar(analyses_df())
   }, options = list(scrollX = TRUE, pageLength = 10))
   
   # Output the peaks table
   
   ## Set up peaks data frame.
-  peaks_df <- reactive({
-    phename <- req(phe_par$pheno_names) 
-    peaks %>%
-      filter(pheno %in% phename)
+  peaks_df <- shiny::reactive({
+    phename <- shiny::req(phe_par$pheno_names) 
+    dplyr::filter(peaks, pheno %in% phename)
   })
-  output$peaks_tbl <- renderDataTable({
-    peaks_df() %>%
-      select(pheno,chr,pos,lod)
+  output$peaks_tbl <- shiny::renderDataTable({
+    dplyr::select(peaks_df(), pheno, chr, pos, lod)
   }, options = list(scrollX = TRUE, pageLength = 10))
   
   ## Setup input logic.
-  output$title <- renderUI({
-    strong(req(input$setup))
+  output$title <- shiny::renderUI({
+    shiny::strong(shiny::req(input$setup))
   })
-  output$sidebar_setup <- renderUI({
-    switch(req(input$setup),
-           Phenotypes = tagList(
+  output$sidebar_setup <- shiny::renderUI({
+    switch(shiny::req(input$setup),
+           Phenotypes = shiny::tagList(
              shinyPhenosUI(ns("phenos")),
-             radioButtons(ns("show_data"), NULL,
+             shiny::radioButtons(ns("show_data"), NULL,
                           c("LOD Peaks","Covariates",
                             "Trans Data","Raw Data"),
                           input$show_data)),
            Region = shinyPeaksInput(ns("shinypeaks")))
   })
-  output$main_setup <- renderUI({
-    switch(req(input$setup),
+  output$main_setup <- shiny::renderUI({
+    switch(shiny::req(input$setup),
            Phenotypes = {
-             switch(req(input$show_data),
-                    "LOD Peaks"  = dataTableOutput(ns("peaks_tbl")),
+             switch(shiny::req(input$show_data),
+                    "LOD Peaks"  = shiny::dataTableOutput(ns("peaks_tbl")),
                     "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
                     "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
-                    "Covariates" = dataTableOutput(ns("analyses_tbl")))
+                    "Covariates" = shiny::dataTableOutput(ns("analyses_tbl")))
              },
            Region = shinyPeaksOutput(ns("shinypeaks")))
   })
   
-  output$radio <- renderUI({
-    radioButtons(ns("setup"), NULL,
+  output$radio <- shiny::renderUI({
+    shiny::radioButtons(ns("setup"), NULL,
                  c("Region", "Phenotypes"),
                  input$setup,
                  inline=TRUE)
   })
   
   ## Return.
-  reactive({
+  shiny::reactive({
     list(phe_par = phe_par,
          win_par = win_par)
   })
@@ -128,23 +131,23 @@ shinySetup <- function(input, output, session,
 #' @rdname shinySetup
 #' @export
 shinySetupOutput <- function(id) {
-  ns <- NS(id)
-  tagList(
-    textOutput(ns("num_pheno")),
-    uiOutput(ns("chr_pos"))
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::textOutput(ns("num_pheno")),
+    shiny::uiOutput(ns("chr_pos"))
   )
 }
 #' @rdname shinySetup
 #' @export
 shinySetupUI <- function(id) {
-  ns <- NS(id)
-  tagList(
+  ns <- shiny::NS(id)
+  shiny::tagList(
     sidebarPanel(
-      uiOutput(ns("title")),
-      uiOutput(ns("radio")),
-      uiOutput(ns("dataset")),
-      uiOutput(ns("sidebar_setup"))
+      shiny::uiOutput(ns("title")),
+      shiny::uiOutput(ns("radio")),
+      shiny::uiOutput(ns("dataset")),
+      shiny::uiOutput(ns("sidebar_setup"))
     ),
-    mainPanel(uiOutput(ns("main_setup")))
+    mainPanel(shiny::uiOutput(ns("main_setup")))
   )
 }

@@ -11,6 +11,7 @@
 #' \dontrun{doqtl2_app()}
 #'
 #' @export
+#' @importFrom shiny runApp
 doqtl2_app <- function(appfile = "app.R") {
   shiny::runApp(system.file(file.path("doqtl2", appfile), package='qtl2shiny'))
 }

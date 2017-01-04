@@ -9,45 +9,50 @@
 #' @return tbl with top SNPs
 #'
 #' @export
+#' @importFrom shiny callModule NS reactive req 
+#'   radioButtons
+#'   uiOutput
+#'   renderUI
+#'   fluidRow column tagList
 shinySNPAssoc <- function(input, output, session,
                         snp_par, chr_pos, pheno_names,
                         snp_scan_obj, top_snps_tbl, 
                         gene_exon_tbl, data_path,
-                        snp_action = reactive({"basic"})) {
+                        snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
-  feature_file <- reactive({file.path(data_path(), 
+  feature_file <- shiny::reactive({file.path(data_path(), 
                                       "mgi_db.sqlite")})
   
   ## Shiny Modules
   ## SNP Association Scan
-  callModule(shinyScan1SNP, "snp_scan",
+  shiny::callModule(shinyScan1SNP, "snp_scan",
              snp_par, chr_pos, pheno_names,
              snp_scan_obj, snp_action)
   ## SNP Summary
-  callModule(shinySNP, "best_snp", 
+  shiny::callModule(shinySNP, "best_snp", 
              chr_pos, top_snps_tbl, snp_action)
   ## Gene Region
-  callModule(shinyGeneRegion, "gene_region",
+  shiny::callModule(shinyGeneRegion, "gene_region",
              snp_par, 
              top_snps_tbl, feature_file,
              snp_action)
   ## Genes and Exons
-  callModule(shinyGeneExon, "gene_exon",
+  shiny::callModule(shinyGeneExon, "gene_exon",
              snp_par, chr_pos, 
              top_snps_tbl, gene_exon_tbl,
              snp_action)
   
-  output$snp_check <- renderUI({
-    switch(req(input$button),
+  output$snp_check <- shiny::renderUI({
+    switch(shiny::req(input$button),
            Genes   = shinyGeneRegionInput(ns("gene_region")))
   })
-  output$snp_input <- renderUI({
-    switch(req(input$button),
+  output$snp_input <- shiny::renderUI({
+    switch(shiny::req(input$button),
            Exons   = shinyGeneExonInput(ns("gene_exon")),
            Summary = shinySNPInput(ns("best_snp")))
   })
-  output$snp_output <- renderUI({
-    switch(req(input$button),
+  output$snp_output <- shiny::renderUI({
+    switch(shiny::req(input$button),
            Scan    = shinyScan1SNPOutput(ns("snp_scan")),
            Genes   = shinyGeneRegionOutput(ns("gene_region")),
            Exons   = shinyGeneExonOutput(ns("gene_exon")),
@@ -55,17 +60,17 @@ shinySNPAssoc <- function(input, output, session,
   })
   
   ## Downloads
-  output$download_csv_plot <- renderUI({
-    switch(req(input$button),
+  output$download_csv_plot <- shiny::renderUI({
+    switch(shiny::req(input$button),
            Scan    =,
-           Summary = tagList(fluidRow(
-             column(6, shinySNPUI(ns("best_snp"))),
-             column(6, shinyScan1SNPUI(ns("snp_scan"))))),
+           Summary = shiny::tagList(shiny::fluidRow(
+             shiny::column(6, shinySNPUI(ns("best_snp"))),
+             shiny::column(6, shinyScan1SNPUI(ns("snp_scan"))))),
            Genes   = shinyGeneRegionUI(ns("gene_region")),
            Exons   = shinyGeneExonUI(ns("gene_exon")))
   })
-  output$radio <- renderUI({
-    radioButtons(ns("button"), "",
+  output$radio <- shiny::renderUI({
+    shiny::radioButtons(ns("button"), "",
                  c("Scan", "Genes", "Exons", "Summary"),
                  input$button)
   })
@@ -75,23 +80,23 @@ shinySNPAssoc <- function(input, output, session,
 #' @rdname shinySNPAssoc
 #' @export
 shinySNPAssocInput <- function(id) {
-  ns <- NS(id)
-  tagList(
-    fluidRow(
-      column(6, uiOutput(ns("radio"))),
-      column(6, uiOutput(ns("snp_check")))),
-    uiOutput(ns("snp_input"))
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::fluidRow(
+      shiny::column(6, shiny::uiOutput(ns("radio"))),
+      shiny::column(6, shiny::uiOutput(ns("snp_check")))),
+    shiny::uiOutput(ns("snp_input"))
   )
 }
 #' @rdname shinySNPAssoc
 #' @export
 shinySNPAssocUI <- function(id) {
-  ns <- NS(id)
-  uiOutput(ns("download_csv_plot"))
+  ns <- shiny::NS(id)
+  shiny::uiOutput(ns("download_csv_plot"))
 }
 #' @rdname shinySNPAssoc
 #' @export
 shinySNPAssocOutput <- function(id) {
-  ns <- NS(id)
-  uiOutput(ns("snp_output"))
+  ns <- shiny::NS(id)
+  shiny::uiOutput(ns("snp_output"))
 }

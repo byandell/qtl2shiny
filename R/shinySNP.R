@@ -9,24 +9,32 @@
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom dplyr filter select
+#' @importFrom shiny NS reactive req 
+#'   selectInput
+#'   dataTableOutput uiOutput
+#'   renderDataTable renderUI
+#'   tagList
+#'   withProgress setProgress
+#'   downloadButton downloadHandler
 shinySNP <- function(input, output, session,
                      chr_pos, top_snps_tbl,
-                     snp_action = reactive({"basic"})) {
+                     snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
   
-  ensembl_species <- reactive({"Mus_musculus"})
-  best_snps <- reactive({
-    req(top_snps_tbl())
+  ensembl_species <- shiny::reactive({"Mus_musculus"})
+  best_snps <- shiny::reactive({
+    shiny::req(top_snps_tbl())
     summary(top_snps_tbl(),"best")
   })
-  best_href <- reactive({
-    best <- req(best_snps())
+  best_href <- shiny::reactive({
+    best <- shiny::req(best_snps())
     if(!is.null(ensembl_species())) {
       ensembl_URL <- file.path("http://www.ensembl.org",
                                ensembl_species(),
                                "Gene/Summary?g=")
       best$ensembl_gene <-
-        unlist(apply(best %>% select(ensembl_gene),
+        unlist(apply(dplyr::select(best, ensembl_gene),
                      1,
                      function(x,y) {
                        if(is.na(x))
@@ -40,14 +48,14 @@ shinySNP <- function(input, output, session,
     }
     best
   })
-  best_http <- reactive({
-    best <- req(best_snps())
+  best_http <- shiny::reactive({
+    best <- shiny::req(best_snps())
     if(!is.null(ensembl_species())) {
       ensembl_URL <- file.path("http://www.ensembl.org",
                                ensembl_species(),
                                "Gene/Summary?g=")
       best$ensembl_gene <-
-        unlist(apply(best %>% select(ensembl_gene),
+        unlist(apply(dplyr::select(best, ensembl_gene),
                      1,
                      function(x,y) {
                        if(is.na(x))
@@ -62,49 +70,48 @@ shinySNP <- function(input, output, session,
     best
   })
 
-  output$top_snps_tbl <- renderDataTable({
-    req(top_snps_tbl())
-    withProgress(message = "Top SNP Range ...", value = 0,
+  output$top_snps_tbl <- shiny::renderDataTable({
+    shiny::req(top_snps_tbl())
+    shiny::withProgress(message = "Top SNP Range ...", value = 0,
     {
-      setProgress(1)
+      shiny::setProgress(1)
       summary(top_snps_tbl())
     })
   })
-  output$top_snps_best <- renderDataTable({
-    withProgress(message = "Top SNP Best ...", value = 0,
+  output$top_snps_best <- shiny::renderDataTable({
+    shiny::withProgress(message = "Top SNP Best ...", value = 0,
     {
-      setProgress(1)
-      req(best_href())
+      shiny::setProgress(1)
+      shiny::req(best_href())
   })
   }, escape = FALSE,
     options = list(scrollX = TRUE, pageLength = 10))
-  output$top_indels <- renderDataTable({
-    withProgress(message = "Top InDels ...", value = 0,
+  output$top_indels <- shiny::renderDataTable({
+    shiny::withProgress(message = "Top InDels ...", value = 0,
                  {
-                   setProgress(1)
-                   req(best_href()) %>%
-                     filter(type != "SNP")
+                   shiny::setProgress(1)
+                   dplyr::filter(shiny::req(best_href()), type != "SNP")
                  })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
-  output$top_snps_peak <- renderDataTable({
-    req(top_snps_tbl())
-    withProgress(message = "Top SNP Peaks ...", value = 0,
+  output$top_snps_peak <- shiny::renderDataTable({
+    shiny::req(top_snps_tbl())
+    shiny::withProgress(message = "Top SNP Peaks ...", value = 0,
     {
-      setProgress(1)
+      shiny::setProgress(1)
       summary(top_snps_tbl(),"peak")
     })
   })
-  output$snp_sum <- renderUI({
+  output$snp_sum <- shiny::renderUI({
     switch(input$snp_sum,
-           best   = dataTableOutput(ns("top_snps_best")),
-           indels = dataTableOutput(ns("top_indels")),
-           peaks  = dataTableOutput(ns("top_snps_peak")),
-           range  = dataTableOutput(ns("top_snps_tbl")))
+           best   = shiny::dataTableOutput(ns("top_snps_best")),
+           indels = shiny::dataTableOutput(ns("top_indels")),
+           peaks  = shiny::dataTableOutput(ns("top_snps_peak")),
+           range  = shiny::dataTableOutput(ns("top_snps_tbl")))
   })
   
   ## Downloads.
-  output$downloadData <- downloadHandler(
+  output$downloadData <- shiny::downloadHandler(
     filename = function() {
       file.path(paste0("top_snps_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
@@ -116,20 +123,20 @@ shinySNP <- function(input, output, session,
 #' @rdname shinySNP
 #' @export
 shinySNPInput <- function(id) {
-  ns <- NS(id)
-  tagList(
-    selectInput(ns("snp_sum"), NULL, c("best","indels","peaks","range"))
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::selectInput(ns("snp_sum"), NULL, c("best","indels","peaks","range"))
   )
 }
 #' @rdname shinySNP
 #' @export
 shinySNPUI <- function(id) {
-  ns <- NS(id)
-  downloadButton(ns("downloadData"), "CSV")
+  ns <- shiny::NS(id)
+  shiny::downloadButton(ns("downloadData"), "CSV")
 }
 #' @rdname shinySNP
 #' @export
 shinySNPOutput <- function(id) {
-  ns <- NS(id)
-  uiOutput(ns("snp_sum"))
+  ns <- shiny::NS(id)
+  shiny::uiOutput(ns("snp_sum"))
 }

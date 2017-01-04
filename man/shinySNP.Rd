@@ -8,7 +8,7 @@
 \title{Shiny SNP analysis and plot module}
 \usage{
 shinySNP(input, output, session, chr_pos, top_snps_tbl,
-  snp_action = reactive({     "basic" }))
+  snp_action = shiny::reactive({     "basic" }))
 
 shinySNPInput(id)
 

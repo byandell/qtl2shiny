@@ -8,7 +8,7 @@
 \title{Shiny Genes and Exons with nearby SNPs module}
 \usage{
 shinyGeneExon(input, output, session, snp_par, chr_pos, top_snps_tbl,
-  gene_exon_tbl, snp_action = reactive({     "basic" }))
+  gene_exon_tbl, snp_action = shiny::reactive({     "basic" }))
 
 shinyGeneExonInput(id)
 

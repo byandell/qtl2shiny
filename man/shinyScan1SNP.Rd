@@ -7,7 +7,7 @@
 \title{Shiny scan1 SNP analysis and plot module}
 \usage{
 shinyScan1SNP(input, output, session, snp_par, chr_pos, pheno_names,
-  snp_scan_obj, snp_action = reactive({     "basic" }))
+  snp_scan_obj, snp_action = shiny::reactive({     "basic" }))
 
 shinyScan1SNPUI(id)
 

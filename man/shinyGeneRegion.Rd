@@ -8,7 +8,7 @@
 \title{Shiny Genes in SNP Region module}
 \usage{
 shinyGeneRegion(input, output, session, snp_par, top_snps_tbl, feature_file,
-  snp_action = reactive({     "basic" }))
+  snp_action = shiny::reactive({     "basic" }))
 
 shinyGeneRegionInput(id)
 

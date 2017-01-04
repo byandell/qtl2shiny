@@ -14,8 +14,8 @@ source("setup.R")
 helpPopup <- function(title, content,
                       placement = c('right', 'top', 'left', 'bottom'),
                       trigger = c('click', 'hover', 'focus', 'manual')) {
-  tagList(
-    singleton(
+  shiny::tagList(
+    shiny::singleton(
       tags$head(
         tags$script("$(function() { $(\"[data-toggle='popover']\").popover()})"),
         tags$style(type = "text/css", ".popover{max-width:500px; position: fixed;}")
@@ -33,17 +33,17 @@ helpPopup <- function(title, content,
 }
 
 #####################################################
-ui <- dashboardPage(skin="red",
-  dashboardHeader(title = "DOQTL2 Wave 4"),
-  dashboardSidebar(
-    sidebarMenu(
-      includeMarkdown("attieDO.md"),
+ui <- shinydashboard::dashboardPage(skin="red",
+  shinydashboard::dashboardHeader(title = "DOQTL2 Wave 4"),
+  shinydashboard::dashboardSidebar(
+    shiny::sidebarMenu(
+      shiny::includeMarkdown("attieDO.md"),
       shinySetupOutput("setup"),
-      menuItem("Phenotypes and Region", tabName = "phenos",
+      shinydashboard::menuItem("Phenotypes and Region", tabName = "phenos",
                icon = icon("dashboard")),
-      menuItem("Haplotype Scans", tabName = "hap_scan",
+      shinydashboard::menuItem("Haplotype Scans", tabName = "hap_scan",
                icon = icon("dashboard")),
-      menuItem("SNP/Gene Action", tabName = "dip_scan", 
+      shinydashboard::menuItem("SNP/Gene Action", tabName = "dip_scan", 
                icon = icon("dashboard")),
       tags$div(id = "popup",
                helpPopup(NULL,
@@ -51,16 +51,16 @@ ui <- dashboardPage(skin="red",
                          placement = "right", trigger = "click"))
     )
   ),
-  dashboardBody(
-    tabItems(
+  shinydashboard::dashboardBody(
+    shinydashboard::tabItems(
       ## Phenotypes and Region
-      tabItem(tabName = "phenos", 
+      shinydashboard::tabItem(tabName = "phenos", 
               shinySetupUI("setup")),
       ## Scans
-      tabItem(tabName="hap_scan",
+      shinydashboard::tabItem(tabName="hap_scan",
               shinyHaploUI("hap_scan")),
       ## Diploid Analysis
-      tabItem(tabName="dip_scan", 
+      shinydashboard::tabItem(tabName="dip_scan", 
               shinyDiploUI("dip_scan"))
     )
   )
@@ -70,46 +70,44 @@ ui <- dashboardPage(skin="red",
 server <- function(input, output, session) {
   
   ## Data Setup
-  pheno_typer <- reactive({pheno_type})
-  peaks_tbl <- reactive({peaks})
-  pmap_obj <- reactive({pmap})
-  analyses_tblr <- reactive({analyses_tbl})
-  data_path <- reactive({datapath})
+  pheno_typer <- shiny::reactive({pheno_type})
+  peaks_tbl <- shiny::reactive({peaks})
+  pmap_obj <- shiny::reactive({pmap})
+  analyses_tblr <- shiny::reactive({analyses_tbl})
+  data_path <- shiny::reactive({datapath})
   
-  set_par <- callModule(shinySetup, "setup", 
+  set_par <- shiny::callModule(shinySetup, "setup", 
                     pheno_typer, peaks_tbl, 
                     pmap_obj, analyses_tblr, cov_mx)
   
   ## Continue with Plots and Analysis.
 
   ## Phenotypes and Covariates.
-  analyses_df <- reactive({
-    phename <- req(set_par()$phe_par$pheno_names)
+  analyses_df <- shiny::reactive({
+    phename <- shiny::req(set_par()$phe_par$pheno_names)
     ## The analyses_tbl should only have one row per pheno.
-    analyses_tbl %>%
-      filter(pheno %in% phename)
+    dplyr::filter(analyses_tbl, pheno %in% phename)
   })
-  phe_df <- reactive({
+  phe_df <- shiny::reactive({
     ## Make sure we get only one column per distinct pheno.
     get_pheno(pheno_data,
-              analyses_df() %>%
-                distinct(pheno, .keep_all=TRUE))
+              dplyr::distinct(analyses_df(), pheno, .keep_all=TRUE))
   })
-  cov_mx <- reactive({
-    get_covar(covar, analyses_df())
+  cov_mx <- shiny::reactive({
+    doqtl2::get_covar(covar, analyses_df())
   })
   
-  ## Set up reactives for scan1 module.
-  K_chr <- reactive({K[set_par()$win_par$chr_id]})
+  ## Set up shiny::reactives for scan1 module.
+  K_chr <- shiny::reactive({K[set_par()$win_par$chr_id]})
 
   ## Haplotype Analysis.
-  callModule(shinyHaplo, "hap_scan", 
+  shiny::callModule(shinyHaplo, "hap_scan", 
              set_par()$win_par, pmap_obj, 
              phe_df, cov_mx, K_chr,
              data_path)
 
   ## Diplotype Analysis.
-  callModule(shinyDiplo, "dip_scan",
+  shiny::callModule(shinyDiplo, "dip_scan",
              set_par()$win_par, 
              phe_df, cov_mx, K_chr,
              data_path)

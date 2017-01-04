@@ -9,68 +9,79 @@
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom dplyr distinct
+#' @importFrom doqtl2 merge_feature
+#' @importFrom qtl2ggplot sdp_to_pattern
+#' @importFrom shiny NS reactive req 
+#'   selectInput
+#'   dataTableOutput plotOutput uiOutput
+#'   renderDataTable renderPlot renderUI
+#'   fluidRow column tagList
+#'   withProgress setProgress
+#'   downloadButton downloadHandler
 shinyTopFeature <- function(input, output, session,
                             snp_par, chr_pos, 
                             snp_scan_obj, top_snps_tbl, 
                             gene_exon_tbl, 
-                            snp_action = reactive({"basic"})) {
+                            snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
 
-  top_feature <- reactive({
-    req(top_snps_tbl(),snp_scan_obj(),gene_exon_tbl())
-    withProgress(message = 'Merging gene info ...', value = 0,
+  top_feature <- shiny::reactive({
+    shiny::req(top_snps_tbl(),snp_scan_obj(),gene_exon_tbl())
+    shiny::withProgress(message = 'Merging gene info ...', value = 0,
     {
-      setProgress(1)
-      merge_feature(top_snps_tbl(), snp_scan_obj(), 1.5, 0, gene_exon_tbl())
+      shiny::setProgress(1)
+      doqtl2::merge_feature(top_snps_tbl(), snp_scan_obj(), 1.5, 0, gene_exon_tbl())
     })
   })
-  output$top_snp_type <- renderDataTable({
-    tops <- req(top_feature(), "SNP type")
+  output$top_snp_type <- shiny::renderDataTable({
+    tops <- shiny::req(top_feature(), "SNP type")
     summary(tops)
   }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
-  output$top_pattern <- renderDataTable({
+  output$top_pattern <- shiny::renderDataTable({
     summary(top_feature(), "pattern")
   }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
-  phename <- reactive({dimnames(snp_scan_obj()$lod)[[2]]})
-  output$top_gene_by_snp <- renderPlot({
-    req(top_feature(), snp_par$pheno_name)
+  phename <- shiny::reactive({dimnames(snp_scan_obj()$lod)[[2]]})
+  output$top_gene_by_snp <- shiny::renderPlot({
+    shiny::req(top_feature(), snp_par$pheno_name)
     plot(top_feature(), snp_par$pheno_name, "consequence")
   })
-  output$top_gene_by_pattern <- renderPlot({
-    req(top_feature(),snp_par$pheno_name)
+  output$top_gene_by_pattern <- shiny::renderPlot({
+    shiny::req(top_feature(), snp_par$pheno_name)
     plot(top_feature(), snp_par$pheno_name, "pattern")
   })
-  output$by_choice <- renderUI({
+  output$by_choice <- shiny::renderUI({
     switch(input$by_choice,
            Pattern = {
-             tagList(
-               plotOutput(ns("top_gene_by_snp")),
-               dataTableOutput(ns("top_pattern")))
+             shiny::tagList(
+               shiny::plotOutput(ns("top_gene_by_snp")),
+               shiny::dataTableOutput(ns("top_pattern")))
            },
            Consequence = {
-             tagList(
-               plotOutput(ns("top_gene_by_pattern")),
-               dataTableOutput(ns("top_snp_type")))
+             shiny::tagList(
+               shiny::plotOutput(ns("top_gene_by_pattern")),
+               shiny::dataTableOutput(ns("top_snp_type")))
            })
   })
   
   ## Downloads.
-  output$downloadData <- downloadHandler(
+  output$downloadData <- shiny::downloadHandler(
     filename = function() {
       file.path(paste0("top_feature_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
-      write.csv(req(top_feature()), file)
+      write.csv(shiny::req(top_feature()), file)
     }
   )
-  output$downloadPlot <- downloadHandler(
+  ## This does not work as items below do not exist.
+  output$downloadPlot <- shiny::downloadHandler(
     filename = function() {
       file.path(paste0("top_feature_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
-      req(top_feature())
+      shiny::req(top_feature())
       pdf(file, width = 9)
       for(phenoi in phename()) {
-        print(plot_top_feat_csq(phenoi))
-        print(plot_top_feat_pat(phenoi))
+        print(plot(top_feature(), phenoi, "consequence"))
+        print(plot(top_feature(), phenoi, "pattern"))
       }
       dev.off()
     }
@@ -80,21 +91,21 @@ shinyTopFeature <- function(input, output, session,
 #' @rdname shinyTopFeature
 #' @export
 shinyTopFeatureInput <- function(id) {
-  ns <- NS(id)
-  selectInput(ns("by_choice"), NULL, 
+  ns <- shiny::NS(id)
+  shiny::selectInput(ns("by_choice"), NULL, 
               c("Pattern","Consequence"))
 }
 #' @rdname shinyTopFeature
 #' @export
 shinyTopFeatureUI <- function(id) {
-  ns <- NS(id)
-  fluidRow(
-    column(6, downloadButton(ns("downloadData"), "CSV")),
-    column(6, downloadButton(ns("downloadPlot"), "Plots")))
+  ns <- shiny::NS(id)
+  shiny::fluidRow(
+    shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
+    shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
 }
 #' @rdname shinyTopFeature
 #' @export
 shinyTopFeatureOutput <- function(id) {
-  ns <- NS(id)
-  uiOutput(ns("by_choice"))
+  ns <- shiny::NS(id)
+  shiny::uiOutput(ns("by_choice"))
 }

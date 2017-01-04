@@ -7,7 +7,7 @@
 \title{Shiny SNP and Allele analysis and plot module}
 \usage{
 shinySNPAllele(input, output, session, job_par, win_par, phe_df, cov_mx,
-  probs_obj, K_chr, data_path, snp_action = reactive({     "basic" }))
+  probs_obj, K_chr, data_path, snp_action = shiny::reactive({     "basic" }))
 
 shinySNPAlleleUI(id)
 

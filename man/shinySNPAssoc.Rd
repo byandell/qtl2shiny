@@ -9,7 +9,7 @@
 \usage{
 shinySNPAssoc(input, output, session, snp_par, chr_pos, pheno_names,
   snp_scan_obj, top_snps_tbl, gene_exon_tbl, data_path,
-  snp_action = reactive({     "basic" }))
+  snp_action = shiny::reactive({     "basic" }))
 
 shinySNPAssocInput(id)
 

@@ -9,60 +9,65 @@
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom shiny callModule NS reactive req
+#'    radioButtons selectInput
+#'    renderText renderUI
+#'    textOutput uiOutput
+#'    mainPanel sidebarPanel strong tagList
 shinyDiplo <- function(input, output, session,
                        win_par, 
                        phe_df, cov_mx, K_chr,
                        data_path) {
   ns <- session$ns
 
-  chr_pos <- reactive({
+  chr_pos <- shiny::reactive({
     make_chr_pos(win_par$chr_id, 
                  win_par$peak_Mbp, 
                  win_par$window_Mbp)
   })
 
   ## Probs object for 36 diplotypes.
-  probs36_obj <- callModule(shinyProbs36, "probs36", 
+  probs36_obj <- shiny::callModule(shinyProbs36, "probs36", 
                             win_par, data_path)
 
-  snp_action <- reactive({input$snp_action})
+  snp_action <- shiny::reactive({input$snp_action})
   
   ## SNP Association
-  patterns <- callModule(shinySNPAllele, "snp_allele",
+  patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
                          input, win_par, phe_df, cov_mx, 
                          probs36_obj, K_chr, data_path,
                          snp_action)
   
-  callModule(shinyPattern, "dip_pat",
+  shiny::callModule(shinyPattern, "dip_pat",
              chr_pos, phe_df, K_chr, cov_mx,
              probs36_obj, patterns,
              snp_action)
 
   ## CC names
-  output$cc_names <- renderText({
-    cc <- CCcolors
+  output$cc_names <- shiny::renderText({
+    cc <- qtl2ggplot::CCcolors
     paste(LETTERS[seq_along(cc)], names(cc), 
           sep = "=", collapse = ", ")
   })
-  output$dip_input <- renderUI({
-    switch(req(input$button),
+  output$dip_input <- shiny::renderUI({
+    switch(shiny::req(input$button),
            "Genome Scans"    = shinyPatternUI(ns("dip_pat")),
            "SNP Association" =,
            "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")))
   })
-  output$dip_output <- renderUI({
-    switch(req(input$button),
+  output$dip_output <- shiny::renderUI({
+    switch(shiny::req(input$button),
            "Genome Scans"    = shinyPatternOutput(ns("dip_pat")),
            "SNP Association" = ,
            "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")))
   })
-  output$radio <- renderUI({
-    radioButtons(ns("button"), "",
+  output$radio <- shiny::renderUI({
+    shiny::radioButtons(ns("button"), "",
                  c("SNP Association","Allele Pattern","Genome Scans"),
                  input$button)
   })
-  output$select <- renderUI({
-    selectInput(ns("snp_action"), "",
+  output$select <- shiny::renderUI({
+    shiny::selectInput(ns("snp_action"), "",
                 c("add+dom","additive","non-add",
                   "recessive","dominant"),
                 input$select)
@@ -72,15 +77,15 @@ shinyDiplo <- function(input, output, session,
 #' @rdname shinyDiplo
 #' @export
 shinyDiploUI <- function(id) {
-  ns <- NS(id)
-  tagList(
-    sidebarPanel(
-      strong("SNP/Gene Action"),
-      uiOutput(ns("radio")),
-      uiOutput(ns("select")),
-      uiOutput(ns("dip_input")),
-      textOutput(ns("cc_names"))),
-  mainPanel(
-    uiOutput(ns("dip_output")))
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::sidebarPanel(
+      shiny::strong("SNP/Gene Action"),
+      shiny::uiOutput(ns("radio")),
+      shiny::uiOutput(ns("select")),
+      shiny::uiOutput(ns("dip_input")),
+      shiny::textOutput(ns("cc_names"))),
+  shiny::mainPanel(
+    shiny::uiOutput(ns("dip_output")))
   )
 }

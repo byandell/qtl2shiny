@@ -7,7 +7,7 @@
 \title{Shiny Pattern module}
 \usage{
 shinyPattern(input, output, session, chr_pos, phe_df, K_chr, cov_mx,
-  probs36_obj, patterns, snp_action = reactive({     NULL }))
+  probs36_obj, patterns, snp_action = shiny::reactive({     NULL }))
 
 shinyPatternUI(id)
 

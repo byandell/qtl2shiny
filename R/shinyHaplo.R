@@ -9,6 +9,11 @@
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom shiny callModule NS req 
+#'   radioButtons
+#'   textOutput uiOutput
+#'   renderText renderUI
+#'   mainPanel sidebarPanel strong tagList
 shinyHaplo <- function(input, output, session,
                        win_par, pmap_obj, 
                        phe_df, cov_mx, K_chr,
@@ -16,39 +21,39 @@ shinyHaplo <- function(input, output, session,
   ns <- session$ns
 
   ## Genotype Probabilities.
-  probs_obj <- callModule(shinyProbs, "probs", 
+  probs_obj <- shiny::callModule(shinyProbs, "probs", 
                           win_par, data_path)
 
   ## Genome Scan.
-  callModule(shinyScan1Plot, "hap_scan", 
+  shiny::callModule(shinyScan1Plot, "hap_scan", 
              win_par, pmap_obj, phe_df, cov_mx, probs_obj, K_chr)
   
   ## SNP Association
-  patterns <- callModule(shinySNPAllele, "snp_allele",
+  patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
               input, win_par, 
               phe_df, cov_mx, probs_obj, K_chr,
               data_path)
 
   ## CC names
-  output$cc_names <- renderText({
-    cc <- CCcolors
+  output$cc_names <- shiny::renderText({
+    cc <- qtl2ggplot::CCcolors
     paste(LETTERS[seq_along(cc)], names(cc), sep = "=", collapse = ", ")
   })
 
-  output$hap_input <- renderUI({
-    switch(req(input$button),
+  output$hap_input <- shiny::renderUI({
+    switch(shiny::req(input$button),
            "Genome Scans"    = shinyScan1PlotUI(ns("hap_scan")),
            "SNP Association" =,
            "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")))
   })
-  output$hap_output <- renderUI({
-    switch(req(input$button),
+  output$hap_output <- shiny::renderUI({
+    switch(shiny::req(input$button),
            "Genome Scans"    = shinyScan1PlotOutput(ns("hap_scan")),
            "SNP Association" = ,
            "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")))
   })
-  output$radio <- renderUI({
-    radioButtons(ns("button"), "",
+  output$radio <- shiny::renderUI({
+    shiny::radioButtons(ns("button"), "",
                  c("Genome Scans","SNP Association","Allele Pattern"),
                  input$button)
   })
@@ -57,14 +62,14 @@ shinyHaplo <- function(input, output, session,
 #' @rdname shinyHaplo
 #' @export
 shinyHaploUI <- function(id) {
-  ns <- NS(id)
-  tagList(
-    sidebarPanel(
-      strong("SNP/Gene Additive"),
-      uiOutput(ns("radio")),
-      uiOutput(ns("hap_input")),
-      textOutput(ns("cc_names"))),
-    mainPanel(
-      uiOutput(ns("hap_output")))
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::sidebarPanel(
+      shiny::strong("SNP/Gene Additive"),
+      shiny::uiOutput(ns("radio")),
+      shiny::uiOutput(ns("hap_input")),
+      shiny::textOutput(ns("cc_names"))),
+    shiny::mainPanel(
+      shiny::uiOutput(ns("hap_output")))
   )
 }

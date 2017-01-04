@@ -9,49 +9,58 @@
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom doqtl2 get_mgi_features
+#' @importFrom ggplot2 ggtitle
+#' @importFrom shiny NS reactive req isTruthy
+#'   checkboxInput
+#'   tableOutput plotOutput uiOutput
+#'   renderPlot renderTable renderUI
+#'   fluidRow column tagList
+#'   withProgress setProgress
+#'   downloadButton downloadHandler
 shinyGeneRegion <- function(input, output, session,
                      snp_par, top_snps_tbl, feature_file,
-                     snp_action = reactive({"basic"})) {
+                     snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
 
-  rng <- reactive({
-    range(req(top_snps_tbl())$pos_Mbp)
+  rng <- shiny::reactive({
+    range(shiny::req(top_snps_tbl())$pos_Mbp)
   })
-  chr_id <- reactive({
+  chr_id <- shiny::reactive({
     unique(top_snps_tbl()$chr)[1]
   })
-  gene_region_tbl <- reactive({
+  gene_region_tbl <- shiny::reactive({
     wrng <- rng()
-    withProgress(message = 'Extract gene features ...',
+    shiny::withProgress(message = 'Extract gene features ...',
                  value = 0, {
-      setProgress(1)
-      get_mgi_features(chr_id(), wrng[1], wrng[2],
+      shiny::setProgress(1)
+      doqtl2::get_mgi_features(chr_id(), wrng[1], wrng[2],
                        sql_file = feature_file())
     })
   })
-  output$gene_sum <- renderTable({
+  output$gene_sum <- shiny::renderTable({
     summary(gene_region_tbl())
   })
-  chr_pos_all <- reactive({
-    chr <- req(chr_id())
+  chr_pos_all <- shiny::reactive({
+    chr <- shiny::req(chr_id())
     scan_w <- round(rng(), 2)
     paste(chr, scan_w[1], scan_w[2], sep = "_")
   })
-  chr_pos <- reactive({
-    chr <- req(chr_id())
-    scan_w <- req(snp_par$scan_window)
+  chr_pos <- shiny::reactive({
+    chr <- shiny::req(chr_id())
+    scan_w <- shiny::req(snp_par$scan_window)
     scan_w <- round(scan_w, 2)
     paste(chr, scan_w[1], scan_w[2], sep = "_")
   })
 
   plot_gene_region <- function(pheno) {
-    req(gene_region_tbl(),snp_par$scan_window)
+    shiny::req(gene_region_tbl(),snp_par$scan_window)
     ## Plot pseudogene and gene locations along with SNPs.
     ## Ordered by pseudogenes first, then genes
     ## negative (blue) strand, then unknown (grey), then positive (red) strand.
     wrng <- snp_par$scan_window
     ## Filtering removes feature_tbl class, so need to be explicit.
-    use_snp <- isTruthy(input$SNP)
+    use_snp <- shiny::isTruthy(input$SNP)
     if(use_snp) {
       top_snps_rng <- subset(top_snps_tbl(), 
                              wrng[1], wrng[2],
@@ -65,29 +74,29 @@ shinyGeneRegion <- function(input, output, session,
               top_snps_tbl = top_snps_rng)
     if(use_snp)
       p <- p + 
-        ggtitle(paste("SNPs for", pheno, snp_action()))
+        ggplot2::ggtitle(paste("SNPs for", pheno, snp_action()))
     p
   }
-  output$SNP <- renderUI({
-    checkboxInput(ns("SNP"), "Add SNPs?", input$SNP)
+  output$SNP <- shiny::renderUI({
+    shiny::checkboxInput(ns("SNP"), "Add SNPs?", input$SNP)
   })
-  output$gene_plot <- renderPlot({
-    phename <- req(snp_par$pheno_name)
+  output$gene_plot <- shiny::renderPlot({
+    phename <- shiny::req(snp_par$pheno_name)
     plot_gene_region(phename)
   })
-  output$downloadData <- downloadHandler(
+  output$downloadData <- shiny::downloadHandler(
     filename = function() {
       file.path(paste0("gene_region_", chr_pos_all(), "_", snp_action(), ".csv")) },
     content = function(file) {
-      write.csv(req(gene_region_tbl()), file)
+      write.csv(shiny::req(gene_region_tbl()), file)
     }
   )
-  output$downloadPlot <- downloadHandler(
+  output$downloadPlot <- shiny::downloadHandler(
     filename = function() {
       file.path(paste0("gene_region_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
-      req(gene_region_tbl(),snp_par$scan_window)
-      pheno_names <- unique(req(top_snps_tbl())$pheno)
+      shiny::req(gene_region_tbl(),snp_par$scan_window)
+      pheno_names <- unique(shiny::req(top_snps_tbl())$pheno)
       pdf(file, width = 9)
       for(pheno in pheno_names)
         print(plot_gene_region(pheno))
@@ -99,24 +108,24 @@ shinyGeneRegion <- function(input, output, session,
 #' @rdname shinyGeneRegion
 #' @export
 shinyGeneRegionInput <- function(id) {
-  ns <- NS(id)
-  uiOutput(ns("SNP"))
+  ns <- shiny::NS(id)
+  shiny::uiOutput(ns("SNP"))
 }
 #' @rdname shinyGeneRegion
 #' @export
 shinyGeneRegionUI <- function(id) {
-  ns <- NS(id)
-  fluidRow(
-    fluidRow(
-      column(6, downloadButton(ns("downloadData"), "CSV")),
-      column(6, downloadButton(ns("downloadPlot"), "Plot"))))
+  ns <- shiny::NS(id)
+  shiny::fluidRow(
+    shiny::fluidRow(
+      shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
+      shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plot"))))
 }
 #' @rdname shinyGeneRegion
 #' @export
 shinyGeneRegionOutput <- function(id) {
-  ns <- NS(id)
-  tagList(
-    plotOutput(ns("gene_plot")),
-    tableOutput(ns("gene_sum"))
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::plotOutput(ns("gene_plot")),
+    shiny::tableOutput(ns("gene_sum"))
   )
 }

@@ -9,33 +9,40 @@
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom doqtl2 top_snp_asso
+#' @importFrom shiny NS reactive req 
+#'   plotOutput
+#'   renderPlot
+#'   withProgress setProgress
+#'   downloadButton downloadHandler
 shinyScan1SNP <- function(input, output, session,
                           snp_par, chr_pos, pheno_names,
                           snp_scan_obj,
-                          snp_action = reactive({"basic"})) {
+                          snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
 
-  output$snpPlot <- renderPlot({
+  output$snpPlot <- shiny::renderPlot({
     if(is.null(snp_par$pheno_name) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
-    withProgress(message = 'SNP plots ...', value = 0, {
-      setProgress(1)
-      top_snp_asso(snp_par$pheno_name, snp_scan_obj(), snp_par$scan_window, snp_action())
+    shiny::withProgress(message = 'SNP plots ...', value = 0, {
+      shiny::setProgress(1)
+      doqtl2::top_snp_asso(snp_par$pheno_name, snp_scan_obj(), 
+                           snp_par$scan_window, snp_action())
     })
   })
   
-  output$downloadPlot <- downloadHandler(
+  output$downloadPlot <- shiny::downloadHandler(
     filename = function() {
       file.path(paste0("snp_scan_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
-      scans <- req(snp_scan_obj())
-      snp_w <- req(snp_par$scan_window)
-      phenos <- req(pheno_names())
+      scans <- shiny::req(snp_scan_obj())
+      snp_w <- shiny::req(snp_par$scan_window)
+      phenos <- shiny::req(pheno_names())
       pdf(file, width = 9)
       ## Plots by phenotype.
       for(pheno in phenos) {
-        print(top_snp_asso(pheno, scans, snp_w))
+        print(doqtl2::top_snp_asso(pheno, scans, snp_w))
       }
       dev.off()
     }
@@ -45,12 +52,12 @@ shinyScan1SNP <- function(input, output, session,
 #' @rdname shinyScan1SNP
 #' @export
 shinyScan1SNPUI <- function(id) {
-  ns <- NS(id)
-  downloadButton(ns("downloadPlot"), "Plots")
+  ns <- shiny::NS(id)
+  shiny::downloadButton(ns("downloadPlot"), "Plots")
 }
 #' @rdname shinyScan1SNP
 #' @export
 shinyScan1SNPOutput <- function(id) {
-  ns <- NS(id)
-  plotOutput(ns("snpPlot"))
+  ns <- shiny::NS(id)
+  shiny::plotOutput(ns("snpPlot"))
 }

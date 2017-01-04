@@ -8,7 +8,7 @@ Maintainer: Brian S. Yandell <byandell@wisc.edu>
 Description: Shiny Interface for R/qtl2 and R/doqtl2.
 License: GPL-3
 LazyData: TRUE
-Depends:
+Includes:
     doqtl2,shiny,shinydashboard
 Suggests:
     flexdashboard
