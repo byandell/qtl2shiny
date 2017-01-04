@@ -36,8 +36,7 @@ helpPopup <- function(title, content,
 ui <- shinydashboard::dashboardPage(skin="red",
   shinydashboard::dashboardHeader(title = "DOQTL2 Wave 4"),
   shinydashboard::dashboardSidebar(
-    shiny::sidebarMenu(
-      shiny::includeMarkdown("attieDO.md"),
+    shinydashboard::sidebarMenu(
       shinySetupOutput("setup"),
       shinydashboard::menuItem("Phenotypes and Region", tabName = "phenos",
                icon = icon("dashboard")),

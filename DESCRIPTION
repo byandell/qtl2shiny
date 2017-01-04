@@ -1,15 +1,17 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for R/qtl2 and R/doqtl2
-Version: 0.3.9
-Date: 2016-11-9
+Version: 0.4.0
+Date: 2017-01-04
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
 Description: Shiny Interface for R/qtl2 and R/doqtl2.
 License: GPL-3
 LazyData: TRUE
+Depends:
+    doqtl2
 Includes:
-    doqtl2,shiny,shinydashboard
+    shiny,shinydashboard
 Suggests:
     flexdashboard
 RoxygenNote: 5.0.1
