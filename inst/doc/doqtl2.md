@@ -27,12 +27,10 @@ get_snpprobs      | snpinfo.R   | snpprobs for SNPs, InDels, SVs
 get_top_snps_tbl  | top_snps_tbl.R | get top SNP info based on LMMs
 listof_scan1coefCC | listof_scan1coefCC.R | create list of scan1coefCC objects
 merge_feature     | merge_feature.R | merge SNP LOD and other information
-plot_eff          | listof_scan1coefCC.R | print list of coef plots
 plot_gene_exon    | gene_exon.R | plot genes and exons
 read_probs        | read_probs.R | read genoprob object for RDS
 read_probs36      | read_probs.R | read genoprob object for RDS
 scan_pattern      | scan_pattern.R | genome scan by pattern set
-show_peaks        | show_peaks.R | obsolete show multiple scan1 overlaid
 snpprob_collapse  | genoprob_to_patternprob.R | collapse from alleles to SNPs
 topsnp_pattern    | topsnp_pattern.R | obsolete(?) fine mapping scans
 
