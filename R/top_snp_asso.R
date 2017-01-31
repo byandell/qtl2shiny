@@ -10,7 +10,7 @@
 #' @param ... additional plot parameters
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#'
+#' 
 top_snp_asso <- function(pheno, scan_obj, xlim,
                          snp_action="basic",
                          drop.hilit = NULL,
@@ -30,11 +30,11 @@ top_snp_asso <- function(pheno, scan_obj, xlim,
   mytitle <- paste(pheno, "chr", chr_id)
   if(snp_action != "basic")
     mytitle <- paste(mytitle, snp_action)
-  plot_snpasso(scan_pheno,
-               show_all_snps = FALSE,
-               drop.hilit = drop.hilit,
-               xlim = xlim,
-               col = col, col.hilit = col.hilit,
-               pch = pch, cex = cex,
-               main = main, ...)
+  plot(scan_pheno,
+       show_all_snps = FALSE,
+       drop.hilit = drop.hilit,
+       xlim = xlim,
+       col = col, col.hilit = col.hilit,
+       pch = pch, cex = cex,
+       main = main, ...)
 }

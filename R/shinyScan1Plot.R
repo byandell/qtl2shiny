@@ -9,7 +9,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom doqtl2 listof_scan1coefCC plot_eff
+#' @importFrom doqtl2 listof_scan1coefCC
 #' @importFrom qtl2scan scan1
 #' @importFrom shiny NS reactive req 
 #'   radioButtons selectInput sliderInput updateSliderInput
@@ -82,7 +82,7 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(input$pheno_name, scan_obj(), eff_obj())
     shiny::withProgress(message = 'Effect plots ...', value = 0, {
       shiny::setProgress(1)
-      doqtl2::plot_eff(input$pheno_name, scan_obj(), eff_obj(), 
+      plot_eff(input$pheno_name, scan_obj(), eff_obj(), 
                input$scan_window)
     })
   })
@@ -109,7 +109,7 @@ shinyScan1Plot <- function(input, output, session,
                  chr = win_par$chr_id,
                  xlim=input$scan_window) +
               ggtitle(input$pheno_name))
-      print(doqtl2::plot_eff(input$pheno_name, scan_obj(), eff_obj(), 
+      print(plot_eff(input$pheno_name, scan_obj(), eff_obj(), 
                      input$scan_window))
     })
   })
@@ -169,7 +169,7 @@ shinyScan1Plot <- function(input, output, session,
                    chr = win_par$chr_id,
                    xlim = win) +
                 ggtitle(pheno))
-        print(doqtl2::plot_eff(pheno, scans, effs, win))
+        print(plot_eff(pheno, scans, effs, win))
       }
       dev.off()
     }
