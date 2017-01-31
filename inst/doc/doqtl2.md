@@ -11,11 +11,10 @@ shinyAllelePat.R |topsnp_pattern
 shinyGeneExon.R |plot_gene_exon
 shinyGeneRegion.R |get_mgi_features
 shinyPattern.R |scan_pattern
-shinyPeaks.R |topsnp_pattern top_snp_asso
+shinyPeaks.R |topsnp_pattern
 shinyProbs.R |get_snpprobs read_probs read_probs36
 shinySNPAllele.R |get_gene_exon_snp get_top_snps_tbl snpprob_collapse
-shinyScan1Plot.R |listof_scan1coefCC plot_eff show_peaks
-shinyScan1SNP.R |top_snp_asso
+shinyScan1Plot.R |listof_scan1coefCC show_peaks
 shinySetup.R |get_pheno
 shinyTopFeature.R |merge_feature
 
