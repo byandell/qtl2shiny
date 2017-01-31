@@ -9,7 +9,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom doqtl2 listof_scan1coefCC plot_eff show_peaks
+#' @importFrom doqtl2 listof_scan1coefCC plot_eff
 #' @importFrom qtl2scan scan1
 #' @importFrom shiny NS reactive req 
 #'   radioButtons selectInput sliderInput updateSliderInput
@@ -63,8 +63,10 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(win_par$chr_id, input$scan_window, scan_obj())
     shiny::withProgress(message = 'Genome LOD Plot ...', value = 0, {
       shiny::setProgress(1)
-      doqtl2::show_peaks(win_par$chr_id, scan_obj(), mytitle="", 
-                 xlim=input$scan_window)
+      plot(scan_obj(), 
+           lodcolumn = seq(ncol(phe_df())),
+           chr = win_par$chr_id,
+           xlim=input$scan_window)
     })
   })
 
@@ -102,10 +104,11 @@ shinyScan1Plot <- function(input, output, session,
       shiny::setProgress(1)
       par(mfrow=c(2,1))
       phenoi <- match(input$pheno_name, eff_names)
-      print(doqtl2::show_peaks(win_par$chr_id, 
-                 subset(scan_obj(), lodcolumn = phenoi),
-                 mytitle="", 
-                 xlim = input$scan_window))
+      print(plot(scan_obj(),
+                 lodcolumn = phenoi,
+                 chr = win_par$chr_id,
+                 xlim=input$scan_window) +
+              ggtitle(input$pheno_name))
       print(doqtl2::plot_eff(input$pheno_name, scan_obj(), eff_obj(), 
                      input$scan_window))
     })
@@ -154,15 +157,18 @@ shinyScan1Plot <- function(input, output, session,
       scans <- shiny::req(scan_obj())
       win <- shiny::req(input$scan_window)
       pdf(file, width=9,height=9)
-      print(doqtl2::show_peaks(win_par$chr_id, scans, mytitle="", 
-                       xlim=win))
+      print(plot(scans,
+                 lodcolumn = seq_along(names(effs)),
+                 chr = win_par$chr_id,
+                 xlim = win))
       par(mfrow=c(2,1))
       for(phenoi in seq_along(effs)) {
         pheno <- names(effs)[phenoi]
-        print(doqtl2::show_peaks(win_par$chr_id, 
-                         subset(scans, lodcolumn = phenoi),
-                         mytitle="", 
-                         xlim = win))
+        print(plot(scans,
+                   lodcolumn = phenoi,
+                   chr = win_par$chr_id,
+                   xlim = win) +
+                ggtitle(pheno))
         print(doqtl2::plot_eff(pheno, scans, effs, win))
       }
       dev.off()
