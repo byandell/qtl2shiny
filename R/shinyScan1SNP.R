@@ -9,7 +9,6 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom doqtl2 top_snp_asso
 #' @importFrom shiny NS reactive req 
 #'   plotOutput
 #'   renderPlot
@@ -22,13 +21,13 @@ shinyScan1SNP <- function(input, output, session,
   ns <- session$ns
 
   output$snpPlot <- shiny::renderPlot({
-    if(is.null(snp_par$pheno_name) | is.null(snp_scan_obj()) |
+    if(is.null(pheno <- snp_par$pheno_name) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     shiny::withProgress(message = 'SNP plots ...', value = 0, {
       shiny::setProgress(1)
-      doqtl2::top_snp_asso(snp_par$pheno_name, snp_scan_obj(), 
-                           snp_par$scan_window, snp_action())
+    top_snp_asso(snp_par$pheno_name, snp_scan_obj(), 
+                 snp_par$scan_window, snp_action())
     })
   })
   
@@ -42,7 +41,7 @@ shinyScan1SNP <- function(input, output, session,
       pdf(file, width = 9)
       ## Plots by phenotype.
       for(pheno in phenos) {
-        print(doqtl2::top_snp_asso(pheno, scans, snp_w))
+        print(top_snp_asso(pheno, scans, snp_w))
       }
       dev.off()
     }

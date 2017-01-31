@@ -7,7 +7,7 @@ output: html_document
 
 file              | function
 ----------------- | --------
-shinyAllelePat.R |topsnp_pattern top_snp_asso
+shinyAllelePat.R |topsnp_pattern 
 shinyGeneExon.R |plot_gene_exon
 shinyGeneRegion.R |get_mgi_features
 shinyPattern.R |scan_pattern
@@ -36,6 +36,5 @@ scan_pattern      | scan_pattern.R | genome scan by pattern set
 show_peaks        | show_peaks.R | obsolete show multiple scan1 overlaid
 snpprob_collapse  | genoprob_to_patternprob.R | collapse from alleles to SNPs
 topsnp_pattern    | topsnp_pattern.R | obsolete(?) fine mapping scans
-top_snp_asso      | top_snps_tbl.R   | obsolete(?) top snp plot wrapper
 
 

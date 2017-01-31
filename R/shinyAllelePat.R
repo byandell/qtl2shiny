@@ -10,7 +10,7 @@
 #' 
 #' @export
 #' @importFrom dplyr distinct
-#' @importFrom doqtl2 topsnp_pattern top_snp_asso
+#' @importFrom doqtl2 topsnp_pattern
 #' @importFrom qtl2ggplot sdp_to_pattern
 #' @importFrom shiny callModule NS reactive req 
 #'   radioButtons selectInput updateRadioButtons
@@ -159,7 +159,7 @@ shinyAllelePat <- function(input, output, session,
       for(pheno in phenos) {
         print(top_pat_plot(pheno, scans, snp_w, FALSE,
                            snp_action = snp_action()))
-        doqtl2::top_snp_asso(pheno, scans, snp_w)
+        top_snp_asso(pheno, scans, snp_w)
       }
       dev.off()
     }

@@ -12,7 +12,7 @@
 #'
 #' @export
 #' @importFrom dplyr distinct
-#' @importFrom doqtl2 topsnp_pattern top_snp_asso
+#' @importFrom doqtl2 topsnp_pattern
 #' @importFrom qtl2ggplot sdp_to_pattern
 #' @importFrom shiny callModule NS req 
 #'   selectInput sliderInput updateSelectInput updateSliderInput textInput
