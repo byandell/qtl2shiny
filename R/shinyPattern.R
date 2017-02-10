@@ -11,7 +11,7 @@
 #' @importFrom grid plotViewport pushViewport
 #' @importFrom gridBase baseViewports
 #' @importFrom qtl2ggplot sdp_to_pattern
-#' @importFrom doqtl2 scan_pattern
+#' @importFrom qtl2pattern scan_pattern
 #' @importFrom shiny NS reactive req 
 #'   observeEvent
 #'   radioButtons selectInput updateSelectInput
@@ -78,7 +78,7 @@ shinyPattern <- function(input, output, session,
     pats <- patterns()
     withProgress(message = 'Scan Patterns ...', value = 0, {
       setProgress(1)
-      doqtl2::scan_pattern(probs36_obj(),
+      qtl2pattern::scan_pattern(probs36_obj(),
                    phe_df()[,pheno_in, drop=FALSE],
                    K_chr(), cov_mx(),
                    pats,

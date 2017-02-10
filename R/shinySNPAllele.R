@@ -10,7 +10,8 @@
 #'
 #' @export
 #' @importFrom dplyr arrange desc filter mutate
-#' @importFrom doqtl2 get_gene_exon_snp get_top_snps_tbl snpprob_collapse
+#' @importFrom CCSanger get_gene_exon_snp 
+#' @importFrom qtl2pattern top_snps_all snpprob_collapse
 #' @importFrom qtl2scan scan1
 #' @importFrom shiny callModule NS reactive req 
 #'   selectInput sliderInput
@@ -43,7 +44,7 @@ shinySNPAllele <- function(input, output, session,
   snp_scan_obj <- shiny::reactive({
     shiny::req(phe_df())
     snpprobs_act <- 
-      doqtl2::snpprob_collapse(shiny::req(snpprobs_obj()), snp_action())
+      qtl2pattern::snpprob_collapse(shiny::req(snpprobs_obj()), snp_action())
     shiny::withProgress(message = "SNP Scan ...", value = 0, {
       shiny::setProgress(1)
       qtl2scan::scan1(snpprobs_act, phe_df(), K_chr(), cov_mx())
@@ -54,7 +55,7 @@ shinySNPAllele <- function(input, output, session,
     shiny::req(snp_action())
     shiny::withProgress(message = 'Get Top SNPs ...', value = 0, {
       shiny::setProgress(1)
-      doqtl2::get_top_snps_tbl(shiny::req(snp_scan_obj()))
+      qtl2pattern::top_snps_all(shiny::req(snp_scan_obj()))
     })
   })
   ## Genes and Exons.
@@ -63,7 +64,7 @@ shinySNPAllele <- function(input, output, session,
     shiny::withProgress(message = 'Gene Exon Calc ...', value = 0, {
       shiny::setProgress(1)
       tops <- shiny::req(top_snps_tbl())
-      doqtl2::get_gene_exon_snp(tops,
+      CCSanger::get_gene_exon_snp(tops,
                         file.path(data_path(), "mgi_db.sqlite"))
     })
   })

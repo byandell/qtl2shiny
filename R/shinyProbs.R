@@ -9,7 +9,8 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom doqtl2 get_snpprobs read_probs read_probs36
+#' @importFrom CCSanger get_snpprobs 
+#' @importFrom DOread read_probs read_probs36
 #' @importFrom shiny reactive req 
 #'   withProgress setProgress
 shinyProbs <- function(input, output, session,
@@ -20,7 +21,7 @@ shinyProbs <- function(input, output, session,
     chr_id <- shiny::req(win_par$chr_id)
     shiny::withProgress(message = 'Read probs ...', value = 0, {
       shiny::setProgress(1)
-      doqtl2::read_probs(chr_id, data_path())
+      DOread::read_probs(chr_id, data_path())
     })
   })
   
@@ -39,7 +40,7 @@ shinyProbs36 <- function(input, output, session,
       c(-1,1) * shiny::req(win_par$window_Mbp)
     shiny::withProgress(message = 'Diplotype Probs ...', value = 0, {
       shiny::setProgress(1)
-      doqtl2::read_probs36(chr_id, range_val[1], range_val[2],
+      DOread::read_probs36(chr_id, range_val[1], range_val[2],
                    data_path())
     })
   })
@@ -57,7 +58,7 @@ shinySNPProbs <- function(input, output, session,
     shiny::req(pheno_names(), probs_obj())
     shiny::withProgress(message = 'SNP Probs ...', value = 0, {
       shiny::setProgress(1)
-      doqtl2::get_snpprobs(win_par$chr_id, 
+      CCSanger::get_snpprobs(win_par$chr_id, 
                    win_par$peak_Mbp, 
                    win_par$window_Mbp,
                    pheno_names(), 

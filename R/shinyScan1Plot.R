@@ -9,7 +9,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom doqtl2 listof_scan1coefCC
+#' @importFrom qtl2pattern listof_scan1coefCC
 #' @importFrom qtl2scan scan1
 #' @importFrom shiny NS reactive req 
 #'   radioButtons selectInput sliderInput updateSliderInput
@@ -75,7 +75,7 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
     shiny::withProgress(message = 'Effect scans ...', value = 0, {
       shiny::setProgress(1)
-      doqtl2::listof_scan1coefCC(phe_df(), cov_mx(), probs_obj(), K_chr())
+      qtl2pattern::listof_scan1coefCC(phe_df(), cov_mx(), probs_obj(), K_chr())
     })
   })
   output$effPlot <- shiny::renderPlot({

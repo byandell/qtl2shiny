@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @importFrom dplyr distinct filter select
-#' @importFrom doqtl2 get_pheno
+#' @importFrom DOread get_pheno
 #' @importFrom shiny callModule NS reactive req 
 #'   radioButtons selectInput
 #'   dataTableOutput textOutput uiOutput
@@ -61,11 +61,11 @@ shinySetup <- function(input, output, session,
     dplyr::filter(analyses_tbl(), pheno %in% shiny::req(phe_par$pheno_names))
   })
   phe_df <- shiny::reactive({
-    doqtl2::get_pheno(pheno_data,
+    DOread::get_pheno(pheno_data,
               dplyr::distinct(analyses_df(), pheno, .keep_all=TRUE))
   })
   raw_phe_df <- shiny::reactive({
-    doqtl2::get_pheno(pheno_data,
+    DOread::get_pheno(pheno_data,
               dplyr::distinct(analyses_df(), pheno, .keep_all=TRUE),
               FALSE)
   })

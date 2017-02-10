@@ -10,8 +10,7 @@
 #'
 #' @export
 #' @importFrom dplyr distinct
-#' @importFrom doqtl2 merge_feature
-#' @importFrom qtl2ggplot sdp_to_pattern
+#' @importFrom qtl2pattern merge_feature
 #' @importFrom shiny NS reactive req 
 #'   selectInput
 #'   dataTableOutput plotOutput uiOutput
@@ -31,7 +30,7 @@ shinyTopFeature <- function(input, output, session,
     shiny::withProgress(message = 'Merging gene info ...', value = 0,
     {
       shiny::setProgress(1)
-      doqtl2::merge_feature(top_snps_tbl(), snp_scan_obj(), 1.5, 0, gene_exon_tbl())
+      qtl2pattern::merge_feature(top_snps_tbl(), snp_scan_obj(), 1.5, 0, gene_exon_tbl())
     })
   })
   output$top_snp_type <- shiny::renderDataTable({

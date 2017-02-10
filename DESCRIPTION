@@ -10,8 +10,14 @@ License: GPL-3
 LazyData: TRUE
 Depends:
     doqtl2
-Includes:
-    shiny,shinydashboard
+Imports:
+    ggplot2, dplyr, tidyr
+    shiny,shinydashboard,
+    gdata, grid, gridBase, GGally,
+    qtl2scan,
+    qtl2ggplot,
+    qtl2pattern,
+    CCSanger
 Suggests:
     flexdashboard
 RoxygenNote: 5.0.1

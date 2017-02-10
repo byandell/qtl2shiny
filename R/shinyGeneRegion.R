@@ -9,7 +9,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom doqtl2 get_mgi_features
+#' @importFrom CCSanger get_mgi_features
 #' @importFrom ggplot2 ggtitle
 #' @importFrom shiny NS reactive req isTruthy
 #'   checkboxInput
@@ -34,7 +34,7 @@ shinyGeneRegion <- function(input, output, session,
     shiny::withProgress(message = 'Extract gene features ...',
                  value = 0, {
       shiny::setProgress(1)
-      doqtl2::get_mgi_features(chr_id(), wrng[1], wrng[2],
+      CCSanger::get_mgi_features(chr_id(), wrng[1], wrng[2],
                        sql_file = feature_file())
     })
   })

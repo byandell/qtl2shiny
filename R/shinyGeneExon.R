@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @importFrom dplyr filter
-#' @importFrom doqtl2 plot_gene_exon
+#' @importFrom CCSanger plot_gene_exon
 #' @importFrom qtl2ggplot sdp_to_pattern
 #' @importFrom shiny NS reactive req 
 #'   selectInput updateSelectInput
@@ -89,7 +89,7 @@ shinyGeneExon <- function(input, output, session,
     pheno_name <- shiny::req(snp_par$pheno_name)
     shiny::withProgress(message = 'Gene Exon Plot ...', value = 0, {
       shiny::setProgress(1)
-      doqtl2::plot_gene_exon(gene_exon_pheno(), 
+      CCSanger::plot_gene_exon(gene_exon_pheno(), 
                      dplyr::filter(top_snps_tbl(), pheno == pheno_name),
                      gene_name, paste(pheno_name, snp_action()))
     })
@@ -123,7 +123,7 @@ shinyGeneExon <- function(input, output, session,
       top_snps <- dplyr::filter(shiny::req(top_snps_tbl()), pheno == pheno_name)
       pdf(file, width = 9)
       for(gene_name in shiny::req(gene_names())) {
-        print(doqtl2::plot_gene_exon(gene_exon, top_snps,
+        print(CCSanger::plot_gene_exon(gene_exon, top_snps,
                              gene_name, pheno_name))
       }
       dev.off()
