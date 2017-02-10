@@ -10,7 +10,7 @@
 #' 
 #' @export
 #' @importFrom dplyr distinct
-#' @importFrom doqtl2 topsnp_pattern
+#' @importFrom qtl2pattern topsnp_pattern
 #' @importFrom CCSanger sdp_to_pattern
 #' @importFrom shiny callModule NS reactive req 
 #'   radioButtons selectInput updateRadioButtons
@@ -33,7 +33,7 @@ shinyAllelePat <- function(input, output, session,
              gene_exon_tbl, snp_action)
   
   sum_top_pat <- shiny::reactive({
-    summary(doqtl2::topsnp_pattern(shiny::req(snp_scan_obj()), 
+    summary(qtl2pattern::topsnp_pattern(shiny::req(snp_scan_obj()), 
                            pheno_names()))
   })
   
@@ -67,7 +67,7 @@ shinyAllelePat <- function(input, output, session,
   })
 
   top_pattern <- shiny::reactive({
-    doqtl2::topsnp_pattern(snp_scan_obj(), pheno_names())
+    qtl2pattern::topsnp_pattern(snp_scan_obj(), pheno_names())
   })
   output$pattern <- shiny::renderUI({
     shiny::req(snp_action())
