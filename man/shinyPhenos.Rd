@@ -24,4 +24,3 @@ Shiny module for phenotype selection.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

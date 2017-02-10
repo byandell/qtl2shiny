@@ -2,8 +2,8 @@
 % Please edit documentation in R/shinyPattern.R
 \name{shinyPattern}
 \alias{shinyPattern}
-\alias{shinyPatternOutput}
 \alias{shinyPatternUI}
+\alias{shinyPatternOutput}
 \title{Shiny Pattern module}
 \usage{
 shinyPattern(input, output, session, chr_pos, phe_df, K_chr, cov_mx,
@@ -27,4 +27,3 @@ Shiny Pattern module
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

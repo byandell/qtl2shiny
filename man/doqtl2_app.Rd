@@ -20,4 +20,3 @@ run shiny app for doqtl2
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

@@ -3,8 +3,8 @@
 \name{shinyGeneRegion}
 \alias{shinyGeneRegion}
 \alias{shinyGeneRegionInput}
-\alias{shinyGeneRegionOutput}
 \alias{shinyGeneRegionUI}
+\alias{shinyGeneRegionOutput}
 \title{Shiny Genes in SNP Region module}
 \usage{
 shinyGeneRegion(input, output, session, snp_par, top_snps_tbl, feature_file,
@@ -30,4 +30,3 @@ Shiny module for scan1 analysis and plots.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

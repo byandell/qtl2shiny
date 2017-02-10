@@ -22,4 +22,3 @@ Plot of density and pairwise scatterplots.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{hplot}
-

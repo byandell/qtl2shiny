@@ -3,8 +3,8 @@
 \name{shinySNPAssoc}
 \alias{shinySNPAssoc}
 \alias{shinySNPAssocInput}
-\alias{shinySNPAssocOutput}
 \alias{shinySNPAssocUI}
+\alias{shinySNPAssocOutput}
 \title{Shiny SNP Consequence}
 \usage{
 shinySNPAssoc(input, output, session, snp_par, chr_pos, pheno_names,
@@ -34,4 +34,3 @@ Shiny SNP Consequence
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

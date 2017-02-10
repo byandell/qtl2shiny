@@ -2,8 +2,8 @@
 % Please edit documentation in R/shinySNPAllele.R
 \name{shinySNPAllele}
 \alias{shinySNPAllele}
-\alias{shinySNPAlleleOutput}
 \alias{shinySNPAlleleUI}
+\alias{shinySNPAlleleOutput}
 \title{Shiny SNP and Allele analysis and plot module}
 \usage{
 shinySNPAllele(input, output, session, job_par, win_par, phe_df, cov_mx,
@@ -27,4 +27,3 @@ Shiny module to coordinate SNP and allele analyses and plots.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

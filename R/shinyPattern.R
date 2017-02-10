@@ -10,7 +10,7 @@
 #' @importFrom dplyr distinct
 #' @importFrom grid plotViewport pushViewport
 #' @importFrom gridBase baseViewports
-#' @importFrom qtl2ggplot sdp_to_pattern
+#' @importFrom CCSanger sdp_to_pattern
 #' @importFrom qtl2pattern scan_pattern
 #' @importFrom shiny NS reactive req 
 #'   observeEvent
@@ -39,7 +39,7 @@ shinyPattern <- function(input, output, session,
     shiny::req(input$pheno_name, snp_action())
     pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
     if(nrow(pats)) {
-      choices <- sdp_to_pattern(pats$sdp)
+      choices <- CCSanger::sdp_to_pattern(pats$sdp)
     } else {
       choices <- input$pattern
     }
@@ -53,7 +53,7 @@ shinyPattern <- function(input, output, session,
     shiny::req(snp_action(), input$pheno_name, patterns())
     pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
     if(nrow(pats)) {
-      choices <- qtl2ggplot::sdp_to_pattern(pats$sdp)
+      choices <- CCSanger::sdp_to_pattern(pats$sdp)
     } else {
       choices <- input$pattern
     }
@@ -89,7 +89,7 @@ shinyPattern <- function(input, output, session,
   scan_pat_type <- function(scan_pat, type, pattern) {
     pattern_cont <- 
       dplyr::filter(scan_pat$patterns,
-                    qtl2ggplot::sdp_to_pattern(sdp) == pattern)$contrast[1]
+                    CCSanger::sdp_to_pattern(sdp) == pattern)$contrast[1]
     plot(scan_pat, type, pattern_cont) 
   }
 
@@ -174,7 +174,7 @@ shinyPattern <- function(input, output, session,
       pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
       if(nrow(pats)) {
         pdf(file, width = 9, height = 9)
-        choices <- qtl2ggplot::sdp_to_pattern(pats$sdp)
+        choices <- CCSanger::sdp_to_pattern(pats$sdp)
         for(pattern in choices) {
           par(mfrow=c(2,1))
           scan_pat_type(scan_in, "coef", pattern)

@@ -2,8 +2,8 @@
 % Please edit documentation in R/shinyScan1Plot.R
 \name{shinyScan1Plot}
 \alias{shinyScan1Plot}
-\alias{shinyScan1PlotOutput}
 \alias{shinyScan1PlotUI}
+\alias{shinyScan1PlotOutput}
 \title{Shiny coefficient analysis and plot module}
 \usage{
 shinyScan1Plot(input, output, session, win_par, pmap_obj, phe_df, cov_mx,
@@ -27,4 +27,3 @@ Shiny module for scan1 coefficient plots.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

@@ -12,7 +12,6 @@
 #'
 #' @export
 #' @importFrom dplyr distinct
-#' @importFrom qtl2ggplot sdp_to_pattern
 #' @importFrom shiny callModule NS req 
 #'   selectInput sliderInput updateSelectInput updateSliderInput textInput
 #'   uiOutput

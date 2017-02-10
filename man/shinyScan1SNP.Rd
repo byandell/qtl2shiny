@@ -2,8 +2,8 @@
 % Please edit documentation in R/shinyScan1SNP.R
 \name{shinyScan1SNP}
 \alias{shinyScan1SNP}
-\alias{shinyScan1SNPOutput}
 \alias{shinyScan1SNPUI}
+\alias{shinyScan1SNPOutput}
 \title{Shiny scan1 SNP analysis and plot module}
 \usage{
 shinyScan1SNP(input, output, session, snp_par, chr_pos, pheno_names,
@@ -27,4 +27,3 @@ Shiny module for scan1 analysis and plots.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

@@ -89,11 +89,12 @@ server <- function(input, output, session) {
   })
   phe_df <- shiny::reactive({
     ## Make sure we get only one column per distinct pheno.
-    get_pheno(pheno_data,
-              dplyr::distinct(analyses_df(), pheno, .keep_all=TRUE))
+    DOread::get_pheno(pheno_data,
+                      dplyr::distinct(analyses_df(),
+                                      pheno, .keep_all=TRUE))
   })
   cov_mx <- shiny::reactive({
-    doqtl2::get_covar(covar, analyses_df())
+    DOread::get_covar(covar, analyses_df())
   })
   
   ## Set up shiny::reactives for scan1 module.

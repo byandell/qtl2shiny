@@ -29,4 +29,3 @@ Shiny module for peaks selection. Does not yet have return.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

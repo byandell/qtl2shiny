@@ -11,7 +11,6 @@
 #' @export
 #' @importFrom dplyr filter
 #' @importFrom CCSanger plot_gene_exon
-#' @importFrom qtl2ggplot sdp_to_pattern
 #' @importFrom shiny NS reactive req 
 #'   selectInput updateSelectInput
 #'   dataTableOutput plotOutput uiOutput

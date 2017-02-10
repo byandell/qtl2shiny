@@ -11,7 +11,7 @@
 #' @export
 #' @importFrom dplyr distinct
 #' @importFrom doqtl2 topsnp_pattern
-#' @importFrom qtl2ggplot sdp_to_pattern
+#' @importFrom CCSanger sdp_to_pattern
 #' @importFrom shiny callModule NS reactive req 
 #'   radioButtons selectInput updateRadioButtons
 #'   dataTableOutput plotOutput uiOutput
@@ -72,7 +72,7 @@ shinyAllelePat <- function(input, output, session,
   output$pattern <- shiny::renderUI({
     shiny::req(snp_action())
     top_pat <- shiny::req(top_pattern())
-    choices <- qtl2ggplot::sdp_to_pattern(dplyr::distinct(top_pat, sdp)$sdp)
+    choices <- CCSanger::sdp_to_pattern(dplyr::distinct(top_pat, sdp)$sdp)
     if(!is.null(selected <- input$pattern)) {
       if(!selected %in% choices)
         selected <- NULL
@@ -88,7 +88,7 @@ shinyAllelePat <- function(input, output, session,
       return(plot_null())
     shiny::req(input$pattern)
     top_pat <- shiny::req(top_pattern())
-    patterns <- qtl2ggplot::sdp_to_pattern(top_pat$sdp)
+    patterns <- CCSanger::sdp_to_pattern(top_pat$sdp)
     shiny::withProgress(message = 'SNP Pattern phenos ...', value = 0, {
       shiny::setProgress(1)
       top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
@@ -144,7 +144,7 @@ shinyAllelePat <- function(input, output, session,
                          group = "pheno", snp_action = snp_action()))
 
       top_pat <- shiny::req(top_pattern())
-      patterns <- qtl2ggplot::sdp_to_pattern(top_pat$sdp)
+      patterns <- CCSanger::sdp_to_pattern(top_pat$sdp)
       upat <- unique(patterns)
       for(pattern in upat) {
         print(top_pat_plot(pheno_names(), snp_scan_obj(), 

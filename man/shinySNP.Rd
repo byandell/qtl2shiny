@@ -3,8 +3,8 @@
 \name{shinySNP}
 \alias{shinySNP}
 \alias{shinySNPInput}
-\alias{shinySNPOutput}
 \alias{shinySNPUI}
+\alias{shinySNPOutput}
 \title{Shiny SNP analysis and plot module}
 \usage{
 shinySNP(input, output, session, chr_pos, top_snps_tbl,
@@ -30,4 +30,3 @@ Shiny module for scan1 analysis and plots.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

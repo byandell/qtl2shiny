@@ -31,4 +31,3 @@ Top SNP Association Plot Wrapper
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
-

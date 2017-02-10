@@ -11,7 +11,7 @@ plot_eff(pheno, scan_obj, eff_obj, xlim = NULL, main = pheno, ...)
 
 \item{scan_obj}{object of class \code{\link[qtl2scan]{scan1}}}
 
-\item{eff_obj}{object of class \code{\link[doqtl2]{listof_scan1coefCC}}}
+\item{eff_obj}{object of class \code{\link[qtl2pattern]{listof_scan1coef}}}
 
 \item{xlim}{x limits for plot}
 
@@ -26,4 +26,3 @@ Plot of effects.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{hplot}
-

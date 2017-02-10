@@ -22,4 +22,3 @@ Character string with number of phenotypes of total.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

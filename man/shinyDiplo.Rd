@@ -23,4 +23,3 @@ Shiny diplotype SNP/Gene action analysis.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

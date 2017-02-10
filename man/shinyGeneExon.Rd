@@ -3,8 +3,8 @@
 \name{shinyGeneExon}
 \alias{shinyGeneExon}
 \alias{shinyGeneExonInput}
-\alias{shinyGeneExonOutput}
 \alias{shinyGeneExonUI}
+\alias{shinyGeneExonOutput}
 \title{Shiny Genes and Exons with nearby SNPs module}
 \usage{
 shinyGeneExon(input, output, session, snp_par, chr_pos, top_snps_tbl,
@@ -30,4 +30,3 @@ Shiny module for scan1 analysis and plots.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

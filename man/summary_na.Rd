@@ -20,4 +20,3 @@ Summary taking care to include NA for all traits
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

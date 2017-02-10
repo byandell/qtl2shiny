@@ -25,4 +25,3 @@ Shiny genotype probability access.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

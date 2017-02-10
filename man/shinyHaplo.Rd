@@ -24,4 +24,3 @@ Shiny module for analysis based on haplotype alleles.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

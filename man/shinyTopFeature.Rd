@@ -3,8 +3,8 @@
 \name{shinyTopFeature}
 \alias{shinyTopFeature}
 \alias{shinyTopFeatureInput}
-\alias{shinyTopFeatureOutput}
 \alias{shinyTopFeatureUI}
+\alias{shinyTopFeatureOutput}
 \title{Shiny Top Features in SNP Region module}
 \usage{
 shinyTopFeature(input, output, session, snp_par, chr_pos, snp_scan_obj,
@@ -30,4 +30,3 @@ Shiny module for scan1 analysis and plots.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

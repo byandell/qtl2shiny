@@ -20,4 +20,3 @@ Collapse covariates used to comma-separated list and return table
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

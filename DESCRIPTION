@@ -11,7 +11,7 @@ LazyData: TRUE
 Depends:
     doqtl2
 Imports:
-    ggplot2, dplyr, tidyr
+    ggplot2, dplyr, tidyr,
     shiny,shinydashboard,
     gdata, grid, gridBase, GGally,
     qtl2scan,
@@ -20,4 +20,4 @@ Imports:
     CCSanger
 Suggests:
     flexdashboard
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

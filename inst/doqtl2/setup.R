@@ -23,7 +23,7 @@ analyses_tbl <- dplyr::filter(readRDS(file.path(datapath, "analyses.rds")),
 
 ## Want to filter to "best" analysis based -- anal1 or anal2
 peak_info <- peaks$pheno
-pheno_data <- doqtl2::read_pheno_tbl(analyses_tbl, datapath)
+pheno_data <- DOread::read_pheno_tbl(analyses_tbl, datapath)
 pheno_data <- dplyr::select(pheno_data, 
                             which(names(pheno_data) %in% peak_info))
 rm(peak_info)

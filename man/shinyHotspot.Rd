@@ -30,4 +30,3 @@ Shiny module to view hotspots for peak selection.
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-

@@ -4,7 +4,7 @@
 #'
 #' @param pheno name of phenotype for effect scan
 #' @param scan_obj object of class \code{\link[qtl2scan]{scan1}}
-#' @param eff_obj object of class \code{\link[doqtl2]{listof_scan1coefCC}}
+#' @param eff_obj object of class \code{\link[qtl2pattern]{listof_scan1coef}}
 #' @param xlim x limits for plot
 #' @param main plot title
 #' @param ... parameters past to plot routine
@@ -22,7 +22,7 @@ plot_eff <- function(pheno, scan_obj, eff_obj, xlim = NULL,
   
   lodcol <- match(pheno, names(eff_obj))
   max_pos <- max(scan_obj, lodcolumn=lodcol)$pos[1]
-  qtl2ggplot::plot_coefCC(eff_obj[[lodcol]], xlim=xlim,
+  plot(eff_obj[[lodcol]], xlim=xlim,
               main = main,
               legend.position = "right", ...) +
     ggplot2::geom_vline(xintercept=max_pos, linetype=2,

@@ -27,4 +27,3 @@ Create character string of chr:left-right with left=peak-window, right=peak+wind
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}
-
