@@ -27,11 +27,15 @@ Major issues
 Minor issues
 
 * shiny
-  + reveal plots more (settings on sidebar? tabs?)
-  + user save settings for quick replay of shiny
+    + reveal plots more (settings on sidebar? tabs?)
+    + user save settings for quick replay of shiny
 * markdown
-  + flexdashboard for Rmd to create dynamic reports
-  + link Rmd and shiny
+    + flexdashboard for Rmd to create dynamic reports
+    + link Rmd and shiny
+* migration to github
+    + top_pat_plot and shinyAllelePat need work
+    + multiple SNP scan plots using facets
+    + multiple pattern plots using facets
 
 ### Contribution guidelines ###
 

@@ -4,20 +4,19 @@
 \alias{plot_eff}
 \title{Plot effects}
 \usage{
-plot_eff(pheno, scan_obj, eff_obj, xlim = NULL, main = pheno, ...)
+plot_eff(pheno, eff_obj, scan_obj, xlim = NULL, chr_id = 1,
+  addlod = FALSE)
 }
 \arguments{
 \item{pheno}{name of phenotype for effect scan}
 
-\item{scan_obj}{object of class \code{\link[qtl2scan]{scan1}}}
-
 \item{eff_obj}{object of class \code{\link[qtl2pattern]{listof_scan1coef}}}
+
+\item{scan_obj}{object of class \code{\link[qtl2scan]{scan1}}}
 
 \item{xlim}{x limits for plot}
 
-\item{main}{plot title}
-
-\item{...}{parameters past to plot routine}
+\item{chr_id}{chromosome ID}
 }
 \description{
 Plot of effects.

@@ -82,8 +82,8 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(input$pheno_name, scan_obj(), eff_obj())
     shiny::withProgress(message = 'Effect plots ...', value = 0, {
       shiny::setProgress(1)
-      plot_eff(input$pheno_name, scan_obj(), eff_obj(), 
-               input$scan_window)
+      plot_eff(input$pheno_name, eff_obj(), scan_obj(), 
+               input$scan_window, win_par$chr_id)
     })
   })
   output$effSummary <- shiny::renderDataTable({
@@ -98,19 +98,11 @@ shinyScan1Plot <- function(input, output, session,
   ## Effect and LOD Plot
   output$lod_effPlot <- shiny::renderPlot({
     shiny::req(win_par$chr_id, input$pheno_name, input$scan_window, 
-        scan_obj(), eff_obj())
-    eff_names <- names(eff_obj())
+               eff_obj(), scan_obj())
     shiny::withProgress(message = 'Effect & LOD plots ...', value = 0, {
       shiny::setProgress(1)
-      par(mfrow=c(2,1))
-      phenoi <- match(input$pheno_name, eff_names)
-      print(plot(scan_obj(),
-                 lodcolumn = phenoi,
-                 chr = win_par$chr_id,
-                 xlim=input$scan_window) +
-              ggtitle(input$pheno_name))
-      print(plot_eff(input$pheno_name, scan_obj(), eff_obj(), 
-                     input$scan_window))
+      plot_eff(input$pheno_name, eff_obj(), scan_obj(), input$scan_window,
+               win_par$chr_id, addlod = TRUE)
     })
   })
   
@@ -127,13 +119,12 @@ shinyScan1Plot <- function(input, output, session,
   })
   output$LOD <- shiny::renderUI({
     switch(shiny::req(input$button),
-           LOD             =,
-           "LOD & Effects" = shiny::plotOutput(ns("scanPlot")))
+           LOD             = shiny::plotOutput(ns("scanPlot")))
   })
   output$Effects <- shiny::renderUI({
     switch(shiny::req(input$button),
-           Effects         =,
-           "LOD & Effects" = shiny::plotOutput(ns("effPlot")))
+           Effects         = shiny::plotOutput(ns("effPlot")),
+           "LOD & Effects" = shiny::plotOutput(ns("lod_effPlot")))
   })
   output$Summary <- shiny::renderUI({
     switch(shiny::req(input$button),
@@ -162,14 +153,9 @@ shinyScan1Plot <- function(input, output, session,
                  chr = win_par$chr_id,
                  xlim = win))
       par(mfrow=c(2,1))
-      for(phenoi in seq_along(effs)) {
-        pheno <- names(effs)[phenoi]
-        print(plot(scans,
-                   lodcolumn = phenoi,
-                   chr = win_par$chr_id,
-                   xlim = win) +
-                ggtitle(pheno))
-        print(plot_eff(pheno, scans, effs, win))
+      for(pheno in names(effs)) {
+        print(plot_eff(pheno, effs, scans, win,
+                       win_par$chr_id, addlod = TRUE))
       }
       dev.off()
     }

@@ -4,9 +4,7 @@
 \alias{top_pat_plot}
 \title{Top Pattern Plot}
 \usage{
-top_pat_plot(pheno, scan_obj, xlim, fill.null = TRUE,
-  top_pattern = qtl2pattern::topsnp_pattern(scan_obj, pheno),
-  group = "pheno", snp_action = "basic")
+top_pat_plot(pheno, scan_obj, xlim, facet = "pheno", snp_action = "basic")
 }
 \arguments{
 \item{pheno}{name of phenotype for effect scan}
@@ -15,11 +13,11 @@ top_pat_plot(pheno, scan_obj, xlim, fill.null = TRUE,
 
 \item{xlim}{x limits for plot}
 
-\item{fill.null}{null plot if no data}
-
-\item{group}{group by one of c("pheno","pattern")}
+\item{facet}{facet by one of c("pheno","pattern")}
 
 \item{snp_action}{character string for plot}
+
+\item{fill.null}{null plot if no data}
 }
 \description{
 Plot of top patterns.
