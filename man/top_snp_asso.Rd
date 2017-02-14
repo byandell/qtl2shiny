@@ -4,26 +4,21 @@
 \alias{top_snp_asso}
 \title{Top SNP Association Plot Wrapper}
 \usage{
-top_snp_asso(pheno, scan_obj, xlim, snp_action = "basic", drop.hilit = NULL,
-  main = mytitle, pch = 1, cex = 0.75, col = "#7570b3",
-  col.hilit = "#d95f02", ...)
+top_snp_asso(scan_obj, xlim, snp_action = "basic",
+  phename = dimnames(scan_obj$lod)[[2]], drop.hilit = NULL)
 }
 \arguments{
-\item{pheno}{name of phenotype for effect scan}
-
 \item{scan_obj}{object of class \code{\link[qtl2scan]{scan1}}}
 
 \item{xlim}{x limits for plot}
 
 \item{snp_action}{character string for plot}
 
+\item{phename}{names of phenotypes}
+
 \item{drop.hilit}{hilight SNPs within this value of max}
 
-\item{main}{plot title}
-
-\item{pch, cex, col, col.hilit}{plot parameters}
-
-\item{...}{additional plot parameters}
+\item{pheno}{name of phenotype for effect scan}
 }
 \description{
 Top SNP Association Plot Wrapper

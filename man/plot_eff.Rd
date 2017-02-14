@@ -4,8 +4,7 @@
 \alias{plot_eff}
 \title{Plot effects}
 \usage{
-plot_eff(pheno, eff_obj, scan_obj, xlim = NULL, chr_id = 1,
-  addlod = FALSE)
+plot_eff(pheno, eff_obj, scan_obj, xlim = NULL, addlod = FALSE)
 }
 \arguments{
 \item{pheno}{name of phenotype for effect scan}

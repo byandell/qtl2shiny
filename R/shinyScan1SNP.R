@@ -21,12 +21,12 @@ shinyScan1SNP <- function(input, output, session,
   ns <- session$ns
 
   output$snpPlot <- shiny::renderPlot({
-    if(is.null(pheno <- snp_par$pheno_name) | is.null(snp_scan_obj()) |
+    if(is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
     shiny::withProgress(message = 'SNP plots ...', value = 0, {
       shiny::setProgress(1)
-    top_snp_asso(snp_par$pheno_name, snp_scan_obj(), 
+    top_snp_asso(snp_scan_obj(), 
                  snp_par$scan_window, snp_action())
     })
   })
@@ -39,10 +39,7 @@ shinyScan1SNP <- function(input, output, session,
       snp_w <- shiny::req(snp_par$scan_window)
       phenos <- shiny::req(pheno_names())
       pdf(file, width = 9)
-      ## Plots by phenotype.
-      for(pheno in phenos) {
-        print(top_snp_asso(pheno, scans, snp_w))
-      }
+      print(top_snp_asso(scans, snp_w))
       dev.off()
     }
   )

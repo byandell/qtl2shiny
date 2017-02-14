@@ -152,7 +152,7 @@ shinyAllelePat <- function(input, output, session,
       for(pheno in phenos) {
         print(top_pat_plot(pheno, scans, snp_w, FALSE,
                            snp_action = snp_action()))
-        top_snp_asso(pheno, scans, snp_w)
+        top_snp_asso(scans, snp_w, phename = pheno)
       }
       dev.off()
     }
