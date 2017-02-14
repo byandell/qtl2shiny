@@ -13,7 +13,7 @@ top_snp_asso <- function(scan_obj, xlim,
                          snp_action="basic",
                          phename = dimnames(scan_obj$lod)[[2]],
                          drop.hilit = NULL) {
-  if(is.null(pheno) | is.null(scan_obj) | is.null(xlim))
+  if(is.null(phename) | is.null(scan_obj) | is.null(xlim))
     return(print(plot_null()))
   
   chr_id <- names(scan_obj$map)[1]
