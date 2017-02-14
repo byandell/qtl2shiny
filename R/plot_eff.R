@@ -15,7 +15,6 @@
 #' @importFrom ggplot2 geom_vline
 #'
 plot_eff <- function(pheno, eff_obj, scan_obj, xlim = NULL,
-                     chr_id = 1,
                      addlod = FALSE) {
   if(is.null(eff_obj) | is.null(pheno) | is.null(scan_obj))
     return(NULL)
@@ -23,6 +22,7 @@ plot_eff <- function(pheno, eff_obj, scan_obj, xlim = NULL,
   main <- pheno
   lodcol <- match(pheno, names(eff_obj))
   max_pos <- max(scan_obj, lodcolumn=lodcol)$pos[1]
+  chr_id <- names(scan_obj$map)[1]
   if(!addlod) {
     plot(eff_obj[[lodcol]], 
          xlim=xlim,

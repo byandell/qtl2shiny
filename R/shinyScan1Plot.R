@@ -83,7 +83,7 @@ shinyScan1Plot <- function(input, output, session,
     shiny::withProgress(message = 'Effect plots ...', value = 0, {
       shiny::setProgress(1)
       plot_eff(input$pheno_name, eff_obj(), scan_obj(), 
-               input$scan_window, win_par$chr_id)
+               input$scan_window)
     })
   })
   output$effSummary <- shiny::renderDataTable({
@@ -102,7 +102,7 @@ shinyScan1Plot <- function(input, output, session,
     shiny::withProgress(message = 'Effect & LOD plots ...', value = 0, {
       shiny::setProgress(1)
       plot_eff(input$pheno_name, eff_obj(), scan_obj(), input$scan_window,
-               win_par$chr_id, addlod = TRUE)
+               addlod = TRUE)
     })
   })
   
@@ -155,7 +155,7 @@ shinyScan1Plot <- function(input, output, session,
       par(mfrow=c(2,1))
       for(pheno in names(effs)) {
         print(plot_eff(pheno, effs, scans, win,
-                       win_par$chr_id, addlod = TRUE))
+                       addlod = TRUE))
       }
       dev.off()
     }
