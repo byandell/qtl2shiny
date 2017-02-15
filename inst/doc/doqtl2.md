@@ -5,15 +5,16 @@ date: "January 2017"
 output: html_document
 ---
 
+migrated to R/qtl2pattern
+
 file              | function
 ----------------- | --------
-shinyAllelePat.R  | topsnp_pattern 
 shinyGeneExon.R   | plot_gene_exon
 shinyGeneRegion.R | get_mgi_features
 shinyPattern.R    | scan_pattern
 shinyProbs.R      | get_snpprobs read_probs read_probs36
 shinySNPAllele.R  | get_gene_exon_snp get_top_snps_tbl snpprob_collapse
-shinyScan1Plot.R  | listof_scan1coefCC show_peaks
+shinyScan1Plot.R  | listof_scan1coefCC
 shinySetup.R      | get_pheno
 shinyTopFeature.R | merge_feature
 
@@ -31,6 +32,7 @@ read_probs        | read_probs.R | read genoprob object for RDS
 read_probs36      | read_probs.R | read genoprob object for RDS
 scan_pattern      | scan_pattern.R | genome scan by pattern set
 snpprob_collapse  | genoprob_to_patternprob.R | collapse from alleles to SNPs
-topsnp_pattern    | topsnp_pattern.R | obsolete(?) fine mapping scans
 
+Want `scan_pattern` to look like `plot_snpasso` with `pattern="all"`.
 
+Need to work on geno and exon stuff to meld with `plot_genes`.

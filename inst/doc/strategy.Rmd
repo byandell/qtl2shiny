@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+migrated to R/qtl2pattern
+
 Here is a strategy to look at multiple traits in a small interval:
 
 - use analyses table (or other approach) to identify region of interest

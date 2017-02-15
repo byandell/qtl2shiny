@@ -21,12 +21,11 @@ top_snp_asso <- function(scan_obj, xlim,
     drop.hilit <- min(1.5,
                       max(scan_obj$lod) - 3)
   }
-  facet <- ifelse(length(phename) > 1, "pheno", NULL)
+  facet <- NULL
+  facet <- if(length(phename) > 1) 
+    facet <- "pheno"
   plot(scan_obj, seq_along(phename),
-       show_all_snps = FALSE,
        drop.hilit = drop.hilit,
        xlim = xlim,
-       col = col, col.hilit = col.hilit,
-       cex = cex,
        facet = facet)
 }
