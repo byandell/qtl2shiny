@@ -89,7 +89,7 @@ shinyPattern <- function(input, output, session,
   scan_pat_type <- function(scan_pat, type, pattern) {
     pattern_cont <- 
       dplyr::filter(scan_pat$patterns,
-                    CCSanger::sdp_to_pattern(sdp) == pattern)$contrast[1]
+                    CCSanger::sdp_to_pattern(sdp) == pattern)$founders[1]
     plot(scan_pat, type, pattern_cont) 
   }
 

@@ -9,7 +9,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom CCSanger get_snpprobs 
+#' @importFrom qtl2pattern get_snpprobs 
 #' @importFrom DOread read_probs read_probs36
 #' @importFrom shiny reactive req 
 #'   withProgress setProgress
@@ -58,7 +58,7 @@ shinySNPProbs <- function(input, output, session,
     shiny::req(pheno_names(), probs_obj())
     shiny::withProgress(message = 'SNP Probs ...', value = 0, {
       shiny::setProgress(1)
-      CCSanger::get_snpprobs(win_par$chr_id, 
+      qtl2pattern::get_snpprobs(win_par$chr_id, 
                    win_par$peak_Mbp, 
                    win_par$window_Mbp,
                    pheno_names(), 
