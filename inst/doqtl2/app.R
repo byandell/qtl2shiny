@@ -34,7 +34,7 @@ helpPopup <- function(title, content,
 
 #####################################################
 ui <- shinydashboard::dashboardPage(skin="red",
-  shinydashboard::dashboardHeader(title = "DOQTL2 Wave 4"),
+  shinydashboard::dashboardHeader(title = "DOQTL2 Wave 5"),
   shinydashboard::dashboardSidebar(
     shinydashboard::sidebarMenu(
       shinySetupOutput("setup"),
