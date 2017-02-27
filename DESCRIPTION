@@ -8,8 +8,6 @@ Maintainer: Brian S. Yandell <byandell@wisc.edu>
 Description: Shiny Interface for R/qtl2 and R/doqtl2.
 License: GPL-3
 LazyData: TRUE
-Depends:
-    doqtl2
 Imports:
     ggplot2, dplyr, tidyr,
     shiny,shinydashboard,
