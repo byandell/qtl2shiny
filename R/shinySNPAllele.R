@@ -43,8 +43,9 @@ shinySNPAllele <- function(input, output, session,
   ## SNP Scan.
   snp_scan_obj <- shiny::reactive({
     shiny::req(phe_df())
+    snpprobs <- shiny::req(snpprobs_obj())
     snpprobs_act <- 
-      qtl2pattern::snpprob_collapse(shiny::req(snpprobs_obj()), snp_action())
+      qtl2pattern::snpprob_collapse(snpprobs, snp_action())
     shiny::withProgress(message = "SNP Scan ...", value = 0, {
       shiny::setProgress(1)
       qtl2scan::scan1(snpprobs_act, phe_df(), K_chr(), cov_mx())
