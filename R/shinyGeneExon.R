@@ -82,15 +82,19 @@ shinyGeneExon <- function(input, output, session,
   })
 
   output$gene_plot <- shiny::renderPlot({
-    shiny::req(top_snps_tbl(), gene_exon_tbl(), gene_names())
-    gene_name <- shiny::req(input$gene_name)
-    pheno_name <- shiny::req(snp_par$pheno_name)
-    shiny::withProgress(message = 'Gene Exon Plot ...', value = 0, {
-      shiny::setProgress(1)
-      plot_gene_exons(gene_exon_pheno(), 
-                      dplyr::filter(top_snps_tbl(), pheno == pheno_name),
-                      gene_name, paste(pheno_name, snp_action()))
-    })
+    if(is.null(input$gene_name)) {
+      plot_null()
+    } else {
+      shiny::req(top_snps_tbl(), gene_exon_tbl(), gene_names())
+      gene_name <- shiny::req(input$gene_name)
+      pheno_name <- shiny::req(snp_par$pheno_name)
+      shiny::withProgress(message = 'Gene Exon Plot ...', value = 0, {
+        shiny::setProgress(1)
+        plot_gene_exons(gene_exon_pheno(), 
+                        dplyr::filter(top_snps_tbl(), pheno == pheno_name),
+                        gene_name, paste(pheno_name, snp_action()))
+      })
+    }
   })
   
   ## Outputs

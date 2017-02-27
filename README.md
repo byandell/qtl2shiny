@@ -32,10 +32,13 @@ Minor issues
 * markdown
     + flexdashboard for Rmd to create dynamic reports
     + link Rmd and shiny
-* migration to github
-    + top_pat_plot and shinyAllelePat need work
-    + multiple SNP scan plots using facets
-    + multiple pattern plots using facets
+* genes
+    + GeneRegion and GeneExon for multiple traits giving different results
+    + make sure GeneExon has null plot if no genes
+    + think about many traits, BLUPs
+* scans
+    + multiple traits now use superset of covariates
+    + needs redesign of Scan1Plot and use of cov_mx() from DOread::get_covar
 
 ### Contribution guidelines ###
 

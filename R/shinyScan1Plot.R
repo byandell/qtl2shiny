@@ -25,6 +25,7 @@ shinyScan1Plot <- function(input, output, session,
   
   ## Scan1
   scan_obj <- shiny::reactive({
+    browser()
     shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
     shiny::withProgress(message = "Genome Scan ...", value = 0, {
       shiny::setProgress(1)

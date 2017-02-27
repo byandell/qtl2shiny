@@ -53,36 +53,16 @@ shinyGeneRegion <- function(input, output, session,
     paste(chr, scan_w[1], scan_w[2], sep = "_")
   })
 
-  plot_gene_region <- function(pheno) {
-    shiny::req(gene_region_tbl(),snp_par$scan_window)
-    ## Plot pseudogene and gene locations along with SNPs.
-    ## Ordered by pseudogenes first, then genes
-    ## negative (blue) strand, then unknown (grey), then positive (red) strand.
-    wrng <- snp_par$scan_window
-    ## Filtering removes feature_tbl class, so need to be explicit.
-    use_snp <- shiny::isTruthy(input$SNP)
-    if(use_snp) {
-      top_snps_rng <- subset(top_snps_tbl(), 
-                             wrng[1], wrng[2],
-                             pheno)
-      if(!nrow(top_snps_rng))
-        top_snps_rng <- NULL
-    } else {
-      top_snps_rng <- NULL
-    }
-    p <- plot(subset(gene_region_tbl(), wrng[1], wrng[2]),
-              top_snps_tbl = top_snps_rng)
-    if(use_snp)
-      p <- p + 
-        ggplot2::ggtitle(paste("SNPs for", pheno, snp_action()))
-    p
-  }
   output$SNP <- shiny::renderUI({
     shiny::checkboxInput(ns("SNP"), "Add SNPs?", input$SNP)
   })
   output$gene_plot <- shiny::renderPlot({
+    shiny::req(gene_region_tbl(), top_snps_tbl())
+    wrng <- shiny::req(snp_par$scan_window)
     phename <- shiny::req(snp_par$pheno_name)
-    plot_gene_region(phename)
+    use_snp <- shiny::isTruthy(input$SNP)
+    plot_gene_region(phename, gene_region_tbl(), top_snps_tbl(), 
+                     wrng, use_snp, snp_action())
   })
   output$downloadData <- shiny::downloadHandler(
     filename = function() {
@@ -95,11 +75,15 @@ shinyGeneRegion <- function(input, output, session,
     filename = function() {
       file.path(paste0("gene_region_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
-      shiny::req(gene_region_tbl(),snp_par$scan_window)
+      shiny::req(gene_region_tbl(), top_snps_tbl())
+      wrng <- shiny::req(snp_par$scan_window)
+      phename <- shiny::req(snp_par$pheno_name)
+      use_snp <- shiny::isTruthy(input$SNP)
       pheno_names <- unique(shiny::req(top_snps_tbl())$pheno)
       pdf(file, width = 9)
       for(pheno in pheno_names)
-        print(plot_gene_region(pheno))
+        print(plot_gene_region(pheno, gene_region_tbl(), top_snps_tbl(), 
+                       wrng, use_snp, snp_action()))
       dev.off()
     }
   )
