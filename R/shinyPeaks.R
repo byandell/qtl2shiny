@@ -11,13 +11,15 @@
 #' @return list of inputs and scan summary
 #'
 #' @export
-#' @importFrom dplyr distinct
+#' 
+#' @importFrom dplyr distinct filter
 #' @importFrom shiny callModule NS req 
 #'   selectInput sliderInput updateSelectInput updateSliderInput textInput
 #'   uiOutput
 #'   renderUI
 #'   observeEvent
 #'   fluidRow column strong tagList
+#'   
 shinyPeaks <- function(input, output, session,
                        set_par, pheno_type, peaks_tbl, pmap_obj) {
   ns <- session$ns
@@ -68,14 +70,12 @@ shinyPeaks <- function(input, output, session,
   shiny::observeEvent(input$chr_id, update_region())
   update_region <- function() {
     scan_in <- shiny::req(scan_tbl())
-    scan_in <- scan_in %>%
-      filter(lod==max(lod))
+    scan_in <- dplyr::filter(scan_in, lod==max(lod))
     
     chr_ct <- as.character(scan_in$chr)
     if(any(chr_ct == shiny::req(input$chr_id))) {
       chr_ct <- as.character(input$chr_id)
-      scan_in <- scan_in %>%
-        filter(chr == chr_ct)
+      scan_in <- dplyr::filter(scan_in, chr == chr_ct)
       pmap <- shiny::req(pmap_obj())
       peak_Mbp <- scan_in$pos[1]
       rng <- round(range(pmap[[chr_ct]]), 2)

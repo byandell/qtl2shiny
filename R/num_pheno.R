@@ -12,7 +12,10 @@
 #' \dontrun{num_pheno(pheno, analyses_tbl)}
 #' 
 #' @export
+#' 
 #' @importFrom gdata humanReadable
+#' @importFrom dplyr distinct
+#' 
 num_pheno <- function(pheno, analyses_tbl) {
   if(any(c("all","none") %in% pheno))
     return(NULL)
@@ -25,8 +28,7 @@ num_pheno <- function(pheno, analyses_tbl) {
   }
   
   num_pheno <- length(unique(pheno))
-  tot_pheno <- nrow(analyses_tbl %>%
-                      distinct(pheno, .keep_all=TRUE))
+  tot_pheno <- nrow(dplyr::distinct(analyses_tbl, pheno, .keep_all=TRUE))
   ## Put in human-readable format
   num_pheno <- hr_num(num_pheno, 0)
   tot_pheno <- hr_num(tot_pheno, 2)

@@ -111,6 +111,9 @@ server <- function(input, output, session) {
              set_par()$win_par, 
              phe_df, cov_mx, K_chr,
              data_path)
+  
+  # Allow reconnect with Shiny Server.
+  session$allowReconnect(TRUE)
 }
 
 shinyApp(ui, server)
