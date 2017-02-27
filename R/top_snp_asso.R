@@ -12,7 +12,8 @@
 top_snp_asso <- function(scan_obj, xlim,
                          snp_action="basic",
                          phename = dimnames(scan_obj$lod)[[2]],
-                         drop.hilit = NULL) {
+                         drop.hilit = NULL,
+                         show_all_snps = FALSE) {
   if(is.null(phename) | is.null(scan_obj) | is.null(xlim))
     return(print(plot_null()))
   
@@ -25,6 +26,7 @@ top_snp_asso <- function(scan_obj, xlim,
   facet <- if(length(phename) > 1) 
     facet <- "pheno"
   plot(scan_obj, seq_along(phename),
+       show_all_snps = show_all_snps,
        drop.hilit = drop.hilit,
        xlim = xlim,
        facet = facet)

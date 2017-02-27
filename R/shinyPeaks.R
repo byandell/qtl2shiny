@@ -123,6 +123,7 @@ shinyPeaks <- function(input, output, session,
 shinyPeaksInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
+    shiny::checkboxInput(ns("local"), "Local Scan in Window?", TRUE),
     shiny::fluidRow(
       shiny::column(6, shiny::uiOutput(ns("chr_id"))),
       shiny::column(6, shiny::uiOutput(ns("chr_pos")))

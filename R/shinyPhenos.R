@@ -72,9 +72,10 @@ shinyPhenos <- function(input, output, session,
   })
   output$filter <- shiny::renderUI({
     shiny::checkboxInput(ns("use_pos"),
-                  paste("Peak on chr", chr_peak$chr_id, "in",
+                  paste0("Peak on chr ", chr_peak$chr_id, " in ",
                         paste(chr_peak$peak_Mbp + c(-1,1) * chr_peak$window_Mbp,
-                              collapse = "-")))
+                              collapse = "-"), "?"),
+                  TRUE)
   })
   input
 }
@@ -84,7 +85,7 @@ shinyPhenos <- function(input, output, session,
 shinyPhenosUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::uiOutput(ns("pheno_names")),
-    shiny::uiOutput(ns("filter"))
+    shiny::uiOutput(ns("filter")),
+    shiny::uiOutput(ns("pheno_names"))
   )
 }

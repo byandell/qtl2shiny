@@ -35,7 +35,7 @@ shinyScan1Plot <- function(input, output, session,
   # Scan Window slider
   output$scan_window <- shiny::renderUI({
     chr_id <- shiny::req(win_par$chr_id)
-    map <- shiny::req(pmap_obj())[[chr_id]]
+    map <- shiny::req(probs_obj())$map[[chr_id]]
     rng <- round(2 * range(map)) / 2
     if(is.null(selected <- input$scan_window))
       selected <- rng
@@ -152,10 +152,9 @@ shinyScan1Plot <- function(input, output, session,
                  lodcolumn = seq_along(names(effs)),
                  chr = win_par$chr_id,
                  xlim = win))
-      par(mfrow=c(2,1))
       for(pheno in names(effs)) {
-        print(plot_eff(pheno, effs, scans, win,
-                       addlod = TRUE))
+        plot_eff(pheno, effs, scans, win,
+                 addlod = TRUE)
       }
       dev.off()
     }

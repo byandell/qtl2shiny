@@ -21,8 +21,19 @@ shinyProbs <- function(input, output, session,
     chr_id <- shiny::req(win_par$chr_id)
     shiny::withProgress(message = 'Read probs ...', value = 0, {
       shiny::setProgress(1)
-      DOread::read_probs(chr_id, data_path())
+      probs <- DOread::read_probs(chr_id, data_path())
+      if(shiny::isTruthy(win_par$local)) {
+        mid <- req(win_par$peak_Mbp)
+        win <- req(win_par$window_Mbp)
+        start_val <- mid - win
+        end_val <- mid + win
+        wh <- which(probs$map[[chr_id]] >= start_val &
+                    probs$map[[chr_id]] <= end_val)
+        probs$map[[chr_id]] <- probs$map[[chr_id]][wh]
+        probs$probs[[chr_id]] <- probs$probs[[chr_id]][,,wh]
+      }
     })
+    probs
   })
   
   probs_obj

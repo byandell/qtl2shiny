@@ -5,7 +5,8 @@
 \title{Top SNP Association Plot Wrapper}
 \usage{
 top_snp_asso(scan_obj, xlim, snp_action = "basic",
-  phename = dimnames(scan_obj$lod)[[2]], drop.hilit = NULL)
+  phename = dimnames(scan_obj$lod)[[2]], drop.hilit = NULL,
+  show_all_snps = FALSE)
 }
 \arguments{
 \item{scan_obj}{object of class \code{\link[qtl2scan]{scan1}}}
