@@ -4,6 +4,8 @@ suppressPackageStartupMessages({
   library(GGally)
   library(grid)
   library(gridBase)
+  library(qtl2geno)
+  library(qtl2scan)
 })
 
 source("setup4.R")
