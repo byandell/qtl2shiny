@@ -99,7 +99,7 @@ shinyAllelePat <- function(input, output, session,
   output$pat_output <- shiny::renderUI({
     switch(shiny::req(input$button),
            "Top SNPs"     = shinyTopFeatureOutput(ns("top_feature")),
-           Pattern        = shiny::plotOutput(ns("snpPatternPlot")),
+           "By Pheno"     = shiny::plotOutput(ns("snpPatternPlot")),
            "All Phenos"   = shiny::plotOutput(ns("snp_phe_pat")),
            "All Patterns" = shiny::plotOutput(ns("snp_pat_phe")),
            Summary        = shiny::dataTableOutput(ns("snpPatternSum")))
@@ -159,8 +159,8 @@ shinyAllelePat <- function(input, output, session,
     }
   )
   output$radio <- shiny::renderUI({
-    button_val <- c("Pattern",
-                    "All Phenos","All Patterns",
+    button_val <- c("All Phenos","All Patterns",
+                    "By Pheno",
                     "Top SNPs","Summary")
     if(length(pheno_names()) == 1) {
       button_val <- button_val[-(2:3)]
@@ -174,8 +174,8 @@ shinyAllelePat <- function(input, output, session,
   })
   ## Update Radio Button if 1 or >1 Phenotype Names.
   shiny::observeEvent(pheno_names(), {
-    button_val <- c("Pattern",
-                    "All Phenos","All Patterns",
+    button_val <- c("All Phenos","All Patterns",
+                    "By Pheno",
                     "Top SNPs","Summary")
     if(length(pheno_names()) == 1) {
       button_val <- button_val[-(2:3)]

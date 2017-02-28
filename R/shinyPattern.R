@@ -13,7 +13,6 @@
 #' @importFrom grid plotViewport pushViewport
 #' @importFrom gridBase baseViewports
 #' @importFrom CCSanger sdp_to_pattern
-#' @importFrom qtl2pattern scan_pattern
 #' @importFrom shiny NS reactive req 
 #'   observeEvent
 #'   radioButtons selectInput updateSelectInput
@@ -73,19 +72,18 @@ shinyPattern <- function(input, output, session,
     unique(unlist(stringr::str_split(diplos(), "")))
   })
   diplos <- shiny::reactive({
-    dimnames(probs36_obj()$probs[[1]])[[2]]
+    dimnames(req(probs36_obj())$probs[[1]])[[2]]
   })
 
   scan_pat <- shiny::reactive({
     pheno_in <- shiny::req(input$pheno_name)
-    pats <- patterns()
+    shiny::req(phe_df(), cov_mx(), probs36_obj(), K_chr(),
+               patterns())
     withProgress(message = 'Scan Patterns ...', value = 0, {
       setProgress(1)
-      qtl2pattern::scan_pattern(probs36_obj(),
-                   phe_df()[,pheno_in, drop=FALSE],
-                   K_chr(), cov_mx(),
-                   pats,
-                   haplos(), diplos())
+      scan1_pattern(pheno_in, phe_df(), cov_mx(), 
+                    probs36_obj(), K_chr(), analyses_df(),
+                                patterns(), haplos(), diplos())
     })
   })
 

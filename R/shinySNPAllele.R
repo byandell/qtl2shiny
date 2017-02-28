@@ -48,7 +48,7 @@ shinySNPAllele <- function(input, output, session,
       qtl2pattern::snpprob_collapse(snpprobs, snp_action())
     shiny::withProgress(message = "SNP Scan ...", value = 0, {
       shiny::setProgress(1)
-      scan1_covar(snpprobs_obj(), phe_df(), K_chr(), cov_mx(), analyses_df())
+      scan1_covar(phe_df(), cov_mx(), snpprobs_obj(), K_chr(), analyses_df())
     })
   })
   ## Top SNPs table.
