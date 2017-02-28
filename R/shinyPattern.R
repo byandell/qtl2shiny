@@ -79,6 +79,7 @@ shinyPattern <- function(input, output, session,
   })
 
   scan_pat <- shiny::reactive({
+    req(snp_action())
     pheno_in <- shiny::req(input$pheno_name)
     shiny::req(phe_df(), cov_mx(), probs36_obj(), K_chr(),
                patterns())
@@ -168,22 +169,34 @@ shinyPattern <- function(input, output, session,
   )
   output$downloadPlot <- shiny::downloadHandler(
     filename = function() {
-      pheno_in <- shiny::req(input$pheno_name)
-      file.path(paste0(pheno_in, "_", snp_action(), "_scan_", chr_pos(), ".pdf"))
+      shiny::req(input$pheno_name)
+      file.path(paste0("pattern", "_", snp_action(), "_scan_", chr_pos(), ".pdf"))
     },
     content = function(file) {
+      shiny::req(scan_pat(), pattern_choices())
       scan_in <- shiny::req(scan_pat())
-      pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
-      if(nrow(pats)) {
-        pdf(file, width = 9, height = 9)
-        par(mfrow=c(2,1))
-        scan_pat_type(scan_in, "coef", pattern_choices(), input$pheno_name)
-        plot.new()
-        vps <- gridBase::baseViewports()
-        grid::pushViewport(vps$figure)
-        vp1 <- grid::plotViewport(c(0,0,0,0)) 
-        print(scan_pat_type(scan_in, "lod", pattern_choices(), input$pheno_name),
-              vp = vp1)
+      top_panel_prop <- 0.65
+      pdf(file, width = 9, height = 9)
+      for(pheno_in in names(phe_df())) {
+        pats <- dplyr::filter(patterns(), pheno == pheno_in)
+
+        grid::grid.newpage()
+        grid::pushViewport(
+          grid::viewport(
+            layout = grid::grid.layout(nrow = 2,
+                                       heights=c(top_panel_prop, 
+                                                 1-top_panel_prop))))
+        
+        scan_now <- scan1_pattern(pheno_in, phe_df(), cov_mx(), 
+                                  probs36_obj(), K_chr(), analyses_df(),
+                                  patterns(), haplos(), diplos())
+        
+        print(scan_pat_type(scan_now, "coef", pattern_choices(), pheno_in),
+              vp = grid::viewport(layout.pos.row = 1,
+                                  layout.pos.col = 1))
+        print(scan_pat_type(scan_now, "lod", pattern_choices(), pheno_in),
+              vp = grid::viewport(layout.pos.row = 2,
+                                  layout.pos.col = 1))
       }
       dev.off()
     }
