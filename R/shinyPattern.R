@@ -7,7 +7,9 @@
 #' @keywords utilities
 #'
 #' @export
+#' 
 #' @importFrom dplyr distinct
+#' @importFrom stringr str_split
 #' @importFrom grid plotViewport pushViewport
 #' @importFrom gridBase baseViewports
 #' @importFrom CCSanger sdp_to_pattern
@@ -20,6 +22,7 @@
 #'   fluidRow column tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#'   
 shinyPattern <- function(input, output, session,
                          chr_pos, 
                          phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
@@ -67,7 +70,7 @@ shinyPattern <- function(input, output, session,
   
   ## Names of haplos and diplos in terms of founders.
   haplos <- shiny::reactive({
-    unique(unlist(str_split(diplos(), "")))
+    unique(unlist(stringr::str_split(diplos(), "")))
   })
   diplos <- shiny::reactive({
     dimnames(probs36_obj()$probs[[1]])[[2]]
