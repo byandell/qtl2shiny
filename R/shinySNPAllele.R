@@ -113,7 +113,7 @@ shinySNPAllele <- function(input, output, session,
            },
            "Allele Pattern" = {
              if(!is.null(pat_par$button)) {
-               pheno_choice <- (pat_par$button %in% c("Pattern","Top SNPs"))
+               pheno_choice <- (pat_par$button %in% c("By Pheno","Top SNPs"))
              }
            })
     if(pheno_choice) {
@@ -121,7 +121,7 @@ shinySNPAllele <- function(input, output, session,
     }
   })
   output$win_choice <- shiny::renderUI({
-    ## Show Window for Scan, Genes, Pattern, Alls
+    ## Show Window for Scan, Genes, By Pheno, Alls
     win_choice <- FALSE
     switch(shiny::req(job_par$button),
            "SNP Association" = {
@@ -133,7 +133,7 @@ shinySNPAllele <- function(input, output, session,
              if(!is.null(pat_par$button)) {
                win_choice <- 
                  (pat_par$button %in%
-                    c("Pattern","All Phenos","All Patterns"))
+                    c("By Pheno","All Phenos","All Patterns"))
              }
            })
     if(win_choice) {

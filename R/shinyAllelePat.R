@@ -81,7 +81,7 @@ shinyAllelePat <- function(input, output, session,
     if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()))
       return(plot_null())
-    shiny::req(input$pattern)
+#     shiny::req(input$pattern)
     top_pat <- shiny::req(top_snps_tbl())
     patterns <- CCSanger::sdp_to_pattern(top_pat$sdp)
     shiny::withProgress(message = 'SNP Pattern phenos ...', value = 0, {
@@ -93,7 +93,7 @@ shinyAllelePat <- function(input, output, session,
 
   output$pat_input <- shiny::renderUI({
     switch(shiny::req(input$button),
-           "All Patterns" = shiny::uiOutput(ns("pattern")),
+#           "All Patterns" = shiny::uiOutput(ns("pattern")),
            "Top SNPs"     = shinyTopFeatureInput(ns("top_feature")))
   })
   output$pat_output <- shiny::renderUI({

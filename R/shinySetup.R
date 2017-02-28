@@ -145,8 +145,8 @@ shinySetupUI <- function(id) {
     sidebarPanel(
       shiny::uiOutput(ns("title")),
       shiny::uiOutput(ns("radio")),
-      shiny::uiOutput(ns("dataset")),
-      shiny::uiOutput(ns("sidebar_setup"))
+      shiny::uiOutput(ns("sidebar_setup")),
+      shiny::uiOutput(ns("dataset"))
     ),
     mainPanel(shiny::uiOutput(ns("main_setup")))
   )

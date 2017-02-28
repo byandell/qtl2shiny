@@ -24,7 +24,7 @@ shinyProbs <- function(input, output, session,
       probs <- DOread::read_probs(chr_id, data_path())
       if(shiny::isTruthy(win_par$local)) {
         mid <- req(win_par$peak_Mbp)
-        win <- req(win_par$window_Mbp)
+        win <- 2 ^ req(win_par$window_Mbp)
         start_val <- mid - win
         end_val <- mid + win
         wh <- which(probs$map[[chr_id]] >= start_val &
