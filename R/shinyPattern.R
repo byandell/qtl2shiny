@@ -37,12 +37,15 @@ shinyPattern <- function(input, output, session,
                 selected = input$pheno_name)
   })
   ## Select pattern for plots.
-  output$pattern <- shiny::renderUI({
-    shiny::req(input$pheno_name, snp_action())
+  pattern_choices <- shiny::reactive({
+    shiny::req(input$pheno_name)
     pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
-    if(nrow(pats)) {
-      choices <- CCSanger::sdp_to_pattern(pats$sdp)
-    } else {
+    CCSanger::sdp_to_pattern(pats$sdp)
+  })
+  output$pattern <- shiny::renderUI({
+    shiny::req(pattern_choices(), snp_action())
+    choices <- pattern_choices()
+    if(!length(choices)) {
       choices <- input$pattern
     }
     shiny::selectInput(ns("pattern"), NULL,
@@ -87,25 +90,25 @@ shinyPattern <- function(input, output, session,
     })
   })
 
-  scan_pat_type <- function(scan_pat, type, pattern) {
+  scan_pat_type <- function(scan_pat, type, pattern, pheno) {
     pattern_cont <- 
-      dplyr::filter(scan_pat$patterns,
-                    CCSanger::sdp_to_pattern(sdp) == pattern)$founders[1]
-    plot(scan_pat, type, pattern_cont) 
+      unique(dplyr::filter(scan_pat$patterns,
+                    CCSanger::sdp_to_pattern(sdp) %in% pattern)$founders)
+    plot(scan_pat, type, pattern_cont, main = pheno) 
   }
 
   output$scan_pat_lod <- shiny::renderPlot({
-    shiny::req(scan_pat(), input$pattern, input$pheno_name)
+    shiny::req(scan_pat(), pattern_choices(), input$pheno_name)
     withProgress(message = 'Pattern LODs ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), "lod", input$pattern)
+      scan_pat_type(scan_pat(), "lod", pattern_choices(), input$pheno_name)
     })
   })
   output$scan_pat_coef <- shiny::renderPlot({
-    shiny::req(scan_pat(), input$pattern, input$pheno_name)
+    shiny::req(scan_pat(), pattern_choices(), input$pheno_name)
     withProgress(message = 'Pattern Effects ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), "coef", input$pattern)
+      scan_pat_type(scan_pat(), "coef", pattern_choices(), input$pheno_name)
     })
   })
   output$scanSummary <- shiny::renderDataTable({
@@ -118,17 +121,10 @@ shinyPattern <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
 
   output$eff_lodPlot <- shiny::renderPlot({
-    shiny::req(scan_pat(), input$pattern)
+    shiny::req(scan_pat(), input$pattern, input$pheno_name)
     withProgress(message = 'Pattern Effects & LOD ...', value = 0, {
       setProgress(1)
-      par(mfrow=c(2,1))
-      scan_pat_type(scan_pat(), "coef", input$pattern)
-      plot.new()
-      vps <- gridBase::baseViewports()
-      grid::pushViewport(vps$figure)
-      vp1 <- grid::plotViewport(c(1,1,1,1)) 
-      print(scan_pat_type(scan_pat(), "lod", input$pattern),
-            vp = vp1)
+      scan_pat_type(scan_pat(), "coef_and_lod", pattern_choices(), input$pheno_name)
     })
   })
   
@@ -148,6 +144,11 @@ shinyPattern <- function(input, output, session,
     switch(shiny::req(input$button),
            Effects         =,
            "LOD & Effects" = shiny::plotOutput(ns("scan_pat_coef")))
+  })
+  output$Both <- shiny::renderUI({ ## does not work yet
+    ## needs work on qtl2ggplot::plot_coef_and_lod for listof_scan1coef object
+    switch(shiny::req(input$button),
+           "LOD & Effects" = shiny::plotOutput(ns("eff_lodPlot")))
   })
   output$Summary <- shiny::renderUI({
     switch(shiny::req(input$button),
@@ -175,19 +176,14 @@ shinyPattern <- function(input, output, session,
       pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
       if(nrow(pats)) {
         pdf(file, width = 9, height = 9)
-        choices <- CCSanger::sdp_to_pattern(pats$sdp)
-        for(pattern in choices) {
-          par(mfrow=c(2,1))
-          scan_pat_type(scan_in, "coef", pattern)
-          plot.new()
-          if(pattern == choices[1]) {
-            vps <- gridBase::baseViewports()
-            grid::pushViewport(vps$figure)
-            vp1 <- grid::plotViewport(c(0,0,0,0)) 
-          }
-          print(scan_pat_type(scan_in, "lod", pattern),
-                vp = vp1)
-        }
+        par(mfrow=c(2,1))
+        scan_pat_type(scan_in, "coef", pattern_choices(), input$pheno_name)
+        plot.new()
+        vps <- gridBase::baseViewports()
+        grid::pushViewport(vps$figure)
+        vp1 <- grid::plotViewport(c(0,0,0,0)) 
+        print(scan_pat_type(scan_in, "lod", pattern_choices(), input$pheno_name),
+              vp = vp1)
       }
       dev.off()
     }
@@ -206,7 +202,7 @@ shinyPatternUI <- function(id) {
   shiny::tagList(
     shiny::uiOutput(ns("radio")),
     shiny::uiOutput(ns("pheno_name")),
-    shiny::uiOutput(ns("pattern_choice")),
+#    shiny::uiOutput(ns("pattern_choice")),
     shiny::fluidRow(
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
@@ -219,6 +215,7 @@ shinyPatternOutput <- function(id) {
   shiny::tagList(
     shiny::uiOutput(ns("LOD")),
     shiny::uiOutput(ns("Effects")),
+#    shiny::uiOutput(ns("Both")),
     shiny::uiOutput(ns("Summary"))
   )
 }
