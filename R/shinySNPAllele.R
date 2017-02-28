@@ -3,7 +3,7 @@
 #' Shiny module to coordinate SNP and allele analyses and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,data_path,snp_action reactive arguments
+#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df,data_path,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -22,7 +22,7 @@
 shinySNPAllele <- function(input, output, session,
                           job_par, win_par, 
                           phe_df, cov_mx,
-                          probs_obj, K_chr,
+                          probs_obj, K_chr, analyses_df,
                           data_path,
                           snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
@@ -42,13 +42,13 @@ shinySNPAllele <- function(input, output, session,
                   data_path)
   ## SNP Scan.
   snp_scan_obj <- shiny::reactive({
-    shiny::req(phe_df())
+    shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
     snpprobs <- shiny::req(snpprobs_obj())
     snpprobs_act <- 
       qtl2pattern::snpprob_collapse(snpprobs, snp_action())
     shiny::withProgress(message = "SNP Scan ...", value = 0, {
       shiny::setProgress(1)
-      qtl2scan::scan1(snpprobs_act, phe_df(), K_chr(), cov_mx())
+      scan1_covar(snpprobs_obj(), phe_df(), K_chr(), cov_mx(), analyses_df())
     })
   })
   ## Top SNPs table.

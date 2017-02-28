@@ -1,7 +1,7 @@
 #' Shiny Pattern module
 #'
 #' @param input,output,session standard shiny arguments
-#' @param chr_pos,phe_df,K_chr,cov_mx,probs36_obj,patterns,snp_action reactive arguments
+#' @param chr_pos,phe_df,cov_mx,probs36_obj,K_chr,analyses_df,patterns,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -21,9 +21,9 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 shinyPattern <- function(input, output, session,
-                         chr_pos, phe_df, K_chr, cov_mx,
-                         probs36_obj, patterns,
-                         snp_action = shiny::reactive({NULL})) {
+                         chr_pos, 
+                         phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
+                         patterns, snp_action = shiny::reactive({NULL})) {
   ns <- session$ns
   
   ###### Want title to have phenotype name.

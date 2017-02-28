@@ -105,13 +105,13 @@ server <- function(input, output, session) {
   ## Haplotype Analysis.
   shiny::callModule(shinyHaplo, "hap_scan", 
              set_par()$win_par, pmap_obj, 
-             phe_df, cov_mx, K_chr,
+             phe_df, cov_mx, K_chr, analyses_df,
              data_path)
 
   ## Diplotype Analysis.
   shiny::callModule(shinyDiplo, "dip_scan",
              set_par()$win_par, 
-             phe_df, cov_mx, K_chr,
+             phe_df, cov_mx, K_chr, analyses_df,
              data_path)
   
   # Allow reconnect with Shiny Server.

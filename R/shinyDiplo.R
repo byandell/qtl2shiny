@@ -3,7 +3,7 @@
 #' Shiny diplotype SNP/Gene action analysis.
 #' 
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,K_chr,data_path reactive arguments
+#' @param win_par,phe_df,cov_mx,K_chr,analyses_df,data_path reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -16,7 +16,7 @@
 #'    mainPanel sidebarPanel strong tagList
 shinyDiplo <- function(input, output, session,
                        win_par, 
-                       phe_df, cov_mx, K_chr,
+                       phe_df, cov_mx, K_chr, analyses_df,
                        data_path) {
   ns <- session$ns
 
@@ -34,14 +34,14 @@ shinyDiplo <- function(input, output, session,
   
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
-                         input, win_par, phe_df, cov_mx, 
-                         probs36_obj, K_chr, data_path,
-                         snp_action)
+                         input, win_par, 
+                         phe_df, cov_mx, probs36_obj, K_chr, analyses_df, 
+                         data_path, snp_action)
   
   shiny::callModule(shinyPattern, "dip_pat",
-             chr_pos, phe_df, K_chr, cov_mx,
-             probs36_obj, patterns,
-             snp_action)
+             chr_pos, 
+             phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
+             patterns, snp_action)
 
   ## CC names
   output$cc_names <- shiny::renderText({

@@ -39,6 +39,7 @@ Minor issues
 * scans
     + multiple traits now use superset of covariates
     + needs redesign of Scan1Plot and use of cov_mx() from DOread::get_covar
+    + fixed for Scan1Plot; need to do same for Scan1SNP and possibly elsewhere
 
 ### Contribution guidelines ###
 

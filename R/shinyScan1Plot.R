@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,probs_obj,K_chr reactive arguments
+#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -20,16 +20,15 @@
 #'   downloadButton downloadHandler
 shinyScan1Plot <- function(input, output, session,
                   win_par, pmap_obj, 
-                  phe_df, cov_mx, probs_obj, K_chr) {
+                  phe_df, cov_mx, probs_obj, K_chr, analyses_df) {
   ns <- session$ns
   
   ## Scan1
   scan_obj <- shiny::reactive({
-    browser()
     shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
     shiny::withProgress(message = "Genome Scan ...", value = 0, {
       shiny::setProgress(1)
-      qtl2scan::scan1(probs_obj(), phe_df(), K_chr(), cov_mx())
+      scan1_covar(probs_obj(), phe_df(), K_chr(), cov_mx(), analyses_df())
     })
   })
   

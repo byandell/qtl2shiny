@@ -3,7 +3,7 @@
 #' Shiny module for analysis based on haplotype alleles.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pmap_obj,phe_df,cov_mx,K_chr,data_path reactive arguments
+#' @param win_par,pmap_obj,phe_df,cov_mx,K_chr,analyses_df,data_path reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -16,7 +16,7 @@
 #'   mainPanel sidebarPanel strong tagList
 shinyHaplo <- function(input, output, session,
                        win_par, pmap_obj, 
-                       phe_df, cov_mx, K_chr,
+                       phe_df, cov_mx, K_chr, analyses_df,
                        data_path) {
   ns <- session$ns
 
@@ -26,12 +26,12 @@ shinyHaplo <- function(input, output, session,
 
   ## Genome Scan.
   shiny::callModule(shinyScan1Plot, "hap_scan", 
-             win_par, pmap_obj, phe_df, cov_mx, probs_obj, K_chr)
+             win_par, pmap_obj, phe_df, cov_mx, probs_obj, K_chr, analyses_df)
   
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
               input, win_par, 
-              phe_df, cov_mx, probs_obj, K_chr,
+              phe_df, cov_mx, probs_obj, K_chr, analyses_df,
               data_path)
 
   ## CC names
