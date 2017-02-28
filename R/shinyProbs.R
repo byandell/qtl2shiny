@@ -48,7 +48,7 @@ shinyProbs36 <- function(input, output, session,
   probs_obj <- shiny::reactive({
     chr_id <- shiny::req(win_par$chr_id)
     range_val <- shiny::req(win_par$peak_Mbp) + 
-      c(-1,1) * shiny::req(win_par$window_Mbp)
+      c(-1,1) * 2 ^ shiny::req(win_par$window_Mbp)
     shiny::withProgress(message = 'Diplotype Probs ...', value = 0, {
       shiny::setProgress(1)
       DOread::read_probs36(chr_id, range_val[1], range_val[2],
@@ -71,7 +71,7 @@ shinySNPProbs <- function(input, output, session,
       shiny::setProgress(1)
       qtl2pattern::get_snpprobs(win_par$chr_id, 
                    win_par$peak_Mbp, 
-                   win_par$window_Mbp,
+                   2 ^ win_par$window_Mbp,
                    pheno_names(), 
                    probs_obj(),
                    data_path())

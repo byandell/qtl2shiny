@@ -5,7 +5,7 @@
 \title{Make chr_pos from chr, peak and window}
 \usage{
 make_chr_pos(chr_id = NULL, peak_Mbp = NULL, window_Mbp = NULL,
-  range = c(peak_Mbp - window_Mbp, peak_Mbp + window_Mbp))
+  range = c(peak_Mbp - 2^window_Mbp, peak_Mbp + 2^window_Mbp))
 }
 \arguments{
 \item{chr_id}{chromosome ID}

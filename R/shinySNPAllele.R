@@ -86,7 +86,7 @@ shinySNPAllele <- function(input, output, session,
   # Scan Window slider
   output$scan_window <- shiny::renderUI({
     rng <- round(shiny::req(win_par$peak_Mbp) + 
-                   c(-1,1) * shiny::req(win_par$window_Mbp), 
+                   c(-1,1) * 2 ^ shiny::req(win_par$window_Mbp), 
                  1)
     if(is.null(selected <- input$scan_window))
       selected <- rng

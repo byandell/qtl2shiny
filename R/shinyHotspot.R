@@ -46,6 +46,7 @@ shinyHotspot <- function(input, output, session,
     if(is.null(peak_window)) {
       NULL
     } else {
+      peak_window <- 2 ^ peak_window
       pheno_types <- pheno_type()
       map <- pmap_obj()
       out_peaks <- list(map=map,
@@ -120,7 +121,7 @@ shinyHotspot <- function(input, output, session,
                  ylim=c(0,max(out_peaks$lod[,lodcolumns]))) +
         ## add mtext for peak_set
         ggplot2::ggtitle(paste0("number of ", paste(peak_set, collapse=","),
-                   " in ", win_par$window_Mbp, "Mbp window"))
+                   " in ", 2 ^ win_par$window_Mbp, "Mbp window"))
     })
   })
   scan_tbl <- shiny::reactive({

@@ -35,7 +35,7 @@ shinyPhenos <- function(input, output, session,
     if(isTruthy(input$use_pos)) {
       chr_id <- shiny::req(chr_peak$chr_id)
       peak_Mbp <- shiny::req(chr_peak$peak_Mbp)
-      window_Mbp <- shiny::req(chr_peak$window_Mbp)
+      window_Mbp <- 2 ^ shiny::req(chr_peak$window_Mbp)
       if(window_Mbp > 0) {
         ## Filter peaks
         peaks <- dplyr::filter(peaks_tbl(), chr == chr_id,
@@ -73,7 +73,7 @@ shinyPhenos <- function(input, output, session,
   output$filter <- shiny::renderUI({
     shiny::checkboxInput(ns("use_pos"),
                   paste0("Peak on chr ", chr_peak$chr_id, " in ",
-                        paste(chr_peak$peak_Mbp + c(-1,1) * chr_peak$window_Mbp,
+                        paste(chr_peak$peak_Mbp + c(-1,1) * 2 ^ chr_peak$window_Mbp,
                               collapse = "-"), "?"),
                   TRUE)
   })

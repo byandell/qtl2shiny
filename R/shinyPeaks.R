@@ -38,9 +38,9 @@ shinyPeaks <- function(input, output, session,
   ## Window slider
   output$window_Mbp <- shiny::renderUI({
     if(is.null(pos <- input$window_Mbp))
-      pos <- 5
-    shiny::sliderInput(ns("window_Mbp"), "Window Half Width",
-                0, 10, pos, step=0.5)
+      pos <- 0
+    shiny::sliderInput(ns("window_Mbp"), "Window Log2 Half Width",
+                -2, 3, pos, step=1)
   })
   
   # Peak position slider.
