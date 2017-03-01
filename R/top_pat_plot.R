@@ -26,14 +26,16 @@ top_pat_plot <- function(pheno,
     if(snp_action != "basic")
       mytitle <- paste(mytitle, snp_action)
   }
-  if(length(pheno) == 1)
+  legend.title <- "pattern"
+  if(length(pheno) == 1) {
     facet <- NULL
+  } else {
+    if(facet == "pattern")
+      legend.title <- "pheno"
+  }
+
   scan_obj <- subset(scan_obj, 
                      lodcolumn = match(pheno, dimnames(scan_obj$lod)[[2]]))
-  
-  legend.title <- "pattern"
-  if(facet == "pattern")
-    legend.title <- "pheno"
   
   plot(scan_obj, seq_along(pheno),
        xlim = xlim, main = mytitle,

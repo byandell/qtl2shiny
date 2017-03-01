@@ -117,7 +117,7 @@ shinyPattern <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
 
   output$eff_lodPlot <- shiny::renderPlot({
-    shiny::req(scan_pat(), pattern_choices(), input$pheno_name)
+    shiny::req(pattern_choices(), input$pheno_name)
     withProgress(message = 'Pattern Effects & LOD ...', value = 0, {
       setProgress(1)
       scan_pat_type(scan_pat(), "coef_and_lod", pattern_choices(), input$pheno_name)

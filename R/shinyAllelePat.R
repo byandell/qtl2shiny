@@ -163,7 +163,7 @@ shinyAllelePat <- function(input, output, session,
                     "By Pheno",
                     "Top SNPs","Summary")
     if(length(pheno_names()) == 1) {
-      button_val <- button_val[-(2:3)]
+      button_val <- button_val[-(1:2)]
     }
     if(!is.null(selected <- input$button)) {
       if(!(selected %in% button_val))
@@ -178,7 +178,7 @@ shinyAllelePat <- function(input, output, session,
                     "By Pheno",
                     "Top SNPs","Summary")
     if(length(pheno_names()) == 1) {
-      button_val <- button_val[-(2:3)]
+      button_val <- button_val[-(1:2)]
     }
     selected <- input$button
     if(!is.null(selected)) {
