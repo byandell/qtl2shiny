@@ -37,10 +37,12 @@ shinyPattern <- function(input, output, session,
                 selected = input$pheno_name)
   })
   ## Select pattern for plots.
+  pats <- shiny::reactive({
+    shiny::req(input$pheno_name, patterns())
+    dplyr::filter(patterns(), pheno == input$pheno_name)
+  })
   pattern_choices <- shiny::reactive({
-    shiny::req(input$pheno_name)
-    pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
-    CCSanger::sdp_to_pattern(pats$sdp)
+    CCSanger::sdp_to_pattern(pats()$sdp)
   })
   output$pattern <- shiny::renderUI({
     shiny::req(pattern_choices(), snp_action())
@@ -87,7 +89,7 @@ shinyPattern <- function(input, output, session,
       setProgress(1)
       scan1_pattern(pheno_in, phe_df(), cov_mx(), 
                     probs36_obj(), K_chr(), analyses_df(),
-                                patterns(), haplos(), diplos())
+                                pats(), haplos(), diplos())
     })
   })
 
@@ -170,12 +172,13 @@ shinyPattern <- function(input, output, session,
       pdf(file, width = 9, height = 9)
       for(pheno_in in names(phe_df())) {
         pats <- dplyr::filter(patterns(), pheno == pheno_in)
+        pat_choices <- CCSanger::sdp_to_pattern(pats$sdp)
         
         scan_now <- scan1_pattern(pheno_in, phe_df(), cov_mx(), 
                                   probs36_obj(), K_chr(), analyses_df(),
-                                  patterns(), haplos(), diplos())
+                                  pats, haplos(), diplos())
         
-        scan_pat_type(scan_now, "coef_and_lod", pattern_choices(), pheno_in)
+        scan_pat_type(scan_now, "coef_and_lod", pat_choices, pheno_in)
       }
       dev.off()
     }
