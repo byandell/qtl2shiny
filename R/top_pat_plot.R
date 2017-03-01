@@ -31,8 +31,12 @@ top_pat_plot <- function(pheno,
   scan_obj <- subset(scan_obj, 
                      lodcolumn = match(pheno, dimnames(scan_obj$lod)[[2]]))
   
+  legend.title <- "pattern"
+  if(facet == "pattern")
+    legend.title <- "pheno"
+  
   plot(scan_obj, seq_along(pheno),
        xlim = xlim, main = mytitle,
        patterns = "hilit", drop.hilit = 1.5,
-       facet = facet)
+       facet = facet, legend.title = legend.title)
 }

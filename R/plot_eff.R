@@ -11,9 +11,6 @@
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords hplot
 #' 
-#' @importFrom qtl2ggplot plot_coefCC
-#' @importFrom ggplot2 geom_vline
-#'
 plot_eff <- function(pheno, eff_obj, scan_obj, xlim = NULL,
                      addlod = FALSE) {
   if(is.null(eff_obj) | is.null(pheno) | is.null(scan_obj))
@@ -21,15 +18,14 @@ plot_eff <- function(pheno, eff_obj, scan_obj, xlim = NULL,
   
   main <- pheno
   lodcol <- match(pheno, names(eff_obj))
-  max_pos <- max(scan_obj, lodcolumn=lodcol)$pos[1]
   chr_id <- names(scan_obj$map)[1]
   if(!addlod) {
+    max_pos <- max(scan_obj, lodcolumn=lodcol)$pos[1]
     plot(eff_obj[[lodcol]], 
          xlim=xlim,
          main = main,
-         legend.position = "right") +
-      ggplot2::geom_vline(xintercept=max_pos, linetype=2,
-                          col=lodcol)
+         legend.position = "right",
+         maxpos = max_pos, maxcol = lodcol)
   } else { # coef_and_lod
     plot(eff_obj[[lodcol]], 
          scan1_output = subset(scan_obj, 
