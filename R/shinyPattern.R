@@ -33,7 +33,7 @@ shinyPattern <- function(input, output, session,
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({
     shiny::selectInput(ns("pheno_name"), NULL,
-                choices = names(phe_df()),
+                choices = unique(patterns()$pheno),
                 selected = input$pheno_name)
   })
   ## Select pattern for plots.
