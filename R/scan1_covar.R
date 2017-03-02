@@ -29,6 +29,8 @@ scan1_covar <- function(phe_df, cov_mx, probs_obj, K_chr, analyses_df) {
     scans <- cbind(scans, 
                    scanfn(probs_obj, phe_df, K_chr, cov_mx, analyses_df, wh))
   }
+  # reorder by decreasing max lod
+  scans$lod <- scans$lod[,order(-apply(scans$lod,2,max)), drop=FALSE]
   scans
 }
 
