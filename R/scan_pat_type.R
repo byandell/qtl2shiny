@@ -2,7 +2,7 @@
 #' 
 #' @importFrom dplyr arrange desc
 #' 
-scan_pat_type <- function(scan_pat, type, pattern, pheno) {
+scan_pat_type <- function(scan_pat, map, type, pattern, pheno) {
   if(is.null(scan_pat))
     return(plot_null())
   
@@ -16,6 +16,6 @@ scan_pat_type <- function(scan_pat, type, pattern, pheno) {
       summary(scan_pat$scan),
       dplyr::desc(lod)))$pos[1]
   }
-  plot(scan_pat, type, pattern_cont, main = pheno,
+  plot(scan_pat, map, type, pattern_cont, main = pheno,
        maxpos = maxpos, maxcol = maxcol) 
 }

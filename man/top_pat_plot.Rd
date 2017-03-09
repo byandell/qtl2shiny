@@ -4,7 +4,8 @@
 \alias{top_pat_plot}
 \title{Top Pattern Plot}
 \usage{
-top_pat_plot(pheno, scan_obj, xlim, facet = "pheno", snp_action = "basic")
+top_pat_plot(pheno, scan_obj, chr_id, map, xlim, facet = "pheno",
+  snp_action = "basic")
 }
 \arguments{
 \item{pheno}{name of phenotype for effect scan}

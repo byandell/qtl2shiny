@@ -88,23 +88,23 @@ shinyPattern <- function(input, output, session,
     withProgress(message = 'Scan Patterns ...', value = 0, {
       setProgress(1)
       scan1_pattern(pheno_in, phe_df(), cov_mx(), 
-                    probs36_obj(), K_chr(), analyses_df(),
+                    probs36_obj()$probs, K_chr(), analyses_df(),
                                 pats(), haplos(), diplos())
     })
   })
 
   output$scan_pat_lod <- shiny::renderPlot({
-    shiny::req(pattern_choices(), input$pheno_name)
+    shiny::req(pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern LODs ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), "lod", pattern_choices(), input$pheno_name)
+      scan_pat_type(scan_pat(), probs36_obj()$map, "lod", pattern_choices(), input$pheno_name)
     })
   })
   output$scan_pat_coef <- shiny::renderPlot({
-    shiny::req(pattern_choices(), input$pheno_name)
+    shiny::req(pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern Effects ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), "coef", pattern_choices(), input$pheno_name)
+      scan_pat_type(scan_pat(), probs36_obj()$map, "coef", pattern_choices(), input$pheno_name)
     })
   })
   output$scanSummary <- shiny::renderDataTable({
@@ -117,10 +117,10 @@ shinyPattern <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
 
   output$eff_lodPlot <- shiny::renderPlot({
-    shiny::req(pattern_choices(), input$pheno_name)
+    shiny::req(pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern Effects & LOD ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), "coef_and_lod", pattern_choices(), input$pheno_name)
+      scan_pat_type(scan_pat(), probs36_obj()$map, "coef_and_lod", pattern_choices(), input$pheno_name)
     })
   })
   
@@ -139,8 +139,7 @@ shinyPattern <- function(input, output, session,
     switch(shiny::req(input$button),
            Effects         = shiny::plotOutput(ns("scan_pat_coef")))
   })
-  output$Both <- shiny::renderUI({ ## does not work yet
-    ## needs work on qtl2ggplot::plot_coef_and_lod for listof_scan1coef object
+  output$Both <- shiny::renderUI({
     switch(shiny::req(input$button),
            "LOD & Effects" = shiny::plotOutput(ns("eff_lodPlot")))
   })
@@ -175,10 +174,10 @@ shinyPattern <- function(input, output, session,
         pat_choices <- CCSanger::sdp_to_pattern(pats$sdp)
         
         scan_now <- scan1_pattern(pheno_in, phe_df(), cov_mx(), 
-                                  probs36_obj(), K_chr(), analyses_df(),
+                                  probs36_obj()$probs, K_chr(), analyses_df(),
                                   pats, haplos(), diplos())
         
-        scan_pat_type(scan_now, "coef_and_lod", pat_choices, pheno_in)
+        scan_pat_type(scan_now, probs36_obj()$map, "coef_and_lod", pat_choices, pheno_in)
       }
       dev.off()
     }

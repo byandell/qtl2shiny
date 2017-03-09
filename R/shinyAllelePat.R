@@ -3,12 +3,13 @@
 #' Shiny module for top SNP analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
+#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #' 
 #' @export
+#' 
 #' @importFrom dplyr distinct
 #' @importFrom CCSanger sdp_to_pattern
 #' @importFrom shiny callModule NS reactive req 
@@ -18,9 +19,10 @@
 #'   mainPanel sidebarPanel column strong tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#'   
 shinyAllelePat <- function(input, output, session,
                         snp_par, chr_pos, pheno_names,
-                        snp_scan_obj, top_snps_tbl, 
+                        snp_scan_obj, snpinfo, top_snps_tbl, 
                         gene_exon_tbl, 
                         snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
@@ -35,6 +37,10 @@ shinyAllelePat <- function(input, output, session,
     summary(shiny::req(top_snps_tbl()))
   })
   
+  chr_id <- reactive({
+    stringr::str_split(reactive(chr_pos()), "_")[[1]][1]
+  })
+  
   output$snpPatternSum <- shiny::renderDataTable({
     sum_top_pat()
   }, escape = FALSE,
@@ -42,11 +48,15 @@ shinyAllelePat <- function(input, output, session,
   
   output$snpPatternPlot <- shiny::renderPlot({
     if(is.null(snp_par$pheno_name) | is.null(snp_scan_obj()) |
-       is.null(snp_par$scan_window) | is.null(snp_action()))
+       is.null(snp_par$scan_window) | is.null(snp_action()) |
+       is.null(snpinfo() | is.null(chr_id())))
       return(plot_null())
     shiny::withProgress(message = 'SNP pattern plots ...', value = 0, {
       shiny::setProgress(1)
-      top_pat_plot(snp_par$pheno_name, snp_scan_obj(), 
+      top_pat_plot(snp_par$pheno_name, 
+                   snp_scan_obj(), 
+                   chr_id(),
+                   snpinfo(),
                    snp_par$scan_window,
                    snp_action = snp_action())
     })
@@ -59,8 +69,13 @@ shinyAllelePat <- function(input, output, session,
       return(plot_null())
     shiny::withProgress(message = 'SNP Pheno patterns ...', value = 0, {
       shiny::setProgress(1)
-      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
-                   facet = "pheno", snp_action = snp_action())
+      top_pat_plot(pheno_names(), 
+                   snp_scan_obj(), 
+                   chr_id(),
+                   snpinfo(),
+                   snp_par$scan_window,
+                   facet = "pheno", 
+                   snp_action = snp_action())
     })
   })
 
@@ -86,8 +101,13 @@ shinyAllelePat <- function(input, output, session,
     patterns <- CCSanger::sdp_to_pattern(top_pat$sdp)
     shiny::withProgress(message = 'SNP Pattern phenos ...', value = 0, {
       shiny::setProgress(1)
-      top_pat_plot(pheno_names(), snp_scan_obj(), snp_par$scan_window,
-                   facet = "pattern", snp_action = snp_action())
+      top_pat_plot(pheno_names(), 
+                   snp_scan_obj(), 
+                   chr_id(),
+                   snpinfo(), 
+                   snp_par$scan_window,
+                   facet = "pattern", 
+                   snp_action = snp_action())
     })
   })
 
@@ -133,14 +153,22 @@ shinyAllelePat <- function(input, output, session,
       phenos <- shiny::req(pheno_names())
       pdf(file, width = 9)
       ## Plots over all phenotypes
-      print(top_pat_plot(phenos, scans, snp_w,
-                         group = "pheno", snp_action = snp_action()))
+      print(top_pat_plot(phenos, 
+                         scans, 
+                         chr_id(),
+                         snpinfo(), 
+                         snp_w,
+                         group = "pheno", 
+                         snp_action = snp_action()))
 
       top_pat <- shiny::req(top_pattern())
       patterns <- CCSanger::sdp_to_pattern(top_pat$sdp)
       upat <- unique(patterns)
       for(pattern in upat) {
-        print(top_pat_plot(pheno_names(), snp_scan_obj(), 
+        print(top_pat_plot(pheno_names(), 
+                           snp_scan_obj(), 
+                           chr_id(),
+                           snpinfo(), 
                            snp_par$scan_window,
                            top_pattern = 
                              top_pattern()[patterns == pattern,],
@@ -150,7 +178,12 @@ shinyAllelePat <- function(input, output, session,
       
       ## Plots by phenotype.
       for(pheno in phenos) {
-        print(top_pat_plot(pheno, scans, snp_w, FALSE,
+        print(top_pat_plot(pheno, 
+                           scans, 
+                           chr_id(),
+                           snpinfo(), 
+                           snp_w, 
+                           FALSE,
                            snp_action = snp_action()))
         print(top_snp_asso(scans, snp_w, phename = pheno))
       }

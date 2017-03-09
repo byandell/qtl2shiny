@@ -40,7 +40,7 @@ shinyTopFeature <- function(input, output, session,
   output$top_pattern <- shiny::renderDataTable({
     summary(top_feature(), "pattern")
   }, options = list(scrollX = TRUE, paging = FALSE, searching=FALSE))
-  phename <- shiny::reactive({dimnames(snp_scan_obj()$lod)[[2]]})
+  phename <- shiny::reactive({dimnames(snp_scan_obj())[[2]]})
   output$top_gene_by_snp <- shiny::renderPlot({
     shiny::req(top_feature(), snp_par$pheno_name)
     plot(top_feature(), snp_par$pheno_name, "consequence")

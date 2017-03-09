@@ -4,8 +4,8 @@
 \alias{top_snp_asso}
 \title{Top SNP Association Plot Wrapper}
 \usage{
-top_snp_asso(scan_obj, xlim, snp_action = "basic",
-  phename = dimnames(scan_obj$lod)[[2]], drop.hilit = NULL,
+top_snp_asso(scan_obj, snpinfo, xlim, snp_action = "basic",
+  phename = dimnames(scan_obj)[[2]], drop.hilit = NULL,
   show_all_snps = FALSE)
 }
 \arguments{
@@ -20,6 +20,8 @@ top_snp_asso(scan_obj, xlim, snp_action = "basic",
 \item{drop.hilit}{hilight SNPs within this value of max}
 
 \item{pheno}{name of phenotype for effect scan}
+
+\item{map}{map object}
 }
 \description{
 Top SNP Association Plot Wrapper

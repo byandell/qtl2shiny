@@ -4,7 +4,7 @@
 \alias{scan_pat_type}
 \title{Plot scan patterns for phenotype.}
 \usage{
-scan_pat_type(scan_pat, type, pattern, pheno)
+scan_pat_type(scan_pat, map, type, pattern, pheno)
 }
 \description{
 Plot scan patterns for phenotype.

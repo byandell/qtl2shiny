@@ -7,7 +7,7 @@
 \title{Shiny scan1 SNP analysis and plot module}
 \usage{
 shinyScan1SNP(input, output, session, snp_par, chr_pos, pheno_names,
-  snp_scan_obj, snp_action = shiny::reactive({     "basic" }))
+  snp_scan_obj, snpinfo, snp_action = shiny::reactive({     "basic" }))
 
 shinyScan1SNPUI(id)
 
@@ -16,7 +16,7 @@ shinyScan1SNPOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{snp_par, chr_pos, pheno_names, snp_scan_obj, snp_action}{reactive arguments}
+\item{snp_par, chr_pos, pheno_names, snp_scan_obj, snpinfo, snp_action}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

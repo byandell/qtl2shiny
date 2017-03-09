@@ -1,7 +1,7 @@
 #' Shiny SNP Consequence
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,top_snps_tbl,gene_exon_tbl,data_path,snp_action reactive arguments
+#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,data_path,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -16,7 +16,7 @@
 #'   fluidRow column tagList
 shinySNPAssoc <- function(input, output, session,
                         snp_par, chr_pos, pheno_names,
-                        snp_scan_obj, top_snps_tbl, 
+                        snp_scan_obj, snpinfo, top_snps_tbl, 
                         gene_exon_tbl, data_path,
                         snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
@@ -27,7 +27,7 @@ shinySNPAssoc <- function(input, output, session,
   ## SNP Association Scan
   shiny::callModule(shinyScan1SNP, "snp_scan",
              snp_par, chr_pos, pheno_names,
-             snp_scan_obj, snp_action)
+             snp_scan_obj, snpinfo, snp_action)
   ## SNP Summary
   shiny::callModule(shinySNP, "best_snp", 
              chr_pos, top_snps_tbl, snp_action)

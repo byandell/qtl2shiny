@@ -11,6 +11,7 @@
 #' @export
 #' @importFrom qtl2pattern listof_scan1coef
 #' @importFrom qtl2scan scan1
+#' @importFrom qtl2ggplot plot_scan1
 #' @importFrom shiny NS reactive req 
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
@@ -28,7 +29,7 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(), win_par$window_Mbp)
     shiny::withProgress(message = "Genome Scan ...", value = 0, {
       shiny::setProgress(1)
-      scan1_covar(phe_df(), cov_mx(), probs_obj(), K_chr(), analyses_df())
+      scan1_covar(phe_df(), cov_mx(), probs_obj()$probs, K_chr(), analyses_df())
     })
   })
   
@@ -44,7 +45,7 @@ shinyScan1Plot <- function(input, output, session,
   })
   ## Reset scan_window if chromosome changes.
   observeEvent(win_par$chr_id, {
-    map <- shiny::req(pmap_obj())
+    map <- shiny::req(probs_obj()$map)
     chr <- shiny::req(win_par$chr_id)
     rng <- round(2 * range(map[[chr]])) / 2
     shiny::updateSliderInput(session, "scan_window", NULL, rng, 
@@ -60,10 +61,10 @@ shinyScan1Plot <- function(input, output, session,
 
   ## Scan1 plot
   output$scanPlot <- shiny::renderPlot({
-    shiny::req(win_par$chr_id, input$scan_window, scan_obj())
+    shiny::req(win_par$chr_id, input$scan_window, scan_obj(), probs_obj())
     shiny::withProgress(message = 'Genome LOD Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot(scan_obj(), 
+      qtl2ggplot::plot_scan1(scan_obj(), probs_obj()$map,
            lodcolumn = seq(ncol(phe_df())),
            chr = win_par$chr_id,
            xlim=input$scan_window)
@@ -75,33 +76,35 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
     shiny::withProgress(message = 'Effect scans ...', value = 0, {
       shiny::setProgress(1)
-      qtl2pattern::listof_scan1coef(probs_obj(), phe_df(), K_chr(), cov_mx())
+      qtl2pattern::listof_scan1coef(probs_obj()$probs, phe_df(), K_chr(), cov_mx())
     })
   })
   output$effPlot <- shiny::renderPlot({
-    shiny::req(input$pheno_name, scan_obj(), eff_obj())
+    shiny::req(input$pheno_name, scan_obj(), eff_obj(), win_par$chr_id)
+    map <- shiny::req(probs_obj())$map
     shiny::withProgress(message = 'Effect plots ...', value = 0, {
       shiny::setProgress(1)
-      plot_eff(input$pheno_name, eff_obj(), scan_obj(), 
+      plot_eff(input$pheno_name, eff_obj(), map, scan_obj(), 
                input$scan_window)
     })
   })
   output$effSummary <- shiny::renderDataTable({
-    shiny::req(eff_obj(), scan_obj())
+    shiny::req(eff_obj(), scan_obj(), probs_obj())
     shiny::withProgress(message = 'Effect summary ...', value = 0, {
       shiny::setProgress(1)
-      summary(eff_obj(), scan_obj())
+      summary(eff_obj(), scan_obj(), probs_obj()$map)
     })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
   
   ## Effect and LOD Plot
   output$lod_effPlot <- shiny::renderPlot({
-    shiny::req(win_par$chr_id, input$pheno_name, input$scan_window, 
+    shiny::req(input$pheno_name, input$scan_window, win_par$chr_id,
                eff_obj(), scan_obj())
+    map <- shiny::req(probs_obj())$map
     shiny::withProgress(message = 'Effect & LOD plots ...', value = 0, {
       shiny::setProgress(1)
-      plot_eff(input$pheno_name, eff_obj(), scan_obj(), input$scan_window,
+      plot_eff(input$pheno_name, eff_obj(), map, scan_obj(), input$scan_window,
                addlod = TRUE)
     })
   })
@@ -144,16 +147,18 @@ shinyScan1Plot <- function(input, output, session,
     filename = function() {
       file.path(paste0("scan_", win_par$chr_id, ".pdf")) },
     content = function(file) {
+      shiny::req(win_par$chr_id)
       effs <- shiny::req(eff_obj())
       scans <- shiny::req(scan_obj())
       win <- shiny::req(input$scan_window)
+      map <- shiny::req(probs_obj())$map
       pdf(file, width=9,height=9)
-      print(plot(scans,
+      print(plot(scans, map,
                  lodcolumn = seq_along(names(effs)),
                  chr = win_par$chr_id,
                  xlim = win))
       for(pheno in names(effs)) {
-        plot_eff(pheno, effs, scans, win,
+        plot_eff(pheno, effs, map, scans, win,
                  addlod = TRUE)
       }
       dev.off()

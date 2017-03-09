@@ -4,12 +4,14 @@
 \alias{plot_eff}
 \title{Plot effects}
 \usage{
-plot_eff(pheno, eff_obj, scan_obj, xlim = NULL, addlod = FALSE)
+plot_eff(pheno, eff_obj, map, scan_obj, xlim = NULL, addlod = FALSE)
 }
 \arguments{
 \item{pheno}{name of phenotype for effect scan}
 
 \item{eff_obj}{object of class \code{\link[qtl2pattern]{listof_scan1coef}}}
+
+\item{map}{map object}
 
 \item{scan_obj}{object of class \code{\link[qtl2scan]{scan1}}}
 

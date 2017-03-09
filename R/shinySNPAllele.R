@@ -40,10 +40,14 @@ shinySNPAllele <- function(input, output, session,
   snpprobs_obj <- shiny::callModule(shinySNPProbs, "snp_probs",
                   win_par, pheno_names, probs_obj,
                   data_path)
+  snpinfo <- reactive({
+    snpprobs_obj()$snpinfo
+  })
+  
   ## SNP Scan.
   snp_scan_obj <- shiny::reactive({
     shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
-    snpprobs <- shiny::req(snpprobs_obj())
+    snpprobs <- shiny::req(snpprobs_obj())$snpprobs
     shiny::withProgress(message = "SNP Scan ...", value = 0, {
       shiny::setProgress(1)
       snpprobs_act <- 
@@ -74,13 +78,13 @@ shinySNPAllele <- function(input, output, session,
   ## SNP Association
   ass_par <- shiny::callModule(shinySNPAssoc, "snp_assoc",
              input, chr_pos, pheno_names,
-             snp_scan_obj, top_snps_tbl, 
+             snp_scan_obj, snpinfo, top_snps_tbl, 
              gene_exon_tbl, data_path,
              snp_action)
   ## Allele Patterns
   pat_par <- shiny::callModule(shinyAllelePat, "allele_pat",
              input, chr_pos, pheno_names,
-             snp_scan_obj, top_snps_tbl, 
+             snp_scan_obj, snpinfo, top_snps_tbl, 
              gene_exon_tbl, snp_action)
 
   # Scan Window slider

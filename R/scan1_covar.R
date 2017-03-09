@@ -2,7 +2,8 @@
 #' 
 #' @importFrom qtl2scan scan1
 #' @importFrom dplyr select
-#' 
+#' @importFrom qtl2pattern modify_scan1
+#'
 scan1_covar <- function(phe_df, cov_mx, probs_obj, K_chr, analyses_df) {
   analyses_df <- which_covar(analyses_df)
   ## Collapse to unique identifier for each row = each phenotype.
@@ -30,8 +31,8 @@ scan1_covar <- function(phe_df, cov_mx, probs_obj, K_chr, analyses_df) {
                    scanfn(probs_obj, phe_df, K_chr, cov_mx, analyses_df, wh))
   }
   # reorder by decreasing max lod
-  scans$lod <- scans$lod[,order(-apply(scans$lod,2,max)), drop=FALSE]
-  scans
+  qtl2pattern::modify_scan1(scans, 
+                            scans[,order(-apply(scans,2,max)), drop=FALSE])
 }
 
 which_covar <- function(analyses_df) {

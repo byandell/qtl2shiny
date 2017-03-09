@@ -14,12 +14,14 @@
 #'
 #' @examples
 #' \dontrun{top_pat_plot(pheno, scan_obj, xlim)}
-#'
+#' 
 top_pat_plot <- function(pheno,
-                         scan_obj, xlim,
+                         scan_obj,
+                         chr_id,
+                         map,
+                         xlim,
                          facet = "pheno",
                          snp_action = "basic") {
-  chr_id <- names(scan_obj$map)[1]
   mytitle <- FALSE
   if(length(pheno) == 1) {
     mytitle <- paste(pheno, "chr", chr_id)
@@ -35,12 +37,9 @@ top_pat_plot <- function(pheno,
   }
 
   scan_obj <- subset(scan_obj, 
-                     lodcolumn = match(pheno, dimnames(scan_obj$lod)[[2]]))
+                     lodcolumn = match(pheno, dimnames(scan_obj)[[2]]))
   
-  # reorder by decreasing max lod
-  scan_obj$lod <- scan_obj$lod[,order(-apply(scan_obj$lod,2,max)), drop=FALSE]
-  
-  plot(scan_obj, seq_along(pheno),
+  plot(scan_obj, map, seq_along(pheno),
        xlim = xlim, main = mytitle,
        patterns = "hilit", drop.hilit = 1.5,
        facet = facet, legend.title = legend.title)

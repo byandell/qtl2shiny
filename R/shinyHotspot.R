@@ -12,7 +12,6 @@
 #'
 #' @export
 #' @importFrom dplyr add_row arrange filter
-#' @importFrom qtl2ggplot plot_scan1
 #' @importFrom ggplot2 ggtitle
 #' @importFrom shiny NS reactive req 
 #'   checkboxInput selectInput
@@ -49,10 +48,9 @@ shinyHotspot <- function(input, output, session,
       peak_window <- 2 ^ peak_window
       pheno_types <- pheno_type()
       map <- pmap_obj()
-      out_peaks <- list(map=map,
-                        lod= matrix(0, length(unlist(map)),
-                                    length(pheno_types),
-                                    dimnames = list(NULL, pheno_types)))
+      out_peaks <- list(matrix(0, length(unlist(map)),
+                                  length(pheno_types),
+                                  dimnames = list(NULL, pheno_types)))
       
       peaks <- peaks_tbl()
       index1 <- 1
@@ -60,7 +58,7 @@ shinyHotspot <- function(input, output, session,
                    {
                      for(chri in map_chr) {
                        shiny::incProgress(1/n_chr, detail = paste("chr", chri))
-                       mapi <- out_peaks$map[[chri]]
+                       mapi <- map[[chri]]
                        index2 <- index1 + length(mapi) - 1
                        for(phenoj in pheno_types) {
                          if(phenoj=="all")
@@ -68,7 +66,7 @@ shinyHotspot <- function(input, output, session,
                          else
                            posi <- dplyr::filter(peaks, pheno_type == phenoj)
                          posi <- dplyr::filter(posi, chr==chri)$pos
-                         out_peaks$lod[seq(index1, index2),phenoj] <-
+                         out_peaks[seq(index1, index2),phenoj] <-
                            apply(outer(posi, mapi,
                                        function(x,y,z) abs(x-y) <= z,
                                        peak_window),
@@ -83,20 +81,20 @@ shinyHotspot <- function(input, output, session,
   
   scan_obj <- shiny::reactive({
     out_peaks <- scan_obj_all()
+    map <- pmap_obj()
     shiny::withProgress(message = 'Hotspot search ...', value = 0,
     {
       shiny::setProgress(1)
-      map_chr <- names(out_peaks$map)
+      map_chr <- names(map)
       chr_ct <- input$chr_ct
       if(!("all" %in% chr_ct)) {
         if(!is.null(chr_ct)) {
           ## reduce to included chromosomes. Not quite there yet.
-          len <- sapply(out_peaks$map, length)
-          index <- split(seq_len(nrow(out_peaks$lod)),
+          len <- sapply(map, length)
+          index <- split(seq_len(nrow(out_peaks)),
                          ordered(rep(map_chr, times=len), map_chr))
           index <- unlist(index[map_chr %in% chr_ct])
-          out_peaks$lod <- out_peaks$lod[index,]
-          out_peaks$map <- out_peaks$map[map_chr %in% chr_ct]
+          out_peaks$lod <- out_peaks[index,]
         }
       }
     })
@@ -106,6 +104,10 @@ shinyHotspot <- function(input, output, session,
 
   output$peak_show <- shiny::renderPlot({
     peak_set <- shiny::req(set_par$dataset)
+    map <- pmap_obj()
+    chr_ct <- shiny::req(input$chr_ct)
+    if(!("all" %in% chr_ct))
+      map <- map[map_chr %in% chr_ct]
     out_peaks <- scan_obj()
     shiny::withProgress(message = 'Hotspot show ...',
                  value = 0, {
@@ -115,10 +117,10 @@ shinyHotspot <- function(input, output, session,
       lodcolumns <- match(peak_set, pheno_types)
       col <- seq_along(pheno_types)
       names(col) <- pheno_types
-      qtl2ggplot::plot_scan1(out_peaks, lodcolumn=lodcolumns,
-                 col=col[lodcolumns],
-                 ylab="phenotype count",
-                 ylim=c(0,max(out_peaks$lod[,lodcolumns]))) +
+      plot(out_peaks, map, lodcolumn=lodcolumns,
+           col = col[lodcolumns],
+           ylab = "phenotype count",
+           ylim = c(0,max(out_peaks$lod[,lodcolumns]))) +
         ## add mtext for peak_set
         ggplot2::ggtitle(paste0("number of ", paste(peak_set, collapse=","),
                    " in ", 2 ^ win_par$window_Mbp, "Mbp window"))

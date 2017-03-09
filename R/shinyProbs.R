@@ -33,6 +33,7 @@ shinyProbs <- function(input, output, session,
         probs$probs[[chr_id]] <- probs$probs[[chr_id]][,,wh]
       }
     })
+    # Note probs object keeps map with it
     probs
   })
   
@@ -73,7 +74,8 @@ shinySNPProbs <- function(input, output, session,
                    win_par$peak_Mbp, 
                    2 ^ win_par$window_Mbp,
                    pheno_names(), 
-                   probs_obj(),
+                   probs_obj()$probs,
+                   probs_obj()$map,
                    data_path())
     })
   })
