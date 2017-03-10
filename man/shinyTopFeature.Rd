@@ -7,7 +7,7 @@
 \alias{shinyTopFeatureOutput}
 \title{Shiny Top Features in SNP Region module}
 \usage{
-shinyTopFeature(input, output, session, snp_par, chr_pos, snp_scan_obj,
+shinyTopFeature(input, output, session, snp_par, chr_pos, snp_scan_obj, snpinfo,
   top_snps_tbl, gene_exon_tbl, snp_action = shiny::reactive({     "basic" }))
 
 shinyTopFeatureInput(id)
@@ -19,7 +19,7 @@ shinyTopFeatureOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{snp_scan_obj, top_snps_tbl, gene_exon_tbl, snp_action}{reactive arguments}
+\item{snp_scan_obj, top_snps_tbl, snpinfo, gene_exon_tbl, snp_action}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

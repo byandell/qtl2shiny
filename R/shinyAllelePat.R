@@ -30,7 +30,7 @@ shinyAllelePat <- function(input, output, session,
   ## Shiny Module
   shiny::callModule(shinyTopFeature, "top_feature",
              snp_par, chr_pos, 
-             snp_scan_obj, top_snps_tbl, 
+             snp_scan_obj, snpinfo, top_snps_tbl, 
              gene_exon_tbl, snp_action)
   
   sum_top_pat <- shiny::reactive({
@@ -38,7 +38,7 @@ shinyAllelePat <- function(input, output, session,
   })
   
   chr_id <- reactive({
-    stringr::str_split(reactive(chr_pos()), "_")[[1]][1]
+    stringr::str_split(shiny::req(chr_pos()), "_")[[1]][1]
   })
   
   output$snpPatternSum <- shiny::renderDataTable({
@@ -49,7 +49,7 @@ shinyAllelePat <- function(input, output, session,
   output$snpPatternPlot <- shiny::renderPlot({
     if(is.null(snp_par$pheno_name) | is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()) |
-       is.null(snpinfo() | is.null(chr_id())))
+       is.null(snpinfo()) | is.null(chr_id()))
       return(plot_null())
     shiny::withProgress(message = 'SNP pattern plots ...', value = 0, {
       shiny::setProgress(1)

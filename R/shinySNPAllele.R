@@ -60,7 +60,8 @@ shinySNPAllele <- function(input, output, session,
     shiny::req(snp_action())
     shiny::withProgress(message = 'Get Top SNPs ...', value = 0, {
       shiny::setProgress(1)
-      qtl2pattern::top_snps_all(shiny::req(snp_scan_obj()))
+      qtl2pattern::top_snps_all(shiny::req(snp_scan_obj()),
+                                shiny::req(snpinfo()))
     })
   })
   ## Genes and Exons.

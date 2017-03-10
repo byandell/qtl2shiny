@@ -3,7 +3,7 @@
 #' Shiny module for scan1 analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_scan_obj,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
+#' @param snp_scan_obj,top_snps_tbl,snpinfo,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -20,17 +20,18 @@
 #'   downloadButton downloadHandler
 shinyTopFeature <- function(input, output, session,
                             snp_par, chr_pos, 
-                            snp_scan_obj, top_snps_tbl, 
+                            snp_scan_obj, snpinfo, top_snps_tbl, 
                             gene_exon_tbl, 
                             snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
 
   top_feature <- shiny::reactive({
-    shiny::req(top_snps_tbl(),snp_scan_obj(),gene_exon_tbl())
+    shiny::req(top_snps_tbl(), snp_scan_obj(), snpinfo(), gene_exon_tbl())
     shiny::withProgress(message = 'Merging gene info ...', value = 0,
     {
       shiny::setProgress(1)
-      qtl2pattern::merge_feature(top_snps_tbl(), snp_scan_obj(), 1.5, 0, gene_exon_tbl())
+      qtl2pattern::merge_feature(top_snps_tbl(), snpinfo(),
+                                 snp_scan_obj(), 1.5, 0, gene_exon_tbl())
     })
   })
   output$top_snp_type <- shiny::renderDataTable({
