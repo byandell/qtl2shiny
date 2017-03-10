@@ -36,11 +36,10 @@ shinyScan1SNP <- function(input, output, session,
     filename = function() {
       file.path(paste0("snp_scan_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
-      scans <- shiny::req(snp_scan_obj())
-      snp_w <- shiny::req(snp_par$scan_window)
-      phenos <- shiny::req(pheno_names())
       pdf(file, width = 9)
-      print(top_snp_asso(scans, snp_w))
+      print(top_snp_asso(shiny::req(snp_scan_obj()), 
+                         shiny::req(snpinfo()), 
+                         shiny::req(snp_par$scan_window)))
       dev.off()
     }
   )

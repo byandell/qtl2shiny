@@ -13,7 +13,7 @@ scan_pat_type <- function(scan_pat, map, type, pattern, pheno) {
   maxcol <- 1
   if(type == "coef") {
     maxpos <- (dplyr::arrange(
-      summary(scan_pat$scan),
+      summary(scan_pat$scan, map),
       dplyr::desc(lod)))$pos[1]
   }
   plot(scan_pat, map, type, pattern_cont, main = pheno,

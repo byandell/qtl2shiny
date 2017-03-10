@@ -139,8 +139,8 @@ shinyScan1Plot <- function(input, output, session,
     filename = function() {
       file.path(paste0("sum_effects_", win_par$chr_id, ".csv")) },
     content = function(file) {
-      shiny::req(eff_obj(), scan_obj())
-      write.csv(summary(eff_obj(), scan_obj()), file)
+      shiny::req(eff_obj(), scan_obj(), probs_obj())
+      write.csv(summary(eff_obj(), scan_obj(), probs_obj()$map), file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(

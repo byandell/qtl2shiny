@@ -84,24 +84,24 @@ shinyPattern <- function(input, output, session,
     req(snp_action())
     pheno_in <- shiny::req(input$pheno_name)
     shiny::req(phe_df(), cov_mx(), probs36_obj(), K_chr(),
-               pats())
+               pats(), analyses_df())
     withProgress(message = 'Scan Patterns ...', value = 0, {
       setProgress(1)
       scan1_pattern(pheno_in, phe_df(), cov_mx(), 
-                    probs36_obj()$probs, K_chr(), analyses_df(),
+                    probs36_obj(), K_chr(), analyses_df(),
                                 pats(), haplos(), diplos())
     })
   })
 
   output$scan_pat_lod <- shiny::renderPlot({
-    shiny::req(pattern_choices(), input$pheno_name, probs36_obj())
+    shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern LODs ...', value = 0, {
       setProgress(1)
       scan_pat_type(scan_pat(), probs36_obj()$map, "lod", pattern_choices(), input$pheno_name)
     })
   })
   output$scan_pat_coef <- shiny::renderPlot({
-    shiny::req(pattern_choices(), input$pheno_name, probs36_obj())
+    shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern Effects ...', value = 0, {
       setProgress(1)
       scan_pat_type(scan_pat(), probs36_obj()$map, "coef", pattern_choices(), input$pheno_name)
@@ -111,13 +111,13 @@ shinyPattern <- function(input, output, session,
     shiny::req(scan_pat())
     withProgress(message = 'Pattern summary ...', value = 0, {
       setProgress(1)
-      summary(scan_pat())
+      summary(scan_pat(), probs36_obj()$map)
     })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
 
   output$eff_lodPlot <- shiny::renderPlot({
-    shiny::req(pattern_choices(), input$pheno_name, probs36_obj())
+    shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern Effects & LOD ...', value = 0, {
       setProgress(1)
       scan_pat_type(scan_pat(), probs36_obj()$map, "coef_and_lod", pattern_choices(), input$pheno_name)
@@ -156,7 +156,8 @@ shinyPattern <- function(input, output, session,
     },
     content = function(file) {
       scan_in <- shiny::req(scan_pat())
-      write.csv(summary(scan_in), file)
+      shiny::req(probs36_obj())
+      write.csv(summary(scan_in, probs36_obj()$map), file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -174,7 +175,7 @@ shinyPattern <- function(input, output, session,
         pat_choices <- CCSanger::sdp_to_pattern(pats$sdp)
         
         scan_now <- scan1_pattern(pheno_in, phe_df(), cov_mx(), 
-                                  probs36_obj()$probs, K_chr(), analyses_df(),
+                                  probs36_obj(), K_chr(), analyses_df(),
                                   pats, haplos(), diplos())
         
         scan_pat_type(scan_now, probs36_obj()$map, "coef_and_lod", pat_choices, pheno_in)

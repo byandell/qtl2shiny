@@ -158,24 +158,17 @@ shinyAllelePat <- function(input, output, session,
                          chr_id(),
                          snpinfo(), 
                          snp_w,
-                         group = "pheno", 
+                         facet = "pheno", 
                          snp_action = snp_action()))
 
-      top_pat <- shiny::req(top_pattern())
-      patterns <- CCSanger::sdp_to_pattern(top_pat$sdp)
-      upat <- unique(patterns)
-      for(pattern in upat) {
-        print(top_pat_plot(pheno_names(), 
-                           snp_scan_obj(), 
-                           chr_id(),
-                           snpinfo(), 
-                           snp_par$scan_window,
-                           top_pattern = 
-                             top_pattern()[patterns == pattern,],
-                           group = "pattern", 
-                           snp_action = snp_action()))
-      }
-      
+      print(top_pat_plot(pheno_names(), 
+                         snp_scan_obj(), 
+                         chr_id(),
+                         snpinfo(), 
+                         snp_par$scan_window,
+                         facet = "pattern", 
+                         snp_action = snp_action()))
+
       ## Plots by phenotype.
       for(pheno in phenos) {
         print(top_pat_plot(pheno, 
@@ -183,11 +176,8 @@ shinyAllelePat <- function(input, output, session,
                            chr_id(),
                            snpinfo(), 
                            snp_w, 
-                           FALSE,
                            snp_action = snp_action()))
-        print(top_snp_asso(scans, snp_w, phename = pheno))
       }
-      print(top_snp_asso(scans, snp_w))
       dev.off()
     }
   )
