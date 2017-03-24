@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @importFrom qtl2pattern get_snpprobs 
-#' @importFrom DOread read_probs read_probs36
+#' @importFrom DOread read_probs
 #' @importFrom shiny reactive req 
 #'   withProgress setProgress
 shinyProbs <- function(input, output, session,
@@ -50,8 +50,9 @@ shinyProbs36 <- function(input, output, session,
       c(-1,1) * 2 ^ shiny::req(win_par$window_Mbp)
     shiny::withProgress(message = 'Diplotype Probs ...', value = 0, {
       shiny::setProgress(1)
-      DOread::read_probs36(chr_id, range_val[1], range_val[2],
-                   datapath = data_path())
+      DOread::read_probs(chr_id, range_val[1], range_val[2],
+                         datapath = data_path(),
+                         allele = FALSE)
     })
   })
   probs_obj
