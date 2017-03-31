@@ -21,7 +21,7 @@ top_pat_plot <- function(pheno,
                          map,
                          xlim,
                          facet = "pheno",
-                         snp_action = "basic") {
+                         snp_action = "basic", ...) {
   mytitle <- FALSE
   if(length(pheno) == 1) {
     mytitle <- paste(pheno, "chr", chr_id)
@@ -42,5 +42,5 @@ top_pat_plot <- function(pheno,
   plot(scan_obj, map, seq_along(pheno),
        xlim = xlim, main = mytitle,
        patterns = "hilit", drop.hilit = 1.5,
-       facet = facet, legend.title = legend.title)
+       facet = facet, legend.title = legend.title, ...)
 }

@@ -19,7 +19,7 @@
 #'   fluidRow column strong tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
-#' @importFrom plotly renderPlotly plotlyOutput ggplotly
+#' @importFrom plotly renderPlotly plotlyOutput
 #' 
 shinyMediate1Plot <- function(input, output, session,
                   win_par,  
@@ -55,23 +55,35 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::req(mediate_obj())
     shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
       shiny::setProgress(1)
-      qtl2pattern:::plot.mediate1(mediate_obj())
+      plot(mediate_obj())
     })
   })
-#  ## Mediate1 plotly
-#  output$medPlotly <- plotly::renderPlotly({
-#    shiny::req(mediate_obj())
-#    shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
-#      shiny::setProgress(1)
-#      plotly::ggplotly(plot(mediate_obj()))
-#    })
-#  })
+  ## Mediate1 plotly
+  output$medPlotly <- plotly::renderPlotly({
+    shiny::req(mediate_obj())
+    shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
+      shiny::setProgress(1)
+      plot(mediate_obj())
+    })
+  })
 
   output$medSummary <- shiny::renderDataTable({
     mediate_obj()
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
 
+  output$out_choice <- shiny::renderUI({
+    switch(shiny::req(input$button),
+           Plot        = shiny::plotOutput(ns("medPlot")),
+           Interactive = plotly::plotlyOutput(ns("medPlotly")),
+           Summary     = shiny::dataTableOutput(ns("medSummary")))
+  })
+  output$radio <- shiny::renderUI({
+    shiny::radioButtons(ns("button"), "",
+                        c("Plot","Interactive","Summary"),
+                        input$button)
+  })
+  
   ## Downloads.
   output$downloadData <- shiny::downloadHandler(
     filename = function() {
@@ -90,11 +102,11 @@ shinyMediate1Plot <- function(input, output, session,
                  win_par$peak_Mbp, win_par$window_Mbp)
       pdf(file, width=9,height=9)
       for(pheno in names(phe_df())) {
-        med <- qtl2pattern::mediate1(chr_id, win_par$peak_Mbp, win_par$window_Mbp,
+        med <- qtl2pattern::mediate1(chr_id, win_par$peak_Mbp, 2^win_par$window_Mbp,
                               phe_df()[, pheno, drop = FALSE],
                               cov_mx(), probs_obj()$probs, K_chr(), 
                               probs_obj()$map, datapath())
-        print(qtl2pattern:::plot.mediate1(med))
+        print(plot(med))
       }
       dev.off()
     }
@@ -106,6 +118,8 @@ shinyMediate1Plot <- function(input, output, session,
 shinyMediate1PlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
+    shiny::strong("Mediation"),
+    shiny::uiOutput(ns("radio")),
     shiny::uiOutput(ns("pheno_name")),
     shiny::fluidRow(
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
@@ -115,8 +129,5 @@ shinyMediate1PlotUI <- function(id) {
 #' @export
 shinyMediate1PlotOutput <- function(id) {
   ns <- shiny::NS(id)
-  shiny::tagList(
-#    plotly::plotlyOutput(ns("medPlotly")),
-    shiny::plotOutput(ns("medPlot")),
-    shiny::dataTableOutput(ns("medSummary")))
+  shiny::uiOutput(ns("out_choice"))
 }

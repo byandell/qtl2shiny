@@ -19,6 +19,7 @@
 #'   mainPanel sidebarPanel column strong tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#' @importFrom plotly plotlyOutput renderPlotly
 #'   
 shinyAllelePat <- function(input, output, session,
                         snp_par, chr_pos, pheno_names,
@@ -62,6 +63,23 @@ shinyAllelePat <- function(input, output, session,
     })
   })
   
+  output$snpPatternPlotly <- plotly::renderPlotly({
+    if(is.null(snp_par$pheno_name) | is.null(snp_scan_obj()) |
+       is.null(snp_par$scan_window) | is.null(snp_action()) |
+       is.null(snpinfo()) | is.null(chr_id()))
+      return(plot_null())
+    shiny::withProgress(message = 'SNP pattern plots ...', value = 0, {
+      shiny::setProgress(1)
+      top_pat_plot(snp_par$pheno_name, 
+                   snp_scan_obj(), 
+                   chr_id(),
+                   snpinfo(),
+                   snp_par$scan_window,
+                   snp_action = snp_action(),
+                   lines = FALSE, cex = 2)
+    })
+  })
+
   ## SNP Pheno patterns
   output$snp_phe_pat <- shiny::renderPlot({
     if(is.null(pheno_names()) | is.null(snp_scan_obj()) |
@@ -122,6 +140,7 @@ shinyAllelePat <- function(input, output, session,
            "By Pheno"     = shiny::plotOutput(ns("snpPatternPlot")),
            "All Phenos"   = shiny::plotOutput(ns("snp_phe_pat")),
            "All Patterns" = shiny::plotOutput(ns("snp_pat_phe")),
+           "Interactive"  = plotly::plotlyOutput(ns("snpPatternPlotly")),
            Summary        = shiny::dataTableOutput(ns("snpPatternSum")))
   })
   output$title <- shiny::renderUI({
@@ -184,7 +203,7 @@ shinyAllelePat <- function(input, output, session,
   output$radio <- shiny::renderUI({
     button_val <- c("All Phenos","All Patterns",
                     "By Pheno",
-                    "Top SNPs","Summary")
+                    "Top SNPs","Interactive","Summary")
     if(length(pheno_names()) == 1) {
       button_val <- button_val[-(1:2)]
     }

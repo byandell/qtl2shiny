@@ -17,6 +17,8 @@
 #'   fluidRow column strong tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#' @importFrom ggplot2 ggtitle
+#' 
 shinyAllele1 <- function(input, output, session,
                   win_par, 
                   phe_df, cov_mx, probs_obj, K_chr, analyses_df, 
@@ -59,7 +61,12 @@ shinyAllele1 <- function(input, output, session,
     shiny::req(allele_obj(), input$scan_window)
     shiny::withProgress(message = 'Allele plots ...', value = 0, {
       shiny::setProgress(1)
-      plot(allele_obj(), pos = input$scan_window)
+      p <- plot(allele_obj(), pos = input$scan_window)
+      if(is.null(p)) {
+        plot_null()
+      } else {
+        p + ggplot2::ggtitle(names(phe_df()))
+      }
     })
   })
   output$allele1Sum <- shiny::renderTable({
@@ -75,10 +82,10 @@ shinyAllele1 <- function(input, output, session,
     filename = function() {
       file.path(paste0("allele1_", win_par$chr_id, "_", win_par$peak_Mbp, ".csv")) },
     content = function(file) {
-      shiny::req(eff_obj(), scan_obj(), probs_obj())
+      shiny::req(allele_obj())
       out <- tidyr::spread(
         dplyr::select(
-          dplyr::mutate(alleles,
+          dplyr::mutate(allele_obj(),
                         allele = paste(source, allele, sep = ".")),
           -probe, -source),
         allele, effect)
@@ -91,7 +98,8 @@ shinyAllele1 <- function(input, output, session,
     content = function(file) {
       shiny::req(allele_obj(), input$scan_window)
       pdf(file, width=9,height=9)
-      print(plot(allele_obj(), pos = input$scan_window))
+      print(plot(allele_obj(), pos = input$scan_window) +
+              ggplot2::ggtitle(names(phe_df())))
       dev.off()
     }
   )

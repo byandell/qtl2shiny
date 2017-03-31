@@ -7,6 +7,7 @@ suppressPackageStartupMessages({
   library(qtl2geno)
   library(qtl2scan)
   library(qtl2feather)
+  library(plotly)
 })
 
 source("setup.R")
