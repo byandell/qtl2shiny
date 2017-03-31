@@ -73,30 +73,25 @@ shinyAllele1 <- function(input, output, session,
   ## Downloads.
   output$downloadData <- shiny::downloadHandler(
     filename = function() {
-      file.path(paste0("sum_effects_", win_par$chr_id, ".csv")) },
+      file.path(paste0("allele1_", win_par$chr_id, "_", win_par$peak_Mbp, ".csv")) },
     content = function(file) {
       shiny::req(eff_obj(), scan_obj(), probs_obj())
-      write.csv(summary(eff_obj(), scan_obj(), probs_obj()$map), file)
+      out <- tidyr::spread(
+        dplyr::select(
+          dplyr::mutate(alleles,
+                        allele = paste(source, allele, sep = ".")),
+          -probe, -source),
+        allele, effect)
+      write.csv(out, file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
     filename = function() {
-      file.path(paste0("scan_", win_par$chr_id, ".pdf")) },
+      file.path(paste0("allele1_", win_par$chr_id, "_", win_par$peak_Mbp, ".pdf")) },
     content = function(file) {
-      shiny::req(win_par$chr_id)
-      effs <- shiny::req(eff_obj())
-      scans <- shiny::req(scan_obj())
-      win <- shiny::req(input$scan_window)
-      map <- shiny::req(probs_obj())$map
+      shiny::req(allele_obj(), input$scan_window)
       pdf(file, width=9,height=9)
-      print(plot(scans, map,
-                 lodcolumn = seq_along(names(effs)),
-                 chr = win_par$chr_id,
-                 xlim = win))
-      for(pheno in names(effs)) {
-        plot_eff(pheno, effs, map, scans, win,
-                 addlod = TRUE)
-      }
+      print(plot(allele_obj(), pos = input$scan_window))
       dev.off()
     }
   )
