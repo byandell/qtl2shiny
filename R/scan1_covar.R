@@ -1,5 +1,7 @@
 #' scan1 for multiple traits with possibly different covariates
 #' 
+#' @export
+#' 
 #' @importFrom qtl2scan scan1
 #' @importFrom dplyr select
 #'
@@ -31,12 +33,4 @@ scan1_covar <- function(phe_df, cov_mx, probs_obj, K_chr, analyses_df) {
   }
   # reorder by decreasing max lod
   modify_object(scans, scans[,order(-apply(scans,2,max)), drop=FALSE])
-}
-
-which_covar <- function(analyses_df) {
-  ## Covariate indicators follow winsorize column.
-  wh <- which("winsorize" == names(analyses_df))
-  is_covar <- apply(analyses_df[, -(seq_len(wh)), drop=FALSE], 2, any)
-  ## Keep only covariate indicators with at least one TRUE value.
-  analyses_df[, names(is_covar)[is_covar], drop=FALSE]
 }

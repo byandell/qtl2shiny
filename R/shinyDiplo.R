@@ -39,10 +39,15 @@ shinyDiplo <- function(input, output, session,
                          data_path, snp_action)
   
   shiny::callModule(shinyPattern, "dip_pat",
-             chr_pos, 
-             phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
-             patterns, snp_action)
-
+                    chr_pos, 
+                    phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
+                    patterns, snp_action)
+  
+  shiny::callModule(shinyAllele1, "alleles",
+                    win_par, 
+                    phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
+                    patterns, snp_action)
+  
   ## CC names
   output$cc_names <- shiny::renderText({
     cc <- CCSanger::CCcolors
@@ -53,17 +58,19 @@ shinyDiplo <- function(input, output, session,
     switch(shiny::req(input$button),
            "Genome Scans"    = shinyPatternUI(ns("dip_pat")),
            "SNP Association" =,
-           "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")))
+           "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")),
+           "Allele Effects"  = shinyAllele1UI(ns("alleles")))
   })
   output$dip_output <- shiny::renderUI({
     switch(shiny::req(input$button),
            "Genome Scans"    = shinyPatternOutput(ns("dip_pat")),
            "SNP Association" = ,
-           "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")))
+           "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")),
+           "Allele Effects"  = shinyAllele1Output(ns("alleles")))
   })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
-                 c("SNP Association","Allele Pattern","Genome Scans"),
+                 c("SNP Association","Allele Pattern","Genome Scans","Allele Effects"),
                  input$button)
   })
   output$select <- shiny::renderUI({
