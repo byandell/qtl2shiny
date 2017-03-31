@@ -1,7 +1,7 @@
 #' Shiny Pattern module
 #'
 #' @param input,output,session standard shiny arguments
-#' @param chr_pos,phe_df,cov_mx,probs36_obj,K_chr,analyses_df,patterns,snp_action reactive arguments
+#' @param chr_pos,win_par,phe_df,cov_mx,probs36_obj,K_chr,analyses_df,patterns,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -23,17 +23,23 @@
 #'   downloadButton downloadHandler
 #'   
 shinyPattern <- function(input, output, session,
-                         chr_pos, 
+                         chr_pos, win_par,
                          phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
                          patterns, snp_action = shiny::reactive({NULL})) {
   ns <- session$ns
   
-  ###### Want title to have phenotype name.
-
+  phe1_df <- reactive({
+    phe_df()[, shiny::req(input$pheno_name), drop = FALSE]
+  })
+  shiny::callModule(shinyAllele1, "alleles",
+                    win_par, 
+                    phe1_df, cov_mx, probs36_obj, K_chr, analyses_df,
+                    patterns, scan_pat, snp_action)
+  
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({
     shiny::selectInput(ns("pheno_name"), NULL,
-                choices = unique(patterns()$pheno),
+                choices = names(shiny::req(phe_df())),
                 selected = input$pheno_name)
   })
   ## Select pattern for plots.
@@ -143,6 +149,10 @@ shinyPattern <- function(input, output, session,
     switch(shiny::req(input$button),
            "LOD & Effects" = shiny::plotOutput(ns("eff_lodPlot")))
   })
+  output$Means <- shiny::renderUI({
+    switch(shiny::req(input$button),
+           "Allele Means"  = shinyAllele1Output(ns("alleles")))
+  })
   output$Summary <- shiny::renderUI({
     switch(shiny::req(input$button),
            Summary = shiny::dataTableOutput(ns("scanSummary")))
@@ -185,23 +195,31 @@ shinyPattern <- function(input, output, session,
   )
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
-                 c("LOD","Effects","LOD & Effects","Summary"),
+                 c("LOD","Effects","LOD & Effects","Allele Means","Summary"),
                  input$button)
+  })
+  output$select <- shiny::renderUI({
+    switch(shiny::req(input$button),
+           "Allele Means"  = shinyAllele1UI(ns("alleles")),
+                             uiOutput(ns("patterndown")))
+    
+  })
+  output$patterndown <- shiny::renderUI({
+    shiny::fluidRow(
+      shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
+      shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
   })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyPattern
 #' @export
+
 shinyPatternUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::uiOutput(ns("radio")),
     shiny::uiOutput(ns("pheno_name")),
-#    shiny::uiOutput(ns("pattern_choice")),
-    shiny::fluidRow(
-      shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
-      shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
-  )
+    shiny::uiOutput(ns("select")))
 }
 #' @rdname shinyPattern
 #' @export
@@ -211,6 +229,7 @@ shinyPatternOutput <- function(id) {
     shiny::uiOutput(ns("LOD")),
     shiny::uiOutput(ns("Effects")),
     shiny::uiOutput(ns("Both")),
+    shiny::uiOutput(ns("Means")),
     shiny::uiOutput(ns("Summary"))
   )
 }
