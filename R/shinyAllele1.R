@@ -49,12 +49,14 @@ shinyAllele1 <- function(input, output, session,
   allele_obj <- shiny::reactive({
     shiny::req(snp_action())
     shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
+    blups <- attr(scan_pat(), "blups")
     shiny::withProgress(message = 'Effect scans ...', value = 0, {
       shiny::setProgress(1)
       qtl2pattern::allele1(phe_df(), cov_mx(), probs_obj()$probs, 
                            probs_obj()$map, K_chr(),
                            patterns = patterns(),
-                           scan_pat = scan_pat())
+                           scan_pat = scan_pat(),
+                           blups = blups)
       })
   })
   output$allele1Plot <- shiny::renderPlot({
