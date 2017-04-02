@@ -5,7 +5,7 @@
 \title{scan1 of pattern when multiple traits may have possibly different covariates}
 \usage{
 scan1_pattern(pheno, phe_df, cov_mx, probs36_obj, K_chr, analyses_df, pats,
-  haplos, diplos)
+  blups)
 }
 \description{
 scan1 of pattern when multiple traits may have possibly different covariates

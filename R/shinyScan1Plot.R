@@ -76,7 +76,8 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
     shiny::withProgress(message = 'Effect scans ...', value = 0, {
       shiny::setProgress(1)
-      qtl2pattern::listof_scan1coef(probs_obj()$probs, phe_df(), K_chr(), cov_mx())
+      qtl2pattern::listof_scan1coef(probs_obj()$probs, phe_df(), K_chr(), cov_mx(),
+                                    input$blups)
     })
   })
   output$effPlot <- shiny::renderPlot({
@@ -164,6 +165,9 @@ shinyScan1Plot <- function(input, output, session,
       dev.off()
     }
   )
+  output$blups <- shiny::renderUI({
+    shiny::checkboxInput(ns("blups"), "Blups?")
+  })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
                  c("LOD","Effects","LOD & Effects","Summary"),
@@ -177,7 +181,9 @@ shinyScan1PlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::strong("Genome Scans"),
-    shiny::uiOutput(ns("radio")),
+    shiny::fluidRow(
+      shiny::column(6, shiny::uiOutput(ns("radio"))),
+      shiny::column(6, shiny::uiOutput(ns("blups")))),
     shiny::uiOutput(ns("pheno_choice")),
     shiny::uiOutput(ns("win_choice")),
     shiny::fluidRow(

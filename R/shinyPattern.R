@@ -78,14 +78,6 @@ shinyPattern <- function(input, output, session,
                       choices, selected)
   }
   
-  ## Names of haplos and diplos in terms of founders.
-  haplos <- shiny::reactive({
-    unique(unlist(stringr::str_split(diplos(), "")))
-  })
-  diplos <- shiny::reactive({
-    dimnames(req(probs36_obj())$probs[[1]])[[2]]
-  })
-
   scan_pat <- shiny::reactive({
     req(snp_action())
     pheno_in <- shiny::req(input$pheno_name)
@@ -95,7 +87,7 @@ shinyPattern <- function(input, output, session,
       setProgress(1)
       scan1_pattern(pheno_in, phe_df(), cov_mx(), 
                     probs36_obj(), K_chr(), analyses_df(),
-                                pats(), haplos(), diplos())
+                                pats(), input$blups)
     })
   })
 
@@ -186,7 +178,7 @@ shinyPattern <- function(input, output, session,
         
         scan_now <- scan1_pattern(pheno_in, phe_df(), cov_mx(), 
                                   probs36_obj(), K_chr(), analyses_df(),
-                                  pats, haplos(), diplos())
+                                  pats, input$blups)
         
         scan_pat_type(scan_now, probs36_obj()$map, "coef_and_lod", pat_choices, pheno_in)
       }
@@ -197,6 +189,9 @@ shinyPattern <- function(input, output, session,
     shiny::radioButtons(ns("button"), "",
                  c("LOD","Effects","LOD & Effects","Allele Means","Summary"),
                  input$button)
+  })
+  output$blups <- shiny::renderUI({
+    shiny::checkboxInput(ns("blups"), "Blups?")
   })
   output$select <- shiny::renderUI({
     switch(shiny::req(input$button),
@@ -217,7 +212,9 @@ shinyPattern <- function(input, output, session,
 shinyPatternUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::uiOutput(ns("radio")),
+    shiny::fluidRow(
+      shiny::column(6, shiny::uiOutput(ns("radio"))),
+      shiny::column(6, shiny::uiOutput(ns("blups")))),
     shiny::uiOutput(ns("pheno_name")),
     shiny::uiOutput(ns("select")))
 }
