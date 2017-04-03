@@ -191,7 +191,7 @@ shinyPattern <- function(input, output, session,
                  input$button)
   })
   output$blups <- shiny::renderUI({
-    shiny::checkboxInput(ns("blups"), "Blups?")
+    shiny::checkboxInput(ns("blups"), "BLUPs?")
   })
   output$select <- shiny::renderUI({
     switch(shiny::req(input$button),

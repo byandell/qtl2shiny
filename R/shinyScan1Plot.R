@@ -166,7 +166,7 @@ shinyScan1Plot <- function(input, output, session,
     }
   )
   output$blups <- shiny::renderUI({
-    shiny::checkboxInput(ns("blups"), "Blups?")
+    shiny::checkboxInput(ns("blups"), "BLUPs?")
   })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
