@@ -94,13 +94,13 @@ shinyMediate1Plot <- function(input, output, session,
 
   output$out_choice <- shiny::renderUI({
     switch(shiny::req(input$button),
-           Plot        = shiny::plotOutput(ns("medPlot")),
-           Interactive = plotly::plotlyOutput(ns("medPlotly")),
-           Summary     = shiny::dataTableOutput(ns("medSummary")))
+           "Mediation LOD" = shiny::plotOutput(ns("medPlot")),
+           Interactive     = plotly::plotlyOutput(ns("medPlotly")),
+           Summary         = shiny::dataTableOutput(ns("medSummary")))
   })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
-                        c("Plot","Interactive","Summary"),
+                        c("Mediation LOD","Interactive","Summary"),
                         input$button)
   })
   
