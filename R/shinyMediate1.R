@@ -31,10 +31,10 @@ shinyMediate1Plot <- function(input, output, session,
   mediate_obj <- shiny::reactive({
     chr_id <- shiny::req(win_par$chr_id)
     shiny::req(phe1_df(), probs_obj(), K_chr(), cov_mx(),
-               win_par$peak_Mbp, win_par$window_Mbp)
+               input$pos_Mbp, win_par$window_Mbp)
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
-      qtl2pattern::mediate1(chr_id, win_par$peak_Mbp, 2^win_par$window_Mbp,
+      qtl2pattern::mediate1(chr_id, input$pos_Mbp, 2^win_par$window_Mbp,
                             phe1_df(), cov_mx(), probs_obj()$probs, K_chr(), 
                             probs_obj()$map, datapath())
     })
@@ -72,6 +72,26 @@ shinyMediate1Plot <- function(input, output, session,
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
 
+  # Scan Window slider
+  output$pos_Mbp <- shiny::renderUI({
+    chr_id <- shiny::req(win_par$chr_id)
+    map <- shiny::req(probs_obj())$map[[chr_id]]
+    rng <- round(2 * range(map)) / 2
+    if(is.null(selected <- input$pos_Mbp))
+      selected <- req(win_par$peak_Mbp)
+    shiny::sliderInput(ns("pos_Mbp"), NULL, rng[1], rng[2],
+                       selected, step=.1)
+  })
+  ## Reset pos_Mbp if chromosome changes.
+  observeEvent(win_par$chr_id, {
+    map <- shiny::req(probs_obj()$map)
+    chr <- shiny::req(win_par$chr_id)
+    rng <- round(2 * range(map[[chr]])) / 2
+    shiny::updateSliderInput(session, "pos_Mbp", NULL, 
+                             req(win_par$peak_Mbp), 
+                             rng[1], rng[2], step=.1)
+  })
+
   output$out_choice <- shiny::renderUI({
     switch(shiny::req(input$button),
            Plot        = shiny::plotOutput(ns("medPlot")),
@@ -99,10 +119,10 @@ shinyMediate1Plot <- function(input, output, session,
     content = function(file) {
       chr_id <- shiny::req(win_par$chr_id)
       shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(),
-                 win_par$peak_Mbp, win_par$window_Mbp)
+                 input$pos_Mbp, win_par$window_Mbp)
       pdf(file, width=9,height=9)
       for(pheno in names(phe_df())) {
-        med <- qtl2pattern::mediate1(chr_id, win_par$peak_Mbp, 2^win_par$window_Mbp,
+        med <- qtl2pattern::mediate1(chr_id, input$pos_Mbp, 2^win_par$window_Mbp,
                               phe_df()[, pheno, drop = FALSE],
                               cov_mx(), probs_obj()$probs, K_chr(), 
                               probs_obj()$map, datapath())
@@ -121,6 +141,7 @@ shinyMediate1PlotUI <- function(id) {
     shiny::strong("Mediation"),
     shiny::uiOutput(ns("radio")),
     shiny::uiOutput(ns("pheno_name")),
+    shiny::uiOutput(ns("pos_Mbp")),
     shiny::fluidRow(
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))

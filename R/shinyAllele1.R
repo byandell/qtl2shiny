@@ -26,21 +26,21 @@ shinyAllele1 <- function(input, output, session,
   ns <- session$ns
   
   # Scan Window slider
-  output$scan_window <- shiny::renderUI({
+  output$pos_Mbp <- shiny::renderUI({
     chr_id <- shiny::req(win_par$chr_id)
     map <- shiny::req(probs_obj())$map[[chr_id]]
     rng <- round(2 * range(map)) / 2
-    if(is.null(selected <- input$scan_window))
+    if(is.null(selected <- input$pos_Mbp))
       selected <- req(win_par$peak_Mbp)
-    shiny::sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
+    shiny::sliderInput(ns("pos_Mbp"), NULL, rng[1], rng[2],
                 selected, step=.1)
   })
-  ## Reset scan_window if chromosome changes.
+  ## Reset pos_Mbp if chromosome changes.
   observeEvent(win_par$chr_id, {
     map <- shiny::req(probs_obj()$map)
     chr <- shiny::req(win_par$chr_id)
     rng <- round(2 * range(map[[chr]])) / 2
-    shiny::updateSliderInput(session, "scan_window", NULL, 
+    shiny::updateSliderInput(session, "pos_Mbp", NULL, 
                              req(win_par$peak_Mbp), 
                              rng[1], rng[2], step=.1)
   })
@@ -60,10 +60,10 @@ shinyAllele1 <- function(input, output, session,
       })
   })
   output$allele1Plot <- shiny::renderPlot({
-    shiny::req(allele_obj(), input$scan_window)
+    shiny::req(allele_obj(), input$pos_Mbp)
     shiny::withProgress(message = 'Allele plots ...', value = 0, {
       shiny::setProgress(1)
-      p <- plot(allele_obj(), pos = input$scan_window)
+      p <- plot(allele_obj(), pos = input$pos_Mbp)
       if(is.null(p)) {
         plot_null()
       } else {
@@ -72,10 +72,10 @@ shinyAllele1 <- function(input, output, session,
     })
   })
   output$allele1Sum <- shiny::renderTable({
-    shiny::req(allele_obj(), input$scan_window)
+    shiny::req(allele_obj(), input$pos_Mbp)
     shiny::withProgress(message = 'Effect summary ...', value = 0, {
       shiny::setProgress(1)
-      summary(allele_obj(), pos = input$scan_window)
+      summary(allele_obj(), pos = input$pos_Mbp)
     })
   })
   
@@ -98,9 +98,9 @@ shinyAllele1 <- function(input, output, session,
     filename = function() {
       file.path(paste0("allele1_", win_par$chr_id, "_", win_par$peak_Mbp, ".pdf")) },
     content = function(file) {
-      shiny::req(allele_obj(), input$scan_window)
+      shiny::req(allele_obj(), input$pos_Mbp)
       pdf(file, width=9,height=9)
-      print(plot(allele_obj(), pos = input$scan_window) +
+      print(plot(allele_obj(), pos = input$pos_Mbp) +
               ggplot2::ggtitle(names(phe_df())))
       dev.off()
     }
@@ -112,7 +112,7 @@ shinyAllele1 <- function(input, output, session,
 shinyAllele1UI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::uiOutput(ns("scan_window")),
+    shiny::uiOutput(ns("pos_Mbp")),
     shiny::fluidRow(
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
