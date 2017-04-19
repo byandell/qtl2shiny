@@ -27,17 +27,33 @@ shinyMediate1Plot <- function(input, output, session,
                   datapath) {
   ns <- session$ns
   
+  ## Expression data
+  expr_ls <- reactive({
+    shiny::req(win_par, datapath())
+    scan_window <- win_par$peak_Mbp + c(-1,1) * 2 ^ win_par$window_Mbp
+    indID <- rownames(shiny::req(phe1_df()))
+    
+    # Get expression mRMNA measurements.
+    out <- DOread::read_mrna(indID, win_par$chr_id,
+                      scan_window[1], scan_window[2],
+                      datapath())
+    # Covariate matrix covar is global, but reget it here to be sure.
+    out$cov_med <- readRDS(file.path(datapath(), "covar.rds"))[, c("sex", paste0("DOwave", 2:4))]
+    out
+  })
+  
+  
   ## Mediate1
   mediate_obj <- shiny::reactive({
     chr_id <- shiny::req(win_par$chr_id)
     shiny::req(phe1_df(), probs_obj(), K_chr(), cov_mx(),
-               input$pos_Mbp, win_par$window_Mbp)
+               input$pos_Mbp, win_par$window_Mbp, expr_ls())
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
       # qtl2pattern::mediate1
-      med_test(chr_id, input$pos_Mbp, 2^win_par$window_Mbp,
+      med_test(chr_id, input$pos_Mbp, expr_ls(),
                             phe1_df(), cov_mx(), probs_obj()$probs, K_chr(), 
-                            probs_obj()$map, datapath())
+                            probs_obj()$map)
     })
   })
   
@@ -128,10 +144,10 @@ shinyMediate1Plot <- function(input, output, session,
                  input$pos_Mbp, win_par$window_Mbp)
       pdf(file, width=9,height=9)
       for(pheno in names(phe_df())) {
-        med <- med_test(chr_id, input$pos_Mbp, 2^win_par$window_Mbp,
+        med <- med_test(chr_id, input$pos_Mbp, expr_ls(),
                               phe_df()[, pheno, drop = FALSE],
                               cov_mx(), probs_obj()$probs, K_chr(), 
-                              probs_obj()$map, datapath())
+                              probs_obj()$map)
         print(plot(med), "pos_lod")
         print(plot(med), "pos_pv")
         print(plot(med), "pv_lod")
