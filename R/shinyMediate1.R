@@ -34,7 +34,8 @@ shinyMediate1Plot <- function(input, output, session,
                input$pos_Mbp, win_par$window_Mbp)
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
-      qtl2pattern::mediate1(chr_id, input$pos_Mbp, 2^win_par$window_Mbp,
+      # qtl2pattern::mediate1
+      med_test(chr_id, input$pos_Mbp, 2^win_par$window_Mbp,
                             phe1_df(), cov_mx(), probs_obj()$probs, K_chr(), 
                             probs_obj()$map, datapath())
     })
@@ -49,13 +50,18 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::selectInput(ns("pheno_name"), NULL,
                 choices = names(phe_df()))
   })
-
+  ## Select phenotype for plots.
+  output$med_plot <- shiny::renderUI({
+    shiny::selectInput(ns("med_plot"), NULL,
+                       choices = c("pos_lod","pos_pv","pv_lod"))
+  })
+  
   ## Mediate1 plot
   output$medPlot <- shiny::renderPlot({
-    shiny::req(mediate_obj())
+    shiny::req(mediate_obj(), input$med_plot)
     shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot(mediate_obj())
+      plot(mediate_obj(), input$med_plot)
     })
   })
   ## Mediate1 plotly
@@ -63,7 +69,7 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::req(mediate_obj())
     shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot(mediate_obj())
+      plot(mediate_obj(), input$med_plot)
     })
   })
 
@@ -94,13 +100,13 @@ shinyMediate1Plot <- function(input, output, session,
 
   output$out_choice <- shiny::renderUI({
     switch(shiny::req(input$button),
-           "Mediation LOD" = shiny::plotOutput(ns("medPlot")),
-           Interactive     = plotly::plotlyOutput(ns("medPlotly")),
-           Summary         = shiny::dataTableOutput(ns("medSummary")))
+           Static      = shiny::plotOutput(ns("medPlot")),
+           Interactive = plotly::plotlyOutput(ns("medPlotly")),
+           Summary     = shiny::dataTableOutput(ns("medSummary")))
   })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
-                        c("Mediation LOD","Interactive","Summary"),
+                        c("Static","Interactive","Summary"),
                         input$button)
   })
   
@@ -122,11 +128,13 @@ shinyMediate1Plot <- function(input, output, session,
                  input$pos_Mbp, win_par$window_Mbp)
       pdf(file, width=9,height=9)
       for(pheno in names(phe_df())) {
-        med <- qtl2pattern::mediate1(chr_id, input$pos_Mbp, 2^win_par$window_Mbp,
+        med <- med_test(chr_id, input$pos_Mbp, 2^win_par$window_Mbp,
                               phe_df()[, pheno, drop = FALSE],
                               cov_mx(), probs_obj()$probs, K_chr(), 
                               probs_obj()$map, datapath())
-        print(plot(med))
+        print(plot(med), "pos_lod")
+        print(plot(med), "pos_pv")
+        print(plot(med), "pv_lod")
       }
       dev.off()
     }
@@ -141,6 +149,7 @@ shinyMediate1PlotUI <- function(id) {
     shiny::strong("Mediation"),
     shiny::uiOutput(ns("radio")),
     shiny::uiOutput(ns("pheno_name")),
+    shiny::uiOutput(ns("med_plot")),
     shiny::uiOutput(ns("pos_Mbp")),
     shiny::fluidRow(
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
