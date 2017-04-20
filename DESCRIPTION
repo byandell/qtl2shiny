@@ -11,7 +11,8 @@ LazyData: TRUE
 Imports:
     ggplot2, dplyr, tidyr,
     shiny,shinydashboard,
-    gdata, grid, gridBase, GGally,
+    gdata, grid, GGally,
+    plotly,
     qtl2scan,
     qtl2ggplot,
     qtl2pattern,

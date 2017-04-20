@@ -11,7 +11,6 @@
 #' @importFrom dplyr distinct
 #' @importFrom stringr str_split
 #' @importFrom grid plotViewport pushViewport
-#' @importFrom gridBase baseViewports
 #' @importFrom CCSanger sdp_to_pattern
 #' @importFrom shiny NS reactive req 
 #'   observeEvent

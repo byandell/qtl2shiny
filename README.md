@@ -52,3 +52,37 @@ Minor issues
 * [Brian Yandell](http://bitbucket.org/byandell)
 * [Karl Broman](http://bitbucket.org/kbroman)
   + [R/qtl2](http://kbroman.org/qtl2/)
+
+### Installation
+
+R/qtl2 is early in development and so is not yet available on
+[CRAN](http://cran.r-project.org).
+
+You can install R/qtl2 from [GitHub](https://github.com/rqtl).
+
+You first need to install the
+[devtools](https://github.com/hadley/devtools) package, plus a set of
+package dependencies: [yaml](https://cran.r-project.org/package=yaml),
+[jsonlite](https://cran.r-project.org/package=jsonlite),
+[data.table](https://cran.r-project.org/package=data.table),
+and [RcppEigen](https://github.com/RcppCore/RcppEigen).
+(Additional, secondary dependencies will also be installed)
+
+    install.packages(c("devtools", "yaml", "jsonlite", "data.table", "RcppEigen"))
+
+You will also need the following packages for qtl2shiny dependencies:
+
+    install.packages(c("ggplot2", "dplyr", "tidyr", "RColorBrewer", "stringr",
+      "shiny", "shinydashboard", "grid", "gdata", "GGally", "Rcpp", "mnormt", "corpcor"))
+
+Then, install R/qtl2 using `devtools::install_github()`.
+
+    library(devtools)
+    install_github(paste0("rqtl/qtl2", c("geno", "scan")))
+    install_github("ropensci/plotly")
+
+Once you have installed these, install qtl2shiny as
+
+    install_github(paste0("byandell/",
+      c("DOread","CCSanger","qtl2pattern","qtl2ggplot","qtl2feather","CausalMST","qtl2shiny")))
+
