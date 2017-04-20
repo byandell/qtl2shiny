@@ -27,21 +27,30 @@ shinyMediate1Plot <- function(input, output, session,
                   datapath) {
   ns <- session$ns
   
+  scan_window <- reactive({
+    shiny::req(win_par)
+    win_par$peak_Mbp + c(-1,1) * 2 ^ win_par$window_Mbp
+  })
   ## Expression data
   expr_ls <- reactive({
-    shiny::req(win_par, datapath())
-    scan_window <- win_par$peak_Mbp + c(-1,1) * 2 ^ win_par$window_Mbp
-    indID <- rownames(shiny::req(phe1_df()))
-    
-    # Get expression mRMNA measurements.
-    out <- DOread::read_mrna(indID, win_par$chr_id,
-                      scan_window[1], scan_window[2],
-                      datapath())
-    # Covariate matrix covar is global, but reget it here to be sure.
-    out$cov_med <- readRDS(file.path(datapath(), "covar.rds"))[, c("sex", paste0("DOwave", 2:4))]
-    out
+    shiny::req(phe1_df(), win_par)
+    # Covariate matrix covar is global.
+    expr_region(phe1_df(), win_par$chr_id, scan_window(), datapath(), covar)
   })
   
+  ## Comediator data
+  comed_ls <- reactive({
+    shiny::req(input$pheno_name, win_par)
+    # Objects covar, analyses_tbl, pheno_data are global.
+    comediator_region(input$pheno_name, win_par$chr_id, scan_window(), 
+                      covar, analyses_tbl, pheno_data)
+  })
+  med_ls <- reactive({
+    switch(shiny::req(input$med_type),
+           expression = expr_ls(),
+           phenotypes = comed_ls(),
+           "other groups" = comediator_group(comed_ls()))
+  })
   
   ## Mediate1
   mediate_obj <- shiny::reactive({
@@ -51,12 +60,12 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
       # qtl2pattern::mediate1
-      med_test(chr_id, input$pos_Mbp, expr_ls(),
+      med_test(chr_id, input$pos_Mbp, med_ls(),
                             phe1_df(), cov_mx(), probs_obj()$probs, K_chr(), 
                             probs_obj()$map)
     })
   })
-  
+
   phe1_df <- reactive({
     phe_df()[, shiny::req(input$pheno_name), drop = FALSE]
   })
@@ -66,18 +75,31 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::selectInput(ns("pheno_name"), NULL,
                 choices = names(phe_df()))
   })
-  ## Select phenotype for plots.
+  ## Select plot format.
   output$med_plot <- shiny::renderUI({
     shiny::selectInput(ns("med_plot"), NULL,
-                       choices = c("pos_lod","pos_pv","pv_lod"))
+                       choices = c("Position by LOD", 
+                                   "Position by P-value", 
+                                   "P-value by LOD"))
+  })
+  ## Select type of mediation.
+  output$med_type <- shiny::renderUI({
+    shiny::selectInput(ns("med_type"), NULL,
+                       choices = c("expression","phenotypes","other groups"))
   })
   
+  med_plot_type <- reactive({
+    switch(shiny::req(input$med_plot),
+           "Position by LOD" = "pos_lod",
+           "Position by P-value" = "pos_pv",
+           "P-value by LOD" = "pv_lod")
+  })
   ## Mediate1 plot
   output$medPlot <- shiny::renderPlot({
-    shiny::req(mediate_obj(), input$med_plot)
+    shiny::req(mediate_obj())
     shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot(mediate_obj(), input$med_plot)
+      plot(mediate_obj(), med_plot_type())
     })
   })
   ## Mediate1 plotly
@@ -85,7 +107,7 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::req(mediate_obj())
     shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot(mediate_obj(), input$med_plot)
+      plot(mediate_obj(), med_plot_type())
     })
   })
 
@@ -165,6 +187,7 @@ shinyMediate1PlotUI <- function(id) {
     shiny::strong("Mediation"),
     shiny::uiOutput(ns("radio")),
     shiny::uiOutput(ns("pheno_name")),
+    shiny::uiOutput(ns("med_type")),
     shiny::uiOutput(ns("med_plot")),
     shiny::uiOutput(ns("pos_Mbp")),
     shiny::fluidRow(
