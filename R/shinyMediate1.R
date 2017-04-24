@@ -12,7 +12,7 @@
 #' @importFrom qtl2pattern mediate1
 #' @importFrom qtl2scan scan1
 #' @importFrom qtl2ggplot plot_scan1
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
@@ -33,36 +33,38 @@ shinyMediate1Plot <- function(input, output, session,
   })
   ## Expression data
   expr_ls <- reactive({
-    shiny::req(phe1_df(), win_par)
+    shiny::req(win_par)
     # Covariate matrix covar is global.
-    expr_region(phe1_df(), win_par$chr_id, scan_window(), datapath(), covar)
+    expr_region(win_par$chr_id, scan_window(), datapath(), covar)
   })
   
   ## Comediator data
   comed_ls <- reactive({
     shiny::req(input$pheno_name, win_par)
-    # Objects covar, analyses_tbl, pheno_data are global.
+    # Objects covar, analyses_tbl, pheno_data, peaks are global.
     comediator_region(input$pheno_name, win_par$chr_id, scan_window(), 
-                      covar, analyses_tbl, pheno_data)
+                      covar, analyses_tbl, pheno_data, peaks)
   })
   med_ls <- reactive({
-    switch(shiny::req(input$med_type),
+    out <- switch(shiny::req(input$med_type),
            expression = expr_ls(),
-           phenotypes = comed_ls(),
-           "other groups" = comediator_group(comed_ls()))
+           phenotype = comediator_type(comed_ls(), shiny::isTruthy(input$other)))
+    out
   })
   
   ## Mediate1
   mediate_obj <- shiny::reactive({
     chr_id <- shiny::req(win_par$chr_id)
     shiny::req(phe1_df(), probs_obj(), K_chr(), cov_mx(),
-               input$pos_Mbp, win_par$window_Mbp, expr_ls())
+               input$pos_Mbp, win_par$window_Mbp, 
+               input$med_type, med_ls())
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
       # qtl2pattern::mediate1
       med_test(chr_id, input$pos_Mbp, med_ls(),
-                            phe1_df(), cov_mx(), probs_obj()$probs, K_chr(), 
-                            probs_obj()$map)
+               phe1_df(), cov_mx(), probs_obj()$probs, K_chr(), 
+               probs_obj()$map,
+               data_type = input$med_type)
     })
   })
 
@@ -85,21 +87,23 @@ shinyMediate1Plot <- function(input, output, session,
   ## Select type of mediation.
   output$med_type <- shiny::renderUI({
     shiny::selectInput(ns("med_type"), NULL,
-                       choices = c("expression","phenotypes","other groups"))
+                       choices = c("expression","phenotype"))
   })
   
   med_plot_type <- reactive({
     switch(shiny::req(input$med_plot),
            "Position by LOD" = "pos_lod",
-           "Position by P-value" = "pos_pv",
-           "P-value by LOD" = "pv_lod")
+           "Position by P-value" = "pos_pvalue",
+           "P-value by LOD" = "pvalue_lod")
   })
   ## Mediate1 plot
   output$medPlot <- shiny::renderPlot({
     shiny::req(mediate_obj())
     shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot(mediate_obj(), med_plot_type())
+      plot(mediate_obj(), med_plot_type(),
+           local_only = input$local, 
+           significant = input$signif)
     })
   })
   ## Mediate1 plotly
@@ -107,7 +111,9 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::req(mediate_obj())
     shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot(mediate_obj(), med_plot_type())
+      plot(mediate_obj(), med_plot_type(),
+           local_only = input$local, 
+           significant = input$signif)
     })
   })
 
@@ -147,6 +153,12 @@ shinyMediate1Plot <- function(input, output, session,
                         c("Static","Interactive","Summary"),
                         input$button)
   })
+  output$local_other <- shiny::renderUI({
+    switch(shiny::req(input$med_type),
+           expression = shiny::checkboxInput(ns("local"), "Local?"),
+           phenotype  = shiny::checkboxInput(ns("other"), "Other types?"))
+  })
+  
   
   ## Downloads.
   output$downloadData <- shiny::downloadHandler(
@@ -167,12 +179,18 @@ shinyMediate1Plot <- function(input, output, session,
       pdf(file, width=9,height=9)
       for(pheno in names(phe_df())) {
         med <- med_test(chr_id, input$pos_Mbp, expr_ls(),
-                              phe_df()[, pheno, drop = FALSE],
-                              cov_mx(), probs_obj()$probs, K_chr(), 
-                              probs_obj()$map)
-        print(plot(med), "pos_lod")
-        print(plot(med), "pos_pv")
-        print(plot(med), "pv_lod")
+                        phe_df()[, pheno, drop = FALSE],
+                        cov_mx(), probs_obj()$probs, K_chr(), 
+                        probs_obj()$map)
+        print(plot(med), "pos_lod",
+              local_only = input$local, 
+              significant = input$signif)
+        print(plot(med), "pos_pvalue",
+              local_only = input$local, 
+              significant = input$signif)
+        print(plot(med), "pvalue_lod",
+              local_only = input$local, 
+              significant = input$signif)
       }
       dev.off()
     }
@@ -188,7 +206,10 @@ shinyMediate1PlotUI <- function(id) {
     shiny::uiOutput(ns("radio")),
     shiny::uiOutput(ns("pheno_name")),
     shiny::uiOutput(ns("med_type")),
-    shiny::uiOutput(ns("med_plot")),
+    shiny::fluidRow(
+      shiny::column(6, shiny::checkboxInput(ns("signif"), "Significant?")),
+    shiny::column(6, shiny::uiOutput(ns("local_other")))),
+  shiny::uiOutput(ns("med_plot")),
     shiny::uiOutput(ns("pos_Mbp")),
     shiny::fluidRow(
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),

@@ -1,14 +1,7 @@
 med_test <- function(chr_id, pos_Mbp, med_ls,
-                     phe_df, cov_tar, aprobs, kinship, map) {
+                     phe_df, cov_tar, aprobs, kinship, map,
+                     data_type) {
 
-  if("expr" %in% names(med_ls)) {
-    mediators <- med_ls$expr
-    testfn <- CausalMST::mediate1_test
-  } else {
-    mediators <- med_ls$comediators
-    testfn <- CausalMST::comediate1_test
-  }
-  annotation <- med_ls$annot
   cov_med <- med_ls$cov_med
   
   # Get genotype matrix and map at 
@@ -17,7 +10,8 @@ med_test <- function(chr_id, pos_Mbp, med_ls,
   map[[chr_id]] <- map[[chr_id]][peak_mar]
   geno_max <- probs_max[[1]][,,1]
   
-  testfn(geno_max, phe_df, mediators, qtl2scan::fit1,
-                                       kinship[[chr_id]], cov_tar, cov_med,
-                                       annotation, "wilc", pos = pos_Mbp)
+  CausalMST::mediate1_test(med_ls, geno_max, phe_df,
+                           kinship[[chr_id]], cov_tar, cov_med,
+                           "wilc", pos = pos_Mbp,
+                           data_type = data_type)
 }

@@ -1,8 +1,6 @@
-expr_region <- function(phe_df, chr_id, scan_window, datapath, covar) {
-  indID <- rownames(phe_df)
-  
+expr_region <- function(chr_id, scan_window, datapath, covar) {
   # Get expression mRMNA measurements.
-  out <- DOread::read_mrna(indID, chr_id,
+  out <- DOread::read_mrna(chr_id,
                            scan_window[1], scan_window[2],
                            datapath)
   # Covariate matrix covar is global.
