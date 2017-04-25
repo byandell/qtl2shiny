@@ -17,7 +17,20 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
   # Replace any NA with FALSE.
   annot[, covars] <- apply(annot[, covars], 2, 
                            function(x) ifelse(is.na(x), FALSE, x))
-
+  
+  # Add QTL peaks
+  annot <- 
+    dplyr::inner_join(
+      annot,
+      dplyr::ungroup(
+        dplyr::summarize(
+          dplyr::group_by(peaks, pheno),
+          qtl_ct = n(),
+          QTL = paste0(chr_id, "@",
+                       round(pos), ":",
+                       round(lod), collapse = ","))),
+      by = "pheno")
+  
   # Kludge to get names of covariates that are used by comediators.
   covars <- apply(annot[, covars], 2, any)
   covars <- names(covars)[covars]
