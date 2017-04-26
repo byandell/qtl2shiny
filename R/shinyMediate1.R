@@ -98,13 +98,16 @@ shinyMediate1Plot <- function(input, output, session,
   })
   ## Mediate1 plot
   output$medPlot <- shiny::renderPlot({
-    shiny::req(mediate_obj())
-    shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
-      shiny::setProgress(1)
-      plot(mediate_obj(), med_plot_type(),
-           local_only = input$local, 
-           significant = input$signif)
-    })
+    if(!shiny::isTruthy(mediate_obj())) {
+      plot_null("too much\nmissing data\nin mediators\nreduce window width")
+    } else {
+      shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
+        shiny::setProgress(1)
+        plot(mediate_obj(), med_plot_type(),
+             local_only = input$local, 
+             significant = input$signif)
+      })
+    }
   })
   ## Mediate1 plotly
   output$medPlotly <- plotly::renderPlotly({
@@ -113,7 +116,7 @@ shinyMediate1Plot <- function(input, output, session,
       shiny::setProgress(1)
       plot(mediate_obj(), med_plot_type(),
            local_only = input$local, 
-           significant = input$signif)
+           significant = TRUE)
     })
   })
 
