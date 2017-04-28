@@ -61,6 +61,8 @@ shinyScan1Plot <- function(input, output, session,
 
   ## Scan1 plot
   output$scanPlot <- shiny::renderPlot({
+    if(!shiny::isTruthy(win_par$chr_id) || !shiny::isTruthy(phe_df()))
+      return(plot_null("need to select\nRegion & Phenotype"))
     shiny::req(win_par$chr_id, input$scan_window, scan_obj(), probs_obj())
     shiny::withProgress(message = 'Genome LOD Plot ...', value = 0, {
       shiny::setProgress(1)

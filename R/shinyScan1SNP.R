@@ -21,6 +21,9 @@ shinyScan1SNP <- function(input, output, session,
   ns <- session$ns
 
   output$snpPlot <- shiny::renderPlot({
+    if(!shiny::isTruthy(snp_par$scan_window) || !shiny::isTruthy(pheno_names()))
+      return(plot_null("need to select\nRegion & Phenotype"))
+    
     if(is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()) |
        is.null(snpinfo()))
