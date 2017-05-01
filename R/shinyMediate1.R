@@ -27,6 +27,9 @@ shinyMediate1Plot <- function(input, output, session,
                   datapath) {
   ns <- session$ns
   
+  chr_id <- reactive({
+    shiny::req(win_par$chr_id)
+  })
   scan_window <- reactive({
     shiny::req(win_par)
     win_par$peak_Mbp + c(-1,1) * 2 ^ win_par$window_Mbp
@@ -35,14 +38,14 @@ shinyMediate1Plot <- function(input, output, session,
   expr_ls <- reactive({
     shiny::req(win_par)
     # Covariate matrix covar is global.
-    expr_region(win_par$chr_id, scan_window(), datapath(), covar)
+    expr_region(chr_id(), scan_window(), datapath(), covar)
   })
   
   ## Comediator data
   comed_ls <- reactive({
     shiny::req(input$pheno_name, win_par)
     # Objects covar, analyses_tbl, pheno_data, peaks are global.
-    comediator_region(input$pheno_name, win_par$chr_id, scan_window(), 
+    comediator_region(input$pheno_name, chr_id(), scan_window(), 
                       covar, analyses_tbl, pheno_data, peaks)
   })
   med_ls <- reactive({
@@ -52,19 +55,29 @@ shinyMediate1Plot <- function(input, output, session,
     out
   })
   
+  # Get genotype matrix and map at 
+  geno_max <- reactive({
+    shiny::req(input$pos_Mbp, probs_obj())
+    peak_mar <- qtl2geno::find_marker(probs_obj()$map, chr_id(), input$pos_Mbp)
+    subset(probs_obj()$probs, chr = chr_id(), mar = peak_mar)[[1]][,,1]
+  })
+  
+  
+  ## Scatter Plots
+  shiny::callModule(shinyScatterPlot, "scatter",
+                    win_par,
+                    phe1_df, cov_mx, probs_obj, K_chr, analyses_df,
+                    data_path)
+  
   ## Mediate1
   mediate_obj <- shiny::reactive({
-    chr_id <- shiny::req(win_par$chr_id)
-    shiny::req(phe1_df(), probs_obj(), K_chr(), cov_mx(),
-               input$pos_Mbp, win_par$window_Mbp, 
-               input$med_type, med_ls())
+    shiny::req(phe1_df(), probs_obj(), K_chr(), cov_mx(), geno_max(), 
+               input$pos_Mbp, input$med_type, med_ls())
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
       # qtl2pattern::mediate1
-      med_test(chr_id, input$pos_Mbp, med_ls(),
-               phe1_df(), cov_mx(), probs_obj()$probs, K_chr(), 
-               probs_obj()$map,
-               data_type = input$med_type)
+      med_test(med_ls(), geno_max(), phe1_df(), K_chr(), cov_mx(),
+               input$pos_Mbp, data_type = input$med_type)
     })
   })
 
@@ -127,8 +140,7 @@ shinyMediate1Plot <- function(input, output, session,
 
   # Scan Window slider
   output$pos_Mbp <- shiny::renderUI({
-    chr_id <- shiny::req(win_par$chr_id)
-    map <- shiny::req(probs_obj())$map[[chr_id]]
+    map <- shiny::req(probs_obj())$map[[chr_id()]]
     rng <- round(2 * range(map)) / 2
     if(is.null(selected <- input$pos_Mbp))
       selected <- req(win_par$peak_Mbp)
@@ -136,10 +148,9 @@ shinyMediate1Plot <- function(input, output, session,
                        selected, step=.1)
   })
   ## Reset pos_Mbp if chromosome changes.
-  observeEvent(win_par$chr_id, {
+  observeEvent(chr_id(), {
     map <- shiny::req(probs_obj()$map)
-    chr <- shiny::req(win_par$chr_id)
-    rng <- round(2 * range(map[[chr]])) / 2
+    rng <- round(2 * range(map[[chr_id()]])) / 2
     shiny::updateSliderInput(session, "pos_Mbp", NULL, 
                              req(win_par$peak_Mbp), 
                              rng[1], rng[2], step=.1)
@@ -166,7 +177,7 @@ shinyMediate1Plot <- function(input, output, session,
   ## Downloads.
   output$downloadData <- shiny::downloadHandler(
     filename = function() {
-      file.path(paste0("mediate_", win_par$chr_id, "_", win_par$peak_Mbp, ".csv")) },
+      file.path(paste0("mediate_", chr_id(), "_", win_par$peak_Mbp, ".csv")) },
     content = function(file) {
       shiny::req(mediate_obj())
       write.csv(mediate_obj(), file)
@@ -174,17 +185,16 @@ shinyMediate1Plot <- function(input, output, session,
   )
   output$downloadPlot <- shiny::downloadHandler(
     filename = function() {
-      file.path(paste0("mediate_", win_par$chr_id, "_", win_par$peak_Mbp, ".pdf")) },
+      file.path(paste0("mediate_", chr_id(), "_", win_par$peak_Mbp, ".pdf")) },
     content = function(file) {
-      chr_id <- shiny::req(win_par$chr_id)
-      shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(),
-                 input$pos_Mbp, win_par$window_Mbp)
+      shiny::req(phe_df(), geno_max(), K_chr(), cov_mx(),
+                 input$pos_Mbp, input$med_type)
       pdf(file, width=9,height=9)
       for(pheno in names(phe_df())) {
-        med <- med_test(chr_id, input$pos_Mbp, expr_ls(),
+        med <- med_test(med_ls(), geno_max(),
                         phe_df()[, pheno, drop = FALSE],
-                        cov_mx(), probs_obj()$probs, K_chr(), 
-                        probs_obj()$map)
+                        K_chr(), cov_mx(), input$pos_Mbp,
+                        data_type = input$med_type)
         print(plot(med), "pos_lod",
               local_only = input$local, 
               significant = input$signif)
@@ -196,8 +206,7 @@ shinyMediate1Plot <- function(input, output, session,
               significant = input$signif)
       }
       dev.off()
-    }
-  )
+    })
 }
 #' @param id identifier for shiny use
 #' @rdname shinyMediate1Plot
@@ -211,8 +220,8 @@ shinyMediate1PlotUI <- function(id) {
     shiny::uiOutput(ns("med_type")),
     shiny::fluidRow(
       shiny::column(6, shiny::checkboxInput(ns("signif"), "Significant?")),
-    shiny::column(6, shiny::uiOutput(ns("local_other")))),
-  shiny::uiOutput(ns("med_plot")),
+      shiny::column(6, shiny::uiOutput(ns("local_other")))),
+    shiny::uiOutput(ns("med_plot")),
     shiny::uiOutput(ns("pos_Mbp")),
     shiny::fluidRow(
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
