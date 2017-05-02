@@ -3,7 +3,7 @@
 #' Shiny module for scatter plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param med_par,patterns,geno_max,med_ls,mediate_obj,phe_df,cov_mx,K_chr reactive arguments
+#' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_df,cov_mx,K_chr reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -23,7 +23,7 @@
 #' 
 shinyScatterPlot <- function(input, output, session,
                   med_par, patterns, 
-                  geno_max, med_ls, mediate_obj,
+                  geno_max, peak_mar, med_ls, mediate_obj,
                   phe_df, cov_mx, K_chr) {
   ns <- session$ns
 
@@ -80,10 +80,13 @@ shinyScatterPlot <- function(input, output, session,
     if(!shiny::isTruthy(scat_dat())) {
       plot_null("too much\nmissing data\nin mediators\nreduce window width")
     } else {
-      shiny::req(input$med_plot)
+      shiny::req(input$med_plot, input$med_name, phe_df())
       shiny::withProgress(message = 'Scatter Plot ...', value = 0, {
         shiny::setProgress(1)
-        plot(scat_dat(), type = input$med_plot)
+        plot(scat_dat(), type = input$med_plot,
+             dname = peak_mar(),
+             mname = input$med_name,
+             tname = names(phe_df()))
       })
     }
   })
@@ -107,7 +110,10 @@ shinyScatterPlot <- function(input, output, session,
                      "by_target", 
                      "driver_offset", 
                      "driver")) {
-        print(plot(scat_dat(), type = types))
+        print(plot(scat_dat(), type = types,
+                   dname = peak_mar(),
+                   mname = input$med_name,
+                   tname = names(phe_df())))
       }
       dev.off()
     })
@@ -119,7 +125,6 @@ shinyScatterPlot <- function(input, output, session,
 shinyScatterPlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::strong("Scatter Plot"),
     shiny::uiOutput(ns("triad")),
     shiny::uiOutput(ns("med_name")),
     shiny::uiOutput(ns("pattern")),

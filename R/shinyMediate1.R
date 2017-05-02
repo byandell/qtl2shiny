@@ -20,6 +20,7 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 #' @importFrom plotly renderPlotly plotlyOutput
+#' @importFrom dplyr filter
 #' 
 shinyMediate1Plot <- function(input, output, session,
                               job_par, win_par, patterns,
@@ -56,16 +57,18 @@ shinyMediate1Plot <- function(input, output, session,
   })
   
   # Get genotype matrix and map at 
+  peak_mar <- reactive({
+    qtl2geno::find_marker(probs_obj()$map, chr_id(), input$pos_Mbp)
+  })
   geno_max <- reactive({
     shiny::req(input$pos_Mbp, probs_obj())
-    peak_mar <- qtl2geno::find_marker(probs_obj()$map, chr_id(), input$pos_Mbp)
-    subset(probs_obj()$probs, chr = chr_id(), mar = peak_mar)[[1]][,,1]
+    subset(probs_obj()$probs, chr = chr_id(), mar = peak_mar())[[1]][,,1]
   })
   
   ## Scatter Plots
   shiny::callModule(shinyScatterPlot, "scatter",
                     input, patterns, 
-                    geno_max, med_ls, mediate_obj,
+                    geno_max, peak_mar, med_ls, mediate_signif,
                     phe1_df, cov_mx, K_chr)
 
   ## Mediate1
@@ -78,6 +81,9 @@ shinyMediate1Plot <- function(input, output, session,
       med_test(med_ls(), geno_max(), phe1_df(), K_chr(), cov_mx(),
                input$pos_Mbp, data_type = input$med_type)
     })
+  })
+  mediate_signif <- shiny::reactive({
+    dplyr::filter(shiny::req(mediate_obj()), pvalue <= 0.1)
   })
 
   phe1_df <- reactive({
@@ -126,7 +132,7 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::req(mediate_obj())
     shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot(mediate_obj(), med_plot_type(),
+      plot(mediate_signif(), med_plot_type(),
            local_only = input$local, 
            significant = TRUE)
     })
@@ -208,7 +214,6 @@ shinyMediate1Plot <- function(input, output, session,
     })
   output$mediation <- renderUI({
     shiny::tagList(
-      shiny::strong("Mediation"),
       shiny::uiOutput(ns("radio")),
       shiny::uiOutput(ns("pheno_name")),
       shiny::uiOutput(ns("med_type")),
@@ -222,14 +227,16 @@ shinyMediate1Plot <- function(input, output, session,
         shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
   })
   output$medUI <- shiny::renderUI({
-    switch(shiny::req(job_par$button),
-           "Mediation"    = shiny::uiOutput(ns("mediation")),
-           "Scatter Plot" = shinyScatterPlotUI(ns("scatter")))
+    if(shiny::isTruthy(input$checkplot))
+      shinyScatterPlotUI(ns("scatter"))
+    else
+      shiny::uiOutput(ns("mediation"))
   })
   output$medOutput <- shiny::renderUI({
-    switch(shiny::req(job_par$button),
-           "Mediation"    = shiny::uiOutput(ns("out_choice")),
-           "Scatter Plot" = shinyScatterPlotOutput(ns("scatter")))
+    if(shiny::isTruthy(input$checkplot))
+      shinyScatterPlotOutput(ns("scatter"))
+    else
+      shiny::uiOutput(ns("out_choice"))
   })
 }
 #' @param id identifier for shiny use
@@ -237,7 +244,10 @@ shinyMediate1Plot <- function(input, output, session,
 #' @export
 shinyMediate1PlotUI <- function(id) {
   ns <- shiny::NS(id)
-  shiny::uiOutput(ns("medUI"))
+  shiny::tagList(
+    shiny::strong("Mediation"),
+    shiny::checkboxInput(ns("checkplot"), "Scatter PLot"),
+    shiny::uiOutput(ns("medUI")))
 }
 #' @rdname shinyMediate1Plot
 #' @export
