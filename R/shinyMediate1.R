@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df,datapath reactive arguments
+#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,datapath reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -22,9 +22,9 @@
 #' @importFrom plotly renderPlotly plotlyOutput
 #' 
 shinyMediate1Plot <- function(input, output, session,
-                  win_par,  
-                  phe_df, cov_mx, probs_obj, K_chr, analyses_df,
-                  datapath) {
+                              job_par, win_par, patterns,
+                              phe_df, cov_mx, probs_obj, K_chr, analyses_df,
+                              datapath) {
   ns <- session$ns
   
   chr_id <- reactive({
@@ -62,13 +62,12 @@ shinyMediate1Plot <- function(input, output, session,
     subset(probs_obj()$probs, chr = chr_id(), mar = peak_mar)[[1]][,,1]
   })
   
-  
   ## Scatter Plots
   shiny::callModule(shinyScatterPlot, "scatter",
-                    win_par,
-                    phe1_df, cov_mx, probs_obj, K_chr, analyses_df,
-                    data_path)
-  
+                    input, patterns, 
+                    geno_max, med_ls, mediate_obj,
+                    phe1_df, cov_mx, K_chr)
+
   ## Mediate1
   mediate_obj <- shiny::reactive({
     shiny::req(phe1_df(), probs_obj(), K_chr(), cov_mx(), geno_max(), 
@@ -207,29 +206,42 @@ shinyMediate1Plot <- function(input, output, session,
       }
       dev.off()
     })
+  output$mediation <- renderUI({
+    shiny::tagList(
+      shiny::strong("Mediation"),
+      shiny::uiOutput(ns("radio")),
+      shiny::uiOutput(ns("pheno_name")),
+      shiny::uiOutput(ns("med_type")),
+      shiny::fluidRow(
+        shiny::column(6, shiny::checkboxInput(ns("signif"), "Significant?")),
+        shiny::column(6, shiny::uiOutput(ns("local_other")))),
+      shiny::uiOutput(ns("med_plot")),
+      shiny::uiOutput(ns("pos_Mbp")),
+      shiny::fluidRow(
+        shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
+        shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
+  })
+  output$medUI <- shiny::renderUI({
+    switch(shiny::req(job_par$button),
+           "Mediation"    = shiny::uiOutput(ns("mediation")),
+           "Scatter Plot" = shinyScatterPlotUI(ns("scatter")))
+  })
+  output$medOutput <- shiny::renderUI({
+    switch(shiny::req(job_par$button),
+           "Mediation"    = shiny::uiOutput(ns("out_choice")),
+           "Scatter Plot" = shinyScatterPlotOutput(ns("scatter")))
+  })
 }
 #' @param id identifier for shiny use
 #' @rdname shinyMediate1Plot
 #' @export
 shinyMediate1PlotUI <- function(id) {
   ns <- shiny::NS(id)
-  shiny::tagList(
-    shiny::strong("Mediation"),
-    shiny::uiOutput(ns("radio")),
-    shiny::uiOutput(ns("pheno_name")),
-    shiny::uiOutput(ns("med_type")),
-    shiny::fluidRow(
-      shiny::column(6, shiny::checkboxInput(ns("signif"), "Significant?")),
-      shiny::column(6, shiny::uiOutput(ns("local_other")))),
-    shiny::uiOutput(ns("med_plot")),
-    shiny::uiOutput(ns("pos_Mbp")),
-    shiny::fluidRow(
-      shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
-      shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
+  shiny::uiOutput(ns("medUI"))
 }
 #' @rdname shinyMediate1Plot
 #' @export
 shinyMediate1PlotOutput <- function(id) {
   ns <- shiny::NS(id)
-  shiny::uiOutput(ns("out_choice"))
+  shiny::uiOutput(ns("medOutput"))
 }

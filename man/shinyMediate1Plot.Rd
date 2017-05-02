@@ -6,8 +6,8 @@
 \alias{shinyMediate1PlotOutput}
 \title{Shiny coefficient analysis and plot module}
 \usage{
-shinyMediate1Plot(input, output, session, win_par, phe_df, cov_mx, probs_obj,
-  K_chr, analyses_df, datapath)
+shinyMediate1Plot(input, output, session, job_par, win_par, patterns, phe_df,
+  cov_mx, probs_obj, K_chr, analyses_df, datapath)
 
 shinyMediate1PlotUI(id)
 
@@ -16,7 +16,7 @@ shinyMediate1PlotOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, phe_df, cov_mx, probs_obj, K_chr, analyses_df, datapath}{reactive arguments}
+\item{job_par, win_par, patterns, phe_df, cov_mx, probs_obj, K_chr, analyses_df, datapath}{reactive arguments}
 
 \item{id}{identifier for shiny use}
 }

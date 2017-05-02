@@ -3,7 +3,7 @@
 #' Shiny module for scatter plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df,datapath reactive arguments
+#' @param med_par,patterns,geno_max,med_ls,mediate_obj,phe_df,cov_mx,K_chr reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -22,12 +22,11 @@
 #' @importFrom plotly renderPlotly plotlyOutput
 #' 
 shinyScatterPlot <- function(input, output, session,
-                  med_par,  
+                  med_par, patterns, 
                   geno_max, med_ls, mediate_obj,
-                  pattern,
                   phe_df, cov_mx, K_chr) {
   ns <- session$ns
-  
+
   ## Select triad for plots.
   output$triad <- shiny::renderUI({
     shiny::req(mediate_obj())
@@ -42,14 +41,14 @@ shinyScatterPlot <- function(input, output, session,
   ## Select mediator for plots.
   output$med_name <- shiny::renderUI({
     shiny::req(mediate_obj(), input$triad)
-    choices <- dplyr::filter(med_ls(), triad == input$triad)[[medID()]]
+    choices <- dplyr::filter(mediate_obj(), triad == input$triad)[[medID()]]
     shiny::selectInput(ns("med_name"), NULL,
                        choices = choices)
   })
   # Select pattern 
   sdps <- shiny::reactive({
-    shiny::req(pattern(), med_par$pheno_name)
-    unique(dplyr::filter(pattern(), pheno == med_par$pheno_name)$sdp)
+    shiny::req(patterns(), med_par$pheno_name)
+    unique(dplyr::filter(patterns(), pheno == med_par$pheno_name)$sdp)
   })
   output$pattern <- shiny::renderUI({
     shiny::selectInput(ns("pattern"), NULL,
@@ -57,10 +56,12 @@ shinyScatterPlot <- function(input, output, session,
   })
   
   scat_dat <- reactive({
-    shiny::req(geno_max(), phe_df(), med_ls(), input$med_name, input$pattern)
+    shiny::req(geno_max(), phe_df(), input$med_name, input$pattern)
+    medLs <- shiny::req(med_ls())
     sdp <- sdps()[CCSanger::sdp_to_pattern(sdps()) == input$pattern]
-    CausalMST:::med_scatter(geno_max(), phe_df(), med_ls()[[1]][, input$med_name, drop = FALSE],
-                            K_chr[[1]], cov_mx(), med_ls()$cov_med,
+    id <- medLs[[2]]$id[medLs[[2]][[medID()]] == input$med_name]
+    CausalMST:::med_scatter(geno_max(), phe_df(), medLs[[1]][, id, drop = FALSE],
+                            K_chr()[[1]], cov_mx(), medLs$cov_med,
                             qtl2scan::fit1,
                             sdp = sdp, allele = TRUE)
   })
@@ -75,7 +76,7 @@ shinyScatterPlot <- function(input, output, session,
   })
 
   ## Scatter plot
-  output$medPlot <- shiny::renderPlot({
+  output$scatPlot <- shiny::renderPlot({
     if(!shiny::isTruthy(scat_dat())) {
       plot_null("too much\nmissing data\nin mediators\nreduce window width")
     } else {
@@ -90,7 +91,7 @@ shinyScatterPlot <- function(input, output, session,
   ## Downloads.
   output$downloadData <- shiny::downloadHandler(
     filename = function() {
-      file.path(paste0("scatter_", win_par$chr_id, "_", win_par$peak_Mbp, ".csv")) },
+      file.path(paste0("scatter.csv")) },
     content = function(file) {
       shiny::req(mediate_obj())
       write.csv(mediate_obj(), file)
@@ -98,14 +99,15 @@ shinyScatterPlot <- function(input, output, session,
   )
   output$downloadPlot <- shiny::downloadHandler(
     filename = function() {
-      file.path(paste0("scatter_", win_par$chr_id, "_", win_par$peak_Mbp, ".pdf")) },
+      file.path(paste0("scatter.pdf")) },
     content = function(file) {
-      chr_id <- shiny::req(win_par$chr_id)
-      shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(),
-                 input$pos_Mbp, win_par$window_Mbp)
+      shiny::req(phe_df(), scat_dat(), input$med_plot)
       pdf(file, width=9,height=9)
-      for(pheno in names(phe_df())) {
-        print(plot(scat_dat(), type = input$med_plot))
+      for(types in c("by_mediator", 
+                     "by_target", 
+                     "driver_offset", 
+                     "driver")) {
+        print(plot(scat_dat(), type = types))
       }
       dev.off()
     })
@@ -130,5 +132,5 @@ shinyScatterPlotUI <- function(id) {
 #' @export
 shinyScatterPlotOutput <- function(id) {
   ns <- shiny::NS(id)
-  shiny::uiOutput(ns("medPlot"))
+  shiny::plotOutput(ns("scatPlot"))
 }
