@@ -83,7 +83,10 @@ shinyMediate1Plot <- function(input, output, session,
     })
   })
   mediate_signif <- shiny::reactive({
-    dplyr::filter(shiny::req(mediate_obj()), pvalue <= 0.1)
+    out <- dplyr::filter(shiny::req(mediate_obj()), pvalue <= 0.1)
+    attr(out, "params") <- attr(mediate_obj(), "params")
+    class(out) <- class(mediate_obj())
+    out
   })
 
   phe1_df <- reactive({
@@ -93,19 +96,22 @@ shinyMediate1Plot <- function(input, output, session,
   output$pheno_name <- shiny::renderUI({
     shiny::req(phe_df())
     shiny::selectInput(ns("pheno_name"), NULL,
-                choices = names(phe_df()))
+                choices = names(phe_df()),
+                selected = input$pheno_name)
   })
   ## Select plot format.
   output$med_plot <- shiny::renderUI({
     shiny::selectInput(ns("med_plot"), NULL,
                        choices = c("Position by LOD", 
                                    "Position by P-value", 
-                                   "P-value by LOD"))
+                                   "P-value by LOD"),
+                       selected = input$med_plot)
   })
   ## Select type of mediation.
   output$med_type <- shiny::renderUI({
     shiny::selectInput(ns("med_type"), NULL,
-                       choices = c("expression","phenotype"))
+                       choices = c("expression","phenotype"),
+                       selected = input$med_type)
   })
   
   med_plot_type <- reactive({
@@ -130,7 +136,7 @@ shinyMediate1Plot <- function(input, output, session,
   ## Mediate1 plotly
   output$medPlotly <- plotly::renderPlotly({
     shiny::req(mediate_obj())
-    shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
+    shiny::withProgress(message = 'Mediation Plotly ...', value = 0, {
       shiny::setProgress(1)
       plot(mediate_signif(), med_plot_type(),
            local_only = input$local, 
@@ -170,15 +176,17 @@ shinyMediate1Plot <- function(input, output, session,
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
                         c("Static","Interactive","Summary"),
-                        input$button)
+                        "Static")
   })
   output$local_other <- shiny::renderUI({
     switch(shiny::req(input$med_type),
-           expression = shiny::checkboxInput(ns("local"), "Local?"),
-           phenotype  = shiny::checkboxInput(ns("other"), "Other types?"))
+           expression = shiny::checkboxInput(ns("local"), "Local?", input$local),
+           phenotype  = shiny::checkboxInput(ns("other"), "Other types?", input$other))
   })
-  
-  
+  output$signif <- shiny::renderUI({
+    shiny::checkboxInput(ns("signif"), "Significant?", input$signif)
+  })
+
   ## Downloads.
   output$downloadData <- shiny::downloadHandler(
     filename = function() {
@@ -218,7 +226,7 @@ shinyMediate1Plot <- function(input, output, session,
       shiny::uiOutput(ns("pheno_name")),
       shiny::uiOutput(ns("med_type")),
       shiny::fluidRow(
-        shiny::column(6, shiny::checkboxInput(ns("signif"), "Significant?")),
+        shiny::column(6, shiny::uiOutput(ns("signif"))),
         shiny::column(6, shiny::uiOutput(ns("local_other")))),
       shiny::uiOutput(ns("med_plot")),
       shiny::uiOutput(ns("pos_Mbp")),

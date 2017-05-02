@@ -60,6 +60,8 @@ shinyScatterPlot <- function(input, output, session,
     medLs <- shiny::req(med_ls())
     sdp <- sdps()[CCSanger::sdp_to_pattern(sdps()) == input$pattern]
     id <- medLs[[2]]$id[medLs[[2]][[medID()]] == input$med_name]
+    if(length(id) != 1)
+      return(NULL)
     CausalMST:::med_scatter(geno_max(), phe_df(), medLs[[1]][, id, drop = FALSE],
                             K_chr()[[1]], cov_mx(), medLs$cov_med,
                             qtl2scan::fit1,
