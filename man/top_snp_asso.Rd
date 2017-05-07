@@ -5,8 +5,7 @@
 \title{Top SNP Association Plot Wrapper}
 \usage{
 top_snp_asso(scan_obj, snpinfo, xlim, snp_action = "basic",
-  phename = dimnames(scan_obj)[[2]], drop.hilit = NULL,
-  show_all_snps = FALSE)
+  phename = dimnames(scan_obj)[[2]], minLOD = NULL, show_all_snps = FALSE)
 }
 \arguments{
 \item{scan_obj}{object of class \code{\link[qtl2scan]{scan1}}}
@@ -17,7 +16,7 @@ top_snp_asso(scan_obj, snpinfo, xlim, snp_action = "basic",
 
 \item{phename}{names of phenotypes}
 
-\item{drop.hilit}{hilight SNPs within this value of max}
+\item{minLOD}{minimum LOD for SNPs to be highlighted}
 
 \item{pheno}{name of phenotype for effect scan}
 

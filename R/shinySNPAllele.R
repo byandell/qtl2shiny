@@ -15,7 +15,7 @@
 #' @importFrom qtl2scan scan1
 #' @importFrom shiny callModule NS reactive req 
 #'   selectInput sliderInput
-#'   uiOutput
+#'   numericInput uiOutput
 #'   renderUI
 #'   tagList
 #'   withProgress setProgress
@@ -55,13 +55,27 @@ shinySNPAllele <- function(input, output, session,
       scan1_covar(phe_df(), cov_mx(), snpprobs_act, K_chr(), analyses_df())
     })
   })
+  
+  # Minimum LOD for SNP top values.
+  output$minLOD <- shiny::renderUI({
+    if(shiny::isTruthy(input$minLOD)) {
+      value <- input$minLOD
+    } else {
+      value <- max(3, round(max(unclass(shiny::req(snp_scan_obj()))), 1) - 1.5)
+    }
+    shiny::numericInput(ns("minLOD"), "LOD threshold", value, min = 0, step = 0.5)
+  })
+  
   ## Top SNPs table.
   top_snps_tbl <- shiny::reactive({
-    shiny::req(snp_action())
+    shiny::req(snp_action(), snpinfo())
+    drop.hilit <- max(unclass(shiny::req(snp_scan_obj()))) - 
+      shiny::req(input$minLOD)
     shiny::withProgress(message = 'Get Top SNPs ...', value = 0, {
       shiny::setProgress(1)
-      qtl2pattern::top_snps_all(shiny::req(snp_scan_obj()),
-                                shiny::req(snpinfo()))
+      qtl2pattern::top_snps_all(snp_scan_obj(),
+                                snpinfo(),
+                                drop.hilit)
     })
   })
   ## Genes and Exons.
@@ -188,6 +202,7 @@ shinySNPAlleleUI <- function(id) {
   shiny::tagList(
     shiny::uiOutput(ns("title")),
     shiny::uiOutput(ns("snp_input")),
+    shiny::uiOutput(ns("minLOD")),
     shiny::uiOutput(ns("phe_choice")),
     shiny::uiOutput(ns("win_choice")),
     shiny::uiOutput(ns("download_csv_plot")))

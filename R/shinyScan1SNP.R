@@ -19,19 +19,20 @@ shinyScan1SNP <- function(input, output, session,
                           snp_scan_obj, snpinfo,
                           snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
-
+  
   output$snpPlot <- shiny::renderPlot({
     if(!shiny::isTruthy(snp_par$scan_window) || !shiny::isTruthy(pheno_names()))
       return(plot_null("need to select\nRegion & Phenotype"))
     
     if(is.null(snp_scan_obj()) |
        is.null(snp_par$scan_window) | is.null(snp_action()) |
-       is.null(snpinfo()))
+       is.null(snpinfo()) | is.null(snp_par$minLOD))
       return(plot_null())
     shiny::withProgress(message = 'SNP plots ...', value = 0, {
       shiny::setProgress(1)
     top_snp_asso(snp_scan_obj(), snpinfo(),
-                 snp_par$scan_window, snp_action())
+                 snp_par$scan_window, snp_action(), 
+                 minLOD = snp_par$minLOD)
     })
   })
   
@@ -42,12 +43,13 @@ shinyScan1SNP <- function(input, output, session,
       pdf(file, width = 9)
       print(top_snp_asso(shiny::req(snp_scan_obj()), 
                          shiny::req(snpinfo()), 
-                         shiny::req(snp_par$scan_window)))
+                         shiny::req(snp_par$scan_window),
+                         snp_action(), 
+                         minLOD = shiny::req(snp_par$minLOD)))
       dev.off()
     }
   )
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyScan1SNP
 #' @export
 shinyScan1SNPUI <- function(id) {

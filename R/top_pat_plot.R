@@ -20,6 +20,7 @@ top_pat_plot <- function(pheno,
                          chr_id,
                          map,
                          xlim,
+                         drop.hilit = 1.5,
                          facet = "pheno",
                          snp_action = "basic", ...) {
   mytitle <- FALSE
@@ -41,6 +42,6 @@ top_pat_plot <- function(pheno,
   
   plot(scan_obj, map, seq_along(pheno),
        xlim = xlim, main = mytitle,
-       patterns = "hilit", drop.hilit = 1.5,
+       patterns = "hilit", drop.hilit = drop.hilit,
        facet = facet, legend.title = legend.title, ...)
 }

@@ -17,8 +17,6 @@ shinyScan1SNPOutput(id)
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_par, chr_pos, pheno_names, snp_scan_obj, snpinfo, snp_action}{reactive arguments}
-
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }
 \description{
 Shiny module for scan1 analysis and plots.
