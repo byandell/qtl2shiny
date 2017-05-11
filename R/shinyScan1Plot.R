@@ -20,7 +20,7 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 shinyScan1Plot <- function(input, output, session,
-                  win_par, pmap_obj, 
+                  win_par, 
                   phe_df, cov_mx, probs_obj, K_chr, analyses_df) {
   ns <- session$ns
   

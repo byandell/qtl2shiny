@@ -6,8 +6,8 @@
 \alias{shinyScan1PlotOutput}
 \title{Shiny coefficient analysis and plot module}
 \usage{
-shinyScan1Plot(input, output, session, win_par, pmap_obj, phe_df, cov_mx,
-  probs_obj, K_chr, analyses_df)
+shinyScan1Plot(input, output, session, win_par, phe_df, cov_mx, probs_obj,
+  K_chr, analyses_df)
 
 shinyScan1PlotUI(id)
 

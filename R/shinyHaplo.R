@@ -26,7 +26,7 @@ shinyHaplo <- function(input, output, session,
 
   ## Genome Scan.
   shiny::callModule(shinyScan1Plot, "hap_scan", 
-             win_par, pmap_obj, phe_df, cov_mx, probs_obj, K_chr, analyses_df)
+             win_par, phe_df, cov_mx, probs_obj, K_chr, analyses_df)
   
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
@@ -38,7 +38,7 @@ shinyHaplo <- function(input, output, session,
   shiny::callModule(shinyMediate1Plot, "mediate",
                     input, win_par, patterns,
                     phe_df, cov_mx, probs_obj, K_chr, analyses_df,
-                    data_path)
+                    pmap_obj, data_path)
 
   ## CC names
   output$cc_names <- shiny::renderText({

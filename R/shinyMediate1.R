@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,datapath reactive arguments
+#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,pmap_obj,datapath reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -25,7 +25,7 @@
 shinyMediate1Plot <- function(input, output, session,
                               job_par, win_par, patterns,
                               phe_df, cov_mx, probs_obj, K_chr, analyses_df,
-                              datapath) {
+                              pmap_obj, datapath) {
   ns <- session$ns
   
   chr_id <- reactive({
@@ -39,7 +39,8 @@ shinyMediate1Plot <- function(input, output, session,
   expr_ls <- reactive({
     shiny::req(win_par)
     # Covariate matrix covar is global.
-    expr_region(chr_id(), scan_window(), datapath(), covar)
+    expr_region(chr_id(), scan_window(), datapath(), covar, 
+                shiny::req(input$qtls), shiny::req(pmap_obj()))
   })
   
   ## Comediator data
@@ -47,7 +48,8 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::req(input$pheno_name, win_par)
     # Objects covar, analyses_tbl, pheno_data, peaks are global.
     comediator_region(input$pheno_name, chr_id(), scan_window(), 
-                      covar, analyses_tbl, pheno_data, peaks)
+                      covar, analyses_tbl, pheno_data, peaks, 
+                      shiny::req(input$qtls), shiny::req(pmap_obj()))
   })
   med_ls <- reactive({
     out <- switch(shiny::req(input$med_type),
@@ -72,6 +74,9 @@ shinyMediate1Plot <- function(input, output, session,
                     phe1_df, cov_mx, K_chr)
 
   ## Mediate1
+  probs_chr <- reactive({
+    probs_obj()$probs[[chr_id()]]
+  })
   mediate_obj <- shiny::reactive({
     shiny::req(phe1_df(), probs_obj(), K_chr(), cov_mx(), geno_max(), 
                input$pos_Mbp, input$med_type, med_ls())
@@ -79,12 +84,13 @@ shinyMediate1Plot <- function(input, output, session,
       shiny::setProgress(1)
       # qtl2pattern::mediate1
       med_test(med_ls(), geno_max(), phe1_df(), K_chr(), cov_mx(),
-               input$pos_Mbp, data_type = input$med_type)
+               input$pos_Mbp, data_type = input$med_type,
+               probs_chr())
     })
   })
   mediate_signif <- shiny::reactive({
-    out <- dplyr::filter(shiny::req(mediate_obj()), pvalue <= 0.1)
-    attr(out, "params") <- attr(mediate_obj(), "params")
+    out <- shiny::req(mediate_obj())
+    out$best <- dplyr::filter(out$best, pvalue <= 0.1)
     class(out) <- class(mediate_obj())
     out
   })
@@ -104,7 +110,9 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::selectInput(ns("med_plot"), NULL,
                        choices = c("Position by LOD", 
                                    "Position by P-value", 
-                                   "P-value by LOD"),
+                                   "P-value by LOD",
+                                   "Allele Effects",
+                                   "Mediator Effects"),
                        selected = input$med_plot)
   })
   ## Select type of mediation.
@@ -118,7 +126,9 @@ shinyMediate1Plot <- function(input, output, session,
     switch(shiny::req(input$med_plot),
            "Position by LOD" = "pos_lod",
            "Position by P-value" = "pos_pvalue",
-           "P-value by LOD" = "pvalue_lod")
+           "P-value by LOD" = "pvalue_lod",
+           "Allele Effects" = "alleles",
+           "Mediator Effects" = "mediator")
   })
   ## Mediate1 plot
   output$medPlot <- shiny::renderPlot({
@@ -173,6 +183,10 @@ shinyMediate1Plot <- function(input, output, session,
            Interactive = plotly::plotlyOutput(ns("medPlotly")),
            Summary     = shiny::dataTableOutput(ns("medSummary")))
   })
+  output$qtls <- shiny::renderUI({
+    shiny::radioButtons(ns("qtls"), "",
+                        c("1 QTL" = 1, "2 QTL" = 2), 1, inline = TRUE)
+  })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
                         c("Static","Interactive","Summary"),
@@ -207,7 +221,8 @@ shinyMediate1Plot <- function(input, output, session,
         med <- med_test(med_ls(), geno_max(),
                         phe_df()[, pheno, drop = FALSE],
                         K_chr(), cov_mx(), input$pos_Mbp,
-                        data_type = input$med_type)
+                        data_type = input$med_type,
+                        probs_chr())
         print(plot(med), "pos_lod",
               local_only = input$local, 
               significant = input$signif)
@@ -222,6 +237,7 @@ shinyMediate1Plot <- function(input, output, session,
     })
   output$mediation <- renderUI({
     shiny::tagList(
+      shiny::uiOutput(ns("qtls")),
       shiny::uiOutput(ns("radio")),
       shiny::uiOutput(ns("pheno_name")),
       shiny::uiOutput(ns("med_type")),

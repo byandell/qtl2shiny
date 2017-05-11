@@ -1,5 +1,6 @@
 comediator_region <- function(pheno_name, chr_id, scan_window, 
-                              covar, analyses_tbl, pheno_data, peaks) {
+                              covar, analyses_tbl, pheno_data, peaks, 
+                              qtls = 1, pmap) {
   
   # Annotation for phenotypes.
   annot <- dplyr::filter(peaks, 
@@ -34,6 +35,9 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
   # Kludge to get names of covariates that are used by comediators.
   covars <- apply(annot[, covars], 2, any)
   covars <- names(covars)[covars]
+  
+  if(qtls == 2)
+    annot$driver <- qtl2geno::find_marker(pmap, chr_id, annot$pos)
   
   list(comediators = DOread::get_pheno(pheno_data, annot),
        annot = dplyr::rename(annot, 
