@@ -184,8 +184,11 @@ shinyMediate1Plot <- function(input, output, session,
            Summary     = shiny::dataTableOutput(ns("medSummary")))
   })
   output$qtls <- shiny::renderUI({
+    if(is.null(selected <- input$qtls))
+      selected <- 1
     shiny::radioButtons(ns("qtls"), "",
-                        c("1 QTL" = 1, "2 QTL" = 2), 1, inline = TRUE)
+                        c("1 QTL" = 1, "2 QTLs" = 2),
+                        selected, inline = TRUE)
   })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
@@ -223,15 +226,18 @@ shinyMediate1Plot <- function(input, output, session,
                         K_chr(), cov_mx(), input$pos_Mbp,
                         data_type = input$med_type,
                         probs_chr())
-        print(plot(med), "pos_lod",
+        print(plot(med, "pos_lod",
               local_only = input$local, 
-              significant = input$signif)
-        print(plot(med), "pos_pvalue",
+              significant = input$signif))
+        print(plot(med, "pos_pvalue",
               local_only = input$local, 
-              significant = input$signif)
-        print(plot(med), "pvalue_lod",
+              significant = TRUE))
+        print(plot(med, "pvalue_lod",
               local_only = input$local, 
-              significant = input$signif)
+              significant = TRUE))
+        print(plot(med, "mediator",
+              local_only = input$local, 
+              significant = TRUE))
       }
       dev.off()
     })
@@ -270,7 +276,7 @@ shinyMediate1PlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::strong("Mediation"),
-    shiny::checkboxInput(ns("checkplot"), "Scatter PLot"),
+    shiny::checkboxInput(ns("checkplot"), "Scatter Plot"),
     shiny::uiOutput(ns("medUI")))
 }
 #' @rdname shinyMediate1Plot
