@@ -30,20 +30,22 @@ pheno_data <- dplyr::select(pheno_data,
 rm(peak_info)
 
 ## Add Closed Reference OTUs
-peaks_otu <- readRDS(file.path(datapath, "otu", "peaks_OTU_CR.rds"))
-peaks <- dplyr::bind_rows(peaks, 
-                          peaks_otu[, names(peaks)])
-
-analyses_otu <- readRDS(file.path(datapath, "otu", "analyses_OTU_CR.rds"))
-analyses_tbl <- dplyr::bind_rows(analyses_tbl,
-                                 analyses_otu[, names(analyses_tbl)])
-
-pheno_otu <- readRDS(file.path(datapath, "otu", "pheno_OTU_CR.rds"))
-tmp <- matrix(NA, nrow(pheno_data), ncol(pheno_otu))
-dimnames(tmp) <- list(rownames(pheno_data), colnames(pheno_otu))
-m <- match(rownames(pheno_otu), rownames(tmp))
-tmp[m,] <- pheno_otu
-pheno_data <- cbind(pheno_data, tmp)
+if(dir.exists(file.path(datapath, "otu"))) {
+  peaks_otu <- readRDS(file.path(datapath, "otu", "peaks_OTU_CR.rds"))
+  peaks <- dplyr::bind_rows(peaks, 
+                            peaks_otu[, names(peaks)])
+  
+  analyses_otu <- readRDS(file.path(datapath, "otu", "analyses_OTU_CR.rds"))
+  analyses_tbl <- dplyr::bind_rows(analyses_tbl,
+                                   analyses_otu[, names(analyses_tbl)])
+  
+  pheno_otu <- readRDS(file.path(datapath, "otu", "pheno_OTU_CR.rds"))
+  tmp <- matrix(NA, nrow(pheno_data), ncol(pheno_otu))
+  dimnames(tmp) <- list(rownames(pheno_data), colnames(pheno_otu))
+  m <- match(rownames(pheno_otu), rownames(tmp))
+  tmp[m,] <- pheno_otu
+  pheno_data <- cbind(pheno_data, tmp)
+}
 
 ##
 pheno_type <- c("all", sort(unique(analyses_tbl$pheno_type)))
