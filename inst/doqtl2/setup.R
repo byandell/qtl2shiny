@@ -55,19 +55,19 @@ if(dir.exists(file.path(datapath, "otu"))) {
   tmp[m,] <- as.matrix(pheno_otu)
   pheno_data <- cbind(pheno_data, 
                       as.data.frame(tmp))
-  
-  # Add model column to analyses_tbl
-  analyses_tbl <- 
-    dplyr::mutate(
-      analyses_tbl,
-      model = ifelse(pheno_type == "OTU_Bin",
-                     "binary",
-                     "normal"))
-  analyses_tbl <- 
-    dplyr::select(
-      analyses_tbl,
-      pheno:pheno_type, model, transf:ncol(analyses_tbl))
 }
+
+# Add model column to analyses_tbl
+analyses_tbl <- 
+  dplyr::mutate(
+    analyses_tbl,
+    model = ifelse(pheno_type == "OTU_Bin",
+                   "binary",
+                   "normal"))
+analyses_tbl <- 
+  dplyr::select(
+    analyses_tbl,
+    pheno:pheno_type, model, transf:ncol(analyses_tbl))
 
 ##
 pheno_type <- c("all", sort(unique(analyses_tbl$pheno_type)))
