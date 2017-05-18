@@ -70,7 +70,7 @@ shinyPeaks <- function(input, output, session,
   shiny::observeEvent(input$chr_id, update_region())
   update_region <- function() {
     scan_in <- shiny::req(scan_tbl())
-    scan_in <- dplyr::filter(scan_in, lod==max(lod))
+    scan_in <- dplyr::filter(scan_in, count==max(count))
     
     chr_ct <- as.character(scan_in$chr)
     if(any(chr_ct == shiny::req(input$chr_id))) {

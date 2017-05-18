@@ -11,7 +11,7 @@
 #' @return list of inputs and scan summary
 #'
 #' @export
-#' @importFrom dplyr add_row arrange filter
+#' @importFrom dplyr add_row arrange filter rename
 #' @importFrom ggplot2 ggtitle
 #' @importFrom shiny NS reactive req 
 #'   checkboxInput selectInput
@@ -28,6 +28,9 @@ shinyHotspot <- function(input, output, session,
     names(shiny::req(pmap_obj()))
   })
   # Hotspot Search (if desired)
+  output$hotspot <- shiny::renderUI({
+    shiny::checkboxInput(ns("hotspot"), "Search Hotspots?", input$hotspot)
+  })
   # Select chromosome.
   output$chr_ct <- shiny::renderUI({
     choices <- chr_names()
@@ -35,7 +38,8 @@ shinyHotspot <- function(input, output, session,
       selected <- "all"
     shiny::selectInput(ns("chr_ct"), strong("Chr"),
                 choices = c("all", choices),
-                selected = selected)
+                selected = selected,
+                multiple = TRUE)
   })
   scan_obj_all <- shiny::reactive({
     shiny::req(input$hotspot)
@@ -110,12 +114,18 @@ shinyHotspot <- function(input, output, session,
       lodcolumns <- match(peak_set, pheno_types)
       col <- seq_along(pheno_types)
       names(col) <- pheno_types
+      nchr <- length(map)
+      xaxt <- ifelse(nchr < 5, "y", "n")
+      traits <- ifelse(length(peak_set) == 1, peak_set, "traits")
+      
       plot(out_peaks, map, lodcolumn=lodcolumns,
            col = col[lodcolumns],
            ylab = "phenotype count",
-           ylim = c(0,max(out_peaks[,lodcolumns]))) +
+           ylim = c(0,max(out_peaks[,lodcolumns])),
+           xaxt = xaxt,
+           gap = 25 / nchr) +
         ## add mtext for peak_set
-        ggplot2::ggtitle(paste0("number of ", paste(peak_set, collapse=","),
+        ggplot2::ggtitle(paste0("number of ", traits,
                    " in ", 2 ^ win_par$window_Mbp, "Mbp window"))
     })
   })
@@ -129,11 +139,17 @@ shinyHotspot <- function(input, output, session,
                     function(map, nms) any(nms %in% names(map)), 
                     rownames(scan))
       chr <- names(chr)[chr]
-      summary(subset(scan, lodcolumn = peak_set), pmap_obj(), chr = chr)
+      dplyr::select(
+        dplyr::rename(
+          summary(
+            subset(scan, lodcolumn = peak_set),
+            pmap_obj(), chr = chr),
+          count = lod),
+        -marker)
     })
   })
   output$peak_tbl <- shiny::renderDataTable({
-    dplyr::arrange(scan_tbl(), desc(lod))
+    dplyr::arrange(scan_tbl(), desc(count))
   }, escape = FALSE,
   options = list(pageLength = 5))
   ## Return.
@@ -145,7 +161,7 @@ shinyHotspot <- function(input, output, session,
 shinyHotspotInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
-    shiny::column(6, shiny::checkboxInput(ns("hotspot"), "Search Hotspots?")),
+    shiny::column(6, shiny::uiOutput(ns("hotspot"))),
     shiny::column(6, shiny::uiOutput(ns("chr_ct"))))
 }
 #' @rdname shinyHotspot
