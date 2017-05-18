@@ -15,8 +15,8 @@
 #' @importFrom ggplot2 ggtitle
 #' @importFrom shiny NS reactive req 
 #'   checkboxInput selectInput
-#'   plotOutput tableOutput uiOutput
-#'   renderPlot renderTable renderUI
+#'   plotOutput dataTableOutput uiOutput
+#'   renderPlot renderDataTable renderUI
 #'   fluidRow column tagList
 #'   withProgress incProgress setProgress
 shinyHotspot <- function(input, output, session,
@@ -48,9 +48,9 @@ shinyHotspot <- function(input, output, session,
       peak_window <- 2 ^ peak_window
       pheno_types <- pheno_type()
       map <- pmap_obj()
-      out_peaks <- list(matrix(0, length(unlist(map)),
+      out_peaks <- matrix(0, length(unlist(map)),
                                   length(pheno_types),
-                                  dimnames = list(NULL, pheno_types)))
+                                  dimnames = list(qtl2scan:::map2markernames(map), pheno_types))
       
       peaks <- peaks_tbl()
       index1 <- 1
@@ -75,6 +75,7 @@ shinyHotspot <- function(input, output, session,
                        index1 <- index2 + 1
                      }
                    })
+      class(out_peaks) <- c("scan1", "matrix")
       out_peaks
     }
   })
@@ -85,20 +86,11 @@ shinyHotspot <- function(input, output, session,
     shiny::withProgress(message = 'Hotspot search ...', value = 0,
     {
       shiny::setProgress(1)
-      map_chr <- names(map)
       chr_ct <- input$chr_ct
       if(!("all" %in% chr_ct)) {
-        if(!is.null(chr_ct)) {
-          ## reduce to included chromosomes. Not quite there yet.
-          len <- sapply(map, length)
-          index <- split(seq_len(nrow(out_peaks)),
-                         ordered(rep(map_chr, times=len), map_chr))
-          index <- unlist(index[map_chr %in% chr_ct])
-          out_peaks$lod <- out_peaks[index,]
-        }
+        out_peaks <- subset(out_peaks, map, chr_ct)
       }
     })
-    class(out_peaks) <- c("scan1", class(out_peaks))
     out_peaks
   })
 
@@ -106,8 +98,9 @@ shinyHotspot <- function(input, output, session,
     peak_set <- shiny::req(set_par$dataset)
     map <- pmap_obj()
     chr_ct <- shiny::req(input$chr_ct)
-    if(!("all" %in% chr_ct))
-      map <- map[map_chr %in% chr_ct]
+    if(!("all" %in% chr_ct)) {
+      map <- map[shiny::req(chr_names()) %in% chr_ct]
+    }
     out_peaks <- scan_obj()
     shiny::withProgress(message = 'Hotspot show ...',
                  value = 0, {
@@ -120,29 +113,29 @@ shinyHotspot <- function(input, output, session,
       plot(out_peaks, map, lodcolumn=lodcolumns,
            col = col[lodcolumns],
            ylab = "phenotype count",
-           ylim = c(0,max(out_peaks$lod[,lodcolumns]))) +
+           ylim = c(0,max(out_peaks[,lodcolumns]))) +
         ## add mtext for peak_set
         ggplot2::ggtitle(paste0("number of ", paste(peak_set, collapse=","),
                    " in ", 2 ^ win_par$window_Mbp, "Mbp window"))
     })
   })
   scan_tbl <- shiny::reactive({
-    lodcol <- match(shiny::req(set_par$dataset), pheno_type())
+    peak_set <- shiny::req(set_par$dataset)
+    lodcol <- match(shiny::req(set_par$dataset), pheno_type(), pmap_obj())
     scan <- scan_obj()
     shiny::withProgress(message = 'Hotspot summary ...', value = 0, {
       shiny::setProgress(1)
-      chr <- names(scan$map)
-      summary(scan, lodcol, chr)
+      chr <- sapply(pmap_obj(), 
+                    function(map, nms) any(nms %in% names(map)), 
+                    rownames(scan))
+      chr <- names(chr)[chr]
+      summary(subset(scan, lodcolumn = peak_set), pmap_obj(), chr = chr)
     })
   })
-  output$peak_tbl <- shiny::renderTable({
-    out <- dplyr::arrange(scan_tbl(), desc(lod))
-    if(nrow(out) > 4) {
-      out <- dplyr::add_row(
-        dplyr::filter(out, row_number() < 4), pheno="...")
-    }
-    out
-  })
+  output$peak_tbl <- shiny::renderDataTable({
+    dplyr::arrange(scan_tbl(), desc(lod))
+  }, escape = FALSE,
+  options = list(pageLength = 5))
   ## Return.
   scan_tbl
 }
@@ -161,6 +154,6 @@ shinyHotspotOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::plotOutput(ns("peak_show")),
-    shiny::tableOutput(ns("peak_tbl"))
+    shiny::dataTableOutput(ns("peak_tbl"))
   )
 }
