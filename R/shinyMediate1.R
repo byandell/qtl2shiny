@@ -195,6 +195,9 @@ shinyMediate1Plot <- function(input, output, session,
                         c("Static","Interactive","Summary"),
                         "Static")
   })
+  output$checkplot <- shiny::renderUI({
+    shiny::checkboxInput(ns("checkplot"), "Scatter Plot", input$checkplot)
+  })
   output$local_other <- shiny::renderUI({
     switch(shiny::req(input$med_type),
            expression = shiny::checkboxInput(ns("local"), "Local?", input$local),
@@ -257,10 +260,13 @@ shinyMediate1Plot <- function(input, output, session,
         shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
   })
   output$medUI <- shiny::renderUI({
-    if(shiny::isTruthy(input$checkplot))
-      shinyScatterPlotUI(ns("scatter"))
-    else
-      shiny::uiOutput(ns("mediation"))
+    switch(1 + shiny::isTruthy(input$checkplot),
+           {
+             shiny::uiOutput(ns("mediation"))
+           },
+           {
+             shinyScatterPlotUI(ns("scatter"))
+           })
   })
   output$medOutput <- shiny::renderUI({
     if(shiny::isTruthy(input$checkplot))
@@ -276,7 +282,7 @@ shinyMediate1PlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::strong("Mediation"),
-    shiny::checkboxInput(ns("checkplot"), "Scatter Plot"),
+    shiny::uiOutput(ns("checkplot")),
     shiny::uiOutput(ns("medUI")))
 }
 #' @rdname shinyMediate1Plot

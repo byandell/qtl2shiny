@@ -29,19 +29,19 @@ shinyScatterPlot <- function(input, output, session,
 
   ## Select triad for plots.
   output$triad <- shiny::renderUI({
-    shiny::req(mediate_obj())
-    choices <- levels(mediate_obj()$triad)
-    choices <- choices[choices %in% unique(mediate_obj()$triad)]
+    triad <- shiny::req(mediate_obj())$best$triad
+    choices <- levels(triad)
+    choices <- choices[choices %in% unique(triad)]
     shiny::selectInput(ns("triad"), NULL,
                        choices = choices)
   })
   medID <- reactive({
-    ifelse("symbol" %in% names(shiny::req(mediate_obj())), "symbol", "longname")
+    ifelse("symbol" %in% names(shiny::req(mediate_obj())$best), "symbol", "longname")
   })
   ## Select mediator for plots.
   output$med_name <- shiny::renderUI({
     shiny::req(mediate_obj(), input$triad)
-    choices <- dplyr::filter(mediate_obj(), triad == input$triad)[[medID()]]
+    choices <- dplyr::filter(mediate_obj()$best, triad == input$triad)[[medID()]]
     shiny::selectInput(ns("med_name"), NULL,
                        choices = choices)
   })
@@ -51,8 +51,9 @@ shinyScatterPlot <- function(input, output, session,
     unique(dplyr::filter(patterns(), pheno == med_par$pheno_name)$sdp)
   })
   output$pattern <- shiny::renderUI({
-    shiny::selectInput(ns("pattern"), NULL,
-                       choices = CCSanger::sdp_to_pattern(sdps()))
+    choices <- CCSanger::sdp_to_pattern(sdps())
+     shiny::selectInput(ns("pattern"), NULL,
+                       choices = choices, input$pattern)
   })
   
   scat_dat <- reactive({
@@ -79,6 +80,10 @@ shinyScatterPlot <- function(input, output, session,
 
   ## Scatter plot
   output$scatPlot <- shiny::renderPlot({
+    browser()
+    if(!shiny::isTruthy(patterns())) {
+      return(plot_null("first run\nAllele Patterns"))
+    }
     if(!shiny::isTruthy(scat_dat())) {
       plot_null("too much\nmissing data\nin mediators\nreduce window width")
     } else {
@@ -99,7 +104,7 @@ shinyScatterPlot <- function(input, output, session,
       file.path(paste0("scatter.csv")) },
     content = function(file) {
       shiny::req(mediate_obj())
-      write.csv(mediate_obj(), file)
+      write.csv(mediate_obj()$best, file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
