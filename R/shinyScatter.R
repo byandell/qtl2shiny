@@ -80,7 +80,6 @@ shinyScatterPlot <- function(input, output, session,
 
   ## Scatter plot
   output$scatPlot <- shiny::renderPlot({
-    browser()
     if(!shiny::isTruthy(patterns())) {
       return(plot_null("first run\nAllele Patterns"))
     }
