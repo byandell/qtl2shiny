@@ -26,10 +26,12 @@ shinyScan1Plot <- function(input, output, session,
   
   ## Scan1
   scan_obj <- shiny::reactive({
-    shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(), win_par$window_Mbp)
+    shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(), win_par$window_Mbp,
+               input$sex_type)
     shiny::withProgress(message = "Genome Scan ...", value = 0, {
       shiny::setProgress(1)
-      scan1_covar(phe_df(), cov_mx(), probs_obj()$probs, K_chr(), analyses_df())
+      scan1_covar(phe_df(), cov_mx(), probs_obj()$probs, K_chr(), analyses_df(),
+                  sex_type = input$sex_type)
     })
   })
   
@@ -66,10 +68,13 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(win_par$chr_id, input$scan_window, scan_obj(), probs_obj())
     shiny::withProgress(message = 'Genome LOD Plot ...', value = 0, {
       shiny::setProgress(1)
-      qtl2ggplot::plot_scan1(scan_obj(), probs_obj()$map,
-           lodcolumn = seq(ncol(phe_df())),
+      p <- qtl2ggplot::plot_scan1(scan_obj(), probs_obj()$map,
+           lodcolumn = seq(ncol(scan_obj())),
            chr = win_par$chr_id,
            xlim=input$scan_window)
+      if(ncol(phe_df()) == 1 & ncol(scan_obj()) > 1)
+        p <- p + ggtitle(names(phe_df()))
+      p
     })
   })
 
@@ -175,6 +180,11 @@ shinyScan1Plot <- function(input, output, session,
                  c("LOD","Effects","LOD & Effects","Summary"),
                  input$button)
   })
+  output$sex_type <- shiny::renderUI({
+    shiny::radioButtons(ns("sex_type"), "",
+                        c("A","I","F","M","all"),
+                        input$sex_type, inline = TRUE)
+  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyScan1Plot
@@ -183,6 +193,7 @@ shinyScan1PlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::strong("Genome Scans"),
+    shiny::uiOutput(ns("sex_type")),
     shiny::fluidRow(
       shiny::column(6, shiny::uiOutput(ns("radio"))),
       shiny::column(6, shiny::uiOutput(ns("blups")))),
