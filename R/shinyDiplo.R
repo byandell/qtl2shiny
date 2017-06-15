@@ -72,6 +72,15 @@ shinyDiplo <- function(input, output, session,
                   "recessive","dominant"),
                 input$select)
   })
+  output$sex_type <- shiny::renderUI({
+    choices <- c("A","I","F","M","all")
+    if(ncol(shiny::req(phe_df())) > 1) {
+      choices <- choices[1:4]
+    }
+    shiny::radioButtons(ns("sex_type"), "Sex:",
+                        choices,
+                        input$sex_type, inline = TRUE)
+  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyDiplo
@@ -83,6 +92,7 @@ shinyDiploUI <- function(id) {
       shiny::strong("SNP/Gene Action"),
       shiny::uiOutput(ns("radio")),
       shiny::uiOutput(ns("select")),
+      shiny::uiOutput(ns("sex_type")),
       shiny::uiOutput(ns("dip_input")),
       shiny::textOutput(ns("cc_names"))),
   shiny::mainPanel(

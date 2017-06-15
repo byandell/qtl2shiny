@@ -91,6 +91,8 @@ shinyPattern <- function(input, output, session,
   })
 
   output$scan_pat_lod <- shiny::renderPlot({
+    if(is.null(scan_pat()))
+      return(plot_null())
     shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern LODs ...', value = 0, {
       setProgress(1)
@@ -98,6 +100,8 @@ shinyPattern <- function(input, output, session,
     })
   })
   output$scan_pat_coef <- shiny::renderPlot({
+    if(is.null(scan_pat()))
+      return(plot_null())
     shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern Effects ...', value = 0, {
       setProgress(1)
@@ -114,6 +118,8 @@ shinyPattern <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
 
   output$eff_lodPlot <- shiny::renderPlot({
+    if(is.null(scan_pat()))
+      return(plot_null())
     shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern Effects & LOD ...', value = 0, {
       setProgress(1)
