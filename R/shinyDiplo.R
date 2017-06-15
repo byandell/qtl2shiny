@@ -39,7 +39,7 @@ shinyDiplo <- function(input, output, session,
                          data_path, snp_action)
   
   shiny::callModule(shinyPattern, "dip_pat",
-                    chr_pos, win_par,
+                    input, chr_pos, win_par,
                     phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
                     patterns, snp_action)
   

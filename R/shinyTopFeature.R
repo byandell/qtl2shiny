@@ -30,8 +30,9 @@ shinyTopFeature <- function(input, output, session,
     shiny::withProgress(message = 'Merging gene info ...', value = 0,
     {
       shiny::setProgress(1)
-      qtl2pattern::merge_feature(top_snps_tbl(), snpinfo(),
-                                 snp_scan_obj(), 1.5, 0, gene_exon_tbl())
+      topSNPs(top_snps_tbl(), snpinfo(),
+              snp_scan_obj(), gene_exon_tbl(),
+              snp_par$pheno_name)
     })
   })
   output$top_snp_type <- shiny::renderDataTable({

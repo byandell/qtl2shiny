@@ -1,7 +1,7 @@
 #' Shiny Pattern module
 #'
 #' @param input,output,session standard shiny arguments
-#' @param chr_pos,win_par,phe_df,cov_mx,probs36_obj,K_chr,analyses_df,patterns,snp_action reactive arguments
+#' @param job_par,chr_pos,win_par,phe_df,cov_mx,probs36_obj,K_chr,analyses_df,patterns,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -12,6 +12,8 @@
 #' @importFrom stringr str_split
 #' @importFrom grid plotViewport pushViewport
 #' @importFrom CCSanger sdp_to_pattern
+#' @importFrom qtl2pattern scan_pattern
+#' @importFrom dplyr filter mutate
 #' @importFrom shiny NS reactive req 
 #'   observeEvent
 #'   radioButtons selectInput updateSelectInput
@@ -22,7 +24,7 @@
 #'   downloadButton downloadHandler
 #'   
 shinyPattern <- function(input, output, session,
-                         chr_pos, win_par,
+                         job_par, chr_pos, win_par,
                          phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
                          patterns, snp_action = shiny::reactive({NULL})) {
   ns <- session$ns
@@ -44,7 +46,7 @@ shinyPattern <- function(input, output, session,
   ## Select pattern for plots.
   pats <- shiny::reactive({
     shiny::req(input$pheno_name, patterns())
-    dplyr::filter(patterns(), pheno == input$pheno_name)
+    pull_patterns(patterns(), input$pheno_name)
   })
   pattern_choices <- shiny::reactive({
     CCSanger::sdp_to_pattern(pats()$sdp)
@@ -81,12 +83,12 @@ shinyPattern <- function(input, output, session,
     req(snp_action())
     pheno_in <- shiny::req(input$pheno_name)
     shiny::req(phe_df(), cov_mx(), probs36_obj(), K_chr(),
-               pats(), analyses_df())
+               pats(), analyses_df(), job_par$sex_type)
     withProgress(message = 'Scan Patterns ...', value = 0, {
       setProgress(1)
       scan1_pattern(pheno_in, phe_df(), cov_mx(), 
                     probs36_obj(), K_chr(), analyses_df(),
-                                pats(), input$blups)
+                                pats(), job_par$sex_type, input$blups)
     })
   })
 
@@ -173,7 +175,7 @@ shinyPattern <- function(input, output, session,
       file.path(paste0("pattern", "_", snp_action(), "_scan_", chr_pos(), ".pdf"))
     },
     content = function(file) {
-      shiny::req(scan_pat(), pattern_choices())
+      shiny::req(scan_pat(), pattern_choices(), job_par$sex_type)
       scan_in <- shiny::req(scan_pat())
       top_panel_prop <- 0.65
       pdf(file, width = 9, height = 9)
@@ -183,7 +185,7 @@ shinyPattern <- function(input, output, session,
         
         scan_now <- scan1_pattern(pheno_in, phe_df(), cov_mx(), 
                                   probs36_obj(), K_chr(), analyses_df(),
-                                  pats, input$blups)
+                                  pats, job_par$sex_type, input$blups)
         
         scan_pat_type(scan_now, probs36_obj()$map, "coef_and_lod", pat_choices, pheno_in)
       }

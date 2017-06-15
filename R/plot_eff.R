@@ -19,13 +19,13 @@ plot_eff <- function(pheno, eff_obj, map, scan_obj, xlim = NULL,
   
   main <- pheno
   effcol <- match(pheno, names(eff_obj))
-  if(is.na(effcol))
+  if(any(is.na(effcol)))
     return(plot_null("effect name mismatch"))
   
   lodcol <- match(pheno, colnames(scan_obj))
-  if(is.na(lodcol)) # Probably all sex
+  if(any(is.na(lodcol))) # Probably all sex
     lodcol <- match("AddSex", colnames(scan_obj))
-  if(is.na(lodcol))
+  if(any(is.na(lodcol)))
     return(plot_null("scan name mismatch"))
   colnames(scan_obj)[lodcol] <- pheno
   

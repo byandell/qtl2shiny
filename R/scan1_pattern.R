@@ -1,9 +1,16 @@
-#' scan1 of pattern when multiple traits may have possibly different covariates
-#' 
-#' @importFrom qtl2pattern scan_pattern
-#' 
+pull_patterns <- function(patterns, pheno_name) {
+  if(pheno_name %in% patterns$pheno) {
+    dplyr::filter(patterns, pheno == pheno_name)
+  }
+  else {
+    out <- dplyr::filter(patterns, pheno == "AddSex")
+    if(nrow(out))
+      out <- dplyr::mutate(out, pheno = pheno_name)
+    out
+  }
+}
 scan1_pattern <- function(pheno, phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
-                          pats, blups) {
+                          pats, sex_type, blups) {
   analyses_df <- which_covar(analyses_df)
   wh <- match(pheno, names(phe_df))
   covars <- unlist(analyses_df[wh,])
