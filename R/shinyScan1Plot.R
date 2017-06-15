@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df reactive arguments
+#' @param job_par,win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -20,18 +20,18 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 shinyScan1Plot <- function(input, output, session,
-                  win_par, 
+                  job_par, win_par, 
                   phe_df, cov_mx, probs_obj, K_chr, analyses_df) {
   ns <- session$ns
   
   ## Scan1
   scan_obj <- shiny::reactive({
     shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(), win_par$window_Mbp,
-               input$sex_type)
+               job_par$sex_type)
     shiny::withProgress(message = "Genome Scan ...", value = 0, {
       shiny::setProgress(1)
       scan1_covar(phe_df(), cov_mx(), probs_obj()$probs, K_chr(), analyses_df(),
-                  sex_type = input$sex_type)
+                  sex_type = job_par$sex_type)
     })
   })
   
@@ -80,11 +80,12 @@ shinyScan1Plot <- function(input, output, session,
 
   ## Coefficient Effects.
   eff_obj <- shiny::reactive({
-    shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
+    shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(),
+               job_par$sex_type)
     shiny::withProgress(message = 'Effect scans ...', value = 0, {
       shiny::setProgress(1)
-      qtl2pattern::listof_scan1coef(probs_obj()$probs, phe_df(), K_chr(), cov_mx(),
-                                    input$blups)
+      scan1_effect(probs_obj()$probs, phe_df(), K_chr(), cov_mx(),
+                   job_par$sex_type, input$blups)
     })
   })
   output$effPlot <- shiny::renderPlot({
@@ -180,11 +181,6 @@ shinyScan1Plot <- function(input, output, session,
                  c("LOD","Effects","LOD & Effects","Summary"),
                  input$button)
   })
-  output$sex_type <- shiny::renderUI({
-    shiny::radioButtons(ns("sex_type"), "",
-                        c("A","I","F","M","all"),
-                        input$sex_type, inline = TRUE)
-  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyScan1Plot
@@ -193,7 +189,6 @@ shinyScan1PlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::strong("Genome Scans"),
-    shiny::uiOutput(ns("sex_type")),
     shiny::fluidRow(
       shiny::column(6, shiny::uiOutput(ns("radio"))),
       shiny::column(6, shiny::uiOutput(ns("blups")))),

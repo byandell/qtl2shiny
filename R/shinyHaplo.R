@@ -26,7 +26,8 @@ shinyHaplo <- function(input, output, session,
 
   ## Genome Scan.
   shiny::callModule(shinyScan1Plot, "hap_scan", 
-             win_par, phe_df, cov_mx, probs_obj, K_chr, analyses_df)
+             input, win_par, 
+             phe_df, cov_mx, probs_obj, K_chr, analyses_df)
   
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
@@ -65,6 +66,11 @@ shinyHaplo <- function(input, output, session,
                  c("Genome Scans","SNP Association","Allele Pattern","Mediation"),
                  input$button)
   })
+  output$sex_type <- shiny::renderUI({
+    shiny::radioButtons(ns("sex_type"), "Sex:",
+                        c("A","I","F","M","all"),
+                        input$sex_type, inline = TRUE)
+  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyHaplo
@@ -75,6 +81,7 @@ shinyHaploUI <- function(id) {
     shiny::sidebarPanel(
       shiny::strong("SNP/Gene Additive"),
       shiny::uiOutput(ns("radio")),
+      shiny::uiOutput(ns("sex_type")),
       shiny::uiOutput(ns("hap_input")),
       shiny::textOutput(ns("cc_names"))),
     shiny::mainPanel(

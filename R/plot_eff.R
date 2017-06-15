@@ -18,17 +18,27 @@ plot_eff <- function(pheno, eff_obj, map, scan_obj, xlim = NULL,
     return(NULL)
   
   main <- pheno
-  lodcol <- match(pheno, names(eff_obj))
+  effcol <- match(pheno, names(eff_obj))
+  if(is.na(effcol))
+    return(plot_null("effect name mismatch"))
+  
+  lodcol <- match(pheno, colnames(scan_obj))
+  if(is.na(lodcol)) # Probably all sex
+    lodcol <- match("AddSex", colnames(scan_obj))
+  if(is.na(lodcol))
+    return(plot_null("scan name mismatch"))
+  colnames(scan_obj)[lodcol] <- pheno
+  
   chr_id <- names(map)[1]
   if(!addlod) {
     max_pos <- max(scan_obj, map, lodcolumn=lodcol)$pos[1]
-    plot(eff_obj[[lodcol]], map,
+    plot(eff_obj[[effcol]], map,
          xlim=xlim,
          main = main,
          legend.position = "right",
          maxpos = max_pos, maxcol = lodcol)
   } else { # coef_and_lod
-    plot(eff_obj[[lodcol]], map,
+    plot(eff_obj[[effcol]], map,
          scan1_output = subset(scan_obj, map,
                                chr = chr_id,
                                lodcolumn = lodcol),

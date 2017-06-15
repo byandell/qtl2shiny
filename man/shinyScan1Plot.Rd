@@ -6,8 +6,8 @@
 \alias{shinyScan1PlotOutput}
 \title{Shiny coefficient analysis and plot module}
 \usage{
-shinyScan1Plot(input, output, session, win_par, phe_df, cov_mx, probs_obj,
-  K_chr, analyses_df)
+shinyScan1Plot(input, output, session, job_par, win_par, phe_df, cov_mx,
+  probs_obj, K_chr, analyses_df)
 
 shinyScan1PlotUI(id)
 
@@ -16,7 +16,7 @@ shinyScan1PlotOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, phe_df, cov_mx, probs_obj, K_chr, analyses_df}{reactive arguments}
+\item{job_par, win_par, phe_df, cov_mx, probs_obj, K_chr, analyses_df}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }
