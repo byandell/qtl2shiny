@@ -48,8 +48,9 @@ shinyAllelePat <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10))
   
   dropHilit <- reactive({
-    max(unclass(shiny::req(snp_scan_obj()))) - 
-      shiny::req(snp_par$minLOD)
+    max(0,
+        max(unclass(shiny::req(snp_scan_obj()))) - 
+            shiny::req(snp_par$minLOD))
   })
   
   output$snpPatternPlot <- shiny::renderPlot({

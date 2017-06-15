@@ -67,8 +67,12 @@ shinyHaplo <- function(input, output, session,
                  input$button)
   })
   output$sex_type <- shiny::renderUI({
+    choices <- c("A","I","F","M","all")
+    if(ncol(shiny::req(phe_df())) > 1) {
+      choices <- choices[1:4]
+    }
     shiny::radioButtons(ns("sex_type"), "Sex:",
-                        c("A","I","F","M","all"),
+                        choices,
                         input$sex_type, inline = TRUE)
   })
 }

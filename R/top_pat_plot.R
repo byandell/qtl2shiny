@@ -30,6 +30,9 @@ top_pat_plot <- function(pheno,
       mytitle <- paste(mytitle, snp_action)
   }
   legend.title <- "pattern"
+  if(length(pheno) == 1 & ncol(scan_obj) > 1) {
+    pheno <- colnames(scan_obj)
+  }
   if(length(pheno) == 1) {
     facet <- NULL
   } else {
@@ -37,8 +40,14 @@ top_pat_plot <- function(pheno,
       legend.title <- "pheno"
   }
 
+  lodcol <- match(pheno, colnames(scan_obj))
+  if(is.na(lodcol)) # Probably all sex
+    lodcol <- match("AddSex", colnames(scan_obj))
+  if(is.na(lodcol))
+    return(plot_null("scan name mismatch"))
+  colnames(scan_obj)[lodcol] <- pheno
   scan_obj <- subset(scan_obj, 
-                     lodcolumn = match(pheno, dimnames(scan_obj)[[2]]))
+                     lodcolumn = lodcol)
   
   plot(scan_obj, map, seq_along(pheno),
        xlim = xlim, main = mytitle,
