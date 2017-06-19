@@ -46,7 +46,7 @@ shinyPattern <- function(input, output, session,
   ## Select pattern for plots.
   pats <- shiny::reactive({
     shiny::req(input$pheno_name, patterns())
-    pull_patterns(patterns(), input$pheno_name)
+    pull_patterns(patterns(), names(shiny::req(phe_df())))
   })
   pattern_choices <- shiny::reactive({
     CCSanger::sdp_to_pattern(pats()$sdp)

@@ -74,7 +74,7 @@ shinyDiplo <- function(input, output, session,
   })
   output$sex_type <- shiny::renderUI({
     choices <- c("A","I","F","M","all")
-    if(ncol(shiny::req(phe_df())) > 1) {
+    if(ncol(shiny::req(phe_df())) > 1 | shiny::req(input$button) == "Genome Scans") {
       choices <- choices[1:4]
     }
     shiny::radioButtons(ns("sex_type"), "Sex:",
