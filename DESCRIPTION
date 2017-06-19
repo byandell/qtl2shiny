@@ -1,7 +1,7 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for R/qtl2 and R/doqtl2
-Version: 0.7.2
+Version: 0.7.3
 Date: 2017-06-19
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
@@ -9,10 +9,10 @@ Description: Shiny Interface for R/qtl2 and R/doqtl2.
 License: GPL-3
 LazyData: TRUE
 Imports:
-    ggplot2, dplyr, tidyr,
+    tidyverse,
     shiny,shinydashboard,
     gdata, grid, GGally,
-    plotly, RSQLite,
+    plotly, RSQLite, dbplyr,
     qtl2scan (>= 0.5-13),
     qtl2ggplot,
     qtl2pattern,

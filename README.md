@@ -73,7 +73,7 @@ and [RcppEigen](https://github.com/RcppCore/RcppEigen).
 You will also need the following packages for qtl2shiny dependencies:
 
     install.packages(c("tidyverse", "RColorBrewer", "feather",
-      "shiny", "shinydashboard", "grid", "gridBase", "gdata", "GGally", "Rcpp", "mnormt", "corpcor"))
+      "shiny", "shinydashboard", "grid", "gridBase", "gdata", "GGally", "Rcpp", "mnormt", "corpcor", "dbplyr"))
 
 Then, install R/qtl2 using `devtools::install_github()`.
 
