@@ -5,7 +5,7 @@
 #' @importFrom qtl2scan scan1
 #' @importFrom dplyr select
 #'
-scan1_covar <- function(phe_df, cov_mx, probs_obj, K_chr, analyses_df, ...) {
+scan1_covar <- function(phe_df, cov_df, probs_obj, K_chr, analyses_df, ...) {
   # This is set up for different types of models (e.g. "binary"),
   # but qtl2scan::scan1 ignores "binary" this right now if kinship is provided.
   # So below, force kinship to NULL if any "binary", 
@@ -17,11 +17,11 @@ scan1_covar <- function(phe_df, cov_mx, probs_obj, K_chr, analyses_df, ...) {
   ucov <- unique(covarset)
 
   wh <- which(covarset == ucov[1])
-  scans <- scanfn(probs_obj, phe_df, K_chr, cov_mx, analyses_df, wh, models, ...)
+  scans <- scanfn(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models, ...)
   attr(scans, "hsq") <- NULL
   if(length(ucov) > 1) for(i in ucov[-1]) {
     wh <- which(covarset == i)
-    tmp <- scanfn(probs_obj, phe_df, K_chr, cov_mx, analyses_df, wh, models, ...)
+    tmp <- scanfn(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models, ...)
     attr(tmp, "hsq") <- NULL
     scans <- cbind(scans, tmp)
   }
@@ -29,7 +29,7 @@ scan1_covar <- function(phe_df, cov_mx, probs_obj, K_chr, analyses_df, ...) {
   modify_object(scans, scans[,order(-apply(scans,2,max)), drop=FALSE])
 }
 
-scanfn <- function(probs_obj, phe_df, K_chr, cov_mx, analyses_df, wh, models,
+scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
                    sex_type = c("A","I","F","M","all"), ...) {
   
   sex_type <- match.arg(sex_type)
@@ -39,7 +39,9 @@ scanfn <- function(probs_obj, phe_df, K_chr, cov_mx, analyses_df, wh, models,
   # scan1 for wh phenotypes using their covariates.
   phe_df <- phe_df[, wh, drop=FALSE]
   covars <- unlist(analyses_df[wh[1],])
-  cov_mx <- cov_mx[, covars, drop=FALSE]
+  cov_df <- as.data.frame(cov_df[, covars, drop=FALSE])
+  f = as.formula(paste("~", paste(covars, collapse = "+")))
+  cov_mx = model.matrix(f, data = cov_df)[,-1]
   models <- models[wh]
   if(all(models == models[1])) {
     kinship <- if(models[1] == "binary") NULL else K_chr

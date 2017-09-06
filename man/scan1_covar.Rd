@@ -4,7 +4,7 @@
 \alias{scan1_covar}
 \title{scan1 for multiple traits with possibly different covariates}
 \usage{
-scan1_covar(phe_df, cov_mx, probs_obj, K_chr, analyses_df, ...)
+scan1_covar(phe_df, cov_df, probs_obj, K_chr, analyses_df, ...)
 }
 \description{
 scan1 for multiple traits with possibly different covariates
