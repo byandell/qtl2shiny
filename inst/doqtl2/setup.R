@@ -2,8 +2,8 @@ dirpath <- "~/Documents/Research/attie_alan/DO/data"
 datapath <- file.path(dirpath, "DerivedData")
 
 pmap <- readRDS(file.path(datapath, "pmap.rds"))
-covar <- readRDS(file.path(datapath, "covar.rds"))
 
+covar        <- DOread::setup_covar(datapath)
 peaks        <- DOread::setup_peaks(datapath) 
 analyses_tbl <- DOread::setup_analyses(peaks, datapath)
 pheno_data   <- DOread::setup_data(analyses_tbl, peaks, datapath)
