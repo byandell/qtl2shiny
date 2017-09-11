@@ -57,16 +57,10 @@ shinyScatterPlot <- function(input, output, session,
   })
   
   scat_dat <- reactive({
-    shiny::req(geno_max(), phe_df(), input$med_name, input$pattern)
-    medLs <- shiny::req(med_ls())
-    sdp <- sdps()[CCSanger::sdp_to_pattern(sdps()) == input$pattern]
-    id <- medLs[[2]]$id[medLs[[2]][[medID()]] == input$med_name]
-    if(length(id) != 1)
-      return(NULL)
-    CausalMST:::med_scatter(geno_max(), phe_df(), medLs[[1]][, id, drop = FALSE],
-                            K_chr()[[1]], cov_mx(), medLs$cov_med,
-                            qtl2scan::fit1,
-                            sdp = sdp, allele = TRUE)
+    shiny::req(geno_max(), phe_df(), med_ls(), medID(),
+               input$med_name, input$pattern)
+    med_scat(med_ls(), geno_max(), phe_df(), K_chr()[[1]], cov_mx(), 
+             input$pattern, input$med_name, medID())
   })
   
   ## Select plot format.

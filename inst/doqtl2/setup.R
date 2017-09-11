@@ -3,11 +3,11 @@ datapath <- file.path(dirpath, "DerivedData")
 
 pmap <- readRDS(file.path(datapath, "pmap.rds"))
 
-covar        <- DOread::setup_covar(datapath)
-peaks        <- DOread::setup_peaks(datapath) 
-analyses_tbl <- DOread::setup_analyses(peaks, datapath)
-pheno_data   <- DOread::setup_data(analyses_tbl, peaks, datapath)
-pheno_type   <- DOread::setup_type(analyses_tbl)
+filtered <- file.path(datapath, "filtered")
+covar        <- readRDS(file.path(filtered, "covar.rds"))
+peaks        <- readRDS(file.path(filtered, "peaks.rds"))
+analyses_tbl <- readRDS(file.path(filtered, "analyses.rds"))
+pheno_data   <- readRDS(file.path(filtered, "pheno.rds"))
+pheno_type   <- readRDS(file.path(filtered, "pheno_type.rds"))
 
 K <- readRDS(file.path(datapath, "kinship.rds"))
-

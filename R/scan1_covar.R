@@ -40,13 +40,11 @@ scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
   phe_df <- phe_df[, wh, drop=FALSE]
   covars <- unlist(analyses_df[wh[1],])
   cov_df <- as.data.frame(cov_df[, covars, drop=FALSE])
-  f = as.formula(paste("~", paste(covars, collapse = "+")))
-  cov_mx = model.matrix(f, data = cov_df)[,-1]
   models <- models[wh]
   if(all(models == models[1])) {
     kinship <- if(models[1] == "binary") NULL else K_chr
     if(length(covars)) {
-      scansex(probs_obj, phe_df, kinship, cov_mx,
+      scansex(probs_obj, phe_df, kinship, cov_df,
               models[1], sex_type)
     } else { # no covariates (unlikely)
       qtl2scan::scan1(probs_obj, phe_df, kinship,
@@ -58,14 +56,14 @@ scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
     kinship <- if(umod[1] == "binary") NULL else K_chr
     if(length(covars)) {
       out <- scansex(probs_obj, phe_df[, whm, drop=FALSE], 
-                     kinship, cov_mx,
+                     kinship, cov_df,
                      umod[1], sex_type)
       attr(out, "hsq") <- NULL
       for(mod in umod[-1]) {
         whm <- which(models == mod)
         kinship <- if(mod == "binary") NULL else K_chr
         tmp <- scansex(probs_obj, phe_df[, whm, drop=FALSE], 
-                       kinship, cov_mx, mod, sex_type)
+                       kinship, cov_df, mod, sex_type)
         attr(tmp, "hsq") <- NULL
         out <- cbind(out, tmp)
       }
@@ -93,40 +91,45 @@ scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
 
 scansex <- function(genoprobs, pheno, kinship, addcovar = NULL,
                     model, sex_type) {
-  if(sex_type == "all") {
-    out <- qtl2scan::scan1(genoprobs, pheno, kinship, 
-                           addcovar,
-                           model = model)
-    out <- cbind(out,
-                 qtl2scan::scan1(genoprobs, pheno, kinship, 
-                                 addcovar, 
-                                 intcovar = addcovar[,"sex", drop = FALSE],
-                                 model = model))
-    out <- cbind(out,
-                 qtl2scan::scan1(genoprobs, pheno, kinship, 
-                                 addcovar[addcovar[, "sex"] == 0,, drop = FALSE],
-                                 model = model))
-    out <- cbind(out,
-                 qtl2scan::scan1(genoprobs, pheno, kinship, 
-                                 addcovar[addcovar[, "sex"] == 1,, drop = FALSE],
-                                 model = model))
-    colnames(out) <- c("AddSex","IntSex","Female","Male")
-    out
-  } else {
-    intcovar <- NULL
-    switch(sex_type,
-           "I" = {
-             intcovar <- addcovar[,"sex", drop = FALSE]
-           },
-           "F" = {
-             addcovar <- addcovar[addcovar[, "sex"] == 0,, drop = FALSE]
-           },
-           "M" = {
-             addcovar <- addcovar[addcovar[, "sex"] == 1,, drop = FALSE]
-           })
-    qtl2scan::scan1(genoprobs, pheno, kinship, addcovar, 
-                    intcovar = intcovar,
-                    model = model)
+  intcovar <- NULL
+  if(!is.null(addcovar)) {
+    if(sex_type == "all") {
+      out <- scansex(genoprobs, pheno, kinship, addcovar, model, "A")
+      out <- cbind(out,
+                   scansex(genoprobs, pheno, kinship, addcovar, model, "I"))
+      out <- cbind(out,
+                   scansex(genoprobs, pheno, kinship, addcovar, model, "F"))
+      out <- cbind(out,
+                   scansex(genoprobs, pheno, kinship, addcovar, model, "M"))
+      colnames(out) <- c("AddSex","IntSex","Female","Male")
+      return(out)
+    } else {
+      intcovar <- NULL
+      switch(sex_type,
+             "I" = {
+               intcovar <- model.matrix(~ sex, addcovar)[, -1, drop = FALSE]
+             },
+             "F" = {
+               addcovar <- addcovar[addcovar$sex == "F",, drop = FALSE]
+             },
+             "M" = {
+               addcovar <- addcovar[addcovar$sex == "M",, drop = FALSE]
+             })
+    }
+    addcovar <- covar_df_mx(addcovar)
   }
+  qtl2scan::scan1(genoprobs, pheno, kinship, addcovar, 
+                  intcovar = intcovar,
+                  model = model)
+}
+covar_df_mx <- function(addcovar) {
+  if(is.data.frame(addcovar)) {
+    f <- formula(paste("~", paste(names(addcovar), collapse = "+")))
+    addcovar <- model.matrix(f, addcovar)[,-1, drop = FALSE]
+    m <- match("sexM", colnames(addcovar))
+    if(!is.na(m))
+      colnames(addcovar)[m] <- "sex"
+  }
+  addcovar
 }
 
