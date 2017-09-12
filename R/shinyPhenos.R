@@ -25,33 +25,40 @@ shinyPhenos <- function(input, output, session,
   ## Set up analyses data frame.
   analyses_df <- shiny::reactive({
     ## Filter by dataset.
-    dataset <- shiny::req(setup_par$dataset)
-    dat <- analyses_tbl()
-    if(!("all" %in% dataset)) {
-      dat <- dplyr::filter(dat, pheno_type %in% dataset)
-    }
-
-    ## Filter by Peak Position if use_pos=TRUE
-    if(isTruthy(input$use_pos)) {
-      chr_id <- shiny::req(chr_peak$chr_id)
-      peak_Mbp <- shiny::req(chr_peak$peak_Mbp)
-      window_Mbp <- 2 ^ shiny::req(chr_peak$window_Mbp)
-      if(window_Mbp > 0) {
-        ## Filter peaks
-        peaks <- dplyr::filter(peaks_tbl(), chr == chr_id,
-                 pos >= peak_Mbp - window_Mbp,
-                 pos <= peak_Mbp + window_Mbp)
-        dat <- dat[dat$output %in% peaks$output,]
+    dataset <- setup_par$dataset
+    if(shiny::isTruthy(dataset)) {
+      dat <- analyses_tbl()
+      
+      if(!("all" %in% dataset)) {
+        dat <- dplyr::filter(dat, pheno_type %in% dataset)
       }
+      
+      ## Filter by Peak Position if use_pos=TRUE
+      if(isTruthy(input$use_pos)) {
+        chr_id <- shiny::req(chr_peak$chr_id)
+        peak_Mbp <- shiny::req(chr_peak$peak_Mbp)
+        window_Mbp <- 2 ^ shiny::req(chr_peak$window_Mbp)
+        if(window_Mbp > 0) {
+          ## Filter peaks
+          peaks <- dplyr::filter(peaks_tbl(), chr == chr_id,
+                                 pos >= peak_Mbp - window_Mbp,
+                                 pos <= peak_Mbp + window_Mbp)
+          dat <- dat[dat$output %in% peaks$output,]
+        }
+      }
+    } else {
+      dat <- NULL
     }
     dat
   })
 
   # Choose Phenotypes for Analysis.
   output$pheno_names <- shiny::renderUI({
-    phenames <- sort(analyses_df()$pheno)
-
-    selected <- input$pheno_names
+    phenames <- selected <- input$pheno_names
+    if(shiny::isTruthy(analyses_df())) {
+      phenames <- sort(analyses_df()$pheno)
+    }
+    
     if("all" %in% selected)
       selected <- c(selected[!(selected %in% c("all","none"))],
                     phenames)
