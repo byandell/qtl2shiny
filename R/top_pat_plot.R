@@ -30,9 +30,6 @@ top_pat_plot <- function(pheno,
       mytitle <- paste(mytitle, snp_action)
   }
   legend.title <- "pattern"
-  if(length(pheno) == 1 & ncol(scan_obj) > 1) {
-    pheno <- colnames(scan_obj)
-  }
   if(length(pheno) == 1) {
     facet <- NULL
   } else {
