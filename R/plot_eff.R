@@ -44,6 +44,7 @@ plot_eff <- function(pheno, eff_obj, map, scan_obj, xlim = NULL,
                                lodcolumn = lodcol),
          xlim = xlim,
          maxcol = lodcol,
+         legend.position_lod = "none",
          main = main)
   }
 }
