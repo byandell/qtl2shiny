@@ -14,12 +14,12 @@ med_test <- function(med_ls, geno_max, phe_df, kinship, cov_tar,
                            data_type = data_type)
 }
 
-med_scat <- function(med_ls, geno_max, phe_df, kinship, cov_tar, pattern, med_name, medID) {
+med_scat <- function(med_ls, geno_max, phe_df, kinship, cov_tar, sdps, pattern, med_name, medID) {
   
   if(is.list(kinship))
     kinship <- kinship[[1]]
   
-  sdp <- sdps()[CCSanger::sdp_to_pattern(sdps()) == pattern]
+  sdp <- sdps[CCSanger::sdp_to_pattern(sdps) == pattern]
   id <- med_ls[[2]]$id[med_ls[[2]][[medID]] == med_name]
   if(length(id) != 1)
     return(NULL)

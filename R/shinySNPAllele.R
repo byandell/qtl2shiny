@@ -41,7 +41,7 @@ shinySNPAllele <- function(input, output, session,
                   win_par, pheno_names, probs_obj,
                   data_path)
   snpinfo <- reactive({
-    snpprobs_obj()$snpinfo
+    shiny::req(snpprobs_obj())$snpinfo
   })
   
   ## SNP Scan.
@@ -58,12 +58,15 @@ shinySNPAllele <- function(input, output, session,
   })
   
   # Minimum LOD for SNP top values.
-  output$minLOD <- shiny::renderUI({
+  minLOD <- reactive({
     if(shiny::isTruthy(input$minLOD)) {
-      value <- input$minLOD
+      input$minLOD
     } else {
-      value <- max(3, round(max(unclass(shiny::req(snp_scan_obj()))), 1) - 1.5)
+      max(3, round(max(unclass(shiny::req(snp_scan_obj()))), 1) - 1.5)
     }
+  })
+  output$minLOD <- shiny::renderUI({
+    value <- minLOD()
     shiny::numericInput(ns("minLOD"), "LOD threshold", value, min = 0, step = 0.5)
   })
   
@@ -71,7 +74,7 @@ shinySNPAllele <- function(input, output, session,
   top_snps_tbl <- shiny::reactive({
     shiny::req(snp_action(), snpinfo())
     drop.hilit <- max(unclass(shiny::req(snp_scan_obj()))) - 
-      shiny::req(input$minLOD)
+      minLOD() 
     shiny::withProgress(message = 'Get Top SNPs ...', value = 0, {
       shiny::setProgress(1)
       qtl2pattern::top_snps_all(snp_scan_obj(),
@@ -186,13 +189,17 @@ shinySNPAllele <- function(input, output, session,
   
   ## Return patterns
   shiny::reactive({ # patterns
-    dplyr::arrange(
-      dplyr::mutate(
-        dplyr::filter(
-          summary(top_snps_tbl()), 
-          max_lod >= 3), 
-        contrast = snp_action()), 
-      dplyr::desc(max_lod))
+    if(shiny::isTruthy(snp_action()) && shiny::isTruthy(top_snps_tbl())) {
+      dplyr::arrange(
+        dplyr::mutate(
+          dplyr::filter(
+            summary(top_snps_tbl()), 
+            max_lod >= 3), 
+          contrast = snp_action()), 
+        dplyr::desc(max_lod))
+    } else {
+      NULL
+    }
   })
 }
 #' @param id identifier for \code{\link{shinySNPAllele}} use

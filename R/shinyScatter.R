@@ -57,9 +57,9 @@ shinyScatterPlot <- function(input, output, session,
   })
   
   scat_dat <- reactive({
-    shiny::req(geno_max(), phe_df(), med_ls(), medID(),
+    shiny::req(geno_max(), phe_df(), med_ls(), medID(), sdps(),
                input$med_name, input$pattern)
-    med_scat(med_ls(), geno_max(), phe_df(), K_chr()[[1]], cov_mx(), 
+    med_scat(med_ls(), geno_max(), phe_df(), K_chr()[[1]], cov_mx(), sdps(),
              input$pattern, input$med_name, medID())
   })
   
