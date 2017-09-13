@@ -155,7 +155,7 @@ shinyMediate1Plot <- function(input, output, session,
   })
 
   output$medSummary <- shiny::renderDataTable({
-    mediate_obj()
+    shiny::req(mediate_obj())$best
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
 
@@ -213,7 +213,7 @@ shinyMediate1Plot <- function(input, output, session,
       file.path(paste0("mediate_", chr_id(), "_", win_par$peak_Mbp, ".csv")) },
     content = function(file) {
       shiny::req(mediate_obj())
-      write.csv(mediate_obj(), file)
+      write.csv(mediate_obj()$best, file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
