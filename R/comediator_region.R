@@ -15,6 +15,8 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
   
   # Covariates used by comediators.
   covars <- colnames(covar)
+  covars <- covars[!is.na(match(covars, colnames(annot)))]
+  
   # Replace any NA with FALSE.
   annot[, covars] <- apply(annot[, covars], 2, 
                            function(x) ifelse(is.na(x), FALSE, x))
