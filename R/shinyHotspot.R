@@ -41,58 +41,35 @@ shinyHotspot <- function(input, output, session,
                 selected = selected,
                 multiple = TRUE)
   })
-  scan_obj_all <- shiny::reactive({
-    shiny::req(input$hotspot)
-    map_chr <- chr_names()
-    n_chr <- length(map_chr)
-    peak_window <- shiny::req(win_par$window_Mbp)
-    if(is.null(peak_window)) {
-      NULL
-    } else {
-      peak_window <- 2 ^ peak_window
-      pheno_types <- pheno_type()
-      map <- pmap_obj()
-      out_peaks <- matrix(0, length(unlist(map)),
-                                  length(pheno_types),
-                                  dimnames = list(qtl2scan:::map2markernames(map), pheno_types))
-      
-      peaks <- peaks_tbl()
-      index1 <- 1
-      shiny::withProgress(message = 'Hot peak windowing ...', value = 0,
-                   {
-                     for(chri in map_chr) {
-                       shiny::incProgress(1/n_chr, detail = paste("chr", chri))
-                       mapi <- map[[chri]]
-                       index2 <- index1 + length(mapi) - 1
-                       for(phenoj in pheno_types) {
-                         if(phenoj=="all")
-                           posi <- peaks
-                         else
-                           posi <- dplyr::filter(peaks, pheno_type == phenoj)
-                         posi <- dplyr::filter(posi, chr==chri)$pos
-                         out_peaks[seq(index1, index2),phenoj] <-
-                           apply(outer(posi, mapi,
-                                       function(x,y,z) abs(x-y) <= z,
-                                       peak_window),
-                                 2, sum)
-                       }
-                       index1 <- index2 + 1
-                     }
-                   })
-      class(out_peaks) <- c("scan1", "matrix")
-      out_peaks
+  shiny::observeEvent(input$chr_ct, {
+    is_all <- grep("all", input$chr_ct)
+    if(length(is_all)) {
+      if(length(input$chr_ct) > 1) {
+        selected <- input$chr_ct[-is_all]
+        choices <- chr_names()
+        shiny::updateSelectInput(session, "chr_ct", strong("Chr"),
+                                 choices = c("all", choices),
+                                 selected = selected)
+      }
     }
+  })
+  scan_obj_all <- shiny::reactive({
+    shiny::req(input$hotspot, win_par$window_Mbp)
+    shiny::withProgress(message = 'Hotspot scan ...', value = 0,
+    {
+      shiny::setProgress(1)
+      hotspot(pmap_obj(), peaks_tbl(), 2^win_par$window_Mbp)
+    })
   })
   
   scan_obj <- shiny::reactive({
     out_peaks <- scan_obj_all()
-    map <- pmap_obj()
     shiny::withProgress(message = 'Hotspot search ...', value = 0,
     {
       shiny::setProgress(1)
       chr_ct <- input$chr_ct
       if(!("all" %in% chr_ct)) {
-        out_peaks <- subset(out_peaks, map, chr_ct)
+        out_peaks <- subset(out_peaks, chr_ct)
       }
     })
     out_peaks
@@ -100,12 +77,8 @@ shinyHotspot <- function(input, output, session,
 
   output$peak_show <- shiny::renderPlot({
     peak_set <- shiny::req(set_par$dataset)
-    map <- pmap_obj()
-    chr_ct <- shiny::req(input$chr_ct)
-    if(!("all" %in% chr_ct)) {
-      map <- map[shiny::req(chr_names()) %in% chr_ct]
-    }
-    out_peaks <- scan_obj()
+    map <- scan_obj()$map
+    out_peaks <- scan_obj()$scan
     shiny::withProgress(message = 'Hotspot show ...',
                  value = 0, {
       shiny::setProgress(1)
@@ -132,18 +105,16 @@ shinyHotspot <- function(input, output, session,
   scan_tbl <- shiny::reactive({
     peak_set <- shiny::req(set_par$dataset)
     lodcol <- match(shiny::req(set_par$dataset), pheno_type(), pmap_obj())
-    scan <- scan_obj()
+    scan <- scan_obj()$scan
+    map <- scan_obj()$map
     shiny::withProgress(message = 'Hotspot summary ...', value = 0, {
       shiny::setProgress(1)
-      chr <- sapply(pmap_obj(), 
-                    function(map, nms) any(nms %in% names(map)), 
-                    rownames(scan))
-      chr <- names(chr)[chr]
+      chr <- names(map)
       dplyr::select(
         dplyr::rename(
           summary(
             subset(scan, lodcolumn = peak_set),
-            pmap_obj(), chr = chr),
+            map, chr = chr),
           count = lod),
         -marker)
     })
