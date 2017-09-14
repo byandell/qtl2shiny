@@ -54,11 +54,11 @@ shinyHotspot <- function(input, output, session,
     }
   })
   scan_obj_all <- shiny::reactive({
-    shiny::req(input$hotspot, win_par$window_Mbp)
+    shiny::req(input$hotspot, win_par$window_Mbp, input$minLOD)
     shiny::withProgress(message = 'Hotspot scan ...', value = 0,
     {
       shiny::setProgress(1)
-      hotspot(pmap_obj(), peaks_tbl(), 2^win_par$window_Mbp)
+      hotspot(pmap_obj(), peaks_tbl(), 2^win_par$window_Mbp, input$minLOD)
     })
   })
   
@@ -76,53 +76,89 @@ shinyHotspot <- function(input, output, session,
   })
 
   output$peak_show <- shiny::renderPlot({
-    peak_set <- shiny::req(set_par$dataset)
+    if(shiny::isTruthy(set_par$dataset)) {
+      peak_set <- set_par$dataset
+    } else {
+      peak_set <- "all"
+    }
     map <- scan_obj()$map
     out_peaks <- scan_obj()$scan
     shiny::withProgress(message = 'Hotspot show ...',
                  value = 0, {
       shiny::setProgress(1)
       ## Build up count of number of peaks
-      pheno_types <- pheno_type()
+      pheno_types <- colnames(out_peaks)
       lodcolumns <- match(peak_set, pheno_types)
+      lodcolumns <- lodcolumns[!is.na(lodcolumns)]
       col <- seq_along(pheno_types)
       names(col) <- pheno_types
       nchr <- length(map)
       xaxt <- ifelse(nchr < 5, "y", "n")
       traits <- ifelse(length(peak_set) == 1, peak_set, "traits")
       
-      plot(out_peaks, map, lodcolumn=lodcolumns,
-           col = col[lodcolumns],
-           ylab = "phenotype count",
-           ylim = c(0,max(out_peaks[,lodcolumns])),
-           xaxt = xaxt,
-           gap = 25 / nchr) +
-        ## add mtext for peak_set
-        ggplot2::ggtitle(paste0("number of ", traits,
-                   " in ", 2 ^ win_par$window_Mbp, "Mbp window"))
+      # Kludge 
+      if(nrow(out_peaks) == length(unlist(map)) & length(lodcolumns)) {
+        plot(out_peaks, map, lodcolumn=lodcolumns,
+             col = col[lodcolumns],
+             ylab = "phenotype count",
+             ylim = c(0,max(out_peaks[,lodcolumns])),
+             xaxt = xaxt,
+             gap = 25 / nchr) +
+          ## add mtext for peak_set
+          ggplot2::ggtitle(paste0("number of ", traits,
+                                  " in ", 2 ^ win_par$window_Mbp, "Mbp window"))
+      } else {
+        plot_null("no data")
+      }
     })
   })
   scan_tbl <- shiny::reactive({
-    peak_set <- shiny::req(set_par$dataset)
-    lodcol <- match(shiny::req(set_par$dataset), pheno_type(), pmap_obj())
-    scan <- scan_obj()$scan
+    # Used chosen datasets, or all if not chosen.
+    if(shiny::isTruthy(set_par$dataset)) {
+      peak_set <- make.names(set_par$dataset)
+    } else {
+      peak_set <- "all"
+    }
     map <- scan_obj()$map
-    shiny::withProgress(message = 'Hotspot summary ...', value = 0, {
-      shiny::setProgress(1)
-      chr <- names(map)
-      dplyr::select(
-        dplyr::rename(
-          summary(
-            subset(scan, lodcolumn = peak_set),
-            map, chr = chr),
-          count = lod),
-        -marker)
-    })
+    scan <- scan_obj()$scan
+    # Match lod columns to those present.
+    lodcol <- match(peak_set, make.names(colnames(scan)))
+    lodcol <- lodcol[!is.na(lodcol)]
+    if(length(lodcol) & (nrow(scan) == length(unlist(map)))) {
+      shiny::withProgress(message = 'Hotspot summary ...', value = 0, {
+        shiny::setProgress(1)
+        chr <- names(map)
+        dplyr::select(
+          dplyr::rename(
+            summary(
+              subset(scan, lodcolumn = lodcol),
+              map, chr = chr),
+            count = lod),
+          -marker)
+      })
+    } else {
+      NULL
+    }
   })
   output$peak_tbl <- shiny::renderDataTable({
-    dplyr::arrange(scan_tbl(), desc(count))
+    shiny::req(scan_tbl(), peaks_tbl())
+    peakDataTable(scan_tbl(), peaks_tbl())
   }, escape = FALSE,
   options = list(pageLength = 5))
+  
+  # Minimum LOD for SNP top values.
+  minLOD <- reactive({
+    if(shiny::isTruthy(input$minLOD)) {
+      input$minLOD
+    } else {
+      max(3, round(min(shiny::req(peaks_tbl())$lod), 1))
+    }
+  })
+  output$minLOD <- shiny::renderUI({
+    value <- minLOD()
+    shiny::numericInput(ns("minLOD"), "LOD threshold", value, min = 0, step = 0.5)
+  })
+  
   ## Return.
   scan_tbl
 }
@@ -133,7 +169,8 @@ shinyHotspotInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
     shiny::column(6, shiny::uiOutput(ns("hotspot"))),
-    shiny::column(6, shiny::uiOutput(ns("chr_ct"))))
+    shiny::column(6, shiny::uiOutput(ns("chr_ct"))),
+    shiny::uiOutput(ns("minLOD")))
 }
 #' @rdname shinyHotspot
 #' @export

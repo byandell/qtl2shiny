@@ -1,4 +1,4 @@
-hotspot <- function(map, peaks, peak_window) {
+hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
   # Set up list by chr of postions and peaks.
   round_pos <- function(x) {
     rng <- round(range(x))
@@ -12,6 +12,10 @@ hotspot <- function(map, peaks, peak_window) {
     names(map_pos[[chr]]) <- paste(chr, names(map_pos[[chr]]), sep = ":")
   }
   
+  peaks <- dplyr::filter(peaks,
+                         lod >= minLOD)
+  if(!nrow(peaks))
+    return(NULL)
   out_chr <- purrr::transpose(list(pos = map_pos, 
                                    peaks = split(peaks, peaks$chr)))
 
