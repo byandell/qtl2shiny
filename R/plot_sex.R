@@ -24,8 +24,7 @@ plot_sex <- function(phe, cov) {
   }
   if("sex" %in% dimnames(cov)[[2]]) {
     ## Assume sex in covar. Ignore actual covariates for analyses.
-    insex <- dplyr::mutate(data.frame(phe, cov), 
-                           sex=c("female","male")[1+sex])
+    insex <- data.frame(phe, cov)
     
     if(length(phename) == 1) {
       ggplot2::ggplot(insex, 

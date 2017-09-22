@@ -118,7 +118,7 @@ shinyMediate1Plot <- function(input, output, session,
   ## Select type of mediation.
   output$med_type <- shiny::renderUI({
     shiny::selectInput(ns("med_type"), NULL,
-                       choices = c("expression","phenotype"),
+                       choices = c("phenotype","expression"),
                        selected = input$med_type)
   })
   
@@ -185,7 +185,7 @@ shinyMediate1Plot <- function(input, output, session,
   })
   output$qtls <- shiny::renderUI({
     if(is.null(selected <- input$qtls))
-      selected <- 1
+      selected <- 2
     shiny::radioButtons(ns("qtls"), "",
                         c("1 QTL" = 1, "2 QTLs" = 2),
                         selected, inline = TRUE)
@@ -204,7 +204,12 @@ shinyMediate1Plot <- function(input, output, session,
            phenotype  = shiny::checkboxInput(ns("other"), "Other types?", input$other))
   })
   output$signif <- shiny::renderUI({
-    shiny::checkboxInput(ns("signif"), "Significant?", input$signif)
+    if(shiny::isTruthy(input$signif)) {
+      value <- input$signif
+    } else {
+      value <- TRUE
+    }
+    shiny::checkboxInput(ns("signif"), "Significant?", value)
   })
 
   ## Downloads.
