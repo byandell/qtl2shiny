@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param pheno_type,peaks_tbl,pmap_obj,analyses_tbl,cov_mx reactive arguments
+#' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_mx reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,15 +18,36 @@
 #'   observeEvent
 #'   strong tagList
 shinySetup <- function(input, output, session,
-                        pheno_type, peaks_tbl, pmap_obj, analyses_tbl, cov_mx) {
+                        pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_mx) {
   ns <- session$ns
   
   # Select phenotype dataset
+  pheno_group <- shiny::reactive({
+    sort(unique(shiny::req(analyses_tbl())$phenoGroup))
+  })
+  pheno_type <- shiny::reactive({
+    phe_gp <- shiny::req(input$pheno_group)
+    analyses_group <- 
+      dplyr::filter(
+        shiny::req(analyses_tbl()),
+        phenoGroup %in% phe_gp)
+    sort(unique(analyses_group$pheno_type))
+  })
+  output$pheno_group <- shiny::renderUI({
+    shiny::req(choices <- pheno_group())
+    if(is.null(selected <- input$pheno_group)) {
+      selected <- choices[1]
+    }
+    shiny::selectInput(ns("pheno_group"), "Phenotype Group",
+                       choices = as.list(choices),
+                       selected = selected,
+                       multiple = TRUE)
+  })
   output$dataset <- shiny::renderUI({
-    shiny::req(choices <- pheno_type())
+    choices <- c("all", shiny::req(pheno_type()))
     if(is.null(selected <- input$dataset))
       selected <- NULL
-    shiny::selectInput(ns("dataset"), "Phenotype Group",
+    shiny::selectInput(ns("dataset"), "Phenotype Set",
                 choices = as.list(choices),
                 selected = selected,
                 multiple = TRUE)
@@ -146,6 +167,7 @@ shinySetupUI <- function(id) {
       shiny::uiOutput(ns("title")),
       shiny::uiOutput(ns("radio")),
       shiny::uiOutput(ns("sidebar_setup")),
+      shiny::uiOutput(ns("pheno_group")),
       shiny::uiOutput(ns("dataset"))
     ),
     mainPanel(shiny::uiOutput(ns("main_setup")))

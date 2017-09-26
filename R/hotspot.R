@@ -22,13 +22,25 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
   peaks_type <- function(mapi, peaks, peak_window=1) {
     # count peaks at position by type
     peaks_type <- split(peaks, peaks$pheno_type)
-    out <- as.data.frame(purrr::map(peaks_type, 
-                                    outer_window, 
-                                    mapi, peak_window))
-    all <- as.matrix(out)
-    out$all <- apply(all, 1, sum)
+    out <- data.frame(purrr::map(peaks_type, 
+                                 outer_window, 
+                                 mapi, peak_window),
+                      check.names = FALSE)
+    groups <- dplyr::distinct(peaks, phenoGroup, pheno_type)
+    groups <- split(groups$pheno_type, groups$phenoGroup)
+    grps <- data.frame(
+      purrr::map(groups,
+                 function(x, out) {
+                   apply(out[, x, drop = FALSE], 1, sum)
+                   },
+                 out),
+      check.names = FALSE)
+    out$all <- apply(out, 1, sum)
+    out <- dplyr::bind_cols(out, grps)
     rownames(out) <- mapi
-    dplyr::select(out, all, dplyr::everything())
+    dplyr::select(out, all, 
+                  dplyr::one_of(names(groups)),
+                  dplyr::everything())
   }
   outer_window <- function(posi, mapi, peak_window = 1) {
     posi <- dplyr::filter(posi)$pos
@@ -43,6 +55,7 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
       purrr::map(out_chr,
                  function(x, peak_window) peaks_type(x$pos, x$peaks, peak_window),
                  peak_window))
+  
   out_peaks <- as.matrix(out_peaks)
   out_peaks[is.na(out_peaks)] <- 0
   rownames(out_peaks) <- unlist(sapply(map_pos, names))

@@ -76,69 +76,30 @@ shinyHotspot <- function(input, output, session,
   })
 
   output$peak_show <- shiny::renderPlot({
+    shiny::req(scan_obj())
+    window_Mbp <- 2 ^ shiny::req(win_par$window_Mbp)
     if(shiny::isTruthy(set_par$dataset)) {
       peak_set <- set_par$dataset
     } else {
-      peak_set <- "all"
+      peak_set <- set_par$pheno_group
     }
-    map <- scan_obj()$map
-    out_peaks <- scan_obj()$scan
     shiny::withProgress(message = 'Hotspot show ...',
                  value = 0, {
       shiny::setProgress(1)
-      ## Build up count of number of peaks
-      pheno_types <- colnames(out_peaks)
-      lodcolumns <- match(peak_set, pheno_types)
-      lodcolumns <- lodcolumns[!is.na(lodcolumns)]
-      col <- seq_along(pheno_types)
-      names(col) <- pheno_types
-      nchr <- length(map)
-      xaxt <- ifelse(nchr < 5, "y", "n")
-      traits <- ifelse(length(peak_set) == 1, peak_set, "traits")
-      
-      # Kludge 
-      if(nrow(out_peaks) == length(unlist(map)) & length(lodcolumns)) {
-        plot(out_peaks, map, lodcolumn=lodcolumns,
-             col = col[lodcolumns],
-             ylab = "phenotype count",
-             ylim = c(0,max(out_peaks[,lodcolumns])),
-             xaxt = xaxt,
-             gap = 25 / nchr) +
-          ## add mtext for peak_set
-          ggplot2::ggtitle(paste0("number of ", traits,
-                                  " in ", 2 ^ win_par$window_Mbp, "Mbp window"))
-      } else {
-        plot_null("no data")
-      }
+      plot_hot(peak_set, scan_obj(), window_Mbp)
     })
   })
   scan_tbl <- shiny::reactive({
-    # Used chosen datasets, or all if not chosen.
+    shiny::req(scan_obj())
     if(shiny::isTruthy(set_par$dataset)) {
       peak_set <- make.names(set_par$dataset)
     } else {
       peak_set <- "all"
     }
-    map <- scan_obj()$map
-    scan <- scan_obj()$scan
-    # Match lod columns to those present.
-    lodcol <- match(peak_set, make.names(colnames(scan)))
-    lodcol <- lodcol[!is.na(lodcol)]
-    if(length(lodcol) & (nrow(scan) == length(unlist(map)))) {
-      shiny::withProgress(message = 'Hotspot summary ...', value = 0, {
-        shiny::setProgress(1)
-        chr <- names(map)
-        dplyr::select(
-          dplyr::rename(
-            summary(
-              subset(scan, lodcolumn = lodcol),
-              map, chr = chr),
-            count = lod),
-          -marker)
-      })
-    } else {
-      NULL
-    }
+    shiny::withProgress(message = 'Hotspot summary ...', value = 0, {
+      shiny::setProgress(1)
+      summary_hot(peak_set, scan_obj())
+    })
   })
   output$peak_tbl <- shiny::renderDataTable({
     shiny::req(scan_tbl(), peaks_tbl())
