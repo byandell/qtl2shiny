@@ -26,8 +26,8 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
                                  outer_window, 
                                  mapi, peak_window),
                       check.names = FALSE)
-    groups <- dplyr::distinct(peaks, phenoGroup, pheno_type)
-    groups <- split(groups$pheno_type, groups$phenoGroup)
+    groups <- dplyr::distinct(peaks, pheno_group, pheno_type)
+    groups <- split(groups$pheno_type, groups$pheno_group)
     grps <- data.frame(
       purrr::map(groups,
                  function(x, out) {

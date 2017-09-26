@@ -23,14 +23,14 @@ shinySetup <- function(input, output, session,
   
   # Select phenotype dataset
   pheno_group <- shiny::reactive({
-    sort(unique(shiny::req(analyses_tbl())$phenoGroup))
+    sort(unique(shiny::req(analyses_tbl())$pheno_group))
   })
   pheno_type <- shiny::reactive({
     phe_gp <- shiny::req(input$pheno_group)
     analyses_group <- 
       dplyr::filter(
         shiny::req(analyses_tbl()),
-        phenoGroup %in% phe_gp)
+        pheno_group %in% phe_gp)
     sort(unique(analyses_group$pheno_type))
   })
   output$pheno_group <- shiny::renderUI({
