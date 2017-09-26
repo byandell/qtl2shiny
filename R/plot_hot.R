@@ -1,4 +1,7 @@
 plot_hot <- function(peak_set, scan_obj, window_Mbp) {
+  # reduce to chrs with positive counts
+  scan_obj <- subset(scan_obj, nonzero = peak_set)
+  
   # want to order max column of peak_set
   map <- scan_obj$map
   out_peaks <- scan_obj$scan

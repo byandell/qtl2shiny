@@ -26,6 +26,8 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
                                  outer_window, 
                                  mapi, peak_window),
                       check.names = FALSE)
+    if(!nrow(out))
+      return(NULL)
     groups <- dplyr::distinct(peaks, pheno_group, pheno_type)
     groups <- split(groups$pheno_type, groups$pheno_group)
     grps <- data.frame(
@@ -37,6 +39,8 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
       check.names = FALSE)
     out$all <- apply(out, 1, sum)
     out <- dplyr::bind_cols(out, grps)
+    if(max(out) == 0)
+      return(NULL)
     rownames(out) <- mapi
     dplyr::select(out, all, 
                   dplyr::one_of(names(groups)),
@@ -50,14 +54,20 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
           2, sum)
   }
   
-  out_peaks <- 
-    dplyr::bind_rows(
-      purrr::map(out_chr,
-                 function(x, peak_window) peaks_type(x$pos, x$peaks, peak_window),
-                 peak_window))
+  # Want to identify what purrr::map are NULL and adjust map
+  out_peaks <- purrr::map(out_chr,
+                          function(x, peak_window) peaks_type(x$pos, x$peaks, peak_window),
+                          peak_window)
+  map_pos <- map_pos[!sapply(out_peaks, is.null)]
+  if(!length(map_pos))
+    return(NULL)
+  out_peaks <- dplyr::bind_rows(out_peaks)
+  if(!nrow(out_peaks))
+    return(NULL)
   
   out_peaks <- as.matrix(out_peaks)
   out_peaks[is.na(out_peaks)] <- 0
+  # Breaks here when threshold is too large.
   rownames(out_peaks) <- unlist(sapply(map_pos, names))
   class(out_peaks) <- c("scan1", "matrix")
 
@@ -65,11 +75,21 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
   class(out) <- c("hotspot", "list")
   out
 }
-subset.hotspot <- function(x, chr, ...) {
-  out <- list(scan = subset(x$scan, x$map, chr),
-              map = x$map[chr])
-  class(out) <- c("hotspot", "list")
-  out
+subset.hotspot <- function(x, chr = NULL, nonzero = NULL, ...) {
+  if(!is.null(chr)) {
+    x <- list(scan = subset(x$scan, x$map, chr),
+                map = x$map[chr])
+    class(x) <- c("hotspot", "list")
+  }
+  # drop chr with all zeroes
+  if(!is.null(nonzero)) {
+    cts <- apply(x$scan[, nonzero, drop = FALSE], 1, sum)
+    chrs <- unlist(tapply(cts, rep(names(x$map), sapply(x$map, length)),
+            function(x) !all(x == 0)))
+    if(!all(chrs))
+      x <- subset(x, chr = names(chrs)[chrs])
+  }
+  x
 }
 hotspot_old <-  function(map_chr, peak_window, pheno_types, map, peaks) {
   out_peaks <- NULL
