@@ -93,7 +93,7 @@ server <- function(input, output, session) {
   })
   phe_df <- shiny::reactive({
     shiny::req(analyses_df())
-    read_pheno(pheno_data, analyses_df())
+    pheno_read(pheno_data, analyses_df())
   })
   cov_mx <- shiny::reactive({
     DOread::get_covar(covar, analyses_df())
