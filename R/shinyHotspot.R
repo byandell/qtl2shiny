@@ -12,7 +12,7 @@
 #'
 #' @export
 #' @importFrom dplyr add_row arrange filter rename
-#' @importFrom ggplot2 ggtitle
+#' @importFrom ggplot2 ggtitle scale_y_sqrt
 #' @importFrom shiny NS reactive req 
 #'   checkboxInput selectInput
 #'   plotOutput dataTableOutput uiOutput
@@ -92,9 +92,9 @@ shinyHotspot <- function(input, output, session,
   scan_tbl <- shiny::reactive({
     shiny::req(scan_obj())
     if(shiny::isTruthy(set_par$dataset)) {
-      peak_set <- make.names(set_par$dataset)
+      peak_set <- set_par$dataset
     } else {
-      peak_set <- "all"
+      peak_set <- set_par$pheno_group
     }
     shiny::withProgress(message = 'Hotspot summary ...', value = 0, {
       shiny::setProgress(1)

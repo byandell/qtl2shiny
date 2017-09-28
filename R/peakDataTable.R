@@ -7,14 +7,18 @@ peakDataTable <- function(scan_tbl, peaks_tbl) {
   if(length(chrs <- unique(scan_tbl$chr)) > 1) {
     dplyr::arrange(scan_tbl, desc(count))
   } else {
-    pheno_types <- make.names(unique(scan_tbl$pheno))
+    pheno_types <- unique(scan_tbl$pheno)
     peaks_tbl <- dplyr::filter(peaks_tbl, chr %in% chrs)
-    if("all" %in% pheno_types)
-      pheno_types <- make.names(unique(peaks_tbl$pheno_type))
+    pheno_groups <- unique(peaks_tbl$pheno_group)
+    if(all(pheno_types %in% pheno_groups)) {
+      pheno_types <- dplyr::filter(
+        dplyr::distinct(peaks_tbl, pheno_type, pheno_group),
+        pheno_group %in% pheno_types)$pheno_type
+    }
     dplyr::arrange(
       dplyr::select(
         dplyr::filter(peaks_tbl,
-                      make.names(pheno_type) %in% pheno_types),
+                      pheno_type %in% pheno_types),
         pheno, pheno_type, chr, pos, lod),
       desc(lod))
   }

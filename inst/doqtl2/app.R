@@ -92,10 +92,8 @@ server <- function(input, output, session) {
     dplyr::filter(analyses_tbl, pheno %in% phename)
   })
   phe_df <- shiny::reactive({
-    ## Make sure we get only one column per distinct pheno.
-    DOread::get_pheno(pheno_data,
-                      dplyr::distinct(analyses_df(),
-                                      pheno, .keep_all=TRUE))
+    shiny::req(analyses_df())
+    read_pheno(pheno_data, analyses_df())
   })
   cov_mx <- shiny::reactive({
     DOread::get_covar(covar, analyses_df())

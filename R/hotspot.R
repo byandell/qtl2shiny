@@ -6,25 +6,25 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
     names(out) <- out
     out
   }
-  map_pos <- purrr::map(map, round_pos)
+  chr_pos <- purrr::map(map, round_pos)
   # Kludge
-  for(chr in names(map_pos)) {
-    names(map_pos[[chr]]) <- paste(chr, names(map_pos[[chr]]), sep = ":")
+  for(chr in names(chr_pos)) {
+    names(chr_pos[[chr]]) <- paste(chr, names(chr_pos[[chr]]), sep = ":")
   }
   
   peaks <- dplyr::filter(peaks,
                          lod >= minLOD)
   if(!nrow(peaks))
     return(NULL)
-  out_chr <- purrr::transpose(list(pos = map_pos, 
+  out_chr <- purrr::transpose(list(pos = chr_pos, 
                                    peaks = split(peaks, peaks$chr)))
 
-  peaks_type <- function(mapi, peaks, peak_window=1) {
+  peaks_type <- function(posi, peaks, peak_window=1) {
     # count peaks at position by type
-    peaks_type <- split(peaks, peaks$pheno_type)
-    out <- data.frame(purrr::map(peaks_type, 
+    peaks_by_type <- split(peaks, peaks$pheno_type)
+    out <- data.frame(purrr::map(peaks_by_type, 
                                  outer_window, 
-                                 mapi, peak_window),
+                                 posi, peak_window),
                       check.names = FALSE)
     if(!nrow(out))
       return(NULL)
@@ -41,14 +41,14 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
     out <- dplyr::bind_cols(out, grps)
     if(max(out) == 0)
       return(NULL)
-    rownames(out) <- mapi
+    rownames(out) <- posi
     dplyr::select(out, all, 
                   dplyr::one_of(names(groups)),
                   dplyr::everything())
   }
-  outer_window <- function(posi, mapi, peak_window = 1) {
-    posi <- dplyr::filter(posi)$pos
-    apply(outer(posi, mapi,
+  outer_window <- function(peaksi, posi, peak_window = 1) {
+    peaksi <- dplyr::filter(peaksi)$pos
+    apply(outer(peaksi, posi,
                 function(x,y,z) abs(x-y) <= z,
                 peak_window),
           2, sum)
@@ -58,8 +58,8 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
   out_peaks <- purrr::map(out_chr,
                           function(x, peak_window) peaks_type(x$pos, x$peaks, peak_window),
                           peak_window)
-  map_pos <- map_pos[!sapply(out_peaks, is.null)]
-  if(!length(map_pos))
+  chr_pos <- chr_pos[!sapply(out_peaks, is.null)]
+  if(!length(chr_pos))
     return(NULL)
   out_peaks <- dplyr::bind_rows(out_peaks)
   if(!nrow(out_peaks))
@@ -68,10 +68,10 @@ hotspot <- function(map, peaks, peak_window = 1, minLOD = 5.5) {
   out_peaks <- as.matrix(out_peaks)
   out_peaks[is.na(out_peaks)] <- 0
   # Breaks here when threshold is too large.
-  rownames(out_peaks) <- unlist(sapply(map_pos, names))
+  rownames(out_peaks) <- unlist(sapply(chr_pos, names))
   class(out_peaks) <- c("scan1", "matrix")
 
-  out <- list(scan = out_peaks, map = map_pos)
+  out <- list(scan = out_peaks, map = chr_pos)
   class(out) <- c("hotspot", "list")
   out
 }
@@ -84,13 +84,16 @@ subset.hotspot <- function(x, chr = NULL, nonzero = NULL, ...) {
   # drop chr with all zeroes
   if(!is.null(nonzero)) {
     cts <- apply(x$scan[, nonzero, drop = FALSE], 1, sum)
-    chrs <- unlist(tapply(cts, rep(names(x$map), sapply(x$map, length)),
+    chrs <- unlist(tapply(cts, 
+                          ordered(rep(names(x$map), sapply(x$map, length)),
+                                  names(x$map)),
             function(x) !all(x == 0)))
     if(!all(chrs))
       x <- subset(x, chr = names(chrs)[chrs])
   }
   x
 }
+##########################################################
 hotspot_old <-  function(map_chr, peak_window, pheno_types, map, peaks) {
   out_peaks <- NULL
   if(!is.null(peak_window)) {

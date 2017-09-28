@@ -82,13 +82,10 @@ shinySetup <- function(input, output, session,
     dplyr::filter(analyses_tbl(), pheno %in% shiny::req(phe_par$pheno_names))
   })
   phe_df <- shiny::reactive({
-    DOread::get_pheno(pheno_data,
-              dplyr::distinct(analyses_df(), pheno, .keep_all=TRUE))
+    read_pheno(pheno_data, analyses_df())
   })
   raw_phe_df <- shiny::reactive({
-    DOread::get_pheno(pheno_data,
-              dplyr::distinct(analyses_df(), pheno, .keep_all=TRUE),
-              FALSE)
+    read_pheno(pheno_data, analyses_df(), FALSE)
   })
   shiny::callModule(shinyPhenoPlot, "PhenoPlotRaw", raw_phe_df, cov_mx)
   shiny::callModule(shinyPhenoPlot, "PhenoPlotTrans", phe_df, cov_mx)

@@ -1,7 +1,7 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for R/qtl2 and R/doqtl2
-Version: 0.7.10
+Version: 0.7.11
 Date: 2017-09-26
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>

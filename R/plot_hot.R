@@ -34,6 +34,7 @@ plot_hot <- function(peak_set, scan_obj, window_Mbp) {
          ylim = c(0,max(out_peaks[,lodcolumns])),
          xaxt = xaxt,
          gap = 25 / nchr) +
+      ggplot2::scale_y_log10() +
       ## add mtext for peak_set
       ggplot2::ggtitle(paste0("number of ", traits,
                               " in ", window_Mbp, "Mbp window"))

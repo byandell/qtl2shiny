@@ -5,7 +5,7 @@ summary_hot <- function(peak_set, scan_obj) {
   scan <- scan_obj$scan
   
   # Match lod columns to those present.
-  lodcol <- match(peak_set, make.names(colnames(scan)))
+  lodcol <- match(peak_set, colnames(scan))
   lodcol <- lodcol[!is.na(lodcol)]
 
   if(length(lodcol) & (nrow(scan) == length(unlist(map)))) {
