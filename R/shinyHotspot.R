@@ -78,11 +78,18 @@ shinyHotspot <- function(input, output, session,
   output$peak_show <- shiny::renderPlot({
     shiny::req(scan_obj())
     window_Mbp <- 2 ^ shiny::req(win_par$window_Mbp)
+    peak_grp <- set_par$pheno_group
     if(shiny::isTruthy(set_par$dataset)) {
       peak_set <- set_par$dataset
+      dat_sets <- dplyr::distinct(peaks_tbl(), 
+                                  pheno_type, pheno_group)
+      dat_groups <- unique(dplyr::filter(dat_sets,
+                                         pheno_type %in% peak_set)$pheno_group)
+      peak_set <- c(peak_grp[!(peak_grp %in% dat_groups)], peak_set)
     } else {
-      peak_set <- set_par$pheno_group
+      peak_set <- peak_grp
     }
+
     shiny::withProgress(message = 'Hotspot show ...',
                  value = 0, {
       shiny::setProgress(1)

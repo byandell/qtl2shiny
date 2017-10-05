@@ -2,6 +2,9 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
                               covar, analyses_tbl, pheno_data, peaks, 
                               qtls = 1, pmap) {
   
+  peaks <- dplyr::filter(peaks,
+                         !(pheno_group == "Islet.mRNA"))
+  
   # Annotation for phenotypes.
   annot <- dplyr::filter(peaks, 
                          chr == chr_id,

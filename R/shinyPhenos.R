@@ -26,11 +26,23 @@ shinyPhenos <- function(input, output, session,
   analyses_df <- shiny::reactive({
     ## Filter by dataset.
     dataset <- setup_par$dataset
+    data_group <- setup_par$pheno_group
+
+    dat <- analyses_tbl()
+
+    # Start with phenotypes in data groups.
+    if(shiny::isTruthy(data_group)) {
+      dat <- dplyr::filter(dat, pheno_group %in% data_group)
+    }
+    # For identified datasets, drop other datasets from those data groups.
     if(shiny::isTruthy(dataset)) {
-      dat <- analyses_tbl()
-      
       if(!("all" %in% dataset)) {
-        dat <- dplyr::filter(dat, pheno_type %in% dataset)
+        dat_sets <- dplyr::distinct(dat, pheno_type, pheno_group)
+        dat_groups <- unique(dplyr::filter(dat_sets,
+                                    pheno_type %in% dataset)$pheno_group)
+        dat <- dplyr::filter(dat, 
+                             (pheno_type %in% dataset) |
+                             !(pheno_group %in% dat_groups))
       }
       
       ## Filter by Peak Position if use_pos=TRUE
@@ -46,8 +58,6 @@ shinyPhenos <- function(input, output, session,
           dat <- dat[dat$output %in% peaks$output,]
         }
       }
-    } else {
-      dat <- NULL
     }
     dat
   })

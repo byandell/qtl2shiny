@@ -38,7 +38,7 @@ shinySetup <- function(input, output, session,
     if(is.null(selected <- input$pheno_group)) {
       selected <- choices[1]
     }
-    shiny::selectInput(ns("pheno_group"), "Phenotype Group",
+    shiny::selectInput(ns("pheno_group"), "",
                        choices = as.list(choices),
                        selected = selected,
                        multiple = TRUE)
