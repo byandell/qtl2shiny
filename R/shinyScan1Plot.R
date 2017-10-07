@@ -72,7 +72,7 @@ shinyScan1Plot <- function(input, output, session,
            lodcolumn = seq(ncol(scan_obj())),
            chr = win_par$chr_id,
            xlim=input$scan_window)
-      if(ncol(phe_df()) == 1 & ncol(scan_obj()) > 1)
+      if(ncol(phe_df()) == 1 & ncol(scan_obj()) >= 1)
         p <- p + ggtitle(names(phe_df()))
       p
     })

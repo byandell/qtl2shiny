@@ -23,7 +23,7 @@ shinyPhenos <- function(input, output, session,
   ns <- session$ns
 
   ## Set up analyses data frame.
-  analyses_df <- shiny::reactive({
+  analyses_set <- shiny::reactive({
     ## Filter by dataset.
     dataset <- setup_par$dataset
     data_group <- setup_par$pheno_group
@@ -44,19 +44,19 @@ shinyPhenos <- function(input, output, session,
                              (pheno_type %in% dataset) |
                              !(pheno_group %in% dat_groups))
       }
-      
+    }
+    dat
+  })
+  analyses_df <- reactive({
+    dataset <- setup_par$dataset
+    if(shiny::isTruthy(dataset)) {
+      dat <- shiny::req(analyses_set())
       ## Filter by Peak Position if use_pos=TRUE
       if(isTruthy(input$use_pos)) {
-        chr_id <- shiny::req(chr_peak$chr_id)
-        peak_Mbp <- shiny::req(chr_peak$peak_Mbp)
         window_Mbp <- 2 ^ shiny::req(chr_peak$window_Mbp)
-        if(window_Mbp > 0) {
-          ## Filter peaks
-          peaks <- dplyr::filter(peaks_tbl(), chr == chr_id,
-                                 pos >= peak_Mbp - window_Mbp,
-                                 pos <= peak_Mbp + window_Mbp)
-          dat <- dat[dat$output %in% peaks$output,]
-        }
+        ## Infinite recursion here.
+        if(shiny::isTruthy(peaks_df()))
+          dat <- dat[dat$pheno %in% peaks_df()$pheno,]
       }
     }
     dat
@@ -64,21 +64,13 @@ shinyPhenos <- function(input, output, session,
 
   # Choose Phenotypes for Analysis.
   peaks_df <- reactive({
-    if(shiny::isTruthy(analyses_df())) {
-      phenames <- analyses_df()$pheno
-      dplyr::mutate(
-        dplyr::select(
-          dplyr::distinct(
-            dplyr::arrange(
-              dplyr::filter(peaks_tbl(),
-                            pheno %in% phenames),
-              dplyr::desc(lod)),
-            pheno, lod, pheno_group, pheno_type),
-          pheno, lod, pheno_type, pheno_group),
-        lod = round(lod, 1))
-    } else {
-      NULL
-    }
+    shiny::req(analyses_set(), peaks_tbl())
+    chr_id <- shiny::req(chr_peak$chr_id)
+    peak_Mbp <- shiny::req(chr_peak$peak_Mbp)
+    window_Mbp <- 2 ^ shiny::req(chr_peak$window_Mbp)
+    peaks_in_pos(analyses_set(), peaks_tbl(),
+                 shiny::isTruthy(input$use_pos),
+                 chr_id, peak_Mbp, window_Mbp)
   })
   output$pheno_lod <- shiny::renderDataTable({
     shiny::req(peaks_df())
