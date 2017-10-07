@@ -3,12 +3,15 @@
 \name{shinyPhenos}
 \alias{shinyPhenos}
 \alias{shinyPhenosUI}
+\alias{shinyPhenosOutput}
 \title{Shiny phenotype selection}
 \usage{
 shinyPhenos(input, output, session, setup_par, peaks_tbl, analyses_tbl,
   chr_peak)
 
 shinyPhenosUI(id)
+
+shinyPhenosOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}

@@ -123,12 +123,14 @@ shinySetup <- function(input, output, session,
   output$main_setup <- shiny::renderUI({
     switch(shiny::req(input$setup),
            Phenotypes = {
-             switch(shiny::req(input$show_data),
-                    "LOD Peaks"  = shiny::dataTableOutput(ns("peaks_tbl")),
-                    "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
-                    "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
-                    "Covariates" = shiny::dataTableOutput(ns("analyses_tbl")))
-             },
+             shiny::tagList(
+               switch(shiny::req(input$show_data),
+                      "LOD Peaks"  = shiny::dataTableOutput(ns("peaks_tbl")),
+                      "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
+                      "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
+                      "Covariates" = shiny::dataTableOutput(ns("analyses_tbl"))),
+               shinyPhenosOutput(ns("phenos")))
+           },
            Region = shinyPeaksOutput(ns("shinypeaks")))
   })
   

@@ -63,10 +63,36 @@ shinyPhenos <- function(input, output, session,
   })
 
   # Choose Phenotypes for Analysis.
+  peaks_df <- reactive({
+    if(shiny::isTruthy(analyses_df())) {
+      phenames <- analyses_df()$pheno
+      dplyr::mutate(
+        dplyr::select(
+          dplyr::distinct(
+            dplyr::arrange(
+              dplyr::filter(peaks_tbl(),
+                            pheno %in% phenames),
+              dplyr::desc(lod)),
+            pheno, lod, pheno_group, pheno_type),
+          pheno, lod, pheno_type, pheno_group),
+        lod = round(lod, 1))
+    } else {
+      NULL
+    }
+  })
+  output$pheno_lod <- shiny::renderDataTable({
+    shiny::req(peaks_df())
+  }, escape = FALSE,
+  options = list(scrollX = TRUE, pageLength = 10,
+                 lengthMenu = c(5,10,25)))
+  
   output$pheno_names <- shiny::renderUI({
     phenames <- selected <- input$pheno_names
-    if(shiny::isTruthy(analyses_df())) {
-      phenames <- sort(analyses_df()$pheno)
+    if(shiny::isTruthy(peaks_df())) {
+      phenames <- peaks_df()$pheno
+      # Limit to first 1000
+      nphe <- length(phenames)
+      phenames <- phenames[seq_len(min(1000, nphe))]
     }
     
     if("all" %in% selected)
@@ -78,11 +104,14 @@ shinyPhenos <- function(input, output, session,
       selected <- sort(unique(selected))
 
     ## Update phenames to include selected (but not "")
-    phenames <- unique(c(selected, sort(phenames)))
+    phenames <- unique(c(selected, phenames))
     phenames <- phenames[phenames != ""]
 
     choices <- c("all","none", phenames)
-    shiny::selectInput(ns("pheno_names"), "Choose phenotypes",
+    label = ifelse(nphe <= 1000,
+                   "Choose phenotypes",
+                   paste("Top 1000 of", nphe))
+    shiny::selectInput(ns("pheno_names"), label,
                 choices = choices,
                 selected = selected,
                 multiple = TRUE)
@@ -105,4 +134,10 @@ shinyPhenosUI <- function(id) {
     shiny::uiOutput(ns("filter")),
     shiny::uiOutput(ns("pheno_names"))
   )
+}
+#' @rdname shinyPhenos
+#' @export
+shinyPhenosOutput <- function(id) {
+  ns <- shiny::NS(id)
+  shiny::dataTableOutput(ns("pheno_lod"))
 }
