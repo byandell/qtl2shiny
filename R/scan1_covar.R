@@ -1,11 +1,16 @@
 #' scan1 for multiple traits with possibly different covariates
 #' 
+#' @param phe_df data frame of phenotypes
+#' @param cov_df data frame of covariates
+#' @param kinship kinship matrix or list of kinship matrices
+#' @param analyses_df data frame of analyses information
+#' 
 #' @export
 #' 
 #' @importFrom qtl2scan scan1
 #' @importFrom dplyr select
 #'
-scan1_covar <- function(phe_df, cov_df, probs_obj, K_chr, analyses_df, ...) {
+scan1_covar <- function(phe_df, cov_df, probs_obj, kinship, analyses_df, ...) {
   # This is set up for different types of models (e.g. "binary"),
   # but qtl2scan::scan1 ignores "binary" this right now if kinship is provided.
   # So below, force kinship to NULL if any "binary", 
@@ -17,11 +22,11 @@ scan1_covar <- function(phe_df, cov_df, probs_obj, K_chr, analyses_df, ...) {
   ucov <- unique(covarset)
 
   wh <- which(covarset == ucov[1])
-  scans <- scanfn(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models, ...)
+  scans <- scanfn(probs_obj, phe_df, kinship, cov_df, analyses_df, wh, models, ...)
   attr(scans, "hsq") <- NULL
   if(length(ucov) > 1) for(i in ucov[-1]) {
     wh <- which(covarset == i)
-    tmp <- scanfn(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models, ...)
+    tmp <- scanfn(probs_obj, phe_df, kinship, cov_df, analyses_df, wh, models, ...)
     attr(tmp, "hsq") <- NULL
     scans <- cbind(scans, tmp)
   }
@@ -29,7 +34,7 @@ scan1_covar <- function(phe_df, cov_df, probs_obj, K_chr, analyses_df, ...) {
   modify_object(scans, scans[,order(-apply(scans,2,max)), drop=FALSE])
 }
 
-scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
+scanfn <- function(probs_obj, phe_df, kinship, cov_df, analyses_df, wh, models,
                    sex_type = c("A","I","F","M","all"), ...) {
   
   sex_type <- match.arg(sex_type)
@@ -38,12 +43,11 @@ scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
   
   # scan1 for wh phenotypes using their covariates.
   phe_df <- phe_df[, wh, drop=FALSE]
-  covars <- unlist(analyses_df[wh[1],])
-  covars <- names(covars)[covars]
-  cov_df <- as.data.frame(cov_df[, covars, drop=FALSE])
+  cov_df <- wh_covar(analyses_df, wh, cov_df)
+
   models <- models[wh]
   if(all(models == models[1])) {
-    kinship <- if(models[1] == "binary") NULL else K_chr
+    kinship <- if(models[1] == "binary") NULL else kinship
     if(length(covars)) {
       scansex(probs_obj, phe_df, kinship, cov_df,
               models[1], sex_type)
@@ -54,7 +58,7 @@ scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
   } else { # multiple models
     umod <- unique(models)
     whm <- which(models == umod[1])
-    kinship <- if(umod[1] == "binary") NULL else K_chr
+    kinship <- if(umod[1] == "binary") NULL else kinship
     if(length(covars)) {
       out <- scansex(probs_obj, phe_df[, whm, drop=FALSE], 
                      kinship, cov_df,
@@ -62,14 +66,14 @@ scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
       attr(out, "hsq") <- NULL
       for(mod in umod[-1]) {
         whm <- which(models == mod)
-        kinship <- if(mod == "binary") NULL else K_chr
+        kinship <- if(mod == "binary") NULL else kinship
         tmp <- scansex(probs_obj, phe_df[, whm, drop=FALSE], 
                        kinship, cov_df, mod, sex_type)
         attr(tmp, "hsq") <- NULL
         out <- cbind(out, tmp)
       }
     } else { # no covariates (unlikely)
-      kinship <- if(umod[1] == "binary") NULL else K_chr
+      kinship <- if(umod[1] == "binary") NULL else kinship
       out <- qtl2scan::scan1(probs_obj, 
                              phe_df[, whm, drop=FALSE], 
                              kinship, 
@@ -77,7 +81,7 @@ scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
       attr(out, "hsq") <- NULL
       for(mod in umod[-1]) {
         whm <- which(models == mod)
-        kinship <- if(mod == "binary") NULL else K_chr
+        kinship <- if(mod == "binary") NULL else kinship
         tmp <- qtl2scan::scan1(probs_obj, 
                                phe_df[, whm, drop=FALSE], 
                                kinship, 

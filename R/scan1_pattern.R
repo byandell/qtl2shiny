@@ -13,9 +13,9 @@ scan1_pattern <- function(pheno, phe_df, addcovar, probs36_obj, K_chr, analyses_
                           pats, sex_type, blups) {
   analyses_df <- which_covar(analyses_df)
   wh <- match(pheno, names(phe_df))
-  covars <- unlist(analyses_df[wh,])
   
-  addcovar <- covar_df_mx(addcovar[, covars, drop=FALSE])
+  addcovar <- wh_covar(analyses_df, wh, addcovar)
+  addcovar <- covar_df_mx(addcovar)
   
   qtl2pattern::scan_pattern(probs36_obj$probs,
                             phe_df[,, drop=FALSE],
