@@ -39,6 +39,7 @@ scanfn <- function(probs_obj, phe_df, K_chr, cov_df, analyses_df, wh, models,
   # scan1 for wh phenotypes using their covariates.
   phe_df <- phe_df[, wh, drop=FALSE]
   covars <- unlist(analyses_df[wh[1],])
+  covars <- names(covars)[covars]
   cov_df <- as.data.frame(cov_df[, covars, drop=FALSE])
   models <- models[wh]
   if(all(models == models[1])) {
