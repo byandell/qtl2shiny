@@ -36,7 +36,7 @@ shinyHotspot <- function(input, output, session,
     choices <- chr_names()
     if(is.null(selected <- input$chr_ct))
       selected <- "all"
-    shiny::selectInput(ns("chr_ct"), strong("Chr"),
+    shiny::selectInput(ns("chr_ct"), strong("Hotspots"),
                 choices = c("all", choices),
                 selected = selected,
                 multiple = TRUE)
@@ -54,7 +54,7 @@ shinyHotspot <- function(input, output, session,
     }
   })
   scan_obj_all <- shiny::reactive({
-    shiny::req(input$hotspot, win_par$window_Mbp, input$minLOD)
+    shiny::req(win_par$window_Mbp, input$minLOD)
     shiny::withProgress(message = 'Hotspot scan ...', value = 0,
     {
       shiny::setProgress(1)
@@ -124,7 +124,7 @@ shinyHotspot <- function(input, output, session,
   })
   output$minLOD <- shiny::renderUI({
     value <- minLOD()
-    shiny::numericInput(ns("minLOD"), "LOD threshold", value, min = 0, step = 0.5)
+    shiny::numericInput(ns("minLOD"), "min LOD", value, min = 0, step = 0.5)
   })
   
   ## Return.
@@ -136,9 +136,8 @@ shinyHotspot <- function(input, output, session,
 shinyHotspotInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
-    shiny::column(6, shiny::uiOutput(ns("hotspot"))),
     shiny::column(6, shiny::uiOutput(ns("chr_ct"))),
-    shiny::uiOutput(ns("minLOD")))
+    shiny::column(6, shiny::uiOutput(ns("minLOD"))))
 }
 #' @rdname shinyHotspot
 #' @export

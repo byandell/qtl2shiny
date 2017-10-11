@@ -20,7 +20,8 @@ peaks_in_pos <- function(analyses, peaks, use_pos = TRUE,
         dplyr::arrange(
           peaks,
           dplyr::desc(lod)),
-        pheno, lod, pheno_group, pheno_type),
-      pheno, lod, pheno_type, pheno_group),
-    lod = round(lod, 1))
+        pheno, lod, pheno_group, pheno_type, chr, pos),
+      pheno, lod, pheno_type, pheno_group, chr, pos),
+    lod = round(lod, 1),
+    pos = round(pos, 2))
 }
