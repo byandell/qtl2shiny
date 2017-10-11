@@ -15,6 +15,7 @@
 #' @importFrom dplyr distinct filter
 #' @importFrom shiny callModule NS req 
 #'   selectInput sliderInput updateSelectInput updateSliderInput textInput
+#'   numericInput updateNumericInput
 #'   uiOutput
 #'   renderUI
 #'   observeEvent
@@ -30,7 +31,7 @@ shinyPeaks <- function(input, output, session,
     selected <- input$chr_id
     if(!isTruthy(selected))
       choices <- c("", choices)
-    shiny::selectInput(ns("chr_id"), shiny::strong("Chromosome"),
+    shiny::selectInput(ns("chr_id"), shiny::strong("chr"),
                 choices = choices,
                 selected = selected)
   })
@@ -38,9 +39,9 @@ shinyPeaks <- function(input, output, session,
   ## Window slider
   output$window_Mbp <- shiny::renderUI({
     if(is.null(pos <- input$window_Mbp))
-      pos <- 0
-    shiny::sliderInput(ns("window_Mbp"), "Window Log2 Half Width",
-                -2, 3, pos, step=1)
+      pos <- 1
+    shiny::numericInput(ns("window_Mbp"), "width",
+                        pos)
   })
   
   # Peak position slider.
@@ -49,18 +50,18 @@ shinyPeaks <- function(input, output, session,
     rng <- round(range(pmap_obj()[[chr_id]]), 2)
     pos <- input$peak_Mbp
     if(is.null(pos)) {
-      pos <- mean(rng)
+      pos <- round(mean(rng), 2)
     } else {
       if(pos < rng[1] | pos > rng[2])
-        pos <- mean(rng)
+        pos <- round(mean(rng), 2)
     }
-    shiny::sliderInput(ns("peak_Mbp"), "Peak Position (Mbp)", rng[1], rng[2], pos,
-                step=.5)
+    shiny::numericInput(ns("peak_Mbp"), "pos", 
+                        pos, rng[1], rng[2])
   })
   
   ## shorthand 
   output$chr_pos <- shiny::renderUI({
-    shiny::textInput(ns("chr_pos"), "Position", input$chr_pos)
+    shiny::textInput(ns("chr_pos"), "pos", input$chr_pos)
   })
   
   scan_tbl <- shiny::callModule(shinyHotspot, "hotspot",
@@ -79,9 +80,9 @@ shinyPeaks <- function(input, output, session,
       pmap <- shiny::req(pmap_obj())
       peak_Mbp <- scan_in$pos[1]
       rng <- round(range(pmap[[chr_ct]]), 2)
-      shiny::updateSliderInput(session, "peak_Mbp",
-                        min=rng[1], max=rng[2],
-                        value=peak_Mbp)
+      shiny::updateNumericInput(session, "peak_Mbp",
+                                value=peak_Mbp, 
+                                min=rng[1], max=rng[2])
 #      shiny::updateTextInput(session, "chr_pos",
 #                      value = paste(chr_ct, round(peak_Mbp, 2), sep="@"))
     }
@@ -108,7 +109,7 @@ shinyPeaks <- function(input, output, session,
             shiny::updateSelectInput(session, "chr_id",
                               selected=chr, choices=choices)
           }
-          shiny::updateSliderInput(session, "peak_Mbp",
+          shiny::updateNumericInput(session, "peak_Mbp",
                             value=pos, min=rng[1], max=rng[2])
         }
       }
@@ -125,11 +126,11 @@ shinyPeaksInput <- function(id) {
   shiny::tagList(
     shiny::checkboxInput(ns("local"), "Local Scan in Window?", TRUE),
     shiny::fluidRow(
-      shiny::column(6, shiny::uiOutput(ns("chr_id"))),
-      shiny::column(6, shiny::uiOutput(ns("chr_pos")))
+      shiny::column(4, shiny::uiOutput(ns("chr_id"))),
+      shiny::column(4, shiny::uiOutput(ns("peak_Mbp"))),
+      shiny::column(4, shiny::uiOutput(ns("window_Mbp")))
     ),
-    shiny::uiOutput(ns("peak_Mbp")),
-    shiny::uiOutput(ns("window_Mbp")),
+#    shiny::uiOutput(ns("chr_pos")),
     shinyHotspotInput(ns("hotspot")))
 }
 #' @rdname shinyPeaks

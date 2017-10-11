@@ -33,7 +33,7 @@ shinyMediate1Plot <- function(input, output, session,
   })
   scan_window <- reactive({
     shiny::req(win_par)
-    win_par$peak_Mbp + c(-1,1) * 2 ^ win_par$window_Mbp
+    win_par$peak_Mbp + c(-1,1) * win_par$window_Mbp
   })
   ## Expression data
   expr_ls <- reactive({

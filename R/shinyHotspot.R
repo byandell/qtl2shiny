@@ -58,7 +58,7 @@ shinyHotspot <- function(input, output, session,
     shiny::withProgress(message = 'Hotspot scan ...', value = 0,
     {
       shiny::setProgress(1)
-      hotspot(pmap_obj(), peaks_tbl(), 2^win_par$window_Mbp, input$minLOD)
+      hotspot(pmap_obj(), peaks_tbl(), win_par$window_Mbp, input$minLOD)
     })
   })
   
@@ -77,7 +77,7 @@ shinyHotspot <- function(input, output, session,
 
   output$peak_show <- shiny::renderPlot({
     shiny::req(scan_obj())
-    window_Mbp <- 2 ^ shiny::req(win_par$window_Mbp)
+    window_Mbp <- shiny::req(win_par$window_Mbp)
     peak_grp <- set_par$pheno_group
     if(shiny::isTruthy(set_par$dataset)) {
       peak_set <- set_par$dataset

@@ -53,7 +53,7 @@ shinyPhenos <- function(input, output, session,
       dat <- shiny::req(analyses_set())
       ## Filter by Peak Position if use_pos=TRUE
       if(isTruthy(input$use_pos)) {
-        window_Mbp <- 2 ^ shiny::req(chr_peak$window_Mbp)
+        window_Mbp <- shiny::req(chr_peak$window_Mbp)
         ## Infinite recursion here.
         if(shiny::isTruthy(peaks_df()))
           dat <- dat[dat$pheno %in% peaks_df()$pheno,]
@@ -67,7 +67,7 @@ shinyPhenos <- function(input, output, session,
     shiny::req(analyses_set(), peaks_tbl())
     chr_id <- shiny::req(chr_peak$chr_id)
     peak_Mbp <- shiny::req(chr_peak$peak_Mbp)
-    window_Mbp <- 2 ^ shiny::req(chr_peak$window_Mbp)
+    window_Mbp <- shiny::req(chr_peak$window_Mbp)
     peaks_in_pos(analyses_set(), peaks_tbl(),
                  shiny::isTruthy(input$use_pos),
                  chr_id, peak_Mbp, window_Mbp)
@@ -111,7 +111,7 @@ shinyPhenos <- function(input, output, session,
   output$filter <- shiny::renderUI({
     shiny::checkboxInput(ns("use_pos"),
                   paste0("Peak on chr ", chr_peak$chr_id, " in ",
-                        paste(chr_peak$peak_Mbp + c(-1,1) * 2 ^ chr_peak$window_Mbp,
+                        paste(chr_peak$peak_Mbp + c(-1,1) * chr_peak$window_Mbp,
                               collapse = "-"), "?"),
                   TRUE)
   })
