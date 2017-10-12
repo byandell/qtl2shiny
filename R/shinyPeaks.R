@@ -74,18 +74,21 @@ shinyPeaks <- function(input, output, session,
     scan_in <- dplyr::filter(scan_in, count==max(count))
     
     chr_ct <- as.character(scan_in$chr)
-    if(any(chr_ct == shiny::req(input$chr_id))) {
-      chr_ct <- as.character(input$chr_id)
-      scan_in <- dplyr::filter(scan_in, chr == chr_ct)
-      pmap <- shiny::req(pmap_obj())
-      peak_Mbp <- scan_in$pos[1]
-      rng <- round(range(pmap[[chr_ct]]), 2)
-      shiny::updateNumericInput(session, "peak_Mbp",
-                                value=peak_Mbp, 
-                                min=rng[1], max=rng[2])
-#      shiny::updateTextInput(session, "chr_pos",
-#                      value = paste(chr_ct, round(peak_Mbp, 2), sep="@"))
+    if(!any(chr_ct == input$chr_id)) {
+      chr_ct <- chr_ct[1]
+      choices <- names(pmap_obj())
+      shiny::updateSelectInput(session, "chr_id", shiny::strong("chr"),
+                               choices, chr_ct)
+    } else {
+      chr_ct <- input$chr_id
     }
+    scan_in <- dplyr::filter(scan_in, chr == chr_ct)
+    pmap <- shiny::req(pmap_obj())
+    peak_Mbp <- scan_in$pos[1]
+    rng <- round(range(pmap[[chr_ct]]), 2)
+    shiny::updateNumericInput(session, "peak_Mbp",
+                              value=peak_Mbp, 
+                              min=rng[1], max=rng[2])
   }
   shiny::observeEvent(input$chr_pos, {
 #    chr_pos <- strsplit(input$chr_pos, ":|@|_| |,")[[1]]

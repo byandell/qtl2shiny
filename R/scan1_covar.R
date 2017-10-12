@@ -48,7 +48,7 @@ scanfn <- function(probs_obj, phe_df, kinship, cov_df, analyses_df, wh, models,
   models <- models[wh]
   if(all(models == models[1])) {
     kinship <- if(models[1] == "binary") NULL else kinship
-    if(length(covars)) {
+    if(ncol(cov_df)) {
       scansex(probs_obj, phe_df, kinship, cov_df,
               models[1], sex_type)
     } else { # no covariates (unlikely)
@@ -59,7 +59,7 @@ scanfn <- function(probs_obj, phe_df, kinship, cov_df, analyses_df, wh, models,
     umod <- unique(models)
     whm <- which(models == umod[1])
     kinship <- if(umod[1] == "binary") NULL else kinship
-    if(length(covars)) {
+    if(ncol(cov_df)) {
       out <- scansex(probs_obj, phe_df[, whm, drop=FALSE], 
                      kinship, cov_df,
                      umod[1], sex_type)
