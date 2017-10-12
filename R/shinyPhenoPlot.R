@@ -20,12 +20,17 @@ shinyPhenoPlot <- function(input, output, session,
                            phe_df, cov_mx) {
   ## Scatter plot or density
   output$phe_sum <- shiny::renderTable({
+    shiny::req(phe_df())
     shiny::withProgress(message = 'Pheno Summary ...', value = 0, {
       shiny::setProgress(1)
       summary_na(phe_df())
     })
   })
   output$phePlot <- shiny::renderPlot({
+    # If no df, gives blank area.
+    # Better to either do nothing or do plot_null()
+    # use uiOutput and renderUI?
+    shiny::req(phe_df(), cov_mx())
     shiny::withProgress(message = 'Pheno Plot ...', value = 0, {
       shiny::setProgress(1)
       plot_sex(phe_df(), cov_mx())

@@ -79,7 +79,9 @@ shinySetup <- function(input, output, session,
   
   ## Density or scatter plot of phenotypes.
   analyses_df <- shiny::reactive({
-    dplyr::filter(analyses_tbl(), pheno %in% shiny::req(phe_par$pheno_names))
+    shiny::req(analyses_tbl())
+    phename <- shiny::req(phe_par$pheno_names)
+    dplyr::filter(analyses_tbl(), pheno %in% phename)
   })
   phe_df <- shiny::reactive({
     pheno_read(pheno_data, analyses_df())

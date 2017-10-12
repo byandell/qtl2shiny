@@ -31,9 +31,11 @@ plot_hot <- function(peak_set, scan_obj, window_Mbp) {
     plot(out_peaks, map, lodcolumn=lodcolumns,
          col = col[lodcolumns],
          ylab = "phenotype count",
-         ylim = c(0,max(out_peaks[,lodcolumns])),
+         ylim = c(0, max(out_peaks[,lodcolumns], na.rm = TRUE)),
          xaxt = xaxt,
          gap = 25 / nchr) +
+      # Warning: Transformation introduced infinite values in continuous y-axis
+      # Triggered somewhere in qtl2ggplot::ggplot_scan1_internal
       ggplot2::scale_y_log10() +
       ## add mtext for peak_set
       ggplot2::ggtitle(paste0("number of ", traits,
