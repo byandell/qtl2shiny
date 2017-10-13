@@ -36,6 +36,12 @@ shinyPhenoPlot <- function(input, output, session,
       plot_sex(phe_df(), cov_mx())
     })
   })
+  output$phePlotTable <- shiny::renderUI({
+    shiny::req(phe_df(), cov_mx())
+    shiny::tagList(
+      shiny::plotOutput(ns("phePlot")),
+      shiny::tableOutput(ns("phe_sum")))
+  })
 }
 
 #' UI for shinyPhenoPlot Shiny Module
@@ -51,8 +57,5 @@ shinyPhenoPlot <- function(input, output, session,
 #' @export
 shinyPhenoPlotUI <- function(id) {
   ns <- shiny::NS(id)
-  shiny::tagList(
-    shiny::plotOutput(ns("phePlot")),
-    shiny::tableOutput(ns("phe_sum"))
-  )
+  shiny::uiOutput(ns("phePlotTable"))
 }
