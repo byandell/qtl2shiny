@@ -58,7 +58,7 @@ shinyHotspot <- function(input, output, session,
     shiny::withProgress(message = 'Hotspot scan ...', value = 0,
     {
       shiny::setProgress(1)
-      hotspot(pmap_obj(), peaks_tbl(), win_par$window_Mbp, input$minLOD)
+      hotspot_wrap(pmap_obj(), peaks_tbl(), win_par$window_Mbp, input$minLOD)
     })
   })
   
