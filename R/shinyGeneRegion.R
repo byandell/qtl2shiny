@@ -23,7 +23,7 @@ shinyGeneRegion <- function(input, output, session,
   ns <- session$ns
 
   rng <- shiny::reactive({
-    range(shiny::req(top_snps_tbl())$pos_Mbp)
+    range(shiny::req(top_snps_tbl())$pos)
   })
   chr_id <- shiny::reactive({
     unique(top_snps_tbl()$chr)[1]
@@ -33,7 +33,7 @@ shinyGeneRegion <- function(input, output, session,
     shiny::withProgress(message = 'Extract gene features ...',
                  value = 0, {
       shiny::setProgress(1)
-      query_genes(chr_id(), wrng[1], wrng[2])
+      CCSanger::get_gene(chr_id(), wrng[1], wrng[2])
     })
   })
   output$gene_sum <- shiny::renderTable({
