@@ -7,7 +7,7 @@
 \alias{shinyGeneRegionOutput}
 \title{Shiny Genes in SNP Region module}
 \usage{
-shinyGeneRegion(input, output, session, snp_par, top_snps_tbl, feature_file,
+shinyGeneRegion(input, output, session, snp_par, top_snps_tbl,
   snp_action = shiny::reactive({     "basic" }))
 
 shinyGeneRegionInput(id)
@@ -19,7 +19,7 @@ shinyGeneRegionOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{top_snps_tbl, feature_file}{reactive arguments}
+\item{top_snps_tbl}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

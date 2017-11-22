@@ -3,13 +3,12 @@
 #' Shiny module for scan1 analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param top_snps_tbl,feature_file reactive arguments
+#' @param top_snps_tbl reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom CCSanger get_mgi_features
 #' @importFrom ggplot2 ggtitle
 #' @importFrom shiny NS reactive req isTruthy
 #'   checkboxInput
@@ -19,7 +18,7 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 shinyGeneRegion <- function(input, output, session,
-                     snp_par, top_snps_tbl, feature_file,
+                     snp_par, top_snps_tbl,
                      snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
 
@@ -34,8 +33,7 @@ shinyGeneRegion <- function(input, output, session,
     shiny::withProgress(message = 'Extract gene features ...',
                  value = 0, {
       shiny::setProgress(1)
-      CCSanger::get_mgi_features(chr_id(), wrng[1], wrng[2],
-                       sql_file = feature_file())
+      query_genes(chr_id(), wrng[1], wrng[2])
     })
   })
   output$gene_sum <- shiny::renderTable({

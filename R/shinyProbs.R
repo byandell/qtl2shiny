@@ -74,8 +74,7 @@ shinySNPProbs <- function(input, output, session,
                    win_par$window_Mbp,
                    pheno_names(), 
                    probs_obj()$probs,
-                   probs_obj()$map,
-                   data_path())
+                   probs_obj()$map)
     })
   })
 }

@@ -20,9 +20,7 @@ shinySNPAssoc <- function(input, output, session,
                         gene_exon_tbl, data_path,
                         snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
-  feature_file <- shiny::reactive({file.path(data_path(), 
-                                      "mgi_db.sqlite")})
-  
+
   ## Shiny Modules
   ## SNP Association Scan
   shiny::callModule(shinyScan1SNP, "snp_scan",
@@ -34,7 +32,7 @@ shinySNPAssoc <- function(input, output, session,
   ## Gene Region
   shiny::callModule(shinyGeneRegion, "gene_region",
              snp_par, 
-             top_snps_tbl, feature_file,
+             top_snps_tbl,
              snp_action)
   ## Genes and Exons
   shiny::callModule(shinyGeneExon, "gene_exon",

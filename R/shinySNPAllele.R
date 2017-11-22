@@ -88,8 +88,7 @@ shinySNPAllele <- function(input, output, session,
     shiny::withProgress(message = 'Gene Exon Calc ...', value = 0, {
       shiny::setProgress(1)
       tops <- shiny::req(top_snps_tbl())
-      CCSanger::get_gene_exon_snp(tops,
-                        file.path(data_path(), "mgi_db.sqlite"))
+      CCSanger::get_gene_exon_snp(tops)
     })
   })
   
