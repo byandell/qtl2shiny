@@ -1,8 +1,8 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for R/qtl2 and R/doqtl2
-Version: 0.7.22
-Date: 2017-11-27
+Version: 0.7.23
+Date: 2017-11-28
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
 Description: Shiny Interface for R/qtl2 and R/doqtl2.
@@ -19,5 +19,7 @@ Imports:
     CCSanger,
     CausalMST
 Suggests:
-    flexdashboard
+    flexdashboard,
+    qtl2db,
+    DOread
 RoxygenNote: 6.0.1

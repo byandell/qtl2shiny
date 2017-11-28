@@ -1,14 +1,4 @@
 ## app.R ##
-suppressPackageStartupMessages({
-  library(qtl2shiny)
-  library(GGally)
-  library(grid)
-  library(gridBase)
-  library(qtl2geno)
-  library(qtl2scan)
-  library(qtl2feather)
-  library(plotly)
-})
 
 source("setup.R")
 

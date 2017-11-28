@@ -2,7 +2,8 @@ dirpath <- "~/Documents/Research/attie_alan/DO/data"
 datapath <- file.path(dirpath, "DerivedData")
 v2path <- "~/Documents/Research/attie_alan/DO/AttieDOv2"
 
-pmap <- readRDS(file.path(datapath, "pmap.rds"))
+pmap         <- readRDS(file.path(datapath, "pmap.rds"))
+K            <- readRDS(file.path(datapath, "kinship.rds"))
 
 filtered <- file.path(datapath, "filtered")
 covar        <- readRDS(file.path(filtered, "covar.rds"))
@@ -11,7 +12,6 @@ analyses_tbl <- readRDS(file.path(filtered, "analyses.rds"))
 pheno_data   <- readRDS(file.path(filtered, "pheno.rds"))
 pheno_type   <- readRDS(file.path(filtered, "pheno_type.rds"))
 hotspots     <- readRDS(file.path(filtered, "hotspot.rds"))
-K            <- readRDS(file.path(datapath, "kinship.rds"))
 
 # Set up queries
 query_genes <- 
