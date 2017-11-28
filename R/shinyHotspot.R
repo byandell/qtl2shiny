@@ -140,11 +140,10 @@ shinyHotspot <- function(input, output, session,
 #' @export
 shinyHotspotInput <- function(id) {
   ns <- shiny::NS(id)
-  shiny::tagList(
-    shiny::fluidRow(
-      shiny::column(6, shiny::uiOutput(ns("chr_ct"))),
-      shiny::column(6, shiny::uiOutput(ns("minLOD")))),
-    shiny::checkboxInput(ns("peak_ck"), "plot?", FALSE))
+  shiny::fluidRow(
+    shiny::column(4, shiny::uiOutput(ns("chr_ct"))),
+    shiny::column(4, shiny::uiOutput(ns("minLOD"))),
+    shiny::column(4, shiny::checkboxInput(ns("peak_ck"), "plot counts?", FALSE)))
 }
 #' @rdname shinyHotspot
 #' @export

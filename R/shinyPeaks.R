@@ -67,9 +67,12 @@ shinyPeaks <- function(input, output, session,
   scan_tbl <- shiny::callModule(shinyHotspot, "hotspot",
               set_par, input, pheno_type, peaks_tbl, pmap_obj)
   
-  shiny::observeEvent(scan_tbl(), update_region())
-  shiny::observeEvent(input$chr_id, update_region())
-  update_region <- function() {
+  shiny::observeEvent(scan_tbl(), {
+    update_chr()
+    update_peak()
+  })
+  shiny::observeEvent(input$chr_id, update_peak())
+  update_chr <- function() {
     scan_in <- shiny::req(scan_tbl())
     scan_in <- dplyr::filter(scan_in, count==max(count))
     
@@ -79,12 +82,20 @@ shinyPeaks <- function(input, output, session,
       choices <- names(pmap_obj())
       shiny::updateSelectInput(session, "chr_id", shiny::strong("chr"),
                                choices, chr_ct)
-    } else {
-      chr_ct <- input$chr_id
     }
-    scan_in <- dplyr::filter(scan_in, chr == chr_ct)
+  }
+  update_peak <- function() {
+    scan_in <- shiny::req(scan_tbl())
+    chr_ct <- input$chr_id
+    scan_in <- dplyr::filter(scan_in, 
+                             chr == chr_ct)
+    if(nrow(scan_in)) {
+      scan_in <- dplyr::filter(scan_in, count==max(count))
+      peak_Mbp <- scan_in$pos[1]
+    } else {
+      peak_Mbp <- input$peak_Mbp
+    }
     pmap <- shiny::req(pmap_obj())
-    peak_Mbp <- scan_in$pos[1]
     rng <- round(range(pmap[[chr_ct]]), 2)
     shiny::updateNumericInput(session, "peak_Mbp",
                               value=peak_Mbp, 
