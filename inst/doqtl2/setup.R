@@ -1,6 +1,9 @@
-dirpath <- "~/Documents/Research/attie_alan/DO/data"
-datapath <- file.path(dirpath, "DerivedData")
-v2path <- "~/Documents/Research/attie_alan/DO/AttieDOv2"
+projects <- read.csv("projects.csv", stringsAsFactors = FALSE)
+project <- projects$project[1]
+datapath <- file.path(projects$directory[1], project)
+
+# Need to think about how to hand off from one project to next.
+# Not so easy, as must reside within app rather than global...
 
 pmap         <- readRDS(file.path(datapath, "pmap.rds"))
 K            <- readRDS(file.path(datapath, "kinship.rds"))
@@ -16,10 +19,10 @@ hotspots     <- readRDS(file.path(filtered, "hotspot.rds"))
 # Set up queries
 query_genes <- 
   qtl2db::create_gene_query_func(
-    file.path(v2path, "qtl2db", "mouse_genes.sqlite"))
+    file.path(datapath, "qtl2db", "mouse_genes.sqlite"))
 query_variants <- 
   qtl2db::create_variant_query_func(
-    file.path(v2path, "qtl2db", "cc_variants.sqlite"))
+    file.path(datapath, "qtl2db", "cc_variants.sqlite"))
 query_probs <- 
   DOread::create_probs_query_func_do(datapath)
 query_mrna <- 

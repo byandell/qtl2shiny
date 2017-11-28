@@ -1,5 +1,9 @@
 ## app.R ##
 
+suppressPackageStartupMessages({
+  library(qtl2shiny)  
+})
+
 source("setup.R")
 
 #####################################################
@@ -28,7 +32,7 @@ helpPopup <- function(title, content,
 
 #####################################################
 ui <- shinydashboard::dashboardPage(skin="red",
-  shinydashboard::dashboardHeader(title = "DOQTL2 Wave 5"),
+  shinydashboard::dashboardHeader(title = "qtl2shiny"),
   shinydashboard::dashboardSidebar(
     shinydashboard::sidebarMenu(
       shinySetupOutput("setup"),

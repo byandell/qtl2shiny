@@ -143,6 +143,10 @@ shinySetup <- function(input, output, session,
                  inline=TRUE)
   })
   
+  output$project <- shiny::renderUI({
+    shiny::selectInput("project", "Project", "AttieDO", input$project)
+  })
+  
   ## Return.
   shiny::reactive({
     list(phe_par = phe_par,
@@ -155,6 +159,7 @@ shinySetup <- function(input, output, session,
 shinySetupOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
+    shiny::uiOutput(ns("project")),
     shiny::textOutput(ns("num_pheno")),
     shiny::uiOutput(ns("chr_pos"))
   )
