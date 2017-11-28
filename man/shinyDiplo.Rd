@@ -5,15 +5,14 @@
 \alias{shinyDiploUI}
 \title{Shiny Diplotype module}
 \usage{
-shinyDiplo(input, output, session, win_par, phe_df, cov_mx, K_chr, analyses_df,
-  data_path)
+shinyDiplo(input, output, session, win_par, phe_df, cov_mx, K_chr, analyses_df)
 
 shinyDiploUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, phe_df, cov_mx, K_chr, analyses_df, data_path}{reactive arguments}
+\item{win_par, phe_df, cov_mx, K_chr, analyses_df}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

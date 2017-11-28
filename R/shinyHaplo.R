@@ -3,7 +3,7 @@
 #' Shiny module for analysis based on haplotype alleles.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pmap_obj,phe_df,cov_mx,K_chr,analyses_df,data_path reactive arguments
+#' @param win_par,pmap_obj,phe_df,cov_mx,K_chr,analyses_df reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -16,13 +16,12 @@
 #'   mainPanel sidebarPanel strong tagList
 shinyHaplo <- function(input, output, session,
                        win_par, pmap_obj, 
-                       phe_df, cov_mx, K_chr, analyses_df,
-                       data_path) {
+                       phe_df, cov_mx, K_chr, analyses_df) {
   ns <- session$ns
 
   ## Genotype Probabilities.
   probs_obj <- shiny::callModule(shinyProbs, "probs", 
-                          win_par, data_path)
+                          win_par)
 
   ## Genome Scan.
   shiny::callModule(shinyScan1Plot, "hap_scan", 
@@ -32,14 +31,13 @@ shinyHaplo <- function(input, output, session,
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
               input, win_par, 
-              phe_df, cov_mx, probs_obj, K_chr, analyses_df,
-              data_path)
+              phe_df, cov_mx, probs_obj, K_chr, analyses_df)
 
   ## Mediation
   shiny::callModule(shinyMediate1Plot, "mediate",
                     input, win_par, patterns,
                     phe_df, cov_mx, probs_obj, K_chr, analyses_df,
-                    pmap_obj, data_path)
+                    pmap_obj)
 
   ## CC names
   output$cc_names <- shiny::renderText({

@@ -43,8 +43,12 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
   
   if(qtls == 2)
     annot$driver <- qtl2geno::find_marker(pmap, chr_id, annot$pos)
-  
-  list(comediators = DOread::get_pheno(pheno_data, annot),
+
+  list(comediators = qtl2pattern::pheno_trans(pheno_data,
+                                              annot$pheno,
+                                              annot$transf,
+                                              annot$offset,
+                                              annot$winsorize),
        annot = dplyr::rename(annot, 
                              id = pheno,
                              biotype = pheno_type),

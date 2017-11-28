@@ -1,8 +1,13 @@
 #' @export
 pheno_read <- function(pheno_data, analyses_df, transform = TRUE) {
-  ## Make sure we get only one column per distinct pheno.
-  DOread::get_pheno(
-    pheno_data,
-    dplyr::distinct(analyses_df, pheno, .keep_all=TRUE),
-    transform)
+  if(transform) {
+    transform <- analyses_df$transf
+  } else {
+    transform <- NULL
+  }
+  qtl2pattern::pheno_trans(pheno_data, 
+                           analyses_df$pheno, 
+                           transform,
+                           analyses_df$offset,
+                           analyses_df$winsorize)
 }

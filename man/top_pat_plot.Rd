@@ -5,7 +5,7 @@
 \title{Top Pattern Plot}
 \usage{
 top_pat_plot(pheno, scan_obj, chr_id, map, xlim, drop.hilit = 1.5,
-  facet = "pheno", snp_action = "basic", ...)
+  facet = "pheno", snp_action = "basic", cex = 2, ...)
 }
 \arguments{
 \item{pheno}{name of phenotype for effect scan}
@@ -17,6 +17,8 @@ top_pat_plot(pheno, scan_obj, chr_id, map, xlim, drop.hilit = 1.5,
 \item{facet}{facet by one of c("pheno","pattern")}
 
 \item{snp_action}{character string for plot}
+
+\item{cex}{size of plot symbols}
 
 \item{fill.null}{null plot if no data}
 }

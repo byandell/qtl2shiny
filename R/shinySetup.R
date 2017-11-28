@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @importFrom dplyr distinct filter select
-#' @importFrom DOread get_pheno
+#' @importFrom qtl2pattern pheno_trans
 #' @importFrom shiny callModule NS reactive req 
 #'   radioButtons selectInput
 #'   dataTableOutput textOutput uiOutput

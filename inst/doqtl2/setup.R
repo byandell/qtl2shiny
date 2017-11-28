@@ -10,13 +10,19 @@ peaks        <- readRDS(file.path(filtered, "peaks.rds"))
 analyses_tbl <- readRDS(file.path(filtered, "analyses.rds"))
 pheno_data   <- readRDS(file.path(filtered, "pheno.rds"))
 pheno_type   <- readRDS(file.path(filtered, "pheno_type.rds"))
+hotspots     <- readRDS(file.path(filtered, "hotspot.rds"))
+K            <- readRDS(file.path(datapath, "kinship.rds"))
 
-K <- readRDS(file.path(datapath, "kinship.rds"))
-
+# Set up queries
 query_genes <- 
   qtl2db::create_gene_query_func(
     file.path(v2path, "qtl2db", "mouse_genes.sqlite"))
 query_variants <- 
   qtl2db::create_variant_query_func(
     file.path(v2path, "qtl2db", "cc_variants.sqlite"))
+query_probs <- 
+  DOread::create_probs_query_func_do(datapath)
+query_mrna <- 
+  DOread::create_mrna_query_func_do(datapath)
+
 

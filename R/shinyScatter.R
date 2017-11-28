@@ -9,7 +9,6 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom qtl2pattern mediate1
 #' @importFrom qtl2scan scan1
 #' @importFrom qtl2ggplot plot_scan1
 #' @importFrom shiny NS reactive req isTruthy

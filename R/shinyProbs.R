@@ -3,18 +3,17 @@
 #' Shiny genotype probability access.
 #' 
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pheno_names,probs_obj,data_path reactive arguments
+#' @param win_par,pheno_names,probs_obj reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 #' @importFrom qtl2pattern get_snpprobs 
-#' @importFrom DOread read_probs
 #' @importFrom shiny reactive req 
 #'   withProgress setProgress
 shinyProbs <- function(input, output, session,
-                       win_par, data_path) {
+                       win_par) {
   ns <- session$ns
 
   probs_obj <- shiny::reactive({
@@ -30,8 +29,7 @@ shinyProbs <- function(input, output, session,
         start_val <- end_val <- NULL
       }
       # Note probs object keeps map with it
-      DOread::read_probs(chr_id, start_val, end_val, 
-                         datapath = data_path())
+      query_probs(chr_id, start_val, end_val)
     })
   })
   
@@ -40,7 +38,7 @@ shinyProbs <- function(input, output, session,
 #' @rdname shinyProbs
 #' @export
 shinyProbs36 <- function(input, output, session,
-                         win_par, data_path) {
+                         win_par) {
   ns <- session$ns
 
   ## Probs object for 36 diplotypes.
@@ -50,8 +48,7 @@ shinyProbs36 <- function(input, output, session,
       c(-1,1) * shiny::req(win_par$window_Mbp)
     shiny::withProgress(message = 'Diplotype Probs ...', value = 0, {
       shiny::setProgress(1)
-      DOread::read_probs(chr_id, range_val[1], range_val[2],
-                         datapath = data_path(),
+      query_probs(chr_id, range_val[1], range_val[2],
                          allele = FALSE)
     })
   })
@@ -60,8 +57,7 @@ shinyProbs36 <- function(input, output, session,
 #' @rdname shinyProbs
 #' @export
 shinySNPProbs <- function(input, output, session,
-                          win_par, pheno_names, probs_obj,
-                          data_path) {
+                          win_par, pheno_names, probs_obj) {
   ns <- session$ns
   
   shiny::reactive({

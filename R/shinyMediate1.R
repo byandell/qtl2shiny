@@ -3,13 +3,14 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,pmap_obj,datapath reactive arguments
+#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,pmap_obj reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom qtl2pattern mediate1
+#' @importFrom CausalMST mediate1_test
+#' @importFrom qtl2pattern pheno_trans
 #' @importFrom qtl2scan scan1
 #' @importFrom qtl2ggplot plot_scan1
 #' @importFrom shiny NS reactive req isTruthy
@@ -25,7 +26,7 @@
 shinyMediate1Plot <- function(input, output, session,
                               job_par, win_par, patterns,
                               phe_df, cov_mx, probs_obj, K_chr, analyses_df,
-                              pmap_obj, datapath) {
+                              pmap_obj) {
   ns <- session$ns
   
   chr_id <- reactive({
@@ -39,7 +40,7 @@ shinyMediate1Plot <- function(input, output, session,
   expr_ls <- reactive({
     shiny::req(win_par)
     # Covariate matrix covar is global.
-    expr_region(chr_id(), scan_window(), datapath(), covar, 
+    expr_region(chr_id(), scan_window(), covar, 
                 shiny::req(input$qtls), shiny::req(pmap_obj()))
   })
   
@@ -82,7 +83,6 @@ shinyMediate1Plot <- function(input, output, session,
                input$pos_Mbp, input$med_type, med_ls())
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
-      # qtl2pattern::mediate1
       med_test(med_ls(), geno_max(), phe1_df(), K_chr(), cov_mx(),
                input$pos_Mbp, data_type = input$med_type,
                probs_chr())

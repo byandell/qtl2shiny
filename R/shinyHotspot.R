@@ -36,7 +36,7 @@ shinyHotspot <- function(input, output, session,
     choices <- chr_names()
     if(is.null(selected <- input$chr_ct))
       selected <- "all"
-    shiny::selectInput(ns("chr_ct"), strong("Hotspots"),
+    shiny::selectInput(ns("chr_ct"), strong("chrs"),
                 choices = c("all", choices),
                 selected = selected,
                 multiple = TRUE)
@@ -75,7 +75,12 @@ shinyHotspot <- function(input, output, session,
     out_peaks
   })
 
-  output$peak_show <- shiny::renderPlot({
+  output$peak_show <- shiny::renderUI({
+    if(input$peak_ck) {
+      shiny::plotOutput(ns("peak_plot"))
+    }
+  })
+  output$peak_plot <- shiny::renderPlot({
     shiny::req(scan_obj())
     window_Mbp <- shiny::req(win_par$window_Mbp)
     peak_grp <- set_par$pheno_group
@@ -135,16 +140,18 @@ shinyHotspot <- function(input, output, session,
 #' @export
 shinyHotspotInput <- function(id) {
   ns <- shiny::NS(id)
-  shiny::fluidRow(
-    shiny::column(6, shiny::uiOutput(ns("chr_ct"))),
-    shiny::column(6, shiny::uiOutput(ns("minLOD"))))
+  shiny::tagList(
+    shiny::fluidRow(
+      shiny::column(6, shiny::uiOutput(ns("chr_ct"))),
+      shiny::column(6, shiny::uiOutput(ns("minLOD")))),
+    shiny::checkboxInput(ns("peak_ck"), "plot?", FALSE))
 }
 #' @rdname shinyHotspot
 #' @export
 shinyHotspotOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::plotOutput(ns("peak_show")),
+    shiny::uiOutput(ns("peak_show")),
     shiny::dataTableOutput(ns("peak_tbl"))
   )
 }

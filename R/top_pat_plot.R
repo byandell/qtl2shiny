@@ -8,6 +8,7 @@
 #' @param fill.null null plot if no data
 #' @param facet facet by one of c("pheno","pattern")
 #' @param snp_action character string for plot
+#' @param cex size of plot symbols
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords hplot
@@ -22,7 +23,8 @@ top_pat_plot <- function(pheno,
                          xlim,
                          drop.hilit = 1.5,
                          facet = "pheno",
-                         snp_action = "basic", ...) {
+                         snp_action = "basic",
+                         cex = 2, ...) {
   mytitle <- FALSE
   if(length(pheno) == 1) {
     mytitle <- paste(pheno, "chr", chr_id)
@@ -49,5 +51,5 @@ top_pat_plot <- function(pheno,
   plot(scan_obj, map, seq_along(pheno),
        xlim = xlim, main = mytitle,
        patterns = "hilit", drop.hilit = drop.hilit,
-       facet = facet, legend.title = legend.title, ...)
+       facet = facet, legend.title = legend.title, cex = cex, ...)
 }

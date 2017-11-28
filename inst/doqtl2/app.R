@@ -77,8 +77,7 @@ server <- function(input, output, session) {
   peaks_tbl <- shiny::reactive({peaks})
   pmap_obj <- shiny::reactive({pmap})
   analyses_tblr <- shiny::reactive({analyses_tbl})
-  data_path <- shiny::reactive({datapath})
-  
+
   set_par <- shiny::callModule(shinySetup, "setup", 
                     pheno_typer, peaks_tbl, 
                     pmap_obj, analyses_tblr, cov_mx)
@@ -105,14 +104,12 @@ server <- function(input, output, session) {
   ## Haplotype Analysis.
   shiny::callModule(shinyHaplo, "hap_scan", 
              set_par()$win_par, pmap_obj, 
-             phe_df, cov_mx, K_chr, analyses_df,
-             data_path)
+             phe_df, cov_mx, K_chr, analyses_df)
 
   ## Diplotype Analysis.
   shiny::callModule(shinyDiplo, "dip_scan",
              set_par()$win_par, 
-             phe_df, cov_mx, K_chr, analyses_df,
-             data_path)
+             phe_df, cov_mx, K_chr, analyses_df)
   
   # Allow reconnect with Shiny Server.
   session$allowReconnect(TRUE)
