@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,pmap_obj reactive arguments
+#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -26,7 +26,7 @@
 shinyMediate1Plot <- function(input, output, session,
                               job_par, win_par, patterns,
                               phe_df, cov_mx, probs_obj, K_chr, analyses_df,
-                              pmap_obj) {
+                              pmap_obj, covar, pheno_data, analyses_tbl, peaks) {
   ns <- session$ns
   
   chr_id <- reactive({
@@ -39,17 +39,15 @@ shinyMediate1Plot <- function(input, output, session,
   ## Expression data
   expr_ls <- reactive({
     shiny::req(win_par)
-    # Covariate matrix covar is global.
-    expr_region(chr_id(), scan_window(), covar, 
+    expr_region(chr_id(), scan_window(), covar(), 
                 shiny::req(input$qtls), shiny::req(pmap_obj()))
   })
   
   ## Comediator data
   comed_ls <- reactive({
     shiny::req(input$pheno_name, win_par)
-    # Objects covar, analyses_tbl, pheno_data, peaks are global.
     comediator_region(input$pheno_name, chr_id(), scan_window(), 
-                      covar, analyses_tbl, pheno_data, peaks, 
+                      covar(), analyses_tbl(), pheno_data(), peaks(), 
                       shiny::req(input$qtls), shiny::req(pmap_obj()))
   })
   med_ls <- reactive({

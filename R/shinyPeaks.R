@@ -3,7 +3,7 @@
 #' Shiny module for peaks selection. Does not yet have return.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param set_par,pheno_type,peaks_tbl,pmap_obj reactive arguments
+#' @param set_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -22,7 +22,8 @@
 #'   fluidRow column strong tagList
 #'   
 shinyPeaks <- function(input, output, session,
-                       set_par, pheno_type, peaks_tbl, pmap_obj) {
+                       set_par, pheno_type, peaks_tbl, pmap_obj, 
+                       project_info) {
   ns <- session$ns
 
   # Select chromosome. Defaults to blank.
@@ -65,7 +66,7 @@ shinyPeaks <- function(input, output, session,
   })
   
   scan_tbl <- shiny::callModule(shinyHotspot, "hotspot",
-              set_par, input, pheno_type, peaks_tbl, pmap_obj)
+              set_par, input, pheno_type, peaks_tbl, pmap_obj, project_info)
   
   shiny::observeEvent(scan_tbl(), {
     update_chr()

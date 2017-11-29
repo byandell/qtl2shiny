@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_mx reactive arguments
+#' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_mx,pheno_data,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,7 +18,8 @@
 #'   observeEvent
 #'   strong tagList
 shinySetup <- function(input, output, session,
-                        pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_mx) {
+                       pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, 
+                       cov_mx, pheno_data, project_info) {
   ns <- session$ns
   
   # Select phenotype dataset
@@ -55,7 +56,8 @@ shinySetup <- function(input, output, session,
   
   ## Locate Peak.
   win_par <- shiny::callModule(shinyPeaks, "shinypeaks",
-                         input, pheno_type, peaks_tbl, pmap_obj)
+                         input, pheno_type, peaks_tbl, pmap_obj, 
+                         project_info)
   
   chr_pos <- shiny::reactive({
     make_chr_pos(win_par$chr_id, 
@@ -84,10 +86,10 @@ shinySetup <- function(input, output, session,
     dplyr::filter(analyses_tbl(), pheno %in% phename)
   })
   phe_df <- shiny::reactive({
-    pheno_read(pheno_data, analyses_df())
+    pheno_read(pheno_data(), analyses_df())
   })
   raw_phe_df <- shiny::reactive({
-    pheno_read(pheno_data, analyses_df(), FALSE)
+    pheno_read(pheno_data(), analyses_df(), FALSE)
   })
   shiny::callModule(shinyPhenoPlot, "PhenoPlotRaw", raw_phe_df, cov_mx)
   shiny::callModule(shinyPhenoPlot, "PhenoPlotTrans", phe_df, cov_mx)
@@ -143,10 +145,6 @@ shinySetup <- function(input, output, session,
                  inline=TRUE)
   })
   
-  output$project <- shiny::renderUI({
-    shiny::selectInput("project", "Project", "AttieDO", input$project)
-  })
-  
   ## Return.
   shiny::reactive({
     list(phe_par = phe_par,
@@ -159,7 +157,6 @@ shinySetup <- function(input, output, session,
 shinySetupOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::uiOutput(ns("project")),
     shiny::textOutput(ns("num_pheno")),
     shiny::uiOutput(ns("chr_pos"))
   )

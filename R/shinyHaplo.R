@@ -3,7 +3,7 @@
 #' Shiny module for analysis based on haplotype alleles.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pmap_obj,phe_df,cov_mx,K_chr,analyses_df reactive arguments
+#' @param win_par,pmap_obj,phe_df,cov_mx,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -16,7 +16,8 @@
 #'   mainPanel sidebarPanel strong tagList
 shinyHaplo <- function(input, output, session,
                        win_par, pmap_obj, 
-                       phe_df, cov_mx, K_chr, analyses_df) {
+                       phe_df, cov_mx, K_chr, analyses_df, 
+                       covar, pheno_data, analyses_tbl, peaks) {
   ns <- session$ns
 
   ## Genotype Probabilities.
@@ -37,7 +38,8 @@ shinyHaplo <- function(input, output, session,
   shiny::callModule(shinyMediate1Plot, "mediate",
                     input, win_par, patterns,
                     phe_df, cov_mx, probs_obj, K_chr, analyses_df,
-                    pmap_obj)
+                    pmap_obj, 
+                    covar, pheno_data, analyses_tbl, peaks)
 
   ## CC names
   output$cc_names <- shiny::renderText({

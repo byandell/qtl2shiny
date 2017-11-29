@@ -1,6 +1,6 @@
 comediator_region <- function(pheno_name, chr_id, scan_window, 
                               covar, analyses_tbl, pheno_data, peaks, 
-                              qtls = 1, pmap) {
+                              qtls = 2, pmap) {
   
   peaks <- dplyr::filter(peaks,
                          !(pheno_group == "Islet.mRNA"))

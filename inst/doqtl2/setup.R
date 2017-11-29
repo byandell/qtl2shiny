@@ -1,28 +1,28 @@
 projects <- read.csv("projects.csv", stringsAsFactors = FALSE)
 project <- projects$project[1]
-datapath <- file.path(projects$directory[1], project)
+id <- 1
+datapath <- file.path(projects$directory[id], project)
 
 # Need to think about how to hand off from one project to next.
 # Not so easy, as must reside within app rather than global...
 
-pmap         <- readRDS(file.path(datapath, "pmap.rds"))
-K            <- readRDS(file.path(datapath, "kinship.rds"))
+#pmap         <- qtl2shiny::qtl2shiny_read(project, "pmap")
+#K            <- qtl2shiny::qtl2shiny_read(project, "kinship")
 
-filtered <- file.path(datapath, "filtered")
-covar        <- readRDS(file.path(filtered, "covar.rds"))
-peaks        <- readRDS(file.path(filtered, "peaks.rds"))
-analyses_tbl <- readRDS(file.path(filtered, "analyses.rds"))
-pheno_data   <- readRDS(file.path(filtered, "pheno.rds"))
-pheno_type   <- readRDS(file.path(filtered, "pheno_type.rds"))
-hotspots     <- readRDS(file.path(filtered, "hotspot.rds"))
+#covar        <- qtl2shiny::qtl2shiny_read(project, "covar")
+#peaks        <- qtl2shiny::qtl2shiny_read(project, "peaks")
+#analyses_tbl <- qtl2shiny::qtl2shiny_read(project, "analyses")
+#pheno_data   <- qtl2shiny::qtl2shiny_read(project, "pheno")
+#pheno_type   <- qtl2shiny::qtl2shiny_read(project, "pheno_type")
+#hotspots     <- qtl2shiny::qtl2shiny_read(project, "hotspot")
 
 # Set up queries
 query_genes <- 
   qtl2db::create_gene_query_func(
-    file.path(datapath, "qtl2db", "mouse_genes.sqlite"))
+    file.path(datapath, projects$genes[id]))
 query_variants <- 
   qtl2db::create_variant_query_func(
-    file.path(datapath, "qtl2db", "cc_variants.sqlite"))
+    file.path(datapath, projects$variants[id]))
 query_probs <- 
   DOread::create_probs_query_func_do(datapath)
 query_mrna <- 

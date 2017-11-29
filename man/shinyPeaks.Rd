@@ -6,7 +6,8 @@
 \alias{shinyPeaksOutput}
 \title{Shiny peaks selection}
 \usage{
-shinyPeaks(input, output, session, set_par, pheno_type, peaks_tbl, pmap_obj)
+shinyPeaks(input, output, session, set_par, pheno_type, peaks_tbl, pmap_obj,
+  project_info)
 
 shinyPeaksInput(id)
 
@@ -15,7 +16,7 @@ shinyPeaksOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{set_par, pheno_type, peaks_tbl, pmap_obj}{reactive arguments}
+\item{set_par, pheno_type, peaks_tbl, pmap_obj, project_info}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1}} use}
 }

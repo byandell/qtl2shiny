@@ -7,7 +7,7 @@
 \title{Shiny hotspot views}
 \usage{
 shinyHotspot(input, output, session, set_par, win_par, pheno_type, peaks_tbl,
-  pmap_obj)
+  pmap_obj, project_info)
 
 shinyHotspotInput(id)
 
@@ -16,7 +16,7 @@ shinyHotspotOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{set_par, win_par, pheno_type, peaks_tbl, pmap_obj}{reactive arguments}
+\item{set_par, win_par, pheno_type, peaks_tbl, pmap_obj, project_info}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1}} use}
 }

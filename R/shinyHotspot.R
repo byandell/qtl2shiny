@@ -3,7 +3,7 @@
 #' Shiny module to view hotspots for peak selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param set_par,win_par,pheno_type,peaks_tbl,pmap_obj reactive arguments
+#' @param set_par,win_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -21,7 +21,8 @@
 #'   withProgress incProgress setProgress
 shinyHotspot <- function(input, output, session,
                          set_par, win_par, 
-                         pheno_type, peaks_tbl, pmap_obj) {
+                         pheno_type, peaks_tbl, pmap_obj,
+                         project_info) {
   ns <- session$ns
 
   chr_names <- shiny::reactive({
@@ -58,7 +59,8 @@ shinyHotspot <- function(input, output, session,
     shiny::withProgress(message = 'Hotspot scan ...', value = 0,
     {
       shiny::setProgress(1)
-      hotspot_wrap(pmap_obj(), peaks_tbl(), win_par$window_Mbp, input$minLOD)
+      hotspot_wrap(pmap_obj(), peaks_tbl(), win_par$window_Mbp, input$minLOD,
+                   project_info())
     })
   })
   

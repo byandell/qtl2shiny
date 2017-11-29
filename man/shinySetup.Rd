@@ -7,7 +7,7 @@
 \title{Shiny setup for DOQTL selection}
 \usage{
 shinySetup(input, output, session, pheno_typer, peaks_tbl, pmap_obj,
-  analyses_tbl, cov_mx)
+  analyses_tbl, cov_mx, pheno_data, project_info)
 
 shinySetupOutput(id)
 
@@ -16,7 +16,7 @@ shinySetupUI(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_mx}{reactive arguments}
+\item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_mx, pheno_data, project_info}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1}} use}
 }

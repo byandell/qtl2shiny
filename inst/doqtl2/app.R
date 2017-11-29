@@ -1,7 +1,8 @@
 ## app.R ##
 
 suppressPackageStartupMessages({
-  library(qtl2shiny)  
+  library(qtl2shiny)
+  library(qtl2feather)
 })
 
 source("setup.R")
@@ -35,6 +36,7 @@ ui <- shinydashboard::dashboardPage(skin="red",
   shinydashboard::dashboardHeader(title = "qtl2shiny"),
   shinydashboard::dashboardSidebar(
     shinydashboard::sidebarMenu(
+      shiny::uiOutput("project"),
       shinySetupOutput("setup"),
       shinydashboard::menuItem("Phenotypes and Region", tabName = "phenos",
                icon = icon("dashboard")),
@@ -67,43 +69,84 @@ ui <- shinydashboard::dashboardPage(skin="red",
 server <- function(input, output, session) {
   
   ## Data Setup
-  pheno_typer <- shiny::reactive({pheno_type})
-  peaks_tbl <- shiny::reactive({peaks})
-  pmap_obj <- shiny::reactive({pmap})
-  analyses_tblr <- shiny::reactive({analyses_tbl})
+  project_info <- shiny::reactive({
+    project_id <- NULL
+    if(shiny::isTruthy(input$project)) {
+        project_id <- input$project
+    }
+    if(is.null(project_id)) {
+      project_id <- projects$project[1]
+    }
+    dplyr::filter(projects, project == project_id)
+  })
+  pheno_type <- shiny::reactive({
+    qtl2shiny::qtl2shiny_read(project_info()$project, "pheno_type")
+    })
+  peaks <- shiny::reactive({
+    qtl2shiny::qtl2shiny_read(project_info()$project, "peaks")
+  })
+  analyses_tbl <- shiny::reactive({
+    ## The analyses_tbl should only have one row per pheno.
+    qtl2shiny::qtl2shiny_read(project_info()$project, "analyses")
+  })
+  pheno_data <- shiny::reactive({
+    qtl2shiny::qtl2shiny_read(project_info()$project, "pheno_data")
+  })
+  covar <- shiny::reactive({
+    qtl2shiny::qtl2shiny_read(project_info()$project, "covar")
+  })
+  
+  pmap_obj <- shiny::reactive({
+    qtl2shiny::qtl2shiny_read(project_info()$project, "pmap")
+  })
+  kinship <- shiny::reactive({
+    qtl2shiny::qtl2shiny_read(project_info()$project, "kinship")
+  })
 
   set_par <- shiny::callModule(shinySetup, "setup", 
-                    pheno_typer, peaks_tbl, 
-                    pmap_obj, analyses_tblr, cov_mx)
+                    pheno_type, peaks, 
+                    pmap_obj, analyses_tbl, 
+                    cov_mx, pheno_data, project_info)
   
   ## Continue with Plots and Analysis.
 
   ## Phenotypes and Covariates.
   analyses_df <- shiny::reactive({
     phename <- shiny::req(set_par()$phe_par$pheno_names)
-    ## The analyses_tbl should only have one row per pheno.
-    dplyr::filter(analyses_tbl, pheno %in% phename)
+    dplyr::filter(analyses_tbl(), pheno %in% phename)
   })
   phe_df <- shiny::reactive({
     shiny::req(analyses_df())
-    pheno_read(pheno_data, analyses_df())
+    pheno_read(pheno_data(), analyses_df())
   })
   cov_mx <- shiny::reactive({
-    DOread::get_covar(covar, analyses_df())
+    DOread::get_covar(covar(), analyses_df())
   })
   
   ## Set up shiny::reactives for scan1 module.
-  K_chr <- shiny::reactive({K[set_par()$win_par$chr_id]})
+  K_chr <- shiny::reactive({
+    kinship()[set_par()$win_par$chr_id]
+  })
 
   ## Haplotype Analysis.
   shiny::callModule(shinyHaplo, "hap_scan", 
              set_par()$win_par, pmap_obj, 
-             phe_df, cov_mx, K_chr, analyses_df)
+             phe_df, cov_mx, K_chr, analyses_df, 
+             covar, pheno_data, analyses_tbl, peaks)
 
   ## Diplotype Analysis.
   shiny::callModule(shinyDiplo, "dip_scan",
              set_par()$win_par, 
              phe_df, cov_mx, K_chr, analyses_df)
+  
+  output$project <- shiny::renderUI({
+    if(shiny::isTruthy(input$project)) {
+      project <- input$project
+    } else {
+      project <- projects$project[1]
+    }
+    shiny::selectInput("project", "Project", projects$project, project)
+  })
   
   # Allow reconnect with Shiny Server.
   session$allowReconnect(TRUE)
