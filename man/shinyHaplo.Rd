@@ -6,14 +6,14 @@
 \title{Shiny haplotype analysis}
 \usage{
 shinyHaplo(input, output, session, win_par, pmap_obj, phe_df, cov_mx, K_chr,
-  analyses_df, covar, pheno_data, analyses_tbl, peaks)
+  analyses_df, covar, pheno_data, analyses_tbl, peaks, project_info)
 
 shinyHaploUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, pmap_obj, phe_df, cov_mx, K_chr, analyses_df, covar, pheno_data, analyses_tbl, peaks}{reactive arguments}
+\item{win_par, pmap_obj, phe_df, cov_mx, K_chr, analyses_df, covar, pheno_data, analyses_tbl, peaks, project_info}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

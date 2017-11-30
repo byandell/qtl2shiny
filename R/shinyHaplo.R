@@ -3,7 +3,7 @@
 #' Shiny module for analysis based on haplotype alleles.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pmap_obj,phe_df,cov_mx,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks reactive arguments
+#' @param win_par,pmap_obj,phe_df,cov_mx,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -17,12 +17,13 @@
 shinyHaplo <- function(input, output, session,
                        win_par, pmap_obj, 
                        phe_df, cov_mx, K_chr, analyses_df, 
-                       covar, pheno_data, analyses_tbl, peaks) {
+                       covar, pheno_data, analyses_tbl, peaks,
+                       project_info) {
   ns <- session$ns
 
   ## Genotype Probabilities.
   probs_obj <- shiny::callModule(shinyProbs, "probs", 
-                          win_par)
+                          win_par, project_info)
 
   ## Genome Scan.
   shiny::callModule(shinyScan1Plot, "hap_scan", 
@@ -32,7 +33,8 @@ shinyHaplo <- function(input, output, session,
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
               input, win_par, 
-              phe_df, cov_mx, probs_obj, K_chr, analyses_df)
+              phe_df, cov_mx, probs_obj, K_chr, analyses_df,
+              project_info)
 
   ## Mediation
   shiny::callModule(shinyMediate1Plot, "mediate",

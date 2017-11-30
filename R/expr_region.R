@@ -1,5 +1,7 @@
-expr_region <- function(chr_id, scan_window, covar, qtls, pmap) {
+expr_region <- function(chr_id, scan_window, covar, qtls, pmap,
+                        project_info) {
   # Get expression mRMNA measurements.
+  query_mrna <- read_query_rds(project_info, "query_mrna.rds")
   out <- query_mrna(chr_id, scan_window[1], scan_window[2], qtl = TRUE)
   # Covariate matrix covar is global.
   out$cov_med <- covar[, c("sex", "DOwave")]

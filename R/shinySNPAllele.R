@@ -3,7 +3,7 @@
 #' Shiny module to coordinate SNP and allele analyses and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df,snp_action reactive arguments
+#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df,project_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -23,6 +23,7 @@ shinySNPAllele <- function(input, output, session,
                           job_par, win_par, 
                           phe_df, cov_mx,
                           probs_obj, K_chr, analyses_df,
+                          project_info,
                           snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
   
@@ -37,7 +38,8 @@ shinySNPAllele <- function(input, output, session,
   ## Reactives
   ## SNP Probabilities.
   snpprobs_obj <- shiny::callModule(shinySNPProbs, "snp_probs",
-                  win_par, pheno_names, probs_obj)
+                  win_par, pheno_names, probs_obj,
+                  project_info)
   snpinfo <- reactive({
     shiny::req(snpprobs_obj())$snpinfo
   })
@@ -86,7 +88,7 @@ shinySNPAllele <- function(input, output, session,
     shiny::withProgress(message = 'Gene Exon Calc ...', value = 0, {
       shiny::setProgress(1)
       tops <- shiny::req(top_snps_tbl())
-      CCSanger::get_gene_exon_snp(tops)
+      gene_exons(tops, project_info())
     })
   })
   

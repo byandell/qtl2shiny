@@ -1,31 +1,17 @@
+datapath <- "qtl2shinyData"
 projects <- read.csv("projects.csv", stringsAsFactors = FALSE)
-project <- projects$project[1]
-id <- 1
-datapath <- file.path(projects$directory[id], project)
+datapath <- projects$directory[1]
 
-# Need to think about how to hand off from one project to next.
-# Not so easy, as must reside within app rather than global...
+read_project_data <- qtl2shiny::read_project_rds
 
-#pmap         <- qtl2shiny::qtl2shiny_read(project, "pmap")
-#K            <- qtl2shiny::qtl2shiny_read(project, "kinship")
-
-#covar        <- qtl2shiny::qtl2shiny_read(project, "covar")
-#peaks        <- qtl2shiny::qtl2shiny_read(project, "peaks")
-#analyses_tbl <- qtl2shiny::qtl2shiny_read(project, "analyses")
-#pheno_data   <- qtl2shiny::qtl2shiny_read(project, "pheno")
-#pheno_type   <- qtl2shiny::qtl2shiny_read(project, "pheno_type")
-#hotspots     <- qtl2shiny::qtl2shiny_read(project, "hotspot")
+# fixed directory approach
+#source("inst/doqtl2/query_taxa.R")
+#source("inst/doqtl2/query_project.R")
 
 # Set up queries
-query_genes <- 
-  qtl2db::create_gene_query_func(
-    file.path(datapath, projects$genes[id]))
-query_variants <- 
-  qtl2db::create_variant_query_func(
-    file.path(datapath, projects$variants[id]))
-query_probs <- 
-  DOread::create_probs_query_func_do(datapath)
-query_mrna <- 
-  DOread::create_mrna_query_func_do(datapath)
+# Want to have global queries that can be reset, or that take project info as arguments
+# queries to get data
+# queries to get genes, variants (for taxa)
+# queries to get probs, mrna (for project)
 
 

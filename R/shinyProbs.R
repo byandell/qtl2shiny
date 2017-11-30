@@ -3,7 +3,7 @@
 #' Shiny genotype probability access.
 #' 
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pheno_names,probs_obj reactive arguments
+#' @param win_par,pheno_names,probs_obj,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -13,9 +13,11 @@
 #' @importFrom shiny reactive req 
 #'   withProgress setProgress
 shinyProbs <- function(input, output, session,
-                       win_par) {
+                       win_par, project_info) {
   ns <- session$ns
 
+  query_probs <- read_query_rds(project_info, "query_probs.rds")
+  
   probs_obj <- shiny::reactive({
     chr_id <- shiny::req(win_par$chr_id)
     shiny::withProgress(message = 'Read probs ...', value = 0, {
@@ -38,9 +40,11 @@ shinyProbs <- function(input, output, session,
 #' @rdname shinyProbs
 #' @export
 shinyProbs36 <- function(input, output, session,
-                         win_par) {
+                         win_par, project_info) {
   ns <- session$ns
 
+  query_probs <- read_query_rds(project_info, "query_probs.rds")
+  
   ## Probs object for 36 diplotypes.
   probs_obj <- shiny::reactive({
     chr_id <- shiny::req(win_par$chr_id)
@@ -57,8 +61,11 @@ shinyProbs36 <- function(input, output, session,
 #' @rdname shinyProbs
 #' @export
 shinySNPProbs <- function(input, output, session,
-                          win_par, pheno_names, probs_obj) {
+                          win_par, pheno_names, probs_obj,
+                          project_info) {
   ns <- session$ns
+  
+  query_variants <- read_query_rds(project_info, "query_variants.rds")
   
   shiny::reactive({
     shiny::req(win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)

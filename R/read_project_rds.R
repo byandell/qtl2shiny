@@ -1,0 +1,15 @@
+#' @export
+#' @importFrom assertthat assert_that
+read_project_rds <- function(project_info, dataname) {
+  project <- project_info$project
+  
+  directory <- match(project, project_info$project)
+  assertthat::assert_that(!is.na(directory))
+  directory <- project_info$directory[directory]
+  
+  filepath <- file.path(directory, project, paste0(dataname, ".rds"))
+  if(file.exists(filepath))
+    readRDS(filepath)
+  else
+    NULL
+}

@@ -80,27 +80,27 @@ server <- function(input, output, session) {
     dplyr::filter(projects, project == project_id)
   })
   pheno_type <- shiny::reactive({
-    qtl2shiny::qtl2shiny_read(project_info()$project, "pheno_type")
+    read_project_data(project_info(), "pheno_type")
     })
   peaks <- shiny::reactive({
-    qtl2shiny::qtl2shiny_read(project_info()$project, "peaks")
+    read_project_data(project_info(), "peaks")
   })
   analyses_tbl <- shiny::reactive({
     ## The analyses_tbl should only have one row per pheno.
-    qtl2shiny::qtl2shiny_read(project_info()$project, "analyses")
+    read_project_data(project_info(), "analyses")
   })
   pheno_data <- shiny::reactive({
-    qtl2shiny::qtl2shiny_read(project_info()$project, "pheno_data")
+    read_project_data(project_info(), "pheno_data")
   })
   covar <- shiny::reactive({
-    qtl2shiny::qtl2shiny_read(project_info()$project, "covar")
+    read_project_data(project_info(), "covar")
   })
   
   pmap_obj <- shiny::reactive({
-    qtl2shiny::qtl2shiny_read(project_info()$project, "pmap")
+    read_project_data(project_info(), "pmap")
   })
   kinship <- shiny::reactive({
-    qtl2shiny::qtl2shiny_read(project_info()$project, "kinship")
+    read_project_data(project_info(), "kinship")
   })
 
   set_par <- shiny::callModule(shinySetup, "setup", 
@@ -132,12 +132,14 @@ server <- function(input, output, session) {
   shiny::callModule(shinyHaplo, "hap_scan", 
              set_par()$win_par, pmap_obj, 
              phe_df, cov_mx, K_chr, analyses_df, 
-             covar, pheno_data, analyses_tbl, peaks)
+             covar, pheno_data, analyses_tbl, peaks,
+             project_info)
 
   ## Diplotype Analysis.
   shiny::callModule(shinyDiplo, "dip_scan",
              set_par()$win_par, 
-             phe_df, cov_mx, K_chr, analyses_df)
+             phe_df, cov_mx, K_chr, analyses_df,
+             project_info)
   
   output$project <- shiny::renderUI({
     if(shiny::isTruthy(input$project)) {

@@ -16,7 +16,8 @@
 #'    mainPanel sidebarPanel strong tagList
 shinyDiplo <- function(input, output, session,
                        win_par, 
-                       phe_df, cov_mx, K_chr, analyses_df) {
+                       phe_df, cov_mx, K_chr, analyses_df,
+                       project_info) {
   ns <- session$ns
 
   chr_pos <- shiny::reactive({
@@ -27,14 +28,15 @@ shinyDiplo <- function(input, output, session,
 
   ## Probs object for 36 diplotypes.
   probs36_obj <- shiny::callModule(shinyProbs36, "probs36", 
-                            win_par)
+                            win_par, project_info)
 
   snp_action <- shiny::reactive({input$snp_action})
   
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
                          input, win_par, 
-                         phe_df, cov_mx, probs36_obj, K_chr, analyses_df, 
+                         phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
+                         project_info,
                          snp_action)
   
   shiny::callModule(shinyPattern, "dip_pat",

@@ -5,7 +5,8 @@
 \alias{shinyDiploUI}
 \title{Shiny Diplotype module}
 \usage{
-shinyDiplo(input, output, session, win_par, phe_df, cov_mx, K_chr, analyses_df)
+shinyDiplo(input, output, session, win_par, phe_df, cov_mx, K_chr, analyses_df,
+  project_info)
 
 shinyDiploUI(id)
 }
