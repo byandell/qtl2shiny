@@ -11,6 +11,7 @@
 #' @export
 #' @importFrom qtl2scan scan1
 #' @importFrom qtl2ggplot plot_scan1
+#' @importFrom qtl2pattern sdp_to_pattern
 #' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
@@ -50,7 +51,7 @@ shinyScatterPlot <- function(input, output, session,
     unique(dplyr::filter(patterns(), pheno == med_par$pheno_name)$sdp)
   })
   output$pattern <- shiny::renderUI({
-    choices <- CCSanger::sdp_to_pattern(sdps())
+    choices <- qtl2pattern::sdp_to_pattern(sdps())
      shiny::selectInput(ns("pattern"), NULL,
                        choices = choices, input$pattern)
   })

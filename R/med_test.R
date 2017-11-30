@@ -19,7 +19,7 @@ med_scat <- function(med_ls, geno_max, phe_df, kinship, cov_tar, sdps, pattern, 
   if(is.list(kinship))
     kinship <- kinship[[1]]
   
-  sdp <- sdps[CCSanger::sdp_to_pattern(sdps) == pattern]
+  sdp <- sdps[qtl2pattern::sdp_to_pattern(sdps) == pattern]
   id <- med_ls[[2]]$id[med_ls[[2]][[medID]] == med_name]
   if(length(id) != 1)
     return(NULL)

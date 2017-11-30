@@ -11,8 +11,7 @@
 #' @importFrom dplyr distinct
 #' @importFrom stringr str_split
 #' @importFrom grid plotViewport pushViewport
-#' @importFrom CCSanger sdp_to_pattern
-#' @importFrom qtl2pattern scan_pattern
+#' @importFrom qtl2pattern scan_pattern sdp_to_pattern
 #' @importFrom dplyr filter mutate
 #' @importFrom shiny NS reactive req 
 #'   observeEvent
@@ -49,7 +48,7 @@ shinyPattern <- function(input, output, session,
     pull_patterns(patterns(), names(shiny::req(phe_df())))
   })
   pattern_choices <- shiny::reactive({
-    CCSanger::sdp_to_pattern(pats()$sdp)
+    qtl2pattern::sdp_to_pattern(pats()$sdp)
   })
   output$pattern <- shiny::renderUI({
     shiny::req(pattern_choices(), snp_action())
@@ -67,7 +66,7 @@ shinyPattern <- function(input, output, session,
     shiny::req(snp_action(), input$pheno_name, patterns())
     pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
     if(nrow(pats)) {
-      choices <- CCSanger::sdp_to_pattern(pats$sdp)
+      choices <- qtl2pattern::sdp_to_pattern(pats$sdp)
     } else {
       choices <- input$pattern
     }
@@ -181,7 +180,7 @@ shinyPattern <- function(input, output, session,
       pdf(file, width = 9, height = 9)
       for(pheno_in in names(phe_df())) {
         pats <- dplyr::filter(patterns(), pheno == pheno_in)
-        pat_choices <- CCSanger::sdp_to_pattern(pats$sdp)
+        pat_choices <- qtl2pattern::sdp_to_pattern(pats$sdp)
         
         scan_now <- scan1_pattern(pheno_in, phe_df(), cov_mx(), 
                                   probs36_obj(), K_chr(), analyses_df(),
