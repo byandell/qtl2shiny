@@ -73,13 +73,13 @@ shinySNPAllele <- function(input, output, session,
   ## Top SNPs table.
   top_snps_tbl <- shiny::reactive({
     shiny::req(snp_action(), snpinfo())
-    drop.hilit <- max(unclass(shiny::req(snp_scan_obj()))) - 
+    drop_hilit <- max(unclass(shiny::req(snp_scan_obj()))) - 
       minLOD() 
     shiny::withProgress(message = 'Get Top SNPs ...', value = 0, {
       shiny::setProgress(1)
       qtl2pattern::top_snps_all(snp_scan_obj(),
                                 snpinfo(),
-                                drop.hilit)
+                                drop_hilit)
     })
   })
   ## Genes and Exons.

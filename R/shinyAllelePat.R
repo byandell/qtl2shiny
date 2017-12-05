@@ -12,6 +12,7 @@
 #' 
 #' @importFrom dplyr distinct
 #' @importFrom qtl2pattern sdp_to_pattern
+#' @importFrom ggplot2 autoplot
 #' @importFrom shiny callModule NS reactive req 
 #'   radioButtons selectInput updateRadioButtons
 #'   dataTableOutput plotOutput uiOutput
@@ -65,7 +66,7 @@ shinyAllelePat <- function(input, output, session,
                    chr_id(),
                    snpinfo(),
                    snp_par$scan_window,
-                   drop.hilit = dropHilit(),
+                   drop_hilit = dropHilit(),
                    snp_action = snp_action())
     })
   })
@@ -82,7 +83,7 @@ shinyAllelePat <- function(input, output, session,
                    chr_id(),
                    snpinfo(),
                    snp_par$scan_window,
-                   drop.hilit = dropHilit(),
+                   drop_hilit = dropHilit(),
                    snp_action = snp_action(),
                    lines = FALSE, cex = 2)
     })
@@ -100,7 +101,7 @@ shinyAllelePat <- function(input, output, session,
                    chr_id(),
                    snpinfo(),
                    snp_par$scan_window,
-                   drop.hilit = dropHilit(),
+                   drop_hilit = dropHilit(),
                    facet = "pheno", 
                    snp_action = snp_action())
     })
@@ -133,7 +134,7 @@ shinyAllelePat <- function(input, output, session,
                    chr_id(),
                    snpinfo(), 
                    snp_par$scan_window,
-                   drop.hilit = dropHilit(),
+                   drop_hilit = dropHilit(),
                    facet = "pattern", 
                    snp_action = snp_action())
     })
@@ -187,7 +188,7 @@ shinyAllelePat <- function(input, output, session,
                          chr_id(),
                          snpinfo(), 
                          snp_w,
-                         drop.hilit = dropHilit(),
+                         drop_hilit = dropHilit(),
                          facet = "pheno", 
                          snp_action = snp_action()))
 
@@ -196,7 +197,7 @@ shinyAllelePat <- function(input, output, session,
                          chr_id(),
                          snpinfo(), 
                          snp_par$scan_window,
-                         drop.hilit = dropHilit(),
+                         drop_hilit = dropHilit(),
                          facet = "pattern", 
                          snp_action = snp_action()))
 
@@ -207,7 +208,7 @@ shinyAllelePat <- function(input, output, session,
                            chr_id(),
                            snpinfo(), 
                            snp_w, 
-                           drop.hilit = dropHilit(),
+                           drop_hilit = dropHilit(),
                            snp_action = snp_action()))
       }
       dev.off()

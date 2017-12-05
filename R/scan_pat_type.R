@@ -1,7 +1,4 @@
-#' Plot scan patterns for phenotype.
-#' 
-#' @importFrom dplyr arrange desc
-#' 
+# Plot scan patterns for phenotype.
 scan_pat_type <- function(scan_pat, map, type, pattern, pheno) {
   if(is.null(scan_pat))
     return(plot_null())
@@ -19,6 +16,7 @@ scan_pat_type <- function(scan_pat, map, type, pattern, pheno) {
   title <- pheno
   if(ncol(scan_pat$scan) > 1)
     title <- FALSE
-  plot(scan_pat, map, type, pattern_cont, main = title,
-       maxpos = maxpos, maxcol = maxcol) 
+  ggplot2::autoplot(
+    scan_pat, map, type, pattern_cont, main = title,
+    maxpos = maxpos, maxcol = maxcol) 
 }

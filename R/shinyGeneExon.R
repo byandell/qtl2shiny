@@ -10,6 +10,7 @@
 #'
 #' @export
 #' @importFrom dplyr filter
+#' @importFrom ggplot2 autoplot ggtitle
 #' @importFrom shiny NS reactive req 
 #'   selectInput updateSelectInput
 #'   dataTableOutput plotOutput uiOutput

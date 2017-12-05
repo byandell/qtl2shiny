@@ -12,7 +12,7 @@
 #' @importFrom CausalMST mediate1_test
 #' @importFrom qtl2pattern pheno_trans
 #' @importFrom qtl2scan scan1
-#' @importFrom qtl2ggplot plot_scan1
+#' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
@@ -135,9 +135,10 @@ shinyMediate1Plot <- function(input, output, session,
     } else {
       shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
         shiny::setProgress(1)
-        plot(mediate_obj(), med_plot_type(),
-             local_only = input$local, 
-             significant = input$signif)
+        ggplot2::autoplot(
+          mediate_obj(), med_plot_type(),
+          local_only = input$local, 
+          significant = input$signif)
       })
     }
   })
@@ -146,9 +147,10 @@ shinyMediate1Plot <- function(input, output, session,
     shiny::req(mediate_obj())
     shiny::withProgress(message = 'Mediation Plotly ...', value = 0, {
       shiny::setProgress(1)
-      plot(mediate_signif(), med_plot_type(),
-           local_only = input$local, 
-           significant = TRUE)
+      ggplot2::autoplot(
+        mediate_signif(), med_plot_type(),
+        local_only = input$local, 
+        significant = TRUE)
     })
   })
 
@@ -232,18 +234,22 @@ shinyMediate1Plot <- function(input, output, session,
                         K_chr(), cov_mx(), input$pos_Mbp,
                         data_type = input$med_type,
                         probs_chr())
-        print(plot(med, "pos_lod",
-              local_only = input$local, 
-              significant = input$signif))
-        print(plot(med, "pos_pvalue",
-              local_only = input$local, 
-              significant = TRUE))
-        print(plot(med, "pvalue_lod",
-              local_only = input$local, 
-              significant = TRUE))
-        print(plot(med, "mediator",
-              local_only = input$local, 
-              significant = TRUE))
+        print(ggplot2::autoplot(
+          med, "pos_lod",
+          local_only = input$local, 
+          significant = input$signif))
+        print(ggplot2::autoplot(
+          med, "pos_pvalue",
+          local_only = input$local, 
+          significant = TRUE))
+        print(ggplot2::autoplot(
+          med, "pvalue_lod",
+          local_only = input$local, 
+          significant = TRUE))
+        print(ggplot2::autoplot(
+          med, "mediator",
+          local_only = input$local, 
+          significant = TRUE))
       }
       dev.off()
     })

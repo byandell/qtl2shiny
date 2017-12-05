@@ -10,6 +10,7 @@
 #'
 #' @export
 #' @importFrom qtl2pattern get_snpprobs 
+#' @importFrom assertthat assert_that
 #' @importFrom shiny reactive req 
 #'   withProgress setProgress
 shinyProbs <- function(input, output, session,

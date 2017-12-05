@@ -11,7 +11,7 @@
 #' @export
 #' @importFrom qtl2pattern listof_scan1coef
 #' @importFrom qtl2scan scan1
-#' @importFrom qtl2ggplot plot_scan1
+#' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req 
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
@@ -68,10 +68,11 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(win_par$chr_id, input$scan_window, scan_obj(), probs_obj())
     shiny::withProgress(message = 'Genome LOD Plot ...', value = 0, {
       shiny::setProgress(1)
-      p <- qtl2ggplot::plot_scan1(scan_obj(), probs_obj()$map,
-           lodcolumn = seq(ncol(scan_obj())),
-           chr = win_par$chr_id,
-           xlim=input$scan_window)
+      p <- ggplot2::autoplot(
+        scan_obj(), probs_obj()$map,
+        lodcolumn = seq(ncol(scan_obj())),
+        chr = win_par$chr_id,
+        xlim=input$scan_window)
       if(ncol(phe_df()) == 1 & ncol(scan_obj()) >= 1)
         p <- p + ggtitle(names(phe_df()))
       p
@@ -162,7 +163,7 @@ shinyScan1Plot <- function(input, output, session,
       win <- shiny::req(input$scan_window)
       map <- shiny::req(probs_obj())$map
       pdf(file, width=9,height=9)
-      print(plot(scans, map,
+      print(ggplot2::autoplot(scans, map,
                  lodcolumn = seq_along(names(effs)),
                  chr = win_par$chr_id,
                  xlim = win))

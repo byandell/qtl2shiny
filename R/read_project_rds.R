@@ -1,5 +1,3 @@
-#' @export
-#' @importFrom assertthat assert_that
 read_project_rds <- function(project_info, dataname) {
   project <- project_info$project
   

@@ -28,7 +28,7 @@ plot_hot <- function(peak_set, scan_obj, window_Mbp) {
   
   # Kludge 
   if(nrow(out_peaks) == length(unlist(map)) & length(lodcolumns)) {
-    plot(out_peaks, map, lodcolumn=lodcolumns,
+    ggplot2::autoplot(out_peaks, map, lodcolumn=lodcolumns,
          col = col[lodcolumns],
          ylab = "phenotype count",
          ylim = c(0, max(out_peaks[,lodcolumns], na.rm = TRUE)),

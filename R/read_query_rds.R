@@ -1,5 +1,3 @@
-#' @export
-#' @importFrom assertthat assert_that
 read_query_rds <- function(project_info, filename) {
   projectfile <- file.path(project_info$directory,
                            project_info$taxa,

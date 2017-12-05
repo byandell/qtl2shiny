@@ -11,6 +11,7 @@
 #' @export
 #' @importFrom dplyr distinct
 #' @importFrom qtl2pattern merge_feature
+#' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req 
 #'   selectInput
 #'   dataTableOutput plotOutput uiOutput
@@ -45,11 +46,11 @@ shinyTopFeature <- function(input, output, session,
   phename <- shiny::reactive({dimnames(snp_scan_obj())[[2]]})
   output$top_gene_by_snp <- shiny::renderPlot({
     shiny::req(top_feature(), snp_par$pheno_name)
-    plot(top_feature(), snp_par$pheno_name, "consequence")
+    ggplot2::autoplot(top_feature(), snp_par$pheno_name, "consequence")
   })
   output$top_gene_by_pattern <- shiny::renderPlot({
     shiny::req(top_feature(), snp_par$pheno_name)
-    plot(top_feature(), snp_par$pheno_name, "pattern")
+    ggplot2::autoplot(top_feature(), snp_par$pheno_name, "pattern")
   })
   output$by_choice <- shiny::renderUI({
     switch(input$by_choice,
@@ -81,8 +82,8 @@ shinyTopFeature <- function(input, output, session,
       shiny::req(top_feature())
       pdf(file, width = 9)
       for(phenoi in phename()) {
-        print(plot(top_feature(), phenoi, "consequence"))
-        print(plot(top_feature(), phenoi, "pattern"))
+        print(ggplot2::autoplot(top_feature(), phenoi, "consequence"))
+        print(ggplot2::autoplot(top_feature(), phenoi, "pattern"))
       }
       dev.off()
     }

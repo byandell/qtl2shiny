@@ -11,8 +11,9 @@
 #' @return list of inputs and scan summary
 #'
 #' @export
+#' @importFrom assertthat assert_that
 #' @importFrom dplyr add_row arrange filter rename
-#' @importFrom ggplot2 ggtitle scale_y_sqrt
+#' @importFrom ggplot2 autoplot ggtitle scale_y_sqrt
 #' @importFrom shiny NS reactive req 
 #'   checkboxInput selectInput
 #'   plotOutput dataTableOutput uiOutput

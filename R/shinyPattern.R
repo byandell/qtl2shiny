@@ -12,7 +12,8 @@
 #' @importFrom stringr str_split
 #' @importFrom grid plotViewport pushViewport
 #' @importFrom qtl2pattern scan_pattern sdp_to_pattern
-#' @importFrom dplyr filter mutate
+#' @importFrom dplyr filter mutate arrange desc
+#' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req 
 #'   observeEvent
 #'   radioButtons selectInput updateSelectInput

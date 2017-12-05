@@ -9,7 +9,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom ggplot2 ggtitle
+#' @importFrom ggplot2 autoplot ggtitle
 #' @importFrom shiny NS reactive req isTruthy
 #'   checkboxInput
 #'   tableOutput plotOutput uiOutput

@@ -13,7 +13,7 @@ Imports:
     shiny,shinydashboard,
     gdata, grid, GGally,
     plotly, RSQLite, dbplyr,
-    qtl2scan (>= 0.5-13),
+    qtl2,
     qtl2ggplot,
     qtl2pattern,
     CCSanger,

@@ -1,20 +1,6 @@
-#' Plot across traits
-#'
-#' Plot of density and pairwise scatterplots.
-#'
-#' @param phe data frame of phenotypes
-#' @param cov matrix of covariates
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords hplot
-#'
-#' @examples
-#' \dontrun{plot_sex(phe)}
-#' 
-#' @export
-#' @importFrom dplyr mutate
-#' @importFrom ggplot2 ggplot aes_string geom_density geom_rug
-#' @importFrom GGally ggscatmat
+# Plot across traits
+#
+# Plot of density and pairwise scatterplots.
 plot_sex <- function(phe, cov) {
   phename <- names(phe)
   if(length(phename) > 10) {

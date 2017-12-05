@@ -1,4 +1,3 @@
-#' @export
 pheno_read <- function(pheno_data, analyses_df, transform = TRUE) {
   if(transform) {
     transform <- analyses_df$transf

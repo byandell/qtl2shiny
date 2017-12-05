@@ -17,6 +17,7 @@
 #'   tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#' @importFrom ggplot2 autoplot
 shinySNP <- function(input, output, session,
                      chr_pos, top_snps_tbl,
                      snp_action = shiny::reactive({"basic"})) {

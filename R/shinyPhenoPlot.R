@@ -16,6 +16,9 @@
 #'   renderPlot renderTable
 #'   tagList
 #'   withProgress setProgress
+#' @importFrom dplyr mutate
+#' @importFrom ggplot2 ggplot aes_string geom_density geom_rug
+#' @importFrom GGally ggscatmat
 shinyPhenoPlot <- function(input, output, session,
                            phe_df, cov_mx) {
   ## Scatter plot or density

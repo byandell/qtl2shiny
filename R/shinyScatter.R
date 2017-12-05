@@ -10,8 +10,8 @@
 #'
 #' @export
 #' @importFrom qtl2scan scan1
-#' @importFrom qtl2ggplot plot_scan1
 #' @importFrom qtl2pattern sdp_to_pattern
+#' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
@@ -83,7 +83,7 @@ shinyScatterPlot <- function(input, output, session,
       shiny::req(input$med_plot, input$med_name, phe_df())
       shiny::withProgress(message = 'Scatter Plot ...', value = 0, {
         shiny::setProgress(1)
-        plot(scat_dat(), type = input$med_plot,
+        ggplot2::autoplot(scat_dat(), type = input$med_plot,
              dname = peak_mar(),
              mname = input$med_name,
              tname = names(phe_df()))
@@ -110,7 +110,7 @@ shinyScatterPlot <- function(input, output, session,
                      "by_target", 
                      "driver_offset", 
                      "driver")) {
-        print(plot(scat_dat(), type = types,
+        print(ggplot2::autoplot(scat_dat(), type = types,
                    dname = peak_mar(),
                    mname = input$med_name,
                    tname = names(phe_df())))

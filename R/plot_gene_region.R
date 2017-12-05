@@ -15,7 +15,7 @@ plot_gene_region <- function(pheno, gene_region_tbl, top_snps_tbl, wrng, use_snp
   }
 
   if(nrow(gene_region_tbl)) {
-    p <- plot(subset(gene_region_tbl, wrng[1], wrng[2]),
+    p <- ggplot2::autoplot(subset(gene_region_tbl, wrng[1], wrng[2]),
               top_snps_tbl = top_snps_rng)
     if(use_snp)
       p <- p + 

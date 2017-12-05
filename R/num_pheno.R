@@ -1,21 +1,6 @@
-#' Number of phenotypes examined
-#'
-#' Character string with number of phenotypes of total.
-#'
-#' @param pheno names of phenotypes
-#' @param analyses_tbl table of analyses run
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
-#' @examples
-#' \dontrun{num_pheno(pheno, analyses_tbl)}
-#' 
-#' @export
-#' 
-#' @importFrom gdata humanReadable
-#' @importFrom dplyr distinct
-#' 
+# Number of phenotypes examined
+#
+# Character string with number of phenotypes of total.
 num_pheno <- function(pheno, analyses_tbl) {
   if(any(c("all","none") %in% pheno))
     return(NULL)

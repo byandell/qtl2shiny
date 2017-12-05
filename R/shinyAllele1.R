@@ -17,7 +17,7 @@
 #'   fluidRow column strong tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
-#' @importFrom ggplot2 ggtitle
+#' @importFrom ggplot2 autoplot ggtitle
 #' 
 shinyAllele1 <- function(input, output, session,
                   win_par, 
@@ -63,7 +63,7 @@ shinyAllele1 <- function(input, output, session,
     shiny::req(allele_obj(), input$pos_Mbp)
     shiny::withProgress(message = 'Allele plots ...', value = 0, {
       shiny::setProgress(1)
-      p <- plot(allele_obj(), pos = input$pos_Mbp)
+      p <- ggplot2::autoplot(allele_obj(), pos = input$pos_Mbp)
       if(is.null(p)) {
         plot_null()
       } else {
@@ -100,8 +100,9 @@ shinyAllele1 <- function(input, output, session,
     content = function(file) {
       shiny::req(allele_obj(), input$pos_Mbp)
       pdf(file, width=9,height=9)
-      print(plot(allele_obj(), pos = input$pos_Mbp) +
-              ggplot2::ggtitle(names(phe_df())))
+      print(ggplot2::autoplot(
+        allele_obj(), pos = input$pos_Mbp) +
+        ggplot2::ggtitle(names(phe_df())))
       dev.off()
     }
   )
