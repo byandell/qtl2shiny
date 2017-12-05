@@ -46,7 +46,7 @@ shinyDiplo <- function(input, output, session,
   
   ## CC names
   output$cc_names <- shiny::renderText({
-    cc <- CCSanger::CCcolors
+    cc <- qtl2::CCcolors
     paste(LETTERS[seq_along(cc)], names(cc), 
           sep = "=", collapse = ", ")
   })

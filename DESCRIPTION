@@ -16,7 +16,6 @@ Imports:
     qtl2,
     qtl2ggplot,
     qtl2pattern,
-    CCSanger,
     CausalMST
 Suggests:
     flexdashboard,

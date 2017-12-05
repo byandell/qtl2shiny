@@ -10,8 +10,7 @@
 #'
 #' @export
 #' @importFrom dplyr arrange desc filter mutate
-#' @importFrom CCSanger get_gene_exon_snp 
-#' @importFrom qtl2pattern top_snps_all snpprob_collapse
+#' @importFrom qtl2pattern get_gene_exon_snp top_snps_all snpprob_collapse
 #' @importFrom qtl2scan scan1
 #' @importFrom shiny callModule NS reactive req 
 #'   selectInput sliderInput

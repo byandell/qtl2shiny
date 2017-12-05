@@ -10,6 +10,7 @@
 #'
 #' @export
 #' @importFrom ggplot2 autoplot ggtitle
+#' @importFrom qtl2pattern get_gene
 #' @importFrom shiny NS reactive req isTruthy
 #'   checkboxInput
 #'   tableOutput plotOutput uiOutput
@@ -33,7 +34,7 @@ shinyGeneRegion <- function(input, output, session,
     shiny::withProgress(message = 'Extract gene features ...',
                  value = 0, {
       shiny::setProgress(1)
-      CCSanger::get_gene(chr_id(), wrng[1], wrng[2])
+      qtl2pattern::get_gene(chr_id(), wrng[1], wrng[2])
     })
   })
   output$gene_sum <- shiny::renderTable({
