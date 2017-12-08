@@ -17,12 +17,8 @@ shinyProbs <- function(input, output, session,
                        win_par, project_info) {
   ns <- session$ns
 
-  query_probs <- shiny::reactive({
-    shiny::req(project_info())
-    read_query_rds(project_info(), "query_probs.rds")
-  })
-  
   probs_obj <- shiny::reactive({
+    shiny::req(project_info())
     chr_id <- shiny::req(win_par$chr_id)
     shiny::withProgress(message = 'Read probs ...', value = 0, {
       shiny::setProgress(1)
@@ -34,8 +30,11 @@ shinyProbs <- function(input, output, session,
       } else {
         start_val <- end_val <- NULL
       }
+      
+      # Define query_probs function
+      query_probs <- read_query_rds(project_info(), "query_probs.rds")
       # Note probs object keeps map with it
-      query_probs()(chr_id, start_val, end_val)
+      query_probs(chr_id, start_val, end_val)
     })
   })
   
@@ -47,11 +46,6 @@ shinyProbs36 <- function(input, output, session,
                          win_par, project_info) {
   ns <- session$ns
 
-  query_probs <- shiny::reactive({
-    shiny::req(project_info())
-    read_query_rds(project_info(), "query_probs.rds")
-  })
-  
   ## Probs object for 36 diplotypes.
   probs_obj <- shiny::reactive({
     chr_id <- shiny::req(win_par$chr_id)
@@ -59,7 +53,10 @@ shinyProbs36 <- function(input, output, session,
       c(-1,1) * shiny::req(win_par$window_Mbp)
     shiny::withProgress(message = 'Diplotype Probs ...', value = 0, {
       shiny::setProgress(1)
-      query_probs()(chr_id, range_val[1], range_val[2],
+      
+      # Define query_probs function
+      query_probs <- read_query_rds(project_info(), "query_probs.rds")
+      query_probs(chr_id, range_val[1], range_val[2],
                          allele = FALSE)
     })
   })
@@ -72,19 +69,15 @@ shinySNPProbs <- function(input, output, session,
                           project_info) {
   ns <- session$ns
   
-  ## Create reactive which is a function
-  qv <- shiny::reactive({
-    shiny::req(project_info())
-    read_query_rds(project_info(), "query_variants.rds")
-  })
-
   shiny::reactive({
     shiny::req(win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
     shiny::req(pheno_names(), probs_obj())
     shiny::withProgress(message = 'SNP Probs ...', value = 0, {
       shiny::setProgress(1)
+      
       # define the query_variants function
-      query_variants <- qv()
+      query_variants <- read_query_rds(project_info(), "query_variants.rds")
+      
       qtl2pattern::get_snpprobs(win_par$chr_id, 
                    win_par$peak_Mbp, 
                    win_par$window_Mbp,
