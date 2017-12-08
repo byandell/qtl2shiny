@@ -37,8 +37,6 @@ ui <- shinydashboard::dashboardPage(skin="red",
   shinydashboard::dashboardSidebar(
     shinydashboard::sidebarMenu(
       shinySetupOutput("setup"),
-      shinydashboard::menuItem("Project", tabName = "project",
-                               icon = icon("dashboard")),
       shinydashboard::menuItem("Phenotypes and Region", tabName = "phenos",
                icon = icon("dashboard")),
       shinydashboard::menuItem("Haplotype Scans", tabName = "hap_scan",
@@ -54,17 +52,17 @@ ui <- shinydashboard::dashboardPage(skin="red",
   shinydashboard::dashboardBody(
     shinydashboard::tabItems(
       ## Phenotypes and Region
-      shinydashboard::tabItem(tabName = "phenos", 
-              shinySetupUI("setup")),
+      shinydashboard::tabItem(
+        tabName = "phenos",
+        shiny::tagList(
+          shinyProjectUI("project"),
+          shinySetupUI("setup"))),
       ## Scans
       shinydashboard::tabItem(tabName="hap_scan",
               shinyHaploUI("hap_scan")),
       ## Diploid Analysis
       shinydashboard::tabItem(tabName="dip_scan", 
-              shinyDiploUI("dip_scan")),
-      ## Project
-      shinydashboard::tabItem(tabName="project", 
-                              shinyProjectUI("project"))
+              shinyDiploUI("dip_scan"))
     )
   )
 )
