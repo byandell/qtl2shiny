@@ -96,7 +96,7 @@ shinySNPAllele <- function(input, output, session,
   ass_par <- shiny::callModule(shinySNPAssoc, "snp_assoc",
              input, chr_pos, pheno_names,
              snp_scan_obj, snpinfo, top_snps_tbl, 
-             gene_exon_tbl, snp_action)
+             gene_exon_tbl, project_info, snp_action)
   ## Allele Patterns
   pat_par <- shiny::callModule(shinyAllelePat, "allele_pat",
              input, chr_pos, pheno_names,

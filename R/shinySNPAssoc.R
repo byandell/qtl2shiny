@@ -1,7 +1,7 @@
 #' Shiny SNP Consequence
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
+#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,project_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,6 +18,7 @@ shinySNPAssoc <- function(input, output, session,
                         snp_par, chr_pos, pheno_names,
                         snp_scan_obj, snpinfo, top_snps_tbl, 
                         gene_exon_tbl,
+                        project_info,
                         snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
 
@@ -33,6 +34,7 @@ shinySNPAssoc <- function(input, output, session,
   shiny::callModule(shinyGeneRegion, "gene_region",
              snp_par, 
              top_snps_tbl,
+             project_info,
              snp_action)
   ## Genes and Exons
   shiny::callModule(shinyGeneExon, "gene_exon",

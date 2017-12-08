@@ -70,20 +70,23 @@ shinySNPProbs <- function(input, output, session,
   ns <- session$ns
   
   shiny::reactive({
-    shiny::req(win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
+    shiny::req(chr_id <- win_par$chr_id, 
+               peak_Mbp <- win_par$peak_Mbp, 
+               window_Mbp <- win_par$window_Mbp)
     shiny::req(pheno_names(), probs_obj())
     shiny::withProgress(message = 'SNP Probs ...', value = 0, {
       shiny::setProgress(1)
       
       # define the query_variants function
       query_variants <- read_query_rds(project_info(), "query_variants.rds")
-      
-      qtl2pattern::get_snpprobs(win_par$chr_id, 
-                   win_par$peak_Mbp, 
-                   win_par$window_Mbp,
+      snpinfo <- query_variants(chr_id,
+                                peak_Mbp - window_Mbp,
+                                peak_Mbp + window_Mbp)
+      qtl2pattern::get_snpprobs(chr_id, peak_Mbp, window_Mbp,
                    pheno_names(), 
                    probs_obj()$probs,
-                   probs_obj()$map)
+                   probs_obj()$map,
+                   snpinfo)
     })
   })
 }

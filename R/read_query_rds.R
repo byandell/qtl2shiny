@@ -1,12 +1,13 @@
 read_query_rds <- function(project_info, filename) {
   if(is.null(project_info))
     return(NULL)
-  projectfile <- file.path(project_info$directory,
+  datapath <- project_info$directory
+  projectfile <- file.path(datapath,
                            project_info$taxa,
                            project_info$project,
                            filename)
   if(!file.exists(projectfile))
-    projectfile <- file.path(project_info$directory,
+    projectfile <- file.path(datapath,
                              project_info$taxa,
                              filename)
   assertthat::assert_that(file.exists(projectfile))

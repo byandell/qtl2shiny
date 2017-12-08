@@ -5,7 +5,10 @@ suppressPackageStartupMessages({
   library(qtl2feather)
 })
 
-source("setup.R")
+# Master control file for projects
+projects <- read.csv("projects.csv", stringsAsFactors = FALSE)
+# Assumes all project data in RDS format
+read_project_data <- qtl2shiny::read_project_rds
 
 #####################################################
 ## Function from Joe Cheng

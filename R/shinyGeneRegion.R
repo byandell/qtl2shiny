@@ -3,14 +3,14 @@
 #' Shiny module for scan1 analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param top_snps_tbl reactive arguments
+#' @param snp_par,top_snps_tbl,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 #' @importFrom ggplot2 autoplot ggtitle
-#' @importFrom qtl2pattern get_gene
+#' @importFrom qtl2pattern get_genes
 #' @importFrom shiny NS reactive req isTruthy
 #'   checkboxInput
 #'   tableOutput plotOutput uiOutput
@@ -20,6 +20,7 @@
 #'   downloadButton downloadHandler
 shinyGeneRegion <- function(input, output, session,
                      snp_par, top_snps_tbl,
+                     project_info,
                      snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
 
@@ -34,7 +35,7 @@ shinyGeneRegion <- function(input, output, session,
     shiny::withProgress(message = 'Extract gene features ...',
                  value = 0, {
       shiny::setProgress(1)
-      qtl2pattern::get_gene(chr_id(), wrng[1], wrng[2])
+      gene_region(chr_id(), wrng, project_info())
     })
   })
   output$gene_sum <- shiny::renderTable({

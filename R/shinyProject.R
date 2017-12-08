@@ -18,20 +18,21 @@ shinyProject <- function(input, output, session, projects_info) {
     if(shiny::isTruthy(input$project)) {
       project <- input$project
     } else {
-      project <- projects$project[1]
+      project <- projects_info()$project[1]
     }
-    shiny::selectInput("project", "Project", projects$project, project)
+    shiny::selectInput("project", "Project", projects_info()$project, project)
   })
   
   shiny::reactive({
+    shiny::req(projects_info())
     project_id <- NULL
     if(shiny::isTruthy(input$project)) {
       project_id <- input$project
     }
     if(is.null(project_id)) {
-      project_id <- projects$project[1]
+      project_id <- projects_info()$project[1]
     }
-    dplyr::filter(projects, project == project_id)
+    dplyr::filter(projects_info(), project == project_id)
   })
 }
 #' @param id identifier for \code{\link{shinyProject}} use

@@ -1,7 +1,4 @@
-datapath <- "qtl2shinyData"
 projects <- read.csv("projects.csv", stringsAsFactors = FALSE)
-datapath <- projects$directory[1]
-
 read_project_data <- qtl2shiny::read_project_rds
 
 # fixed directory approach
