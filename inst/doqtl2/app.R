@@ -36,8 +36,9 @@ ui <- shinydashboard::dashboardPage(skin="red",
   shinydashboard::dashboardHeader(title = "qtl2shiny"),
   shinydashboard::dashboardSidebar(
     shinydashboard::sidebarMenu(
-      shiny::uiOutput("project"),
       shinySetupOutput("setup"),
+      shinydashboard::menuItem("Project", tabName = "project",
+                               icon = icon("dashboard")),
       shinydashboard::menuItem("Phenotypes and Region", tabName = "phenos",
                icon = icon("dashboard")),
       shinydashboard::menuItem("Haplotype Scans", tabName = "hap_scan",
@@ -60,7 +61,10 @@ ui <- shinydashboard::dashboardPage(skin="red",
               shinyHaploUI("hap_scan")),
       ## Diploid Analysis
       shinydashboard::tabItem(tabName="dip_scan", 
-              shinyDiploUI("dip_scan"))
+              shinyDiploUI("dip_scan")),
+      ## Project
+      shinydashboard::tabItem(tabName="project", 
+                              shinyProjectUI("project"))
     )
   )
 )
@@ -69,37 +73,36 @@ ui <- shinydashboard::dashboardPage(skin="red",
 server <- function(input, output, session) {
   
   ## Data Setup
-  project_info <- shiny::reactive({
-    project_id <- NULL
-    if(shiny::isTruthy(input$project)) {
-        project_id <- input$project
-    }
-    if(is.null(project_id)) {
-      project_id <- projects$project[1]
-    }
-    dplyr::filter(projects, project == project_id)
-  })
+  projects_info <- shiny::reactive({projects})
+  project_info <- shiny::callModule(shinyProject, "project", projects_info)
   pheno_type <- shiny::reactive({
+    shiny::req(project_info())
     read_project_data(project_info(), "pheno_type")
     })
   peaks <- shiny::reactive({
+    shiny::req(project_info())
     read_project_data(project_info(), "peaks")
   })
   analyses_tbl <- shiny::reactive({
+    shiny::req(project_info())
     ## The analyses_tbl should only have one row per pheno.
     read_project_data(project_info(), "analyses")
   })
   pheno_data <- shiny::reactive({
+    shiny::req(project_info())
     read_project_data(project_info(), "pheno_data")
   })
   covar <- shiny::reactive({
+    shiny::req(project_info())
     read_project_data(project_info(), "covar")
   })
   
   pmap_obj <- shiny::reactive({
+    shiny::req(project_info())
     read_project_data(project_info(), "pmap")
   })
   kinship <- shiny::reactive({
+    shiny::req(project_info())
     read_project_data(project_info(), "kinship")
   })
 
@@ -140,15 +143,6 @@ server <- function(input, output, session) {
              set_par()$win_par, 
              phe_df, cov_mx, K_chr, analyses_df,
              project_info)
-  
-  output$project <- shiny::renderUI({
-    if(shiny::isTruthy(input$project)) {
-      project <- input$project
-    } else {
-      project <- projects$project[1]
-    }
-    shiny::selectInput("project", "Project", projects$project, project)
-  })
   
   # Allow reconnect with Shiny Server.
   session$allowReconnect(TRUE)

@@ -13,6 +13,8 @@ num_pheno <- function(pheno, analyses_tbl) {
   }
   
   num_pheno <- length(unique(pheno))
+  if(!num_pheno || is.null(analyses_tbl))
+    return(NULL)
   tot_pheno <- nrow(dplyr::distinct(analyses_tbl, pheno, .keep_all=TRUE))
   ## Put in human-readable format
   num_pheno <- hr_num(num_pheno, 0)

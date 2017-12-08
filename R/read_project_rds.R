@@ -1,3 +1,4 @@
+#' @export
 read_project_rds <- function(project_info, dataname) {
   project <- project_info$project
   

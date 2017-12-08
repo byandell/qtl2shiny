@@ -8,7 +8,7 @@
 \usage{
 shinyMediate1Plot(input, output, session, job_par, win_par, patterns, phe_df,
   cov_mx, probs_obj, K_chr, analyses_df, pmap_obj, covar, pheno_data,
-  analyses_tbl, peaks)
+  analyses_tbl, peaks, project_info)
 
 shinyMediate1PlotUI(id)
 
@@ -17,7 +17,7 @@ shinyMediate1PlotOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{job_par, win_par, patterns, phe_df, cov_mx, probs_obj, K_chr, analyses_df, pmap_obj, covar, pheno_data, analyses_tbl, peaks}{reactive arguments}
+\item{job_par, win_par, patterns, phe_df, cov_mx, probs_obj, K_chr, analyses_df, pmap_obj, covar, pheno_data, analyses_tbl, peaks, project_info}{reactive arguments}
 
 \item{id}{identifier for shiny use}
 }

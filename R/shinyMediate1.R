@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks reactive arguments
+#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -26,7 +26,8 @@
 shinyMediate1Plot <- function(input, output, session,
                               job_par, win_par, patterns,
                               phe_df, cov_mx, probs_obj, K_chr, analyses_df,
-                              pmap_obj, covar, pheno_data, analyses_tbl, peaks) {
+                              pmap_obj, covar, pheno_data, analyses_tbl, peaks,
+                              project_info) {
   ns <- session$ns
   
   chr_id <- reactive({
@@ -40,7 +41,8 @@ shinyMediate1Plot <- function(input, output, session,
   expr_ls <- reactive({
     shiny::req(win_par)
     expr_region(chr_id(), scan_window(), covar(), 
-                shiny::req(input$qtls), shiny::req(pmap_obj()))
+                shiny::req(input$qtls), shiny::req(pmap_obj()),
+                project_info())
   })
   
   ## Comediator data

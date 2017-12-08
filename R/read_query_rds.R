@@ -1,4 +1,6 @@
 read_query_rds <- function(project_info, filename) {
+  if(is.null(project_info))
+    return(NULL)
   projectfile <- file.path(project_info$directory,
                            project_info$taxa,
                            project_info$project,

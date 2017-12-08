@@ -41,7 +41,8 @@ shinyHaplo <- function(input, output, session,
                     input, win_par, patterns,
                     phe_df, cov_mx, probs_obj, K_chr, analyses_df,
                     pmap_obj, 
-                    covar, pheno_data, analyses_tbl, peaks)
+                    covar, pheno_data, analyses_tbl, peaks,
+                    project_info)
 
   ## CC names
   output$cc_names <- shiny::renderText({

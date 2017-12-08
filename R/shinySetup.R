@@ -69,7 +69,13 @@ shinySetup <- function(input, output, session,
     paste0("Region: ", chr_pos(), "Mbp")
   })
   output$num_pheno <- shiny::renderText({
+    shiny::req(project_info())
     num_pheno(character(), analyses_tbl())
+  })
+  shiny::observeEvent(project_info(), {
+    output$num_pheno <- shiny::renderText({
+      num_pheno(phe_par$pheno_names, analyses_tbl())
+    })
   })
   shiny::observeEvent(phe_par$pheno_names, {
     output$num_pheno <- shiny::renderText({
