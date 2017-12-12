@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param setup_par,peaks_tbl,analyses_tbl,chr_peak reactive arguments
+#' @param set_par,peaks_tbl,analyses_tbl,win_par,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,15 +18,23 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 shinyPhenos <- function(input, output, session,
-                        setup_par, peaks_tbl, analyses_tbl,
-                        chr_peak) {
+                        set_par, win_par, peaks_tbl, analyses_tbl,
+                        project_info) {
   ns <- session$ns
 
+  shiny::observeEvent(project_info(), {
+    out <- pick_phenames()
+    shiny::updateSelectInput(session, "pheno_names", out$label,
+                             choices = out$choices,
+                             selected = NULL)
+  })
+  
   ## Set up analyses data frame.
   analyses_set <- shiny::reactive({
+    shiny::req(project_info())
     ## Filter by dataset.
-    dataset <- setup_par$dataset
-    data_group <- setup_par$pheno_group
+    dataset <- set_par$dataset
+    data_group <- set_par$pheno_group
 
     dat <- analyses_tbl()
 
@@ -48,12 +56,12 @@ shinyPhenos <- function(input, output, session,
     dat
   })
   analyses_df <- reactive({
-    dataset <- setup_par$dataset
+    dataset <- set_par$dataset
     if(shiny::isTruthy(dataset)) {
       dat <- shiny::req(analyses_set())
       ## Filter by Peak Position if use_pos=TRUE
       if(isTruthy(input$use_pos)) {
-        window_Mbp <- shiny::req(chr_peak$window_Mbp)
+        window_Mbp <- shiny::req(win_par$window_Mbp)
         ## Infinite recursion here.
         if(shiny::isTruthy(peaks_df()))
           dat <- dat[dat$pheno %in% peaks_df()$pheno,]
@@ -65,9 +73,9 @@ shinyPhenos <- function(input, output, session,
   # Choose Phenotypes for Analysis.
   peaks_df <- reactive({
     shiny::req(analyses_set(), peaks_tbl())
-    chr_id <- shiny::req(chr_peak$chr_id)
-    peak_Mbp <- shiny::req(chr_peak$peak_Mbp)
-    window_Mbp <- shiny::req(chr_peak$window_Mbp)
+    chr_id <- shiny::req(win_par$chr_id)
+    peak_Mbp <- shiny::req(win_par$peak_Mbp)
+    window_Mbp <- shiny::req(win_par$window_Mbp)
     peaks_in_pos(analyses_set(), peaks_tbl(),
                  shiny::isTruthy(input$use_pos),
                  chr_id, peak_Mbp, window_Mbp)
@@ -78,10 +86,10 @@ shinyPhenos <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10,
                  lengthMenu = c(5,10,25)))
   
-  output$pheno_names <- shiny::renderUI({
+  pick_phenames <- function() {
     phenames <- selected <- input$pheno_names
     if(shiny::isTruthy(peaks_df())) {
-      phenames <- peaks_df()$pheno
+      phenames <- unique(peaks_df()$pheno)
       # Limit to first 1000
       nphe <- length(phenames)
       phenames <- phenames[seq_len(min(1000, nphe))]
@@ -94,24 +102,29 @@ shinyPhenos <- function(input, output, session,
       selected <- ""
     if(!is.null(selected))
       selected <- sort(unique(selected))
-
+    
     ## Update phenames to include selected (but not "")
     phenames <- unique(c(selected, phenames))
     phenames <- phenames[phenames != ""]
-
+    
     choices <- c("all","none", phenames)
     label = ifelse(nphe <= 1000,
                    "Choose phenotypes",
                    paste("Top 1000 of", nphe))
-    shiny::selectInput(ns("pheno_names"), label,
-                choices = choices,
-                selected = selected,
+    list(selected = selected, choices = choices, label = label)    
+  }
+  output$pheno_names <- shiny::renderUI({
+    out <- pick_phenames()
+    shiny::selectInput(ns("pheno_names"), out$label,
+                choices = out$choices,
+                selected = out$selected,
                 multiple = TRUE)
   })
+  
   output$filter <- shiny::renderUI({
     shiny::checkboxInput(ns("use_pos"),
-                  paste0("Peak on chr ", chr_peak$chr_id, " in ",
-                        paste(chr_peak$peak_Mbp + c(-1,1) * chr_peak$window_Mbp,
+                  paste0("Peak on chr ", win_par$chr_id, " in ",
+                        paste(win_par$peak_Mbp + c(-1,1) * win_par$window_Mbp,
                               collapse = "-"), "?"),
                   TRUE)
   })

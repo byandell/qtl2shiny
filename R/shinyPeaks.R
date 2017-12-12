@@ -26,8 +26,18 @@ shinyPeaks <- function(input, output, session,
                        project_info) {
   ns <- session$ns
 
+  shiny::observeEvent(project_info(), {
+    choices <- names(pmap_obj())
+    shiny::updateSelectInput(session, "chr_id", shiny::strong("chr"),
+                             choices = choices,
+                             selected = NULL)
+    shiny::updateNumericInput(session, "window_Mbp", "width",
+                              1, 0.1, 100)
+  })
+  
   # Select chromosome. Defaults to blank.
   output$chr_id <- shiny::renderUI({
+    shiny::req(project_info())
     choices <- names(pmap_obj())
     selected <- input$chr_id
     if(!isTruthy(selected))
@@ -39,6 +49,7 @@ shinyPeaks <- function(input, output, session,
   
   ## Window slider
   output$window_Mbp <- shiny::renderUI({
+    shiny::req(project_info())
     if(is.null(pos <- input$window_Mbp))
       pos <- 1
     shiny::numericInput(ns("window_Mbp"), "width",
@@ -47,6 +58,7 @@ shinyPeaks <- function(input, output, session,
   
   # Peak position slider.
   output$peak_Mbp <- shiny::renderUI({
+    shiny::req(project_info())
     chr_id <- shiny::req(input$chr_id)
     rng <- round(range(pmap_obj()[[chr_id]]), 2)
     pos <- input$peak_Mbp
@@ -62,6 +74,7 @@ shinyPeaks <- function(input, output, session,
   
   ## shorthand 
   output$chr_pos <- shiny::renderUI({
+    shiny::req(project_info())
     shiny::textInput(ns("chr_pos"), "pos", input$chr_pos)
   })
   

@@ -6,8 +6,8 @@
 \alias{shinyPhenosOutput}
 \title{Shiny phenotype selection}
 \usage{
-shinyPhenos(input, output, session, setup_par, peaks_tbl, analyses_tbl,
-  chr_peak)
+shinyPhenos(input, output, session, set_par, win_par, peaks_tbl, analyses_tbl,
+  project_info)
 
 shinyPhenosUI(id)
 
@@ -16,7 +16,7 @@ shinyPhenosOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{setup_par, peaks_tbl, analyses_tbl, chr_peak}{reactive arguments}
+\item{set_par, peaks_tbl, analyses_tbl, win_par, project_info}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1}} use}
 }

@@ -18,7 +18,7 @@
 #'   checkboxInput selectInput
 #'   plotOutput dataTableOutput uiOutput
 #'   renderPlot renderDataTable renderUI
-#'   fluidRow column tagList
+#'   fluidRow column tagList strong
 #'   withProgress incProgress setProgress
 shinyHotspot <- function(input, output, session,
                          set_par, win_par, 
@@ -26,7 +26,14 @@ shinyHotspot <- function(input, output, session,
                          project_info) {
   ns <- session$ns
 
+  shiny::observeEvent(project_info(), {
+    choices <- chr_names()
+    shiny::updateSelectInput(session, "chr_ct", shiny::strong("chrs"),
+                       choices = c("all", choices),
+                       selected = NULL)
+  })
   chr_names <- shiny::reactive({
+    shiny::req(project_info())
     names(shiny::req(pmap_obj()))
   })
   # Hotspot Search (if desired)

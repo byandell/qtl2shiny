@@ -26,9 +26,11 @@ shinySetup <- function(input, output, session,
   
   # Select phenotype dataset
   pheno_group <- shiny::reactive({
+    shiny::req(project_info())
     sort(unique(shiny::req(analyses_tbl())$pheno_group))
   })
   pheno_type <- shiny::reactive({
+    shiny::req(project_info())
     phe_gp <- shiny::req(input$pheno_group)
     analyses_group <- 
       dplyr::filter(
@@ -47,6 +49,7 @@ shinySetup <- function(input, output, session,
                        multiple = TRUE)
   })
   output$dataset <- shiny::renderUI({
+    shiny::req(project_info())
     choices <- c("all", shiny::req(pheno_type()))
     if(is.null(selected <- input$dataset))
       selected <- NULL
@@ -62,6 +65,7 @@ shinySetup <- function(input, output, session,
                          project_info)
   
   chr_pos <- shiny::reactive({
+    shiny::req(project_info())
     make_chr_pos(win_par$chr_id, 
                  win_par$peak_Mbp, win_par$window_Mbp)
   })
@@ -85,7 +89,8 @@ shinySetup <- function(input, output, session,
   
   ## Use window as input to shinyPhenos.
   phe_par <- shiny::callModule(shinyPhenos, "phenos",
-             input, peaks_tbl, analyses_tbl, win_par)
+             input, win_par, peaks_tbl, analyses_tbl,
+             project_info)
   
   ## Density or scatter plot of phenotypes.
   analyses_df <- shiny::reactive({
@@ -155,7 +160,8 @@ shinySetup <- function(input, output, session,
   
   ## Return.
   shiny::reactive({
-    list(phe_par = phe_par,
+    list(project_info = project_info(),
+         phe_par = phe_par,
          win_par = win_par)
   })
 }

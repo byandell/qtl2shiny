@@ -68,14 +68,12 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(win_par$chr_id, input$scan_window, scan_obj(), probs_obj())
     shiny::withProgress(message = 'Genome LOD Plot ...', value = 0, {
       shiny::setProgress(1)
-      p <- ggplot2::autoplot(
-        scan_obj(), probs_obj()$map,
-        lodcolumn = seq(ncol(scan_obj())),
-        chr = win_par$chr_id,
-        xlim=input$scan_window)
-      if(ncol(phe_df()) == 1 & ncol(scan_obj()) >= 1)
-        p <- p + ggtitle(names(phe_df()))
-      p
+      plot_scan(scan_obj(), 
+                probs_obj()$map, 
+                seq(ncol(scan_obj())), 
+                win_par$chr_id, 
+                input$scan_window, 
+                phe_df())
     })
   })
 

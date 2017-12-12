@@ -15,12 +15,11 @@ shinyProject <- function(input, output, session, projects_info) {
   
   output$project <- shiny::renderUI({
     shiny::req(projects_info())
-    if(shiny::isTruthy(input$project)) {
-      project <- input$project
-    } else {
-      project <- projects_info()$project[1]
+    choices <- projects_info()$project
+    if(is.null(selected <- input$project)) {
+      selected <- choices[1]
     }
-    shiny::selectInput("project", "Project", projects_info()$project, project)
+    shiny::selectInput(ns("project"), "Project", choices, selected)
   })
   
   shiny::reactive({
