@@ -21,6 +21,8 @@
 #' @importFrom GGally ggscatmat
 shinyPhenoPlot <- function(input, output, session,
                            phe_df, cov_mx) {
+  ns <- session$ns
+  
   ## Scatter plot or density
   output$phe_sum <- shiny::renderTable({
     shiny::req(phe_df())

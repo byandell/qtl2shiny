@@ -108,8 +108,8 @@ shinySNPAllele <- function(input, output, session,
     rng <- round(shiny::req(win_par$peak_Mbp) + 
                    c(-1,1) * shiny::req(win_par$window_Mbp), 
                  1)
-    if(is.null(selected <- input$scan_window))
-      selected <- rng
+    selected <- select_range(input$scan_window, rng)
+    
     shiny::sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
                 selected, step=.1)
   })

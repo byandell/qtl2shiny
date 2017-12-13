@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df reactive arguments
+#' @param job_par,win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -21,7 +21,8 @@
 #'   downloadButton downloadHandler
 shinyScan1Plot <- function(input, output, session,
                   job_par, win_par, 
-                  phe_df, cov_mx, probs_obj, K_chr, analyses_df) {
+                  phe_df, cov_mx, probs_obj, K_chr, analyses_df,
+                  project_info) {
   ns <- session$ns
   
   ## Scan1
@@ -37,11 +38,12 @@ shinyScan1Plot <- function(input, output, session,
   
   # Scan Window slider
   output$scan_window <- shiny::renderUI({
+    shiny::req(project_info(), phe_df())
     chr_id <- shiny::req(win_par$chr_id)
     map <- shiny::req(probs_obj())$map[[chr_id]]
     rng <- round(2 * range(map)) / 2
-    if(is.null(selected <- input$scan_window))
-      selected <- rng
+    selected <- select_range(input$scan_window, rng)
+
     shiny::sliderInput(ns("scan_window"), NULL, rng[1], rng[2],
                 selected, step=.5)
   })

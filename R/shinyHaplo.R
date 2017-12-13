@@ -28,7 +28,8 @@ shinyHaplo <- function(input, output, session,
   ## Genome Scan.
   shiny::callModule(shinyScan1Plot, "hap_scan", 
              input, win_par, 
-             phe_df, cov_mx, probs_obj, K_chr, analyses_df)
+             phe_df, cov_mx, probs_obj, K_chr, analyses_df,
+             project_info)
   
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
