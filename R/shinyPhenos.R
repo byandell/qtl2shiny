@@ -22,13 +22,6 @@ shinyPhenos <- function(input, output, session,
                         project_info) {
   ns <- session$ns
 
-  shiny::observeEvent(project_info(), {
-    out <- pick_phenames()
-    shiny::updateSelectInput(session, "pheno_names", out$label,
-                             choices = out$choices,
-                             selected = NULL)
-  })
-  
   ## Set up analyses data frame.
   analyses_set <- shiny::reactive({
     shiny::req(project_info())
@@ -100,8 +93,10 @@ shinyPhenos <- function(input, output, session,
                     phenames)
     if("none" %in% selected)
       selected <- ""
-    if(!is.null(selected))
+    if(!is.null(selected)) {
       selected <- sort(unique(selected))
+      selected <- selected[selected %in% phenames]
+    }
     
     ## Update phenames to include selected (but not "")
     phenames <- unique(c(selected, phenames))

@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_mx,pheno_data,project_info reactive arguments
+#' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_mx,pheno_data,projects_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -21,8 +21,10 @@
 #'   strong tagList
 shinySetup <- function(input, output, session,
                        pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, 
-                       cov_mx, pheno_data, project_info) {
+                       cov_mx, pheno_data, projects_info) {
   ns <- session$ns
+
+  project_info <- shiny::callModule(shinyProject, "project", projects_info)
   
   # Select phenotype dataset
   pheno_group <- shiny::reactive({
@@ -125,7 +127,13 @@ shinySetup <- function(input, output, session,
   
   ## Setup input logic.
   output$title <- shiny::renderUI({
-    shiny::strong(shiny::req(input$setup))
+    shiny::tagList(
+      switch(shiny::req(input$setup),
+             Region = shinyProjectUI(ns("project")),
+             Phenotypes = shiny::strong(paste("Project:", 
+                                              shiny::req(project_info()$project),
+                                              "\n"))),
+      shiny::strong(shiny::req(input$setup)))
   })
   output$sidebar_setup <- shiny::renderUI({
     switch(shiny::req(input$setup),

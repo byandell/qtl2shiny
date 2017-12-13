@@ -78,6 +78,11 @@ shinyHaplo <- function(input, output, session,
                         choices,
                         input$sex_type, inline = TRUE)
   })
+  output$project <- shiny::renderUI({
+    shiny::strong(shiny::req(paste("Project:",
+                                   project_info()$project,
+                                   "\n")))
+  })
 }
 #' @param id identifier for \code{\link{shinyScan1SNP}} use
 #' @rdname shinyHaplo
@@ -86,6 +91,7 @@ shinyHaploUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarPanel(
+      shiny::uiOutput(ns("project")),
       shiny::strong("SNP/Gene Additive"),
       shiny::uiOutput(ns("radio")),
       shiny::uiOutput(ns("sex_type")),

@@ -23,7 +23,9 @@ shinyMain <- function(input, output, session, projects_info) {
   ns <- session$ns
   
   ## Data Setup
-  project_info <- shiny::callModule(shinyProject, "project", projects_info)
+  project_info <- reactive({ 
+    shiny::req(set_par()$project_info) 
+  })
   pheno_type <- shiny::reactive({
     shiny::req(project_info())
     read_project_rds(project_info(), "pheno_type")
@@ -58,7 +60,7 @@ shinyMain <- function(input, output, session, projects_info) {
   set_par <- shiny::callModule(shinySetup, "setup", 
                                pheno_type, peaks, 
                                pmap_obj, analyses_tbl, 
-                               cov_mx, pheno_data, project_info)
+                               cov_mx, pheno_data, projects_info)
   
   ## Continue with Plots and Analysis.
   
@@ -105,9 +107,7 @@ shinyMainInput <- function(id) {
 #' @export
 shinyMainUI <- function(id) {
   ns <- shiny::NS(id)
-  shiny::tagList(
-    shinyProjectUI(ns("project")),
-    shinySetupUI(ns("setup")))
+  shinySetupUI(ns("setup"))
 }
 #' @rdname shinyMain
 #' @export
