@@ -1,7 +1,7 @@
 #' Shiny Pattern module
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,chr_pos,win_par,phe_df,cov_mx,probs36_obj,K_chr,analyses_df,patterns,snp_action reactive arguments
+#' @param job_par,chr_pos,win_par,phe_mx,cov_df,probs36_obj,K_chr,analyses_df,patterns,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -25,28 +25,28 @@
 #'   
 shinyPattern <- function(input, output, session,
                          job_par, chr_pos, win_par,
-                         phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
+                         phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
                          patterns, snp_action = shiny::reactive({NULL})) {
   ns <- session$ns
   
-  phe1_df <- reactive({
-    phe_df()[, shiny::req(input$pheno_name), drop = FALSE]
+  phe1_mx <- reactive({
+    phe_mx()[, shiny::req(input$pheno_name), drop = FALSE]
   })
   shiny::callModule(shinyAllele1, "alleles",
                     win_par, 
-                    phe1_df, cov_mx, probs36_obj, K_chr, analyses_df,
+                    phe1_mx, cov_df, probs36_obj, K_chr, analyses_df,
                     patterns, scan_pat, snp_action)
   
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({
     shiny::selectInput(ns("pheno_name"), NULL,
-                choices = names(shiny::req(phe_df())),
+                choices = colnames(shiny::req(phe_mx())),
                 selected = input$pheno_name)
   })
   ## Select pattern for plots.
   pats <- shiny::reactive({
     shiny::req(input$pheno_name, patterns())
-    pull_patterns(patterns(), names(shiny::req(phe_df())))
+    pull_patterns(patterns(), colnames(shiny::req(phe_mx())))
   })
   pattern_choices <- shiny::reactive({
     qtl2pattern::sdp_to_pattern(pats()$sdp)
@@ -82,11 +82,11 @@ shinyPattern <- function(input, output, session,
   scan_pat <- shiny::reactive({
     req(snp_action())
     pheno_in <- shiny::req(input$pheno_name)
-    shiny::req(phe_df(), cov_mx(), probs36_obj(), K_chr(),
+    shiny::req(phe_mx(), cov_df(), probs36_obj(), K_chr(),
                pats(), analyses_df(), job_par$sex_type)
     withProgress(message = 'Scan Patterns ...', value = 0, {
       setProgress(1)
-      scan1_pattern(pheno_in, phe_df(), cov_mx(), 
+      scan1_pattern(pheno_in, phe_mx(), cov_df(), 
                     probs36_obj(), K_chr(), analyses_df(),
                                 pats(), job_par$sex_type, input$blups)
     })
@@ -179,11 +179,11 @@ shinyPattern <- function(input, output, session,
       scan_in <- shiny::req(scan_pat())
       top_panel_prop <- 0.65
       pdf(file, width = 9, height = 9)
-      for(pheno_in in names(phe_df())) {
+      for(pheno_in in colnames(phe_mx())) {
         pats <- dplyr::filter(patterns(), pheno == pheno_in)
         pat_choices <- qtl2pattern::sdp_to_pattern(pats$sdp)
         
-        scan_now <- scan1_pattern(pheno_in, phe_df(), cov_mx(), 
+        scan_now <- scan1_pattern(pheno_in, phe_mx(), cov_df(), 
                                   probs36_obj(), K_chr(), analyses_df(),
                                   pats, job_par$sex_type, input$blups)
         

@@ -2,21 +2,21 @@
 % Please edit documentation in R/shinySetup.R
 \name{shinySetup}
 \alias{shinySetup}
-\alias{shinySetupOutput}
+\alias{shinySetupInput}
 \alias{shinySetupUI}
 \title{Shiny setup for DOQTL selection}
 \usage{
 shinySetup(input, output, session, pheno_typer, peaks_tbl, pmap_obj,
-  analyses_tbl, cov_mx, pheno_data, projects_info)
+  analyses_tbl, cov_df, pheno_data, projects_info)
 
-shinySetupOutput(id)
+shinySetupInput(id)
 
 shinySetupUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_mx, pheno_data, projects_info}{reactive arguments}
+\item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_df, pheno_data, projects_info}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1}} use}
 }

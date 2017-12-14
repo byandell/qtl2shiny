@@ -1,4 +1,4 @@
-med_test <- function(med_ls, geno_max, phe_df, kinship, cov_tar,
+med_test <- function(med_ls, geno_max, phe_mx, kinship, cov_tar,
                      pos_Mbp, data_type, driver_med = NULL) {
 
   if(is.list(kinship))
@@ -7,14 +7,14 @@ med_test <- function(med_ls, geno_max, phe_df, kinship, cov_tar,
   cov_tar <- covar_df_mx(cov_tar)
   cov_med <- covar_df_mx(med_ls$cov_med)
   
-  CausalMST::mediate1_test(med_ls, geno_max, phe_df,
+  CausalMST::mediate1_test(med_ls, geno_max, phe_mx,
                            kinship, cov_tar, cov_med,
                            driver_med,
                            test = "wilc", pos = pos_Mbp,
                            data_type = data_type)
 }
 
-med_scat <- function(med_ls, geno_max, phe_df, kinship, cov_tar, sdps, pattern, med_name, medID) {
+med_scat <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps, pattern, med_name, medID) {
   
   if(is.list(kinship))
     kinship <- kinship[[1]]
@@ -27,7 +27,7 @@ med_scat <- function(med_ls, geno_max, phe_df, kinship, cov_tar, sdps, pattern, 
   cov_tar <- covar_df_mx(cov_tar)
   cov_med <- covar_df_mx(med_ls$cov_med)
   
-  CausalMST:::med_scatter(geno_max, phe_df, med_ls[[1]][, id, drop = FALSE],
+  CausalMST:::med_scatter(geno_max, phe_mx, med_ls[[1]][, id, drop = FALSE],
                           kinship, cov_tar, cov_med,
                           qtl2scan::fit1,
                           sdp = sdp, allele = TRUE)

@@ -7,7 +7,7 @@
 \title{Shiny scatter plot module}
 \usage{
 shinyScatterPlot(input, output, session, med_par, patterns, geno_max, peak_mar,
-  med_ls, mediate_obj, phe_df, cov_mx, K_chr)
+  med_ls, mediate_obj, phe_mx, cov_df, K_chr)
 
 shinyScatterPlotUI(id)
 
@@ -16,7 +16,7 @@ shinyScatterPlotOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{med_par, patterns, geno_max, peak_mar, med_ls, mediate_obj, phe_df, cov_mx, K_chr}{reactive arguments}
+\item{med_par, patterns, geno_max, peak_mar, med_ls, mediate_obj, phe_mx, cov_df, K_chr}{reactive arguments}
 
 \item{id}{identifier for shiny use}
 }

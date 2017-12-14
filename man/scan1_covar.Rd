@@ -4,10 +4,10 @@
 \alias{scan1_covar}
 \title{scan1 for multiple traits with possibly different covariates}
 \usage{
-scan1_covar(phe_df, cov_df, probs_obj, kinship, analyses_df, ...)
+scan1_covar(phe_mx, cov_df, probs_obj, kinship, analyses_df, ...)
 }
 \arguments{
-\item{phe_df}{data frame of phenotypes}
+\item{phe_mx}{matrix of phenotypes}
 
 \item{cov_df}{data frame of covariates}
 

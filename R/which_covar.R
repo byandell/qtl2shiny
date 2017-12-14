@@ -9,7 +9,7 @@ which_covar <- function(analyses_df) {
 wh_covar <- function(analyses_df, wh, cov_df) {
   # Get which covariates from condensed analyses table.
   # The analyses table as T/F with names; capture names that have TRUE.
-  covars <- unlist(analyses_df[wh[1],])
+  covars <- unlist(analyses_df[wh[1],, drop = FALSE])
   covars <- names(covars)[covars]
   data.frame(cov_df[, covars, drop=FALSE],
              stringsAsFactors = FALSE)

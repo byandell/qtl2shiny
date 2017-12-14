@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df,patterns,scan_pat,snp_action reactive arguments
+#' @param win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,patterns,scan_pat,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -21,7 +21,7 @@
 #' 
 shinyAllele1 <- function(input, output, session,
                   win_par, 
-                  phe_df, cov_mx, probs_obj, K_chr, analyses_df, 
+                  phe_mx, cov_df, probs_obj, K_chr, analyses_df, 
                   patterns, scan_pat, snp_action) {
   ns <- session$ns
   
@@ -48,11 +48,11 @@ shinyAllele1 <- function(input, output, session,
   ## Coefficient Effects.
   allele_obj <- shiny::reactive({
     shiny::req(snp_action())
-    shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx())
+    shiny::req(phe_mx(), probs_obj(), K_chr(), cov_df())
     blups <- attr(scan_pat(), "blups")
     shiny::withProgress(message = 'Effect scans ...', value = 0, {
       shiny::setProgress(1)
-      allele_scan(phe_df(), cov_mx(), probs_obj(), K_chr(),
+      allele_scan(phe_mx(), cov_df(), probs_obj(), K_chr(),
                   patterns(), scan_pat(), blups)
       })
   })
@@ -64,7 +64,7 @@ shinyAllele1 <- function(input, output, session,
       if(is.null(p)) {
         plot_null()
       } else {
-        p + ggplot2::ggtitle(names(phe_df()))
+        p + ggplot2::ggtitle(colnames(phe_mx()))
       }
     })
   })
@@ -99,7 +99,7 @@ shinyAllele1 <- function(input, output, session,
       pdf(file, width=9,height=9)
       print(ggplot2::autoplot(
         allele_obj(), pos = input$pos_Mbp) +
-        ggplot2::ggtitle(names(phe_df())))
+        ggplot2::ggtitle(colnames(phe_mx())))
       dev.off()
     }
   )

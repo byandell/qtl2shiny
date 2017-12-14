@@ -3,7 +3,7 @@
 #' Shiny module for analysis based on haplotype alleles.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pmap_obj,phe_df,cov_mx,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks,project_info reactive arguments
+#' @param win_par,pmap_obj,phe_mx,cov_df,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -16,7 +16,7 @@
 #'   mainPanel sidebarPanel strong tagList
 shinyHaplo <- function(input, output, session,
                        win_par, pmap_obj, 
-                       phe_df, cov_mx, K_chr, analyses_df, 
+                       phe_mx, cov_df, K_chr, analyses_df, 
                        covar, pheno_data, analyses_tbl, peaks,
                        project_info) {
   ns <- session$ns
@@ -28,19 +28,19 @@ shinyHaplo <- function(input, output, session,
   ## Genome Scan.
   shiny::callModule(shinyScan1Plot, "hap_scan", 
              input, win_par, 
-             phe_df, cov_mx, probs_obj, K_chr, analyses_df,
+             phe_mx, cov_df, probs_obj, K_chr, analyses_df,
              project_info)
   
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
               input, win_par, 
-              phe_df, cov_mx, probs_obj, K_chr, analyses_df,
+              phe_mx, cov_df, probs_obj, K_chr, analyses_df,
               project_info)
 
   ## Mediation
   shiny::callModule(shinyMediate1Plot, "mediate",
                     input, win_par, patterns,
-                    phe_df, cov_mx, probs_obj, K_chr, analyses_df,
+                    phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                     pmap_obj, 
                     covar, pheno_data, analyses_tbl, peaks,
                     project_info)
@@ -72,7 +72,7 @@ shinyHaplo <- function(input, output, session,
   })
   output$sex_type <- shiny::renderUI({
     choices <- c("A","I","F","M","all")
-    if(ncol(shiny::req(phe_df())) > 1 & shiny::req(input$button) != "Mediation") {
+    if(ncol(shiny::req(phe_mx())) > 1 & shiny::req(input$button) != "Mediation") {
       choices <- choices[1:4]
     }
     shiny::radioButtons(ns("sex_type"), "Sex:",

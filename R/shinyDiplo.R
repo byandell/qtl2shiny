@@ -3,7 +3,7 @@
 #' Shiny diplotype SNP/Gene action analysis.
 #' 
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,K_chr,analyses_df reactive arguments
+#' @param win_par,phe_mx,cov_df,K_chr,analyses_df reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -16,7 +16,7 @@
 #'    mainPanel sidebarPanel strong tagList
 shinyDiplo <- function(input, output, session,
                        win_par, 
-                       phe_df, cov_mx, K_chr, analyses_df,
+                       phe_mx, cov_df, K_chr, analyses_df,
                        project_info) {
   ns <- session$ns
 
@@ -35,13 +35,13 @@ shinyDiplo <- function(input, output, session,
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
                          input, win_par, 
-                         phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
+                         phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
                          project_info,
                          snp_action)
   
   shiny::callModule(shinyPattern, "dip_pat",
                     input, chr_pos, win_par,
-                    phe_df, cov_mx, probs36_obj, K_chr, analyses_df,
+                    phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
                     patterns, snp_action)
   
   ## CC names
@@ -75,7 +75,7 @@ shinyDiplo <- function(input, output, session,
   })
   output$sex_type <- shiny::renderUI({
     choices <- c("A","I","F","M","all")
-    if(ncol(shiny::req(phe_df())) > 1 | shiny::req(input$button) == "Genome Scans") {
+    if(ncol(shiny::req(phe_mx())) > 1 | shiny::req(input$button) == "Genome Scans") {
       choices <- choices[1:4]
     }
     shiny::radioButtons(ns("sex_type"), "Sex:",

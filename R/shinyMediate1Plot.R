@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,patterns,phe_df,cov_mx,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks,project_info reactive arguments
+#' @param job_par,win_par,patterns,phe_mx,cov_df,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -25,7 +25,7 @@
 #' 
 shinyMediate1Plot <- function(input, output, session,
                               job_par, win_par, patterns,
-                              phe_df, cov_mx, probs_obj, K_chr, analyses_df,
+                              phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                               pmap_obj, covar, pheno_data, analyses_tbl, peaks,
                               project_info) {
   ns <- session$ns
@@ -72,18 +72,18 @@ shinyMediate1Plot <- function(input, output, session,
   shiny::callModule(shinyScatterPlot, "scatter",
                     input, patterns, 
                     geno_max, peak_mar, med_ls, mediate_signif,
-                    phe1_df, cov_mx, K_chr)
+                    phe1_mx, cov_df, K_chr)
 
   ## Mediate1
   probs_chr <- reactive({
     probs_obj()$probs[[chr_id()]]
   })
   mediate_obj <- shiny::reactive({
-    shiny::req(phe1_df(), probs_obj(), K_chr(), cov_mx(), geno_max(), 
+    shiny::req(phe1_mx(), probs_obj(), K_chr(), cov_df(), geno_max(), 
                input$pos_Mbp, input$med_type, med_ls())
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
-      med_test(med_ls(), geno_max(), phe1_df(), K_chr(), cov_mx(),
+      med_test(med_ls(), geno_max(), phe1_mx(), K_chr(), cov_df(),
                input$pos_Mbp, data_type = input$med_type,
                probs_chr())
     })
@@ -95,14 +95,14 @@ shinyMediate1Plot <- function(input, output, session,
     out
   })
 
-  phe1_df <- reactive({
-    phe_df()[, shiny::req(input$pheno_name), drop = FALSE]
+  phe1_mx <- reactive({
+    phe_mx()[, shiny::req(input$pheno_name), drop = FALSE]
   })
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({
-    shiny::req(phe_df())
+    shiny::req(phe_mx())
     shiny::selectInput(ns("pheno_name"), NULL,
-                choices = names(phe_df()),
+                choices = colnames(phe_mx()),
                 selected = input$pheno_name)
   })
   ## Select plot format.
@@ -227,13 +227,13 @@ shinyMediate1Plot <- function(input, output, session,
     filename = function() {
       file.path(paste0("mediate_", chr_id(), "_", win_par$peak_Mbp, ".pdf")) },
     content = function(file) {
-      shiny::req(phe_df(), geno_max(), K_chr(), cov_mx(),
+      shiny::req(phe_mx(), geno_max(), K_chr(), cov_df(),
                  input$pos_Mbp, input$med_type)
       pdf(file, width=9,height=9)
-      for(pheno in names(phe_df())) {
+      for(pheno in colnames(phe_mx())) {
         med <- med_test(med_ls(), geno_max(),
-                        phe_df()[, pheno, drop = FALSE],
-                        K_chr(), cov_mx(), input$pos_Mbp,
+                        phe_mx()[, pheno, drop = FALSE],
+                        K_chr(), cov_df(), input$pos_Mbp,
                         data_type = input$med_type,
                         probs_chr())
         print(ggplot2::autoplot(

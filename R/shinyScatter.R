@@ -3,7 +3,7 @@
 #' Shiny module for scatter plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_df,cov_mx,K_chr reactive arguments
+#' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -24,7 +24,7 @@
 shinyScatterPlot <- function(input, output, session,
                   med_par, patterns, 
                   geno_max, peak_mar, med_ls, mediate_obj,
-                  phe_df, cov_mx, K_chr) {
+                  phe_mx, cov_df, K_chr) {
   ns <- session$ns
 
   ## Select triad for plots.
@@ -57,9 +57,9 @@ shinyScatterPlot <- function(input, output, session,
   })
   
   scat_dat <- reactive({
-    shiny::req(geno_max(), phe_df(), med_ls(), medID(), sdps(),
+    shiny::req(geno_max(), phe_mx(), med_ls(), medID(), sdps(),
                input$med_name, input$pattern)
-    med_scat(med_ls(), geno_max(), phe_df(), K_chr()[[1]], cov_mx(), sdps(),
+    med_scat(med_ls(), geno_max(), phe_mx(), K_chr()[[1]], cov_df(), sdps(),
              input$pattern, input$med_name, medID())
   })
   
@@ -80,13 +80,13 @@ shinyScatterPlot <- function(input, output, session,
     if(!shiny::isTruthy(scat_dat())) {
       plot_null("too much\nmissing data\nin mediators\nreduce window width")
     } else {
-      shiny::req(input$med_plot, input$med_name, phe_df())
+      shiny::req(input$med_plot, input$med_name, phe_mx())
       shiny::withProgress(message = 'Scatter Plot ...', value = 0, {
         shiny::setProgress(1)
         ggplot2::autoplot(scat_dat(), type = input$med_plot,
              dname = peak_mar(),
              mname = input$med_name,
-             tname = names(phe_df()))
+             tname = colnames(phe_mx()))
       })
     }
   })
@@ -104,7 +104,7 @@ shinyScatterPlot <- function(input, output, session,
     filename = function() {
       file.path(paste0("scatter.pdf")) },
     content = function(file) {
-      shiny::req(phe_df(), scat_dat(), input$med_plot)
+      shiny::req(phe_mx(), scat_dat(), input$med_plot)
       pdf(file, width=9,height=9)
       for(types in c("by_mediator", 
                      "by_target", 
@@ -113,7 +113,7 @@ shinyScatterPlot <- function(input, output, session,
         print(ggplot2::autoplot(scat_dat(), type = types,
                    dname = peak_mar(),
                    mname = input$med_name,
-                   tname = names(phe_df())))
+                   tname = colnames(phe_mx())))
       }
       dev.off()
     })

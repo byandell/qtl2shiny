@@ -5,14 +5,14 @@
 \alias{shinyPhenoPlotUI}
 \title{Shiny Phenotype Plot module}
 \usage{
-shinyPhenoPlot(input, output, session, phe_df, cov_mx)
+shinyPhenoPlot(input, output, session, phe_mx, cov_df)
 
 shinyPhenoPlotUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{phe_df, cov_mx}{reactive arguments}
+\item{phe_mx, cov_df}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1}} use}
 }

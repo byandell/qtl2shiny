@@ -3,7 +3,7 @@
 #' Shiny module to plot phenotypes.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param phe_df,cov_mx reactive arguments
+#' @param phe_mx,cov_df reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -20,29 +20,29 @@
 #' @importFrom ggplot2 ggplot aes_string geom_density geom_rug
 #' @importFrom GGally ggscatmat
 shinyPhenoPlot <- function(input, output, session,
-                           phe_df, cov_mx) {
+                           phe_mx, cov_df) {
   ns <- session$ns
   
   ## Scatter plot or density
   output$phe_sum <- shiny::renderTable({
-    shiny::req(phe_df())
+    shiny::req(phe_mx())
     shiny::withProgress(message = 'Pheno Summary ...', value = 0, {
       shiny::setProgress(1)
-      summary_na(phe_df())
+      summary_na(phe_mx())
     })
   })
   output$phePlot <- shiny::renderPlot({
     # If no df, gives blank area.
     # Better to either do nothing or do plot_null()
     # use uiOutput and renderUI?
-    shiny::req(phe_df(), cov_mx())
+    shiny::req(phe_mx(), cov_df())
     shiny::withProgress(message = 'Pheno Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot_sex(phe_df(), cov_mx())
+      plot_sex(phe_mx(), cov_df())
     })
   })
   output$phePlotTable <- shiny::renderUI({
-    shiny::req(phe_df(), cov_mx())
+    shiny::req(phe_mx(), cov_df())
     shiny::tagList(
       shiny::plotOutput(ns("phePlot")),
       shiny::tableOutput(ns("phe_sum")))

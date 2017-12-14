@@ -6,7 +6,7 @@
 \alias{shinySNPAlleleOutput}
 \title{Shiny SNP and Allele analysis and plot module}
 \usage{
-shinySNPAllele(input, output, session, job_par, win_par, phe_df, cov_mx,
+shinySNPAllele(input, output, session, job_par, win_par, phe_mx, cov_df,
   probs_obj, K_chr, analyses_df, project_info, snp_action = shiny::reactive({ 
      "basic" }))
 
@@ -17,7 +17,7 @@ shinySNPAlleleOutput(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, phe_df, cov_mx, probs_obj, K_chr, analyses_df, project_info, snp_action}{reactive arguments}
+\item{win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, project_info, snp_action}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinySNPAllele}} use}
 }

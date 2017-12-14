@@ -2,15 +2,15 @@
 #
 # Plot of density and pairwise scatterplots.
 plot_sex <- function(phe, cov) {
-  phename <- names(phe)
+  phename <- colnames(phe)
   if(length(phename) > 10) {
     cat(file=stderr(), "\nOnly first 10 phenotypes used\n")
     phename <- phename[seq_len(10)]
     phe <- phe[,phename]
   }
-  if("sex" %in% dimnames(cov)[[2]]) {
-    ## Assume sex in covar. Ignore actual covariates for analyses.
-    insex <- data.frame(phe, cov)
+  if(m <- match("sex", tolower(dimnames(cov)[[2]]), nomatch = 0)) {
+    ## Need sex in covar. Ignore actual covariates for analyses.
+    insex <- data.frame(phe, sex = cov[,m])
     
     if(length(phename) == 1) {
       ggplot2::ggplot(insex, 

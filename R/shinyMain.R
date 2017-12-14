@@ -60,20 +60,22 @@ shinyMain <- function(input, output, session, projects_info) {
   set_par <- shiny::callModule(shinySetup, "setup", 
                                pheno_type, peaks, 
                                pmap_obj, analyses_tbl, 
-                               cov_mx, pheno_data, projects_info)
+                               cov_df, pheno_data, projects_info)
   
   ## Continue with Plots and Analysis.
   
   ## Phenotypes and Covariates.
   analyses_df <- shiny::reactive({
+    cat("analyses_df\n", file = stderr())
     phename <- shiny::req(set_par()$phe_par$pheno_names)
     dplyr::filter(analyses_tbl(), pheno %in% phename)
   })
-  phe_df <- shiny::reactive({
+  phe_mx <- shiny::reactive({
+    cat("phe_mx\n", file = stderr())
     shiny::req(analyses_df())
     pheno_read(pheno_data(), analyses_df())
   })
-  cov_mx <- shiny::reactive({
+  cov_df <- shiny::reactive({
     DOread::get_covar(covar(), analyses_df())
   })
   
@@ -85,14 +87,14 @@ shinyMain <- function(input, output, session, projects_info) {
   ## Haplotype Analysis.
   shiny::callModule(shinyHaplo, "hap_scan", 
                     set_par()$win_par, pmap_obj, 
-                    phe_df, cov_mx, K_chr, analyses_df, 
+                    phe_mx, cov_df, K_chr, analyses_df, 
                     covar, pheno_data, analyses_tbl, peaks,
                     project_info)
   
   ## Diplotype Analysis.
   shiny::callModule(shinyDiplo, "dip_scan",
                     set_par()$win_par, 
-                    phe_df, cov_mx, K_chr, analyses_df,
+                    phe_mx, cov_df, K_chr, analyses_df,
                     project_info)
 }
 
@@ -101,7 +103,7 @@ shinyMain <- function(input, output, session, projects_info) {
 #' @export
 shinyMainInput <- function(id) {
   ns <- shiny::NS(id)
-  shinySetupOutput(ns("setup"))
+  shinySetupInput(ns("setup"))
 }
 #' @rdname shinyMain
 #' @export

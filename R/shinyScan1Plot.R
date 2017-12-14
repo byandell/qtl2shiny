@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df,project_info reactive arguments
+#' @param job_par,win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -21,24 +21,24 @@
 #'   downloadButton downloadHandler
 shinyScan1Plot <- function(input, output, session,
                   job_par, win_par, 
-                  phe_df, cov_mx, probs_obj, K_chr, analyses_df,
+                  phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                   project_info) {
   ns <- session$ns
   
   ## Scan1
   scan_obj <- shiny::reactive({
-    shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(), win_par$window_Mbp,
+    shiny::req(phe_mx(), probs_obj(), K_chr(), cov_df(), win_par$window_Mbp,
                job_par$sex_type)
     shiny::withProgress(message = "Genome Scan ...", value = 0, {
       shiny::setProgress(1)
-      scan1_covar(phe_df(), cov_mx(), probs_obj()$probs, K_chr(), analyses_df(),
+      scan1_covar(phe_mx(), cov_df(), probs_obj()$probs, K_chr(), analyses_df(),
                   sex_type = job_par$sex_type)
     })
   })
   
   # Scan Window slider
   output$scan_window <- shiny::renderUI({
-    shiny::req(project_info(), phe_df())
+    shiny::req(project_info(), phe_mx())
     chr_id <- shiny::req(win_par$chr_id)
     map <- shiny::req(probs_obj())$map[[chr_id]]
     rng <- round(2 * range(map)) / 2
@@ -58,14 +58,14 @@ shinyScan1Plot <- function(input, output, session,
   
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({
-    shiny::req(phe_df())
+    shiny::req(phe_mx())
     shiny::selectInput(ns("pheno_name"), NULL,
-                choices = names(phe_df()))
+                choices = colnames(phe_mx()))
   })
 
   ## Scan1 plot
   output$scanPlot <- shiny::renderPlot({
-    if(!shiny::isTruthy(win_par$chr_id) || !shiny::isTruthy(phe_df()))
+    if(!shiny::isTruthy(win_par$chr_id) || !shiny::isTruthy(phe_mx()))
       return(plot_null("need to select\nRegion & Phenotype"))
     shiny::req(win_par$chr_id, input$scan_window, scan_obj(), probs_obj())
     shiny::withProgress(message = 'Genome LOD Plot ...', value = 0, {
@@ -75,17 +75,17 @@ shinyScan1Plot <- function(input, output, session,
                 seq(ncol(scan_obj())), 
                 win_par$chr_id, 
                 input$scan_window, 
-                phe_df())
+                phe_mx())
     })
   })
 
   ## Coefficient Effects.
   eff_obj <- shiny::reactive({
-    shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(),
+    shiny::req(phe_mx(), probs_obj(), K_chr(), cov_df(),
                job_par$sex_type)
     shiny::withProgress(message = 'Effect scans ...', value = 0, {
       shiny::setProgress(1)
-      scan1_effect(probs_obj()$probs, phe_df(), K_chr(), cov_mx(),
+      scan1_effect(probs_obj()$probs, phe_mx(), K_chr(), cov_df(),
                    job_par$sex_type, input$blups)
     })
   })

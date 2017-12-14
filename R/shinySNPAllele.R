@@ -3,7 +3,7 @@
 #' Shiny module to coordinate SNP and allele analyses and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_df,cov_mx,probs_obj,K_chr,analyses_df,project_info,snp_action reactive arguments
+#' @param win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -20,7 +20,7 @@
 #'   withProgress setProgress
 shinySNPAllele <- function(input, output, session,
                           job_par, win_par, 
-                          phe_df, cov_mx,
+                          phe_mx, cov_df,
                           probs_obj, K_chr, analyses_df,
                           project_info,
                           snp_action = shiny::reactive({"basic"})) {
@@ -31,7 +31,9 @@ shinySNPAllele <- function(input, output, session,
                  range = shiny::req(input$scan_window))
   })
   pheno_names <- shiny::reactive({
-    names(phe_df())
+    cat("pheno_names SNPAllele", file = stderr())
+    shiny::req(project_info(), phe_mx())
+    colnames(phe_mx())
   })
   
   ## Reactives
@@ -40,18 +42,21 @@ shinySNPAllele <- function(input, output, session,
                   win_par, pheno_names, probs_obj,
                   project_info)
   snpinfo <- reactive({
+    shiny::req(project_info(), phe_mx())
     shiny::req(snpprobs_obj())$snpinfo
   })
   
   ## SNP Scan.
   snp_scan_obj <- shiny::reactive({
-    shiny::req(phe_df(), probs_obj(), K_chr(), cov_mx(), job_par$sex_type)
-    snpprobs <- shiny::req(snpprobs_obj())$snpprobs
+    cat("snp_scan_obj SNPAllele\n", file = stderr())
+    shiny::req(snpprobs_obj(), phe_mx())
+    shiny::req(probs_obj(), K_chr(), cov_df(), job_par$sex_type)
+    snpprobs <- snpprobs_obj()$snpprobs
     shiny::withProgress(message = "SNP Scan ...", value = 0, {
       shiny::setProgress(1)
       snpprobs_act <- 
         qtl2pattern::snpprob_collapse(snpprobs, snp_action())
-      scan1_covar(phe_df(), cov_mx(), snpprobs_act, K_chr(), analyses_df(),
+      scan1_covar(phe_mx(), cov_df(), snpprobs_act, K_chr(), analyses_df(),
                   sex_type = job_par$sex_type)
     })
   })
@@ -105,6 +110,7 @@ shinySNPAllele <- function(input, output, session,
 
   # Scan Window slider
   output$scan_window <- shiny::renderUI({
+    shiny::req(pheno_names())
     rng <- round(shiny::req(win_par$peak_Mbp) + 
                    c(-1,1) * shiny::req(win_par$window_Mbp), 
                  1)
@@ -116,6 +122,7 @@ shinySNPAllele <- function(input, output, session,
 
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({
+    shiny::req(pheno_names())
     shiny::selectInput(ns("pheno_name"), NULL,
                 choices = shiny::req(pheno_names()),
                 selected = input$pheno_name)

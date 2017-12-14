@@ -48,6 +48,7 @@ shinyProbs36 <- function(input, output, session,
 
   ## Probs object for 36 diplotypes.
   probs_obj <- shiny::reactive({
+    shiny::req(project_info())
     chr_id <- shiny::req(win_par$chr_id)
     range_val <- shiny::req(win_par$peak_Mbp) + 
       c(-1,1) * shiny::req(win_par$window_Mbp)
@@ -70,6 +71,7 @@ shinySNPProbs <- function(input, output, session,
   ns <- session$ns
   
   shiny::reactive({
+    shiny::req(project_info())
     shiny::req(chr_id <- win_par$chr_id, 
                peak_Mbp <- win_par$peak_Mbp, 
                window_Mbp <- win_par$window_Mbp)

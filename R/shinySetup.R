@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_mx,pheno_data,projects_info reactive arguments
+#' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_df,pheno_data,projects_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -21,7 +21,7 @@
 #'   strong tagList
 shinySetup <- function(input, output, session,
                        pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, 
-                       cov_mx, pheno_data, projects_info) {
+                       cov_df, pheno_data, projects_info) {
   ns <- session$ns
 
   project_info <- shiny::callModule(shinyProject, "project", projects_info)
@@ -100,14 +100,14 @@ shinySetup <- function(input, output, session,
     phename <- shiny::req(phe_par$pheno_names)
     dplyr::filter(analyses_tbl(), pheno %in% phename)
   })
-  phe_df <- shiny::reactive({
+  phe_mx <- shiny::reactive({
     pheno_read(pheno_data(), analyses_df())
   })
-  raw_phe_df <- shiny::reactive({
+  raw_phe_mx <- shiny::reactive({
     pheno_read(pheno_data(), analyses_df(), FALSE)
   })
-  shiny::callModule(shinyPhenoPlot, "PhenoPlotRaw", raw_phe_df, cov_mx)
-  shiny::callModule(shinyPhenoPlot, "PhenoPlotTrans", phe_df, cov_mx)
+  shiny::callModule(shinyPhenoPlot, "PhenoPlotRaw", raw_phe_mx, cov_df)
+  shiny::callModule(shinyPhenoPlot, "PhenoPlotTrans", phe_mx, cov_df)
   
   # Output the analyses table
   output$analyses_tbl <- shiny::renderDataTable({
@@ -176,7 +176,7 @@ shinySetup <- function(input, output, session,
 #' @param id identifier for \code{\link{shinyScan1}} use
 #' @rdname shinySetup
 #' @export
-shinySetupOutput <- function(id) {
+shinySetupInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::textOutput(ns("num_pheno")),
