@@ -112,25 +112,13 @@ scansex <- function(genoprobs, pheno, kinship, addcovar = NULL,
       intcovar <- NULL
       addcovar <- wh_sex(addcovar)
       if("sex" %in% colnames(addcovar)) {
-        if(!all(sort(unique(addcovar$sex)) %in% c("M","F")) & sex_type %in% c("M","F")) {
-          cat("cannot handle levels of sex not M and F", file = stderr())
-          return(NULL)          
-        }
         switch(sex_type,
                "I" = {
                  intcovar <- model.matrix(~ sex, addcovar)[, -1, drop = FALSE]
                  },
-               "F" = {
-                 addcovar <- addcovar[addcovar$sex == "F",, drop = FALSE]
-               },
-               "M" = {
-                 addcovar <- addcovar[addcovar$sex == "M",, drop = FALSE]
+               "F","M" = {
+                 addcovar <- sexcovar(addcovar, sex_type)
                })
-        if(sex_type %in% c("F","M")) {
-          addcovar <- dplyr::select(addcovar, -sex)
-          if(ncol(addcovar) == 0)
-            addcovar <- NULL
-        }
       }
     }
     addcovar <- covar_df_mx(addcovar)

@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @importFrom gdata humanReadable
-#' @importFrom dplyr distinct filter mutate one_of select 
+#' @importFrom dplyr arrange desc distinct filter mutate one_of select 
 #' @importFrom tidyr unite
 #' @importFrom qtl2pattern pheno_trans
 #' @importFrom shiny callModule NS reactive req 
@@ -122,7 +122,10 @@ shinySetup <- function(input, output, session,
     dplyr::filter(peaks_tbl(), pheno %in% phename)
   })
   output$peaks_tbl <- shiny::renderDataTable({
-    dplyr::select(peaks_df(), pheno, chr, pos, lod)
+    dplyr::arrange(
+      dplyr::select(
+        peaks_df(), pheno, chr, pos, lod),
+      dplyr::desc(lod))
   }, options = list(scrollX = TRUE, pageLength = 10))
   
   ## Setup input logic.

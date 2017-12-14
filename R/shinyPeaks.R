@@ -100,7 +100,7 @@ shinyPeaks <- function(input, output, session,
   }
   update_peak <- function() {
     scan_in <- shiny::req(scan_tbl())
-    chr_ct <- input$chr_id
+    chr_ct <- shiny::req(input$chr_id)
     scan_in <- dplyr::filter(scan_in, 
                              chr == chr_ct)
     if(nrow(scan_in)) {
