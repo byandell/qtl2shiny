@@ -112,8 +112,8 @@ scansex <- function(genoprobs, pheno, kinship, addcovar = NULL,
       intcovar <- NULL
       addcovar <- wh_sex(addcovar)
       if("sex" %in% colnames(addcovar)) {
-        if(!all(sort(levels(addcovar)) == c("M","F")) & sex_type %in% c("M","F")) {
-          warning("cannot handle levels of sex not M and F")
+        if(!all(sort(unique(addcovar$sex)) == c("M","F")) & sex_type %in% c("M","F")) {
+          cat("cannot handle levels of sex not M and F", file = stderr())
           return(NULL)          
         }
         switch(sex_type,

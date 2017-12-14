@@ -66,12 +66,10 @@ shinyMain <- function(input, output, session, projects_info) {
   
   ## Phenotypes and Covariates.
   analyses_df <- shiny::reactive({
-    cat("analyses_df\n", file = stderr())
     phename <- shiny::req(set_par()$phe_par$pheno_names)
     dplyr::filter(analyses_tbl(), pheno %in% phename)
   })
   phe_mx <- shiny::reactive({
-    cat("phe_mx\n", file = stderr())
     shiny::req(analyses_df())
     pheno_read(pheno_data(), analyses_df())
   })

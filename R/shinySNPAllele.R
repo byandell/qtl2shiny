@@ -31,7 +31,6 @@ shinySNPAllele <- function(input, output, session,
                  range = shiny::req(input$scan_window))
   })
   pheno_names <- shiny::reactive({
-    cat("pheno_names SNPAllele", file = stderr())
     shiny::req(project_info(), phe_mx())
     colnames(phe_mx())
   })
@@ -48,7 +47,6 @@ shinySNPAllele <- function(input, output, session,
   
   ## SNP Scan.
   snp_scan_obj <- shiny::reactive({
-    cat("snp_scan_obj SNPAllele\n", file = stderr())
     shiny::req(snpprobs_obj(), phe_mx())
     shiny::req(probs_obj(), K_chr(), cov_df(), job_par$sex_type)
     snpprobs <- snpprobs_obj()$snpprobs

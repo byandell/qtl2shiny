@@ -4,9 +4,9 @@ expr_region <- function(chr_id, scan_window, covar, qtls, pmap,
   query_mrna <- read_query_rds(project_info, "query_mrna.rds")
   out <- query_mrna(chr_id, scan_window[1], scan_window[2], qtl = TRUE)
 
-  m <- match(tolower(c("sex", "DOwave")), colnames(covar))
-  if(any(is.na(m)))
-    warning("sex and DOwave not found in data")
+  m <- match(tolower(c("sex", "DOwave")), colnames(covar), nomatch = 0)
+  if(any(m == 0))
+    cat("sex and DOwave not found in data", file = stderr())
   
   out$cov_med <- covar[, m]
   
