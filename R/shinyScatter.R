@@ -86,7 +86,8 @@ shinyScatterPlot <- function(input, output, session,
         ggplot2::autoplot(scat_dat(), type = input$med_plot,
              dname = peak_mar(),
              mname = input$med_name,
-             tname = colnames(phe_mx()))
+             tname = colnames(phe_mx()),
+             centerline = NULL)
       })
     }
   })
@@ -113,7 +114,8 @@ shinyScatterPlot <- function(input, output, session,
         print(ggplot2::autoplot(scat_dat(), type = types,
                    dname = peak_mar(),
                    mname = input$med_name,
-                   tname = colnames(phe_mx())))
+                   tname = colnames(phe_mx()),
+                   centerline = NULL))
       }
       dev.off()
     })
