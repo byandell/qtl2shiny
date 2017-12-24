@@ -79,7 +79,7 @@ shinyPhenos <- function(input, output, session,
   options = list(scrollX = TRUE, pageLength = 10,
                  lengthMenu = c(5,10,25)))
   
-  pick_phenames <- function() {
+  output$pheno_names <- shiny::renderUI({
     phenames <- selected <- input$pheno_names
     if(shiny::isTruthy(peaks_df())) {
       phenames <- unique(peaks_df()$pheno)
@@ -106,13 +106,10 @@ shinyPhenos <- function(input, output, session,
     label = ifelse(nphe <= 1000,
                    "Choose phenotypes",
                    paste("Top 1000 of", nphe))
-    list(selected = selected, choices = choices, label = label)    
-  }
-  output$pheno_names <- shiny::renderUI({
-    out <- pick_phenames()
-    shiny::selectInput(ns("pheno_names"), out$label,
-                choices = out$choices,
-                selected = out$selected,
+
+    shiny::selectInput(ns("pheno_names"), label,
+                choices = choices,
+                selected = selected,
                 multiple = TRUE)
   })
   
