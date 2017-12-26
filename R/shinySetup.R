@@ -97,7 +97,7 @@ shinySetup <- function(input, output, session,
   
   ## Use window as input to shinyPhenos.
   phe_par <- shiny::callModule(shinyPhenos, "phenos",
-             input, win_par, peaks_tbl, analyses_tbl, cov_df,
+             input, win_par, peaks_tbl, analyses_tbl, pheno_data, cov_df,
              project_info)
   
   ## Setup input logic.

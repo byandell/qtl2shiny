@@ -18,7 +18,7 @@ shinySetupUI(id)
 
 \item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_df, pheno_data, projects_info}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1}} use}
+\item{id}{identifier for \code{\link{shinyScan1}}}
 }
 \description{
 Shiny module for phenotype selection.

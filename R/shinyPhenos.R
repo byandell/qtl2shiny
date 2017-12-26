@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param set_par,win_par,peaks_tbl,analyses_tbl,cov_df,project_info reactive arguments
+#' @param set_par,win_par,peaks_tbl,analyses_tbl,pheno_data,cov_df,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,53 +18,18 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 shinyPhenos <- function(input, output, session,
-                        set_par, win_par, peaks_tbl, analyses_tbl, cov_df,
+                        set_par, win_par, peaks_tbl, analyses_tbl, pheno_data, cov_df,
                         project_info) {
   ns <- session$ns
 
   ## Set up analyses data frame.
   analyses_set <- shiny::reactive({
     shiny::req(project_info())
-    ## Filter by dataset.
-    dataset <- set_par$dataset
-    data_group <- set_par$pheno_group
-
-    dat <- analyses_tbl()
-
-    # Start with phenotypes in data groups.
-    if(shiny::isTruthy(data_group)) {
-      dat <- dplyr::filter(dat, pheno_group %in% data_group)
-    }
-    # For identified datasets, drop other datasets from those data groups.
-    if(shiny::isTruthy(dataset)) {
-      if(!("all" %in% dataset)) {
-        dat_sets <- dplyr::distinct(dat, pheno_type, pheno_group)
-        dat_groups <- unique(dplyr::filter(dat_sets,
-                                    pheno_type %in% dataset)$pheno_group)
-        dat <- dplyr::filter(dat, 
-                             (pheno_type %in% dataset) |
-                             !(pheno_group %in% dat_groups))
-      }
-    }
-    dat
+    set_analyses(set_par$dataset, set_par$pheno_group, analyses_tbl())
   })
-  analyses_df <- reactive({
-    dataset <- set_par$dataset
-    if(shiny::isTruthy(dataset)) {
-      dat <- shiny::req(analyses_set())
-      ## Filter by Peak Position if use_pos=TRUE
-      if(isTruthy(input$use_pos)) {
-        window_Mbp <- shiny::req(win_par$window_Mbp)
-        ## Infinite recursion here.
-        if(shiny::isTruthy(peaks_df()))
-          dat <- dat[dat$pheno %in% peaks_df()$pheno,]
-      }
-    }
-    dat
-  })
-  
+
   # Choose Phenotypes for Analysis.
-  peaks_df <- reactive({
+  peaks_df <- shiny::reactive({
     shiny::req(analyses_set(), peaks_tbl())
     chr_id <- shiny::req(win_par$chr_id)
     peak_Mbp <- shiny::req(win_par$peak_Mbp)
@@ -76,52 +41,27 @@ shinyPhenos <- function(input, output, session,
   output$pheno_lod <- shiny::renderDataTable({
     shiny::req(peaks_df())
   }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10,
+  options = list(scrollX = TRUE, pageLength = 5,
                  lengthMenu = c(5,10,25)))
 
   output$pheno_names <- shiny::renderUI({
     shiny::req(project_info())
     cat("output$pheno_names", input$pheno_names, "\n", file = stderr())
-    phenames <- selected <- input$pheno_names
-    if(shiny::isTruthy(peaks_df())) {
-      phenames <- unique(peaks_df()$pheno)
-      # Limit to first 1000
-      nphe <- length(phenames)
-      phenames <- phenames[seq_len(min(1000, nphe))]
-    }
-    
-    if("all" %in% selected)
-      selected <- c(selected[!(selected %in% c("all","none"))],
-                    phenames)
-    if("none" %in% selected)
-      selected <- ""
-    if(!is.null(selected)) {
-      selected <- sort(unique(selected))
-      selected <- selected[selected %in% phenames]
-    }
-    
-    ## Update phenames to include selected (but not "")
-    phenames <- unique(c(selected, phenames))
-    phenames <- phenames[phenames != ""]
-    
-    choices <- c("all","none", phenames)
-    label = ifelse(nphe <= 1000,
-                   "Choose phenotypes",
-                   paste("Top 1000 of", nphe))
+    out <- select_phenames( input$pheno_names, peaks_df())
 
-    shiny::selectInput(ns("pheno_names"), label,
-                choices = choices,
-                selected = selected,
+    shiny::selectInput(ns("pheno_names"), out$label,
+                choices = out$choices,
+                selected = out$selected,
                 multiple = TRUE)
   })
   
   # Output the peaks table
-  output$peaks_tbl <- shiny::renderDataTable({
+  output$peaks <- shiny::renderDataTable({
     dplyr::arrange(
       dplyr::select(
         peaks_df(), pheno, chr, pos, lod),
       dplyr::desc(lod))
-  }, options = list(scrollX = TRUE, pageLength = 10))
+  }, options = list(scrollX = TRUE, pageLength = 5))
   
   ## Density or scatter plot of phenotypes.
   analyses_plot <- shiny::reactive({
@@ -147,7 +87,7 @@ shinyPhenos <- function(input, output, session,
   })
   output$show_data <- renderUI({
     switch(shiny::req(input$radio),
-           "LOD Peaks"  = shiny::dataTableOutput(ns("peaks_tbl")),
+           "LOD Peaks"  = shiny::dataTableOutput(ns("peaks")),
            "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
            "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
            "Covariates" = shiny::dataTableOutput(ns("analyses_tbl")))
@@ -183,7 +123,7 @@ shinyPhenosUI <- function(id) {
 shinyPhenosOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::dataTableOutput(ns("pheno_lod")),
-    shiny::uiOutput(ns("show_data"))
+    shiny::uiOutput(ns("show_data")),
+    shiny::dataTableOutput(ns("pheno_lod"))
   )
 }
