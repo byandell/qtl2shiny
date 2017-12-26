@@ -2,6 +2,7 @@
 
 export(doqtl2_app)
 export(read_project_rds)
+export(read_query_rds)
 export(scan1_covar)
 export(shinyAllele1)
 export(shinyAllele1Output)

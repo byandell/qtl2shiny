@@ -1,3 +1,4 @@
+#' @export
 read_query_rds <- function(project_info, filename) {
   if(is.null(project_info))
     return(NULL)
