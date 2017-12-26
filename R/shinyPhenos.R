@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param set_par,win_par,peaks_tbl,analyses_tbl,pheno_data,cov_df,project_info reactive arguments
+#' @param set_par,win_par,peaks_df,analyses_tbl,pheno_data,cov_df,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,42 +18,14 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 shinyPhenos <- function(input, output, session,
-                        set_par, win_par, peaks_tbl, analyses_tbl, pheno_data, cov_df,
+                        set_par, win_par, peaks_df, analyses_tbl, pheno_data, cov_df,
                         project_info) {
   ns <- session$ns
-
-  ## Set up analyses data frame.
-  analyses_set <- shiny::reactive({
-    shiny::req(project_info())
-    set_analyses(set_par$dataset, set_par$pheno_group, analyses_tbl())
-  })
-
-  # Choose Phenotypes for Analysis.
-  peaks_df <- shiny::reactive({
-    shiny::req(analyses_set(), peaks_tbl())
-    chr_id <- shiny::req(win_par$chr_id)
-    peak_Mbp <- shiny::req(win_par$peak_Mbp)
-    window_Mbp <- shiny::req(win_par$window_Mbp)
-    peaks_in_pos(analyses_set(), peaks_tbl(),
-                 shiny::isTruthy(input$use_pos),
-                 chr_id, peak_Mbp, window_Mbp)
-  })
   output$pheno_lod <- shiny::renderDataTable({
     shiny::req(peaks_df())
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 5,
                  lengthMenu = c(5,10,25)))
-
-  output$pheno_names <- shiny::renderUI({
-    shiny::req(project_info())
-    cat("output$pheno_names", input$pheno_names, "\n", file = stderr())
-    out <- select_phenames( input$pheno_names, peaks_df())
-
-    shiny::selectInput(ns("pheno_names"), out$label,
-                choices = out$choices,
-                selected = out$selected,
-                multiple = TRUE)
-  })
   
   # Output the peaks table
   output$peaks <- shiny::renderDataTable({
@@ -66,7 +38,7 @@ shinyPhenos <- function(input, output, session,
   ## Density or scatter plot of phenotypes.
   analyses_plot <- shiny::reactive({
     shiny::req(analyses_tbl())
-    phename <- shiny::req(input$pheno_names)
+    phename <- shiny::req(set_par$pheno_names)
     dplyr::filter(analyses_tbl(), pheno %in% phename)
   })
   phe_mx <- shiny::reactive({
@@ -98,13 +70,6 @@ shinyPhenos <- function(input, output, session,
     collapse_covar(analyses_plot())
   }, options = list(scrollX = TRUE, pageLength = 10))
   
-  output$filter <- shiny::renderUI({
-    shiny::checkboxInput(ns("use_pos"),
-                  paste0("Peak on chr ", win_par$chr_id, " in ",
-                        paste(win_par$peak_Mbp + c(-1,1) * win_par$window_Mbp,
-                              collapse = "-"), "?"),
-                  TRUE)
-  })
   input
 }
 #' @param id identifier for \code{\link{shinyScan1}} use
@@ -112,11 +77,7 @@ shinyPhenos <- function(input, output, session,
 #' @export
 shinyPhenosUI <- function(id) {
   ns <- shiny::NS(id)
-  shiny::tagList(
-    shiny::uiOutput(ns("filter")),
-    shiny::uiOutput(ns("pheno_names")),
-    shiny::uiOutput(ns("radio"))
-  )
+  shiny::uiOutput(ns("radio"))
 }
 #' @rdname shinyPhenos
 #' @export

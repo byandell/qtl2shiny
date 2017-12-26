@@ -2,7 +2,6 @@ Setup 209
   project_info callModule Project
   win_par callModule Peaks
   phe_par callModule Phenos
-  callModule PhenoPlot
   observeEvent project_info
     num_phenos renderText
   observeEvent phe_par$pheno_names
@@ -18,19 +17,18 @@ SetupUI
       renderText strong
   radio radioButtons
   sidebar_setup renderUI
-    Phenotypes
-      PhenosUI
-      show_data radioButtons
+    Region
       PeaksInput
-    pheno_group selectInput
-    dataset selectInput
+    Phenotypes
+      filter renderUI checkboxInput
+      pheno_names renderUI selectInput
+      PhenosUI
+  pheno_group selectInput
+  dataset selectInput
   
   main_setup renderUI
     Region
-      peaks_tbl renderDataTable dataTableOutput
-      PhenoPlotUI
-      PhenoPlotUI
-      analyses_tbl renderDataTable dataTableOutput
+      PeaksOutput
     Phenotypes
       PhenosOutput
 
@@ -75,10 +73,17 @@ HotspotOutput
     peak_plot renderPlot
   peak_tbl renderDataTable
   
-PhenosUI 142
-  pheno_names renderUI selectInput
-  filter renderUI checkboxInput
+Phenos 129
+  callModule PhenoPlot raw
+  callModule PhenoPlot trans
+PhenosUI
+  radio radioButtons
 PhenosOutput
+  show_data renderUI
+    peaks_tbl renderDataTable dataTableOutput
+    raw PhenoPlotUI
+    trans PhenoPlotUI
+    analyses_tbl renderDataTable dataTableOutput
   pheno_lod renderDataTable
   
 PhenoPlot 66

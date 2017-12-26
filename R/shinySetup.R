@@ -28,12 +28,10 @@ shinySetup <- function(input, output, session,
   
   # Select phenotype dataset
   pheno_group <- shiny::reactive({
-    cat("pheno_group\n", file = stderr())
     shiny::req(project_info())
     sort(unique(shiny::req(analyses_tbl())$pheno_group))
   })
   pheno_type <- shiny::reactive({
-    cat("pheno_type\n", file = stderr())
     shiny::req(project_info())
     phe_gp <- shiny::req(input$pheno_group)
     analyses_group <- 
@@ -43,7 +41,6 @@ shinySetup <- function(input, output, session,
     sort(unique(analyses_group$pheno_type))
   })
   output$pheno_group <- shiny::renderUI({
-    cat("output$pheno_group\n", file = stderr())
     shiny::req(choices <- pheno_group())
     if(is.null(selected <- input$pheno_group)) {
       selected <- choices[1]
@@ -54,7 +51,6 @@ shinySetup <- function(input, output, session,
                        multiple = TRUE)
   })
   output$dataset <- shiny::renderUI({
-    cat("output$dataset\n", file = stderr())
     shiny::req(project_info())
     choices <- c("all", shiny::req(pheno_type()))
     if(is.null(selected <- input$dataset))
@@ -63,6 +59,39 @@ shinySetup <- function(input, output, session,
                 choices = as.list(choices),
                 selected = selected,
                 multiple = TRUE)
+  })
+  
+  ## Set up analyses data frame.
+  analyses_set <- shiny::reactive({
+    shiny::req(project_info())
+    set_analyses(input$dataset, input$pheno_group, analyses_tbl())
+  })
+  # Restrict peaks to region.
+  peaks_df <- shiny::reactive({
+    shiny::req(analyses_set(), peaks_tbl())
+    chr_id <- shiny::req(win_par$chr_id)
+    peak_Mbp <- shiny::req(win_par$peak_Mbp)
+    window_Mbp <- shiny::req(win_par$window_Mbp)
+    peaks_in_pos(analyses_set(), peaks_tbl(),
+                 shiny::isTruthy(input$filter),
+                 chr_id, peak_Mbp, window_Mbp)
+  })
+  output$filter <- shiny::renderUI({
+    shiny::checkboxInput(ns("filter"),
+                         paste0("Peak on chr ", win_par$chr_id, " in ",
+                                paste(win_par$peak_Mbp + c(-1,1) * win_par$window_Mbp,
+                                      collapse = "-"), "?"),
+                         TRUE)
+  })
+  
+  # Pick phenotype names
+  output$pheno_names <- shiny::renderUI({
+    shiny::req(project_info())
+    out <- select_phenames(input$pheno_names, peaks_df())
+    shiny::selectInput(ns("pheno_names"), out$label,
+                       choices = out$choices,
+                       selected = out$selected,
+                       multiple = TRUE)
   })
   
   ## Locate Peak.
@@ -83,24 +112,30 @@ shinySetup <- function(input, output, session,
     num_pheno(character(), analyses_tbl())
   })
   shiny::observeEvent(project_info(), {
-    cat("observeEvent project_info\n", file = stderr())
     output$num_pheno <- shiny::renderText({
-      num_pheno(phe_par$pheno_names, analyses_tbl())
+      num_pheno(input$pheno_names, analyses_tbl())
     })
+    out <- select_phenames("none", peaks_df())
+    updateSelectInput(session, "pheno_names", out$label,
+      choices = out$choices, selected = "none")
   })
-  shiny::observeEvent(phe_par$pheno_names, {
-    cat("observeEvent phe_par$pheno_names\n", file = stderr())
+  shiny::observeEvent(input$pheno_names, {
     output$num_pheno <- shiny::renderText({
-      num_pheno(phe_par$pheno_names, analyses_tbl())
+      num_pheno(input$pheno_names, analyses_tbl())
     })
   })
   
   ## Use window as input to shinyPhenos.
   phe_par <- shiny::callModule(shinyPhenos, "phenos",
-             input, win_par, peaks_tbl, analyses_tbl, pheno_data, cov_df,
+             input, win_par, peaks_df, analyses_tbl, pheno_data, cov_df,
              project_info)
   
   ## Setup input logic.
+  output$project_name <- renderUI({
+    shiny::strong(paste("Project:", 
+                        shiny::req(project_info()$project),
+                        "\n"))
+  })
   output$title <- shiny::renderUI({
     shiny::tagList(
       switch(shiny::req(input$radio),
@@ -112,8 +147,14 @@ shinySetup <- function(input, output, session,
   })
   output$sidebar_setup <- shiny::renderUI({
     switch(shiny::req(input$radio),
-           Phenotypes = shinyPhenosUI(ns("phenos")),
+           Phenotypes = shiny::tagList(
+             shiny::uiOutput(ns("filter")),
+             shinyPhenosUI(ns("phenos"))),
            Region     = shinyPeaksInput(ns("shinypeaks")))
+  })
+  output$sidebar_hot <- shiny::renderUI({
+    switch(shiny::req(input$radio),
+           Region     = shinyPeaksUI(ns("shinypeaks")))
   })
   output$main_setup <- shiny::renderUI({
     switch(shiny::req(input$radio),
@@ -131,7 +172,7 @@ shinySetup <- function(input, output, session,
   ## Return.
   shiny::reactive({
     list(project_info = project_info(),
-         phe_par = phe_par,
+         phe_par = input,
          win_par = win_par)
   })
 }
@@ -141,6 +182,7 @@ shinySetup <- function(input, output, session,
 shinySetupInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
+    shiny::uiOutput(ns("project_name")),
     shiny::textOutput(ns("num_pheno")),
     shiny::uiOutput(ns("chr_pos"))
   )
@@ -154,8 +196,10 @@ shinySetupUI <- function(id) {
       shiny::uiOutput(ns("title")),
       shiny::uiOutput(ns("radio")),
       shiny::uiOutput(ns("sidebar_setup")),
+      shiny::uiOutput(ns("pheno_names")),
       shiny::uiOutput(ns("pheno_group")),
-      shiny::uiOutput(ns("dataset"))
+      shiny::uiOutput(ns("dataset")),
+      shiny::uiOutput(ns("sidebar_hot"))
     ),
     mainPanel(shiny::uiOutput(ns("main_setup")))
   )

@@ -3,6 +3,7 @@
 \name{shinyPeaks}
 \alias{shinyPeaks}
 \alias{shinyPeaksInput}
+\alias{shinyPeaksUI}
 \alias{shinyPeaksOutput}
 \title{Shiny peaks selection}
 \usage{
@@ -10,6 +11,8 @@ shinyPeaks(input, output, session, set_par, pheno_type, peaks_tbl, pmap_obj,
   project_info)
 
 shinyPeaksInput(id)
+
+shinyPeaksUI(id)
 
 shinyPeaksOutput(id)
 }

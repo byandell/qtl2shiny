@@ -143,6 +143,10 @@ shinyPeaks <- function(input, output, session,
       }
     }
   })
+  output$hotinfo <- renderUI({
+    shiny::strong("Hotspot Info")
+  })
+  
   ## Return.
   input
 }
@@ -157,8 +161,14 @@ shinyPeaksInput <- function(id) {
       shiny::column(4, shiny::uiOutput(ns("chr_id"))),
       shiny::column(4, shiny::uiOutput(ns("peak_Mbp"))),
       shiny::column(4, shiny::uiOutput(ns("window_Mbp")))
-    ),
-#    shiny::uiOutput(ns("chr_pos")),
+    ))
+}
+#' @rdname shinyPeaks
+#' @export
+shinyPeaksUI <- function(id) {
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::uiOutput(ns("hotinfo")),
     shinyHotspotInput(ns("hotspot")))
 }
 #' @rdname shinyPeaks
