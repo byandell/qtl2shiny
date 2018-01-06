@@ -88,12 +88,12 @@ shinyPeaks <- function(input, output, session,
   shiny::observeEvent(input$chr_id, update_peak())
   update_chr <- function() {
     scan_in <- shiny::req(scan_tbl())
+    choices <- scan_in$chr[scan_in$count > 0]
     scan_in <- dplyr::filter(scan_in, count==max(count))
     
     chr_ct <- as.character(scan_in$chr)
     if(!any(chr_ct == input$chr_id)) {
       chr_ct <- chr_ct[1]
-      choices <- names(pmap_obj())
       shiny::updateSelectInput(session, "chr_id", shiny::strong("chr"),
                                choices, chr_ct)
     }

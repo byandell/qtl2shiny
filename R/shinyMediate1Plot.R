@@ -132,7 +132,7 @@ shinyMediate1Plot <- function(input, output, session,
   })
   ## Mediate1 plot
   output$medPlot <- shiny::renderPlot({
-    if(!shiny::isTruthy(mediate_obj())) {
+    if(!shiny::isTruthy(med_ls()) || !shiny::isTruthy(mediate_obj())) {
       plot_null("too much\nmissing data\nin mediators\nreduce window width")
     } else {
       shiny::req(med_plot_type())
