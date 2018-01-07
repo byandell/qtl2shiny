@@ -1,9 +1,6 @@
 ## app.R ##
-
-suppressPackageStartupMessages({
-  library(qtl2shiny)
-  library(qtl2feather)
-})
+library(qtl2shiny)
+library(qtl2ggplot)
 
 # Master control file for projects
 projects <- read.csv("projects.csv", stringsAsFactors = FALSE)
