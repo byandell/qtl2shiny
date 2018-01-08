@@ -1,6 +1,4 @@
 ## app.R ##
-library(qtl2shiny)
-library(qtl2ggplot)
 
 # Master control file for projects
 projects <- read.csv("projects.csv", stringsAsFactors = FALSE)
@@ -36,7 +34,7 @@ ui <- shinydashboard::dashboardPage(skin="red",
   shinydashboard::dashboardHeader(title = "qtl2shiny"),
   shinydashboard::dashboardSidebar(
     shinydashboard::sidebarMenu(
-      shinySetupOutput("setup"),
+      qtl2shiny::shinySetupInput("setup"),
       shinydashboard::menuItem("Phenotypes and Region", tabName = "phenos",
                icon = icon("dashboard")),
       shinydashboard::menuItem("Haplotype Scans", tabName = "hap_scan",
@@ -55,14 +53,14 @@ ui <- shinydashboard::dashboardPage(skin="red",
       shinydashboard::tabItem(
         tabName = "phenos",
         shiny::tagList(
-          shinyProjectUI("project"),
-          shinySetupUI("setup"))),
+          qtl2shiny::shinyProjectUI("project"),
+          qtl2shiny::shinySetupUI("setup"))),
       ## Scans
       shinydashboard::tabItem(tabName="hap_scan",
-              shinyHaploUI("hap_scan")),
+              qtl2shiny::shinyHaploUI("hap_scan")),
       ## Diploid Analysis
       shinydashboard::tabItem(tabName="dip_scan", 
-              shinyDiploUI("dip_scan"))
+              qtl2shiny::shinyDiploUI("dip_scan"))
     )
   )
 )
@@ -72,7 +70,7 @@ server <- function(input, output, session) {
   
   ## Data Setup
   projects_info <- shiny::reactive({projects})
-  project_info <- shiny::callModule(shinyProject, "project", projects_info)
+  project_info <- shiny::callModule(qtl2shiny::shinyProject, "project", projects_info)
   pheno_type <- shiny::reactive({
     shiny::req(project_info())
     read_project_data(project_info(), "pheno_type")
@@ -104,7 +102,7 @@ server <- function(input, output, session) {
     read_project_data(project_info(), "kinship")
   })
 
-  set_par <- shiny::callModule(shinySetup, "setup", 
+  set_par <- shiny::callModule(qtl2shiny::shinySetup, "setup", 
                     pheno_type, peaks, 
                     pmap_obj, analyses_tbl, 
                     cov_mx, pheno_data, project_info)
@@ -130,14 +128,14 @@ server <- function(input, output, session) {
   })
 
   ## Haplotype Analysis.
-  shiny::callModule(shinyHaplo, "hap_scan", 
+  shiny::callModule(qtl2shiny::shinyHaplo, "hap_scan", 
              set_par()$win_par, pmap_obj, 
              phe_df, cov_mx, K_chr, analyses_df, 
              covar, pheno_data, analyses_tbl, peaks,
              project_info)
 
   ## Diplotype Analysis.
-  shiny::callModule(shinyDiplo, "dip_scan",
+  shiny::callModule(qtl2shiny::shinyDiplo, "dip_scan",
              set_par()$win_par, 
              phe_df, cov_mx, K_chr, analyses_df,
              project_info)
