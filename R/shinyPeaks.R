@@ -47,13 +47,13 @@ shinyPeaks <- function(input, output, session,
                 selected = selected)
   })
   
-  ## Window slider
+  ## Window numeric
   output$window_Mbp <- shiny::renderUI({
     shiny::req(project_info())
-    if(is.null(pos <- input$window_Mbp))
-      pos <- 1
+    if(is.null(win <- input$window_Mbp))
+      win <- 1
     shiny::numericInput(ns("window_Mbp"), "width",
-                        pos, 0.1, 100)
+                        win, 0.1, 100)
   })
   
   # Peak position slider.
@@ -79,7 +79,7 @@ shinyPeaks <- function(input, output, session,
   })
   
   scan_tbl <- shiny::callModule(shinyHotspot, "hotspot",
-              set_par, input, pheno_type, peaks_tbl, pmap_obj, project_info)
+              set_par, pheno_type, peaks_tbl, pmap_obj, project_info)
   
   shiny::observeEvent(scan_tbl(), {
     update_chr()
@@ -143,9 +143,6 @@ shinyPeaks <- function(input, output, session,
       }
     }
   })
-  output$hotinfo <- renderUI({
-    shiny::strong("Hotspot Info")
-  })
   
   ## Return.
   input
@@ -168,7 +165,6 @@ shinyPeaksInput <- function(id) {
 shinyPeaksUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::uiOutput(ns("hotinfo")),
     shinyHotspotInput(ns("hotspot")))
 }
 #' @rdname shinyPeaks

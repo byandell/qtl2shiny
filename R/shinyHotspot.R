@@ -3,7 +3,7 @@
 #' Shiny module to view hotspots for peak selection.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param set_par,win_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
+#' @param set_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -22,7 +22,7 @@
 #'   fluidRow column tagList strong
 #'   withProgress incProgress setProgress
 shinyHotspot <- function(input, output, session,
-                         set_par, win_par, 
+                         set_par, 
                          pheno_type, peaks_tbl, pmap_obj,
                          project_info) {
   ns <- session$ns
@@ -32,6 +32,8 @@ shinyHotspot <- function(input, output, session,
     shiny::updateSelectInput(session, "chr_ct", shiny::strong("chrs"),
                        choices = c("all", choices),
                        selected = NULL)
+    shiny::updateNumericInput(session, "window_Mbp", "width",
+                              1, 0.1, 100)
   })
   chr_names <- shiny::reactive({
     shiny::req(project_info())
@@ -63,12 +65,22 @@ shinyHotspot <- function(input, output, session,
       }
     }
   })
+  
+  ## Window numeric
+  output$window_Mbp <- shiny::renderUI({
+    shiny::req(project_info())
+    if(is.null(win <- input$window_Mbp))
+      win <- 1
+    shiny::numericInput(ns("window_Mbp"), "width",
+                        win, 0.1, 100)
+  })
+
   scan_obj_all <- shiny::reactive({
-    shiny::req(win_par$window_Mbp, input$minLOD)
+    shiny::req(input$window_Mbp, input$minLOD)
     shiny::withProgress(message = 'Hotspot scan ...', value = 0,
     {
       shiny::setProgress(1)
-      hotspot_wrap(pmap_obj(), peaks_tbl(), win_par$window_Mbp, input$minLOD,
+      hotspot_wrap(pmap_obj(), peaks_tbl(), input$window_Mbp, input$minLOD,
                    project_info())
     })
   })
@@ -93,7 +105,7 @@ shinyHotspot <- function(input, output, session,
   })
   output$peak_plot <- shiny::renderPlot({
     shiny::req(scan_obj())
-    window_Mbp <- shiny::req(win_par$window_Mbp)
+    window_Mbp <- shiny::req(input$window_Mbp)
     peak_grp <- set_par$pheno_group
     if(shiny::isTruthy(set_par$dataset)) {
       peak_set <- set_par$dataset
@@ -151,16 +163,21 @@ shinyHotspot <- function(input, output, session,
 #' @export
 shinyHotspotInput <- function(id) {
   ns <- shiny::NS(id)
-  shiny::fluidRow(
-    shiny::column(4, shiny::uiOutput(ns("chr_ct"))),
-    shiny::column(4, shiny::uiOutput(ns("minLOD"))),
-    shiny::column(4, shiny::checkboxInput(ns("peak_ck"), "plot counts?", FALSE)))
+  shiny::tagList(
+    shiny::fluidRow(
+      shiny::column(6, shiny::strong("Hotspot Info")),
+      shiny::column(6, shiny::checkboxInput(ns("peak_ck"), "plot?", FALSE))),
+    shiny::fluidRow(
+      shiny::column(4, shiny::uiOutput(ns("chr_ct"))),
+      shiny::column(4, shiny::uiOutput(ns("minLOD"))),
+      shiny::column(4, shiny::uiOutput(ns("window_Mbp")))))
 }
 #' @rdname shinyHotspot
 #' @export
 shinyHotspotOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
+    shiny::strong("Hotspot Info"),
     shiny::uiOutput(ns("peak_show")),
     shiny::dataTableOutput(ns("peak_tbl"))
   )

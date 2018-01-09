@@ -24,6 +24,7 @@ shinySetup <- function(input, output, session,
                        cov_df, pheno_data, projects_info) {
   ns <- session$ns
 
+  # This is called in app.R and here. Check app.R on server as I destroyed the local version.
   project_info <- shiny::callModule(shinyProject, "project", projects_info)
   
   # Select phenotype dataset

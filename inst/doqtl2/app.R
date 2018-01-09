@@ -30,21 +30,31 @@ helpPopup <- function(title, content,
 }
 
 #####################################################
-ui <- shinydashboard::dashboardPage(skin="red",
-  shinydashboard::dashboardHeader(title = "qtl2shiny"),
+ui <- shinydashboard::dashboardPage(
+  skin="red",
+  shinydashboard::dashboardHeader(
+    title = "qtl2shiny"),
   shinydashboard::dashboardSidebar(
     shinydashboard::sidebarMenu(
-      qtl2shiny::shinySetupInput("setup"),
-      shinydashboard::menuItem("Phenotypes and Region", tabName = "phenos",
-               icon = icon("dashboard")),
-      shinydashboard::menuItem("Haplotype Scans", tabName = "hap_scan",
-               icon = icon("dashboard")),
-      shinydashboard::menuItem("SNP/Gene Action", tabName = "dip_scan", 
-               icon = icon("dashboard")),
-      tags$div(id = "popup",
-               helpPopup(NULL,
-                         includeMarkdown("about.md"),
-                         placement = "right", trigger = "click"))
+      qtl2shiny::shinyMainInput("qtl2shiny"),
+      shinydashboard::menuItem(
+        "Phenotypes and Region",
+        tabName = "phenos",
+        icon = icon("dashboard")),
+      shinydashboard::menuItem(
+        "Haplotype Scans",
+        tabName = "hap_scan",
+        icon = icon("dashboard")),
+      shinydashboard::menuItem(
+        "SNP/Gene Action",
+        tabName = "dip_scan",
+        icon = icon("dashboard")),
+      tags$div(
+        id = "popup",
+        helpPopup(
+          NULL,
+          shiny::includeMarkdown("about.md"),
+          placement = "right", trigger = "click"))
     )
   ),
   shinydashboard::dashboardBody(
@@ -52,15 +62,15 @@ ui <- shinydashboard::dashboardPage(skin="red",
       ## Phenotypes and Region
       shinydashboard::tabItem(
         tabName = "phenos",
-        shiny::tagList(
-          qtl2shiny::shinyProjectUI("project"),
-          qtl2shiny::shinySetupUI("setup"))),
+        qtl2shiny::shinyMainUI("qtl2shiny")),
       ## Scans
-      shinydashboard::tabItem(tabName="hap_scan",
-              qtl2shiny::shinyHaploUI("hap_scan")),
+      shinydashboard::tabItem(
+        tabName="hap_scan",
+        qtl2shiny::shinyMainOutput("qtl2shiny")),
       ## Diploid Analysis
-      shinydashboard::tabItem(tabName="dip_scan", 
-              qtl2shiny::shinyDiploUI("dip_scan"))
+      shinydashboard::tabItem(
+        tabName="dip_scan", 
+        qtl2shiny::shinyMainOutput2("qtl2shiny"))
     )
   )
 )
@@ -68,78 +78,9 @@ ui <- shinydashboard::dashboardPage(skin="red",
 #####################################################
 server <- function(input, output, session) {
   
-  ## Data Setup
   projects_info <- shiny::reactive({projects})
-  project_info <- shiny::callModule(qtl2shiny::shinyProject, "project", projects_info)
-  pheno_type <- shiny::reactive({
-    shiny::req(project_info())
-    read_project_data(project_info(), "pheno_type")
-    })
-  peaks <- shiny::reactive({
-    shiny::req(project_info())
-    read_project_data(project_info(), "peaks")
-  })
-  analyses_tbl <- shiny::reactive({
-    shiny::req(project_info())
-    ## The analyses_tbl should only have one row per pheno.
-    read_project_data(project_info(), "analyses")
-  })
-  pheno_data <- shiny::reactive({
-    shiny::req(project_info())
-    read_project_data(project_info(), "pheno_data")
-  })
-  covar <- shiny::reactive({
-    shiny::req(project_info())
-    read_project_data(project_info(), "covar")
-  })
-  
-  pmap_obj <- shiny::reactive({
-    shiny::req(project_info())
-    read_project_data(project_info(), "pmap")
-  })
-  kinship <- shiny::reactive({
-    shiny::req(project_info())
-    read_project_data(project_info(), "kinship")
-  })
+  shiny::callModule(qtl2shiny::shinyMain, "qtl2shiny", projects_info)
 
-  set_par <- shiny::callModule(qtl2shiny::shinySetup, "setup", 
-                    pheno_type, peaks, 
-                    pmap_obj, analyses_tbl, 
-                    cov_mx, pheno_data, project_info)
-  
-  ## Continue with Plots and Analysis.
-
-  ## Phenotypes and Covariates.
-  analyses_df <- shiny::reactive({
-    phename <- shiny::req(set_par()$phe_par$pheno_names)
-    dplyr::filter(analyses_tbl(), pheno %in% phename)
-  })
-  phe_df <- shiny::reactive({
-    shiny::req(analyses_df())
-    pheno_read(pheno_data(), analyses_df())
-  })
-  cov_mx <- shiny::reactive({
-    DOread::get_covar(covar(), analyses_df())
-  })
-  
-  ## Set up shiny::reactives for scan1 module.
-  K_chr <- shiny::reactive({
-    kinship()[set_par()$win_par$chr_id]
-  })
-
-  ## Haplotype Analysis.
-  shiny::callModule(qtl2shiny::shinyHaplo, "hap_scan", 
-             set_par()$win_par, pmap_obj, 
-             phe_df, cov_mx, K_chr, analyses_df, 
-             covar, pheno_data, analyses_tbl, peaks,
-             project_info)
-
-  ## Diplotype Analysis.
-  shiny::callModule(qtl2shiny::shinyDiplo, "dip_scan",
-             set_par()$win_par, 
-             phe_df, cov_mx, K_chr, analyses_df,
-             project_info)
-  
   # Allow reconnect with Shiny Server.
   session$allowReconnect(TRUE)
 }
