@@ -140,7 +140,7 @@ shinyHotspot <- function(input, output, session,
     shiny::req(scan_tbl(), peaks_tbl())
     peakDataTable(scan_tbl(), peaks_tbl())
   }, escape = FALSE,
-  options = list(pageLength = 5))
+  options = list(lengthMenu = c(5,10,20,50), pageLength = 5))
   
   # Minimum LOD for SNP top values.
   minLOD <- reactive({
