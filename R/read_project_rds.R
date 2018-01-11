@@ -10,8 +10,12 @@ read_project_rds <- function(project_info, dataname) {
     directory <- "."
   
   filepath <- file.path(directory, taxa, project, paste0(dataname, ".rds"))
-  if(file.exists(filepath))
+  if(!file.exists(filepath)) {
+    filepath <- file.path(directory, taxa, paste0(dataname, ".rds"))
+  }
+  if(file.exists(filepath)) {
     readRDS(filepath)
-  else
+  } else {
     NULL
+  }
 }

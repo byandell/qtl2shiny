@@ -3,7 +3,7 @@
 #' Shiny diplotype SNP/Gene action analysis.
 #' 
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_mx,cov_df,K_chr,analyses_df reactive arguments
+#' @param win_par,phe_mx,cov_df,K_chr,analyses_df,project_info,allele_names reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -17,7 +17,7 @@
 shinyDiplo <- function(input, output, session,
                        win_par, 
                        phe_mx, cov_df, K_chr, analyses_df,
-                       project_info) {
+                       project_info, allele_names) {
   ns <- session$ns
 
   chr_pos <- shiny::reactive({
@@ -44,12 +44,10 @@ shinyDiplo <- function(input, output, session,
                     phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
                     patterns, snp_action)
   
-  ## CC names
-  output$cc_names <- shiny::renderText({
-    cc <- qtl2::CCcolors
-    paste(LETTERS[seq_along(cc)], names(cc), 
-          sep = "=", collapse = ", ")
+  output$allele_names <- shiny::renderText({
+    shiny::req(allele_names())
   })
+
   output$dip_input <- shiny::renderUI({
     switch(shiny::req(input$button),
            "Genome Scans"    = shinyPatternUI(ns("dip_pat")),
@@ -101,7 +99,7 @@ shinyDiploUI <- function(id) {
       shiny::uiOutput(ns("select")),
       shiny::uiOutput(ns("sex_type")),
       shiny::uiOutput(ns("dip_input")),
-      shiny::textOutput(ns("cc_names"))),
+      shiny::textOutput(ns("allele_names"))),
   shiny::mainPanel(
     shiny::uiOutput(ns("dip_output")))
   )

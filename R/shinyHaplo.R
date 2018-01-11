@@ -3,7 +3,7 @@
 #' Shiny module for analysis based on haplotype alleles.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pmap_obj,phe_mx,cov_df,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks,project_info reactive arguments
+#' @param win_par,pmap_obj,phe_mx,cov_df,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks,project_info,allele_names reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,7 +18,7 @@ shinyHaplo <- function(input, output, session,
                        win_par, pmap_obj, 
                        phe_mx, cov_df, K_chr, analyses_df, 
                        covar, pheno_data, analyses_tbl, peaks,
-                       project_info) {
+                       project_info, allele_names) {
   ns <- session$ns
 
   ## Genotype Probabilities.
@@ -45,10 +45,8 @@ shinyHaplo <- function(input, output, session,
                     covar, pheno_data, analyses_tbl, peaks,
                     project_info)
 
-  ## CC names
-  output$cc_names <- shiny::renderText({
-    cc <- qtl2::CCcolors
-    paste(LETTERS[seq_along(cc)], names(cc), sep = "=", collapse = ", ")
+  output$allele_names <- shiny::renderText({
+    shiny::req(allele_names())
   })
 
   output$hap_input <- shiny::renderUI({
@@ -97,7 +95,7 @@ shinyHaploUI <- function(id) {
       shiny::uiOutput(ns("radio")),
       shiny::uiOutput(ns("sex_type")),
       shiny::uiOutput(ns("hap_input")),
-      shiny::textOutput(ns("cc_names"))),
+      shiny::textOutput(ns("allele_names"))),
     shiny::mainPanel(
       shiny::uiOutput(ns("hap_output")))
   )

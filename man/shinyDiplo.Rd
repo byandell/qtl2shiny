@@ -6,14 +6,14 @@
 \title{Shiny Diplotype module}
 \usage{
 shinyDiplo(input, output, session, win_par, phe_mx, cov_df, K_chr, analyses_df,
-  project_info)
+  project_info, allele_names)
 
 shinyDiploUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, phe_mx, cov_df, K_chr, analyses_df}{reactive arguments}
+\item{win_par, phe_mx, cov_df, K_chr, analyses_df, project_info, allele_names}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }
