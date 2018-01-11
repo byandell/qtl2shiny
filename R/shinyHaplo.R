@@ -3,7 +3,7 @@
 #' Shiny module for analysis based on haplotype alleles.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pmap_obj,phe_mx,cov_df,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks,project_info,allele_names reactive arguments
+#' @param win_par,pmap_obj,phe_mx,cov_df,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks,project_info,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,7 +18,7 @@ shinyHaplo <- function(input, output, session,
                        win_par, pmap_obj, 
                        phe_mx, cov_df, K_chr, analyses_df, 
                        covar, pheno_data, analyses_tbl, peaks,
-                       project_info, allele_names) {
+                       project_info, allele_info) {
   ns <- session$ns
 
   ## Genotype Probabilities.
@@ -29,7 +29,7 @@ shinyHaplo <- function(input, output, session,
   shiny::callModule(shinyScan1Plot, "hap_scan", 
              input, win_par, 
              phe_mx, cov_df, probs_obj, K_chr, analyses_df,
-             project_info)
+             project_info, allele_info)
   
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
@@ -46,7 +46,8 @@ shinyHaplo <- function(input, output, session,
                     project_info)
 
   output$allele_names <- shiny::renderText({
-    shiny::req(allele_names())
+    shiny::req(allele_info())
+    paste(allele_info()$code, allele_info()$shortname, sep = "=", collapse = ", ")
   })
 
   output$hap_input <- shiny::renderUI({

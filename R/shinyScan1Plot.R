@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info reactive arguments
+#' @param job_par,win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -22,7 +22,7 @@
 shinyScan1Plot <- function(input, output, session,
                   job_par, win_par, 
                   phe_mx, cov_df, probs_obj, K_chr, analyses_df,
-                  project_info) {
+                  project_info, allele_info) {
   ns <- session$ns
   
   ## Scan1
@@ -90,12 +90,12 @@ shinyScan1Plot <- function(input, output, session,
     })
   })
   output$effPlot <- shiny::renderPlot({
-    shiny::req(input$pheno_name, scan_obj(), eff_obj(), win_par$chr_id)
+    shiny::req(input$pheno_name, scan_obj(), eff_obj(), win_par$chr_id, allele_info())
     map <- shiny::req(probs_obj())$map
     shiny::withProgress(message = 'Effect plots ...', value = 0, {
       shiny::setProgress(1)
       plot_eff(input$pheno_name, eff_obj(), map, scan_obj(), 
-               input$scan_window)
+               input$scan_window,, allele_info())
     })
   })
   output$effSummary <- shiny::renderDataTable({
@@ -110,12 +110,12 @@ shinyScan1Plot <- function(input, output, session,
   ## Effect and LOD Plot
   output$lod_effPlot <- shiny::renderPlot({
     shiny::req(input$pheno_name, input$scan_window, win_par$chr_id,
-               eff_obj(), scan_obj())
+               eff_obj(), scan_obj(), allele_info())
     map <- shiny::req(probs_obj())$map
     shiny::withProgress(message = 'Effect & LOD plots ...', value = 0, {
       shiny::setProgress(1)
       plot_eff(input$pheno_name, eff_obj(), map, scan_obj(), input$scan_window,
-               addlod = TRUE)
+               addlod = TRUE, allele_info())
     })
   })
   
@@ -157,7 +157,7 @@ shinyScan1Plot <- function(input, output, session,
     filename = function() {
       file.path(paste0("scan_", win_par$chr_id, ".pdf")) },
     content = function(file) {
-      shiny::req(win_par$chr_id)
+      shiny::req(win_par$chr_id, allele_info())
       effs <- shiny::req(eff_obj())
       scans <- shiny::req(scan_obj())
       win <- shiny::req(input$scan_window)
@@ -169,7 +169,7 @@ shinyScan1Plot <- function(input, output, session,
                  xlim = win))
       for(pheno in names(effs)) {
         plot_eff(pheno, effs, map, scans, win,
-                 addlod = TRUE)
+                 addlod = TRUE, allele_info())
       }
       dev.off()
     }

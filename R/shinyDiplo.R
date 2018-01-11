@@ -3,7 +3,7 @@
 #' Shiny diplotype SNP/Gene action analysis.
 #' 
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_mx,cov_df,K_chr,analyses_df,project_info,allele_names reactive arguments
+#' @param win_par,phe_mx,cov_df,K_chr,analyses_df,project_info,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -17,7 +17,7 @@
 shinyDiplo <- function(input, output, session,
                        win_par, 
                        phe_mx, cov_df, K_chr, analyses_df,
-                       project_info, allele_names) {
+                       project_info, allele_info) {
   ns <- session$ns
 
   chr_pos <- shiny::reactive({
@@ -46,6 +46,7 @@ shinyDiplo <- function(input, output, session,
   
   output$allele_names <- shiny::renderText({
     shiny::req(allele_names())
+    paste(allele_info()$code, allele_info()$shortname, sep = "=", collapse = ", ")
   })
 
   output$dip_input <- shiny::renderUI({

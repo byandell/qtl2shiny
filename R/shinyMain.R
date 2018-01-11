@@ -83,10 +83,9 @@ shinyMain <- function(input, output, session, projects_info) {
   })
   
   ## Allele names.
-  allele_names <- shiny::reactive({
+  allele_info <- shiny::reactive({
     shiny::req(project_info())
-    allele_info <- read_project_rds(project_info(), "allele_info")
-    paste(allele_info$code, allele_info$shortname, sep = "=", collapse = ", ")
+    read_project_rds(project_info(), "allele_info")
   })
   
   ## Haplotype Analysis.
@@ -94,13 +93,13 @@ shinyMain <- function(input, output, session, projects_info) {
                     set_par()$win_par, pmap_obj, 
                     phe_mx, cov_df, K_chr, analyses_df, 
                     covar, pheno_data, analyses_tbl, peaks,
-                    project_info, allele_names)
+                    project_info, allele_info)
   
   ## Diplotype Analysis.
   shiny::callModule(shinyDiplo, "dip_scan",
                     set_par()$win_par, 
                     phe_mx, cov_df, K_chr, analyses_df,
-                    project_info, allele_names)
+                    project_info, allele_info)
 }
 
 #' @param id identifier for \code{\link{shinyScan1}} use
