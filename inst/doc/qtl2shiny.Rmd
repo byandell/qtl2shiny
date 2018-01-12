@@ -1,0 +1,26 @@
+---
+title: "QTL2 Shiny Interface"
+author: "Brian S. Yandell"
+date: "1/12/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The popular [R/qtl](http://www.rqtl.org) package for gene mapping has been redeveloped for high volume, multi-parent systems genetics data as [R/qtl2](http://www.rqtl.org/qtl2). This new package is still in a state of flux, so please work with us to improve.
+
+This document concerns a suite of packages complementary to [R/qtl2](http://www.rqtl.org/qtl2) that extend capabilities in terms of plotting, fast data access, deeper probe of SNPs and structural variants, and a user-friendly interface for deep investigation. The packages are:
+
+- [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2)
+- [R/qtl2feather](https://github.com/byandell/qtl2feather)
+- [R/qtl2pattern](https://github.com/byandell/qtl2pattern)
+- [R/qtl2shiny](https://github.com/byandell/qtl2shiny)
+
+See the other packages for their own documentation. 
+There are two additional packages that are more specialized and still need documentation:
+
+- [R/DOread](https://github.com/byandell/DOread)
+- [R/CausalMST](https://github.com/byandell/CausalMST)
+

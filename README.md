@@ -4,25 +4,31 @@ Yandell R/qtl2shiny project.
 
 ### What is this repository for? ###
 
-* Code to create shiny interface for [R/doqtl2](https://bitbucket.org/byandell/doqtl2).
-* Version 0.3.2
+* Code to create shiny interface for [R/qtl2](https://kbroman.org/qtl2).
+* Version 0.8.12
 
 ### What has been done ###
 
-* Shiny interface for multiple phenotypes with modules and dashboard
-  + invoke shiny dashboard as doqtl2_app()
-  + download RDS data
-  + create plots and scans on the fly
-* organized in package R/qtl2shiny
-* depends on R/doqtl2
+- created [Shiny](http://shiny.rstudio.org) interface for [R/qtl2](https://kbroman.org/qtl2) data
+    + handles multiple phenotypes and multiple projects
+    + creates plots and scans on the fly
+    + uses Shiny modules and dashboard
+- organized in package R/qtl2shiny
+- depends on related packages
+    + [R/qtl2](https://kbroman.org/qtl2)
+    + [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2)
+    + [R/qtl2feather](https://github.com/byandell/qtl2feather)
+    + [R/qtl2pattern](https://github.com/byandell/qtl2pattern)
+    + [R/DOread](https://github.com/byandell/DOread)
+    + [R/CausalMST](https://github.com/byandell/CausalMST)
 
 ### What are open development issues ###
 
 Major issues
 
-* Navigation across panels improved
-* speed up access
-* save intermediate calculations that are reused
+- speed up access
+- save intermediate calculations that are reused
+- make sure multiple taxa work smoothly
 
 Minor issues
 
@@ -31,14 +37,12 @@ Minor issues
     + user save settings for quick replay of shiny
 * markdown
     + flexdashboard for Rmd to create dynamic reports
-    + link Rmd and shiny
+    + link Rmd and shiny documents
 * genes
     + GeneRegion and GeneExon for multiple traits giving different results
-    + make sure GeneExon has null plot if no genes
-    + think about many traits, BLUPs
+    + upgrade these to use `plot_genes`
 * scans
     + multiple traits now use superset of covariates
-    + needs redesign of Scan1Plot and use of cov_mx() from DOread::get_covar
     + fixed for Scan1Plot; need to do same for Scan1SNP and possibly elsewhere
 
 ### Contribution guidelines ###
@@ -73,16 +77,16 @@ and [RcppEigen](https://github.com/RcppCore/RcppEigen).
 You will also need the following packages for qtl2shiny dependencies:
 
     install.packages(c("tidyverse", "RColorBrewer", "feather",
-      "shiny", "shinydashboard", "grid", "gridBase", "gdata", "GGally", "Rcpp", "mnormt", "corpcor", "dbplyr"))
+      "shiny", "shinydashboard", "grid", "gridBase", "gdata", "GGally", "Rcpp", "mnormt", "corpcor"))
 
 Then, install R/qtl2 using `devtools::install_github()`.
 
     library(devtools)
-    install_github(paste0("rqtl/qtl2", c("geno", "scan")))
+    install_github("rqtl/qtl2")
     install_github("ropensci/plotly")
 
-Once you have installed these, install qtl2shiny as
+Once you have installed these, install qtl2shiny and related packages as
 
     install_github(paste0("byandell/",
-      c("DOread","CCSanger","qtl2pattern","qtl2ggplot","qtl2feather","CausalMST","qtl2shiny")))
+      c("DOread","qtl2pattern","qtl2ggplot","qtl2feather","CausalMST","qtl2shiny")))
 
