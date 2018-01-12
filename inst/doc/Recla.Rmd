@@ -1,0 +1,157 @@
+---
+title: "recla"
+author: "Brian S. Yandell"
+date: "12/8/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE}
+library(dplyr)
+library(qtl2)
+library(qtl2feather)
+library(qtl2pattern)
+```
+
+```{r}
+file <- paste0("https://raw.githubusercontent.com/rqtl/",
+               "qtl2data/master/DO_Recla/recla.zip")
+recla <- read_cross2(file)
+```
+
+```{r}
+saveRDS(recla$pmap, "pmap.rds")
+```
+
+```{r}
+covar <- recla$covar %>%
+  rename(sex = Sex)
+saveRDS(covar, "covar.rds")
+```
+
+```{r}
+saveRDS(recla$pheno, "pheno_data.rds")
+```
+
+## Genotype probabilities
+
+```{r}
+if(file.exists("probs.rds")) {
+  pr <- readRDS("probs.rds")
+} else {
+  map <- insert_pseudomarkers(recla$gmap, step=1)
+  pr <- calc_genoprob(recla, map, err=0.002)
+  saveRDS(pr, "probs.rds")
+}
+```
+
+```{r}
+if(!dir.exists("feather")) {
+  dir.create("feather")
+}
+fprobs <- feather_genoprob(pr, "probs", "feather", verbose = FALSE)
+saveRDS(fprobs, file = file.path("feather", "fprobs.rds"))
+```
+
+
+```{r}
+apr <- genoprob_to_alleleprob(pr)
+```
+
+```{r}
+faprobs <- feather_genoprob(apr, "aprobs", "feather", verbose = FALSE)
+saveRDS(faprobs, file = file.path("feather", "faprobs.rds"))
+```
+
+
+```{r}
+kinship_loco <- calc_kinship(pr, "loco")
+```
+
+```{r}
+saveRDS(kinship_loco, "kinship.rds")
+```
+
+## Genome Scans
+
+```{r}
+form <- formula(paste("~", paste(names(covar), collapse = "+")))
+addcovar <- model.matrix(form, covar)[, -1, drop = FALSE]
+out <- scan1(apr, recla$pheno, addcovar=addcovar)
+```
+
+```{r}
+peaks <- find_peaks(out, recla$pmap, threshold = 3)
+```
+
+## Set up analyses and peaks tables for qtl2shiny
+
+```{r}
+peaks <- peaks %>%
+  rename(
+    pheno = lodcolumn) %>%
+  mutate(
+    longname = pheno,
+    output = pheno,
+    pheno_group = "recla",
+    pheno_type = "recla") %>%
+  select(-lodindex)
+```
+
+```{r}
+saveRDS(peaks, "peaks.rds")
+```
+
+```{r}
+analyses_tbl <- distinct(peaks, pheno, .keep_all = TRUE) %>%
+  select(-lod, -pos, -chr) %>%
+  mutate(model = "normal",
+         transf = "identity",
+         offset = 0,
+         winsorize = FALSE)
+for(i in names(covar))
+  analyses_tbl[[i]] <- TRUE
+```
+
+```{r}
+saveRDS(analyses_tbl, "analyses.rds")
+```
+
+```{r}
+pheno_type   <- DOread::setup_type(analyses_tbl)
+```
+
+```{r}
+saveRDS(pheno_type, "pheno_type.rds")
+```
+
+## Hotspots
+
+```{r}
+hots <- qtl2pattern::hotspot(recla$pmap, peaks)
+```
+
+```{r}
+saveRDS(hots, "hotspot.rds")
+```
+
+## Query functions
+
+```{r}
+query_probs <- 
+  DOread::create_probs_query_func_do(
+    file.path("qtl2shinyData", "mouse", "Recla"))
+saveRDS(query_probs, "query_probs.rds")
+tmpfn <- function(dbfile) {
+  function(chr, start, stop,
+           local = TRUE,
+           qtl = FALSE) NULL
+}
+query_mrna <- tmpfn()
+saveRDS(query_mrna, "query_mrna.rds")
+```
+
+
