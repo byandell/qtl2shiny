@@ -149,6 +149,23 @@ saveRDS(hots, file.path(project_dir, "hotspot.rds"))
 
 ## Query functions
 
+The query for genes and variants are usually common across all projects for a taxa.
+Here we use query routines from R/qtl2 for the CC mouse.
+
+```{r}
+query_genes <- 
+  qtl2::create_gene_query_func(
+    file.path("qtl2shinyData", "CCmouse", "mouse_genes.sqlite"))
+saveRDS(query_genes, file.path(project_dir, "..", "query_genes.rds"))
+```
+
+```{r}
+query_variants <- 
+  qtl2::create_variant_query_func(
+    file.path("qtl2shinyData", "CCmouse", "cc_variants.sqlite"))
+saveRDS(query_variants, file.path(project_dir, "..", "query_variants.rds"))
+```
+
 Use `create_probs_query_func_do` from package `DOread` to query genotype probabilities.
 
 ```{r}
