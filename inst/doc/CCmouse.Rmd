@@ -1,0 +1,100 @@
+---
+title: "recla"
+author: "Brian S. Yandell"
+date: "12/8/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This sets up the `CCmouse` taxa information.
+
+```{r}
+project_info <- data.frame(project = "",
+                           taxa = "CCmouse",
+                           directory = "qtl2shinyData",
+                           stringsAsFactors = FALSE)
+```
+
+```{r}
+taxa_dir <- file.path(project_info$taxa)
+if(!dir.exists(taxa_dir)) {
+  dir.create(taxa_dir)
+}
+```
+
+```{r}
+taxa_path <- file.path(project_info$directory,
+                       project_info$taxa)
+```
+
+```{r message=FALSE}
+library(dplyr)
+library(qtl2)
+library(qtl2feather)
+library(qtl2pattern)
+```
+
+## Query functions
+
+The query for genes and variants are usually common across all projects for a taxa.
+Here we use query routines from R/qtl2 for the CC mouse.
+
+```{r}
+query_genes <- 
+  qtl2::create_gene_query_func(
+    file.path(taxa_path, "mouse_genes.sqlite"))
+saveRDS(query_genes, file.path(taxa_dir, "query_genes.rds"))
+```
+
+```{r}
+query_variants <- 
+  qtl2::create_variant_query_func(
+    file.path(taxa_path, "cc_variants.sqlite"))
+saveRDS(query_variants, file.path(taxa_dir, "query_variants.rds"))
+```
+
+The large files [mouse_genes.sqlite](https://figshare.com/articles/SQLite_database_with_MGI_mouse_gene_annotations_from_Mouse_Genome_Informatics_MGI_at_The_Jackson_Laboratory/5286019) and [cc_variants.sqlite](https://figshare.com/articles/SQLite_database_of_variants_in_Collaborative_Cross_founder_mouse_strains/5280229) can be found at FigShare. See [R/qtl2 db ReadMe](https://github.com/rqtl/qtl2db/blob/master/ReadMe.md) for more information.
+
+## Colors and Alleles
+
+I have replaced [qtl2::CCcolors](http://kbroman.org/qtl2/assets/vignettes/user_guide.html#qtl_analysis_in_diversity_outbred_mice) with a founder CSV dictionary (or whatever) that has columns.
+For Collaborative Cross, see <http://compgen.unc.edu/wp/?page_id=577>.
+
+```{r}
+qtl2::CCorigcolors
+```
+
+```{r}
+qtl2::CCcolors
+```
+
+```{r}
+allele_info <- 
+  data.frame(
+    code = LETTERS[1:8],
+    shortname = names(qtl2::CCcolors),
+    longname = c("A/J","C57BL/6J","129S1/SvImJ","NOD/LtJ","NZO/HlLtJ","CAST/EiJ","PWK/PhJ","WSB/EiJ"),
+    allelename = c("A_J","C57BL_6J","129S1_SvImJ","NOD_LtJ","NZO_HlLtJ","CAST_EiJ","PWK_PhJ","WSB_EiJ"),
+    link = c("https://www.jax.org/strain/000646",
+             "https://www.jax.org/strain/000664",
+             "https://www.jax.org/strain/002448",
+             "https://www.jax.org/strain/001289",
+             "https://www.jax.org/strain/002105",
+             "https://www.jax.org/strain/000928",
+             "https://www.jax.org/strain/003715",
+             "https://www.jax.org/strain/001145"),
+    color = qtl2::CCcolors,
+    color_name = c("yellow","grey","salmon","blue","aqua","green","red","purple"),
+    origcolor = qtl2::CCorigcolors,
+    stringsAsFactors = FALSE
+  )
+```
+
+```{r}
+saveRDS(allele_info, file.path(taxa_dir, "allele_info.rds"))
+```
+
+

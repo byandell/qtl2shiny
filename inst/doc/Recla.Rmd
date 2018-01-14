@@ -9,6 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+This sets up the `Recla` project for [R/qtl2shiny](https://github.com/byandell/qtl2shiny).
+See also [CCmouse.Rmd]()
+
 ```{r}
 project_info <- data.frame(project = "Recla",
                            taxa = "CCmouse",
@@ -17,7 +20,7 @@ project_info <- data.frame(project = "Recla",
 ```
 
 ```{r}
-project_dir <- project_info$project
+project_dir <- file.path(project_info$taxa, project_info$project)
 if(!dir.exists(project_dir)) {
   dir.create(project_dir)
 }
@@ -149,32 +152,16 @@ saveRDS(hots, file.path(project_dir, "hotspot.rds"))
 
 ## Query functions
 
-The query for genes and variants are usually common across all projects for a taxa.
-Here we use query routines from R/qtl2 for the CC mouse.
-
-```{r}
-query_genes <- 
-  qtl2::create_gene_query_func(
-    file.path("qtl2shinyData", "CCmouse", "mouse_genes.sqlite"))
-saveRDS(query_genes, file.path(project_dir, "..", "query_genes.rds"))
-```
-
-```{r}
-query_variants <- 
-  qtl2::create_variant_query_func(
-    file.path("qtl2shinyData", "CCmouse", "cc_variants.sqlite"))
-saveRDS(query_variants, file.path(project_dir, "..", "query_variants.rds"))
-```
-
 Use `create_probs_query_func_do` from package `DOread` to query genotype probabilities.
 
 ```{r}
 project_path <- file.path(project_info$directory,
               project_info$taxa,
               project_info$project)
-query_probs <- 
-  DOread::create_probs_query_func_do(
-    project_path)
+```
+
+```{r}
+query_probs <- DOread::create_probs_query_func_do(project_path)
 saveRDS(query_probs, file.path(project_dir, "query_probs.rds"))
 ```
 
