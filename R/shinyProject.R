@@ -15,7 +15,7 @@ shinyProject <- function(input, output, session, projects_info) {
   
   output$project <- shiny::renderUI({
     shiny::req(projects_info())
-    choices <- projects_info()$project
+    choices <- unique(projects_info()$project)
     if(is.null(selected <- input$project)) {
       selected <- choices[1]
     }
@@ -31,7 +31,11 @@ shinyProject <- function(input, output, session, projects_info) {
     if(is.null(project_id)) {
       project_id <- projects_info()$project[1]
     }
-    dplyr::filter(projects_info(), project == project_id)
+    dplyr::distinct(
+      dplyr::filter(
+        projects_info(),
+        project == project_id),
+      project, .keep_all = TRUE)
   })
 }
 #' @param id identifier for \code{\link{shinyProject}} use

@@ -64,12 +64,12 @@ shinySetup <- function(input, output, session,
   
   ## Set up analyses data frame.
   analyses_set <- shiny::reactive({
-    shiny::req(project_info())
+    shiny::req(project_info(), analyses_tbl())
     set_analyses(input$dataset, input$pheno_group, analyses_tbl())
   })
   # Restrict peaks to region.
   peaks_df <- shiny::reactive({
-    shiny::req(analyses_set(), peaks_tbl())
+    shiny::req(project_info(), analyses_set(), peaks_tbl())
     chr_id <- shiny::req(win_par$chr_id)
     peak_Mbp <- shiny::req(win_par$peak_Mbp)
     window_Mbp <- shiny::req(win_par$window_Mbp)

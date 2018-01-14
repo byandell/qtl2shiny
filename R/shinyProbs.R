@@ -30,7 +30,7 @@ shinyProbs <- function(input, output, session,
       } else {
         start_val <- end_val <- NULL
       }
-      
+
       # Define query_probs function
       query_probs <- read_query_rds(project_info(), "query_probs.rds")
       # Note probs object keeps map with it

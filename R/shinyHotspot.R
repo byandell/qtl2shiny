@@ -45,6 +45,7 @@ shinyHotspot <- function(input, output, session,
   })
   # Select chromosome.
   output$chr_ct <- shiny::renderUI({
+    shiny::req(project_info())
     choices <- chr_names()
     if(is.null(selected <- input$chr_ct))
       selected <- "all"
@@ -76,7 +77,7 @@ shinyHotspot <- function(input, output, session,
   })
 
   scan_obj_all <- shiny::reactive({
-    shiny::req(input$window_Mbp, input$minLOD)
+    shiny::req(project_info(), input$window_Mbp, input$minLOD)
     shiny::withProgress(message = 'Hotspot scan ...', value = 0,
     {
       shiny::setProgress(1)
@@ -147,7 +148,7 @@ shinyHotspot <- function(input, output, session,
     if(shiny::isTruthy(input$minLOD)) {
       input$minLOD
     } else {
-      max(3, round(min(shiny::req(peaks_tbl())$lod), 1))
+      max(5.5, round(min(shiny::req(peaks_tbl())$lod), 1))
     }
   })
   output$minLOD <- shiny::renderUI({

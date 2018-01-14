@@ -9,6 +9,20 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+project_info <- data.frame(project = "Recla",
+                           taxa = "CCmouse",
+                           directory = "qtl2shinyData",
+                           stringsAsFactors = FALSE)
+```
+
+```{r}
+project_dir <- project_info$project
+if(!dir.exists(project_dir)) {
+  dir.create(project_dir)
+}
+```
+
 ```{r message=FALSE}
 library(dplyr)
 library(qtl2)
@@ -23,56 +37,51 @@ recla <- read_cross2(file)
 ```
 
 ```{r}
-saveRDS(recla$pmap, "pmap.rds")
+saveRDS(recla$pmap, file.path(project_dir, "pmap.rds"))
 ```
 
 ```{r}
 covar <- recla$covar %>%
   rename(sex = Sex)
-saveRDS(covar, "covar.rds")
+saveRDS(covar, file.path(project_dir, "covar.rds"))
 ```
 
 ```{r}
-saveRDS(recla$pheno, "pheno_data.rds")
+saveRDS(recla$pheno, file.path(project_dir, "pheno_data.rds"))
 ```
 
 ## Genotype probabilities
 
 ```{r}
-if(file.exists("probs.rds")) {
-  pr <- readRDS("probs.rds")
-} else {
+if(!dir.exists(feather_dir <- file.path(project_dir, "genoprob"))) {
+  dir.create(feather_dir)
+}
+faprobs_file <- file.path(feather_dir, "faprobs.rds")
+if(!file.exists(probs_file <- file.path(feather_dir, "fprobs.rds"))) {
   map <- insert_pseudomarkers(recla$gmap, step=1)
+  
+  cat("allele pair genotype probabilities\n", file = stderr())
   pr <- calc_genoprob(recla, map, err=0.002)
-  saveRDS(pr, "probs.rds")
+  cat("allele pair prob conversion via qtl2feather\n", file = stderr())
+  fprobs <- feather_genoprob(pr, "probs", feather_dir, verbose = FALSE)
+  saveRDS(fprobs, file = file.path(feather_dir, "fprobs.rds"))
+
+  cat("allele genotype probabilities\n", file = stderr())
+  apr <- genoprob_to_alleleprob(pr)
+  cat("allele prob conversion via qtl2feather\n", file = stderr())
+  faprobs <- feather_genoprob(apr, "aprobs", feather_dir, verbose = FALSE)
+  saveRDS(faprobs, file = faprobs_file)
+} else {
+  faprobs <- readRDS(faprobs_file)
 }
 ```
-
-```{r}
-if(!dir.exists("feather")) {
-  dir.create("feather")
-}
-fprobs <- feather_genoprob(pr, "probs", "feather", verbose = FALSE)
-saveRDS(fprobs, file = file.path("feather", "fprobs.rds"))
-```
-
-
-```{r}
-apr <- genoprob_to_alleleprob(pr)
-```
-
-```{r}
-faprobs <- feather_genoprob(apr, "aprobs", "feather", verbose = FALSE)
-saveRDS(faprobs, file = file.path("feather", "faprobs.rds"))
-```
-
 
 ```{r}
 kinship_loco <- calc_kinship(pr, "loco")
 ```
 
 ```{r}
-saveRDS(kinship_loco, "kinship.rds")
+saveRDS(kinship_loco, file.path(project_dir, "kinship.rds"))
 ```
 
 ## Genome Scans
@@ -80,7 +89,7 @@ saveRDS(kinship_loco, "kinship.rds")
 ```{r}
 form <- formula(paste("~", paste(names(covar), collapse = "+")))
 addcovar <- model.matrix(form, covar)[, -1, drop = FALSE]
-out <- scan1(apr, recla$pheno, addcovar=addcovar)
+out <- scan1(faprobs, recla$pheno, addcovar=addcovar)
 ```
 
 ```{r}
@@ -102,7 +111,7 @@ peaks <- peaks %>%
 ```
 
 ```{r}
-saveRDS(peaks, "peaks.rds")
+saveRDS(peaks, file.path(project_dir, "peaks.rds"))
 ```
 
 ```{r}
@@ -117,7 +126,7 @@ for(i in names(covar))
 ```
 
 ```{r}
-saveRDS(analyses_tbl, "analyses.rds")
+saveRDS(analyses_tbl, file.path(project_dir, "analyses.rds"))
 ```
 
 ```{r}
@@ -125,7 +134,7 @@ pheno_type   <- DOread::setup_type(analyses_tbl)
 ```
 
 ```{r}
-saveRDS(pheno_type, "pheno_type.rds")
+saveRDS(pheno_type, file.path(project_dir, "pheno_type.rds"))
 ```
 
 ## Hotspots
@@ -135,23 +144,34 @@ hots <- qtl2pattern::hotspot(recla$pmap, peaks)
 ```
 
 ```{r}
-saveRDS(hots, "hotspot.rds")
+saveRDS(hots, file.path(project_dir, "hotspot.rds"))
 ```
 
 ## Query functions
 
+Use `create_probs_query_func_do` from package `DOread` to query genotype probabilities.
+
 ```{r}
+project_path <- file.path(project_info$directory,
+              project_info$taxa,
+              project_info$project)
 query_probs <- 
   DOread::create_probs_query_func_do(
-    file.path("qtl2shinyData", "mouse", "Recla"))
-saveRDS(query_probs, "query_probs.rds")
+    project_path)
+saveRDS(query_probs, file.path(project_dir, "query_probs.rds"))
+```
+
+These data do not include mRNA data, so set up null routine. Make sure it has
+required arguments.
+
+```{r}
 tmpfn <- function(dbfile) {
   function(chr, start, stop,
            local = TRUE,
            qtl = FALSE) NULL
 }
 query_mrna <- tmpfn()
-saveRDS(query_mrna, "query_mrna.rds")
+saveRDS(query_mrna, file.path(project_dir, "query_mrna.rds"))
 ```
 
 

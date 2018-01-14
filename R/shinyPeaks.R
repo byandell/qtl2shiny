@@ -58,7 +58,7 @@ shinyPeaks <- function(input, output, session,
   
   # Peak position slider.
   output$peak_Mbp <- shiny::renderUI({
-    shiny::req(project_info())
+    shiny::req(project_info(), pmap_obj())
     chr_id <- shiny::req(input$chr_id)
     rng <- round(range(pmap_obj()[[chr_id]]), 2)
     pos <- input$peak_Mbp

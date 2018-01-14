@@ -36,10 +36,10 @@ The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl
 
 ```
 project,taxa,directory
-Recla,mouse,qtl2shinyData
+Recla,CCmouse,qtl2shinyData
 ```
 
-The column names are fixed. The `project` is the project name, `taxa` has the taxa name, and `directory` is the relative or absolute address of the directory where data are kept. In this case, the basic structure of the app is:
+The column names are fixed. The `project` is the project name (`Recla`), `taxa` has the taxa name (`mouse`), and `directory` is the relative or absolute address of the directory where data are kept (`qtl2shinyData`, which is relative here). In this case, the basic structure of the app is:
 
 ```
 app.R
@@ -48,7 +48,7 @@ about-extended.md
 project.csv
 qtl2shinyData/
   mouse/
-    AttieDOv2/
+    Recla/
 ```
 
 The `taxa` sub-directory (`mouse`) contains the following files. See <https://github.com/rqtl/qtl2db>
@@ -71,7 +71,7 @@ Note that [R/qtl2](http://www.rqtl.org/qtl2) wants data files to be consistent i
 
 file | contents
 -----|------------------------------------------------
-feather | directory with genotype probabilities created with [R/qtl2feather](https://github.com/byandell/qtl2feather)
+genoprob | directory with genotype probabilities created with [R/qtl2feather](https://github.com/byandell/qtl2feather)
 kinship.rds | kinship object using LOCO (see [R/qtl2](http://kbroman.org/qtl2/assets/vignettes/user_guide.html#calculating_a_kinship_matrix))
 pmap.rds | physical map
 analyses.rds | data frame of information about analyses (one row per phenotype)
@@ -87,6 +87,8 @@ query_probs.rds | query of genotype probabilities
 
 
 ## Query files
+
+The query files are designed to encapsulate specific information about where data are stored and how to retrieve them, so that different projects might use different strategies. For instance, some projects might use CSV or RDS files, while others might use SQL or feather databases. There are four query objects, for genes, variants, mrna and probs.
 
 
 ## Details of Data and Shiny Setup
