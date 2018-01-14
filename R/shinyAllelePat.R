@@ -3,7 +3,7 @@
 #' Shiny module for top SNP analysis and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
+#' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,allele_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -25,7 +25,7 @@
 shinyAllelePat <- function(input, output, session,
                         snp_par, chr_pos, pheno_names,
                         snp_scan_obj, snpinfo, top_snps_tbl, 
-                        gene_exon_tbl, 
+                        gene_exon_tbl, allele_info, 
                         snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
 
@@ -107,10 +107,14 @@ shinyAllelePat <- function(input, output, session,
     })
   })
 
+  haplos <- reactive({
+    shiny::req(allele_info())$code
+  })
   output$pattern <- shiny::renderUI({
     shiny::req(snp_action())
     top_pat <- shiny::req(top_snps_tbl())
-    choices <- qtl2pattern::sdp_to_pattern(dplyr::distinct(top_pat, sdp)$sdp)
+    choices <- qtl2pattern::sdp_to_pattern(dplyr::distinct(top_pat, sdp)$sdp,
+                                           haplos())
     if(!is.null(selected <- input$pattern)) {
       if(!selected %in% choices)
         selected <- NULL
@@ -126,7 +130,7 @@ shinyAllelePat <- function(input, output, session,
       return(plot_null())
 #     shiny::req(input$pattern)
     top_pat <- shiny::req(top_snps_tbl())
-    patterns <- qtl2pattern::sdp_to_pattern(top_pat$sdp)
+    patterns <- qtl2pattern::sdp_to_pattern(top_pat$sdp, haplos())
     shiny::withProgress(message = 'SNP Pattern phenos ...', value = 0, {
       shiny::setProgress(1)
       top_pat_plot(pheno_names(), 

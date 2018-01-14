@@ -1,3 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 Makefile
+^/inst/doc/CCmouse
+^/inst/doc/*.csv
+^/inst/doc/*.tex

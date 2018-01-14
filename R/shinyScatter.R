@@ -3,7 +3,7 @@
 #' Shiny module for scatter plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr reactive arguments
+#' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -24,7 +24,8 @@
 shinyScatterPlot <- function(input, output, session,
                   med_par, patterns, 
                   geno_max, peak_mar, med_ls, mediate_obj,
-                  phe_mx, cov_df, K_chr) {
+                  phe_mx, cov_df, K_chr,
+                  allele_info) {
   ns <- session$ns
 
   ## Select triad for plots.
@@ -45,14 +46,19 @@ shinyScatterPlot <- function(input, output, session,
     shiny::selectInput(ns("med_name"), NULL,
                        choices = choices)
   })
+  
   # Select pattern 
   sdps <- shiny::reactive({
     shiny::req(patterns(), med_par$pheno_name)
     unique(dplyr::filter(patterns(), pheno == med_par$pheno_name)$sdp)
   })
+  haplos <- reactive({
+    shiny::req(allele_info())$code
+  })
   output$pattern <- shiny::renderUI({
-    choices <- qtl2pattern::sdp_to_pattern(sdps())
-     shiny::selectInput(ns("pattern"), NULL,
+    shiny::req(sdps(), haplos())
+    choices <- qtl2pattern::sdp_to_pattern(sdps(), haplos())
+    shiny::selectInput(ns("pattern"), NULL,
                        choices = choices, input$pattern)
   })
   
@@ -60,7 +66,7 @@ shinyScatterPlot <- function(input, output, session,
     shiny::req(geno_max(), phe_mx(), med_ls(), medID(), sdps(),
                input$med_name, input$pattern)
     med_scat(med_ls(), geno_max(), phe_mx(), K_chr()[[1]], cov_df(), sdps(),
-             input$pattern, input$med_name, medID())
+             input$pattern, input$med_name, medID(), haplos())
   })
   
   ## Select plot format.

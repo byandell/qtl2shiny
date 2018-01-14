@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,patterns,phe_mx,cov_df,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks,project_info reactive arguments
+#' @param job_par,win_par,patterns,phe_mx,cov_df,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks,project_info,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -27,7 +27,7 @@ shinyMediate1Plot <- function(input, output, session,
                               job_par, win_par, patterns,
                               phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                               pmap_obj, covar, pheno_data, analyses_tbl, peaks,
-                              project_info) {
+                              project_info, allele_info) {
   ns <- session$ns
   
   chr_id <- reactive({
@@ -72,7 +72,8 @@ shinyMediate1Plot <- function(input, output, session,
   shiny::callModule(shinyScatterPlot, "scatter",
                     input, patterns, 
                     geno_max, peak_mar, med_ls, mediate_signif,
-                    phe1_mx, cov_df, K_chr)
+                    phe1_mx, cov_df, K_chr,
+                    allele_info)
 
   ## Mediate1
   probs_chr <- reactive({

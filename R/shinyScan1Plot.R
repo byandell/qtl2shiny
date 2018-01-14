@@ -38,7 +38,7 @@ shinyScan1Plot <- function(input, output, session,
   
   # Scan Window slider
   output$scan_window <- shiny::renderUI({
-    shiny::req(project_info(), phe_mx())
+    shiny::req(project_info(), phe_mx(), win_par$window_Mbp)
     chr_id <- shiny::req(win_par$chr_id)
     map <- shiny::req(probs_obj())$map[[chr_id]]
     rng <- round(2 * range(map)) / 2
@@ -48,7 +48,7 @@ shinyScan1Plot <- function(input, output, session,
                 selected, step=.5)
   })
   ## Reset scan_window if chromosome changes.
-  observeEvent(win_par$chr_id, {
+  observeEvent(probs_obj()$map, {
     map <- shiny::req(probs_obj()$map)
     chr <- shiny::req(win_par$chr_id)
     rng <- round(2 * range(map[[chr]])) / 2

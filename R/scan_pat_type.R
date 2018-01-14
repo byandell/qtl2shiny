@@ -1,11 +1,11 @@
 # Plot scan patterns for phenotype.
-scan_pat_type <- function(scan_pat, map, type, pattern, pheno) {
+scan_pat_type <- function(scan_pat, map, type, pattern, pheno, haplos) {
   if(is.null(scan_pat))
     return(plot_null())
   
   pattern_cont <- 
     unique(dplyr::filter(scan_pat$patterns,
-                         qtl2pattern::sdp_to_pattern(sdp) %in% pattern)$founders)
+                         qtl2pattern::sdp_to_pattern(sdp, haplos) %in% pattern)$founders)
   maxpos <- NULL
   maxcol <- 1
   if(type == "coef") {

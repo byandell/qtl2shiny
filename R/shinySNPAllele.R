@@ -3,7 +3,7 @@
 #' Shiny module to coordinate SNP and allele analyses and plots.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,snp_action reactive arguments
+#' @param win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -22,7 +22,7 @@ shinySNPAllele <- function(input, output, session,
                           job_par, win_par, 
                           phe_mx, cov_df,
                           probs_obj, K_chr, analyses_df,
-                          project_info,
+                          project_info, allele_info,
                           snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
   
@@ -104,7 +104,7 @@ shinySNPAllele <- function(input, output, session,
   pat_par <- shiny::callModule(shinyAllelePat, "allele_pat",
              input, chr_pos, pheno_names,
              snp_scan_obj, snpinfo, top_snps_tbl, 
-             gene_exon_tbl, snp_action)
+             gene_exon_tbl, allele_info, snp_action)
 
   # Scan Window slider
   output$scan_window <- shiny::renderUI({

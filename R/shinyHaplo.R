@@ -35,7 +35,7 @@ shinyHaplo <- function(input, output, session,
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
               input, win_par, 
               phe_mx, cov_df, probs_obj, K_chr, analyses_df,
-              project_info)
+              project_info, allele_info)
 
   ## Mediation
   shiny::callModule(shinyMediate1Plot, "mediate",
@@ -43,7 +43,7 @@ shinyHaplo <- function(input, output, session,
                     phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                     pmap_obj, 
                     covar, pheno_data, analyses_tbl, peaks,
-                    project_info)
+                    project_info, allele_info)
 
   output$allele_names <- shiny::renderText({
     shiny::req(allele_info())

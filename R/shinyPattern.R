@@ -1,7 +1,7 @@
 #' Shiny Pattern module
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,chr_pos,win_par,phe_mx,cov_df,probs36_obj,K_chr,analyses_df,patterns,snp_action reactive arguments
+#' @param job_par,chr_pos,win_par,phe_mx,cov_df,probs36_obj,K_chr,analyses_df,patterns,allele_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -26,7 +26,7 @@
 shinyPattern <- function(input, output, session,
                          job_par, chr_pos, win_par,
                          phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
-                         patterns, snp_action = shiny::reactive({NULL})) {
+                         patterns, allele_info, snp_action = shiny::reactive({NULL})) {
   ns <- session$ns
   
   phe1_mx <- reactive({
@@ -48,8 +48,11 @@ shinyPattern <- function(input, output, session,
     shiny::req(input$pheno_name, patterns())
     pull_patterns(patterns(), colnames(shiny::req(phe_mx())))
   })
+  haplos <- reactive({
+    shiny::req(allele_info())$code
+  })
   pattern_choices <- shiny::reactive({
-    qtl2pattern::sdp_to_pattern(pats()$sdp)
+    qtl2pattern::sdp_to_pattern(pats()$sdp, haplos())
   })
   output$pattern <- shiny::renderUI({
     shiny::req(pattern_choices(), snp_action())
@@ -67,7 +70,7 @@ shinyPattern <- function(input, output, session,
     shiny::req(snp_action(), input$pheno_name, patterns())
     pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
     if(nrow(pats)) {
-      choices <- qtl2pattern::sdp_to_pattern(pats$sdp)
+      choices <- qtl2pattern::sdp_to_pattern(pats$sdp, haplos())
     } else {
       choices <- input$pattern
     }
@@ -98,7 +101,8 @@ shinyPattern <- function(input, output, session,
     shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern LODs ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), probs36_obj()$map, "lod", pattern_choices(), input$pheno_name)
+      scan_pat_type(scan_pat(), probs36_obj()$map, "lod", pattern_choices(), 
+                    input$pheno_name, haplos())
     })
   })
   output$scan_pat_coef <- shiny::renderPlot({
@@ -107,7 +111,8 @@ shinyPattern <- function(input, output, session,
     shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern Effects ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), probs36_obj()$map, "coef", pattern_choices(), input$pheno_name)
+      scan_pat_type(scan_pat(), probs36_obj()$map, "coef", pattern_choices(), 
+                    input$pheno_name, haplos())
     })
   })
   output$scanSummary <- shiny::renderDataTable({
@@ -125,7 +130,8 @@ shinyPattern <- function(input, output, session,
     shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
     withProgress(message = 'Pattern Effects & LOD ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), probs36_obj()$map, "coef_and_lod", pattern_choices(), input$pheno_name)
+      scan_pat_type(scan_pat(), probs36_obj()$map, "coef_and_lod", pattern_choices(), 
+                    input$pheno_name, haplos())
     })
   })
   
@@ -181,13 +187,14 @@ shinyPattern <- function(input, output, session,
       pdf(file, width = 9, height = 9)
       for(pheno_in in colnames(phe_mx())) {
         pats <- dplyr::filter(patterns(), pheno == pheno_in)
-        pat_choices <- qtl2pattern::sdp_to_pattern(pats$sdp)
+        pat_choices <- qtl2pattern::sdp_to_pattern(pats$sdp, haplos())
         
         scan_now <- scan1_pattern(pheno_in, phe_mx(), cov_df(), 
                                   probs36_obj(), K_chr(), analyses_df(),
                                   pats, job_par$sex_type, input$blups)
         
-        scan_pat_type(scan_now, probs36_obj()$map, "coef_and_lod", pat_choices, pheno_in)
+        scan_pat_type(scan_now, probs36_obj()$map, "coef_and_lod", pat_choices,
+                      pheno_in, haplos())
       }
       dev.off()
     }

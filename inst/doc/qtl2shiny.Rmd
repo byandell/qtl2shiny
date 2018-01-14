@@ -54,6 +54,9 @@ qtl2shinyData/
 The `about.md` and `about-extended.md` files are place-holders for now for online documentation. All data are now stored under the directory (`qtl2shinyData`) using relative addresses. However, it is possible for data for a `taxa` and `project` to be stored in another place, in which case an absolute address would be supplied in the `projects.csv` file.
 
 Detailed information about the `taxa` and `project` can be found with the [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) and [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd) examples, respectively.
+
+### Taxa information
+
 The `taxa` sub-directory (`CCmouse`) contains the following files. See <https://github.com/rqtl/qtl2db>
 for explanation of the SQL databases and query routines.
 
@@ -64,6 +67,8 @@ file | contents
 `mouse_genes_mgi.sqlite` | mouse genes curated by MGI in SQL database
 `query_genes.rds` | query routine for genes
 `query_variants.rds` | query routines for structural variants
+
+### Project Information
 
 The `project` sub-sub-directory (`Recla`) has the data specific to the project. An example of how this is created can be found in [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd).
 Most of the objects are stored as [RDS](https://www.rdocumentation.org/packages/base/versions/3.4.3/topics/readRDS).
@@ -101,6 +106,8 @@ Some projects have an `RNAseq` folder. This, and accompanying routines for mRNA 
 
 The query files are designed to encapsulate specific information about where data are stored and how to retrieve them, so that different projects might use different strategies. For instance, some projects might use CSV or RDS files, while others might use SQL or feather databases. There are four query objects, for genes, variants, mrna and probs.
 
+Note that if you use a similar format as [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) and [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd) examples
+to create and store the queries, you may have to quit RStudio and restart it to have it properly pick up the `project` or `taxa` directory.
 
 ## Details of Data and Shiny Setup
 

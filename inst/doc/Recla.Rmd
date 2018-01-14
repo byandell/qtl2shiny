@@ -24,6 +24,8 @@ project_info <- data.frame(project = "Recla",
 ```{r}
 project_dir <- file.path(project_info$taxa, project_info$project)
 if(!dir.exists(project_dir)) {
+  if(!dir.exists(project_info$taxa))
+    dir.create(project_info$taxa)
   dir.create(project_dir)
 }
 ```

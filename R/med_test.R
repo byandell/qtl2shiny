@@ -14,12 +14,13 @@ med_test <- function(med_ls, geno_max, phe_mx, kinship, cov_tar,
                            data_type = data_type)
 }
 
-med_scat <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps, pattern, med_name, medID) {
+med_scat <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps, 
+                     pattern, med_name, medID, haplos) {
   
   if(is.list(kinship))
     kinship <- kinship[[1]]
   
-  sdp <- sdps[qtl2pattern::sdp_to_pattern(sdps) == pattern]
+  sdp <- sdps[qtl2pattern::sdp_to_pattern(sdps, haplos) == pattern]
   id <- med_ls[[2]]$id[med_ls[[2]][[medID]] == med_name]
   if(length(id) != 1)
     return(NULL)

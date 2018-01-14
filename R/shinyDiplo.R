@@ -36,16 +36,16 @@ shinyDiplo <- function(input, output, session,
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
                          input, win_par, 
                          phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
-                         project_info,
+                         project_info, allele_info,
                          snp_action)
   
   shiny::callModule(shinyPattern, "dip_pat",
                     input, chr_pos, win_par,
                     phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
-                    patterns, snp_action)
+                    patterns, allele_info, snp_action)
   
   output$allele_names <- shiny::renderText({
-    shiny::req(allele_names())
+    shiny::req(allele_info())
     paste(allele_info()$code, allele_info()$shortname, sep = "=", collapse = ", ")
   })
 

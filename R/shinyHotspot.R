@@ -34,6 +34,10 @@ shinyHotspot <- function(input, output, session,
                        selected = NULL)
     shiny::updateNumericInput(session, "window_Mbp", "width",
                               1, 0.1, 100)
+    if(shiny::isTruthy(peaks_tbl())) {
+      value <- minLOD(NULL, peaks_tbl())
+      shiny::updateNumericInput(session, "minLOD", "min LOD", value, min = 0, step = 0.5)
+    }
   })
   chr_names <- shiny::reactive({
     shiny::req(project_info())
@@ -144,15 +148,16 @@ shinyHotspot <- function(input, output, session,
   options = list(lengthMenu = c(5,10,20,50), pageLength = 5))
   
   # Minimum LOD for SNP top values.
-  minLOD <- reactive({
-    if(shiny::isTruthy(input$minLOD)) {
-      input$minLOD
+  minLOD <- function(value, peaks_tbl) {
+    if(shiny::isTruthy(value)) {
+      value
     } else {
-      max(5.5, round(min(shiny::req(peaks_tbl())$lod), 1))
+      max(5.5, round(min(peaks_tbl$lod), 1))
     }
-  })
+  }
   output$minLOD <- shiny::renderUI({
-    value <- minLOD()
+    shiny::req(peaks_tbl())
+    value <- minLOD(input$minLOD, peaks_tbl())
     shiny::numericInput(ns("minLOD"), "min LOD", value, min = 0, step = 0.5)
   })
   
