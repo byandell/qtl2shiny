@@ -30,7 +30,7 @@ The QTL2 Shiny Interface can be invoked from the Shiny server
 <http://www.statlab.wisc.edu/shiny/qtl2shiny>. This is being set up
 with project-specific login and password protection for data that has not been published, using [server side Apache htaccess](https://httpd.apache.org/docs/current/howto/ssi.html).
 
-## Organization of taxa and project files
+## Organization of qtl2shiny data files
 
 The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shiny/app.R) is in a directory with other support documents and the data. The projects are identified in a CSV file `projects.csv`, which has the following content:
 
@@ -39,7 +39,7 @@ project,taxa,directory
 Recla,CCmouse,qtl2shinyData
 ```
 
-The column names are fixed. The `project` is the project name (`Recla`), `taxa` has the taxa name (`mouse`), and `directory` is the relative or absolute address of the directory where data are kept (`qtl2shinyData`, which is relative here). In this case, the basic structure of the app is:
+The column names are fixed. The `project` is the project name (`Recla`), `taxa` has the taxa name (`CCmouse`), and `directory` is the relative or absolute address of the directory where data are kept (`qtl2shinyData`, which is relative here). In this case, the basic structure of the app is:
 
 ```
 app.R
@@ -47,20 +47,23 @@ about.md
 about-extended.md
 project.csv
 qtl2shinyData/
-  mouse/
+  CCmouse/
     Recla/
 ```
 
-The `taxa` sub-directory (`mouse`) contains the following files. See <https://github.com/rqtl/qtl2db>
+The `about.md` and `about-extended.md` files are place-holders for now for online documentation. All data are now stored under the directory (`qtl2shinyData`) using relative addresses. However, it is possible for data for a `taxa` and `project` to be stored in another place, in which case an absolute address would be supplied in the `projects.csv` file.
+
+Detailed information about the `taxa` and `project` can be found with the [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) and [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd) examples, respectively.
+The `taxa` sub-directory (`CCmouse`) contains the following files. See <https://github.com/rqtl/qtl2db>
 for explanation of the SQL databases and query routines.
 
 file | contents
 -----|---------
-allele_info.rds | information on alleles for taxa
-cc-variants.sqlite | CC structural variants in SQL database
-mouse_genes_mgi.sqlite | mouse genes curated by MGI in SQL database
-query_genes.rds | query routine for genes
-query_variants.rds | query routines for structural variants
+`allele_info.rds` | information on alleles for taxa
+`cc-variants.sqlite` | CC structural variants in SQL database
+`mouse_genes_mgi.sqlite` | mouse genes curated by MGI in SQL database
+`query_genes.rds` | query routine for genes
+`query_variants.rds` | query routines for structural variants
 
 The `project` sub-sub-directory (`Recla`) has the data specific to the project. An example of how this is created can be found in [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd).
 Most of the objects are stored as [RDS](https://www.rdocumentation.org/packages/base/versions/3.4.3/topics/readRDS).
@@ -71,17 +74,25 @@ Note that [R/qtl2](http://www.rqtl.org/qtl2) wants data files to be consistent i
 
 file | contents
 -----|------------------------------------------------
-genoprob | directory with genotype probabilities created with [R/qtl2feather](https://github.com/byandell/qtl2feather)
-kinship.rds | kinship object using LOCO (see [R/qtl2](http://kbroman.org/qtl2/assets/vignettes/user_guide.html#calculating_a_kinship_matrix))
-pmap.rds | physical map
-analyses.rds | data frame of information about analyses (one row per phenotype)
-covar.rds | data frame of covariates (row = individual, column = covariate)
-pheno_data.rds | matrix of phenotype data (row = individual, column = phenotype)
-pheno_type.rds | vector of phenotype types (this will probably disappear)
-peaks.rds | data frame of peak information (one row per peak)
-hotspot.rds | hotspot object with counts of peaks by position and phenotype set
-query_mrna.rds | query of mRNA data
-query_probs.rds | query of genotype probabilities
+`genoprob` | directory with genotype probabilities created with [R/qtl2feather](https://github.com/byandell/qtl2feather)
+`kinship.rds` | kinship object using LOCO (see [R/qtl2](http://kbroman.org/qtl2/assets/vignettes/user_guide.html#calculating_a_kinship_matrix))
+`pmap.rds` | physical map
+`analyses.rds` | data frame of information about analyses (one row per phenotype)
+`covar.rds` | data frame of covariates (row = individual, column = covariate)
+`pheno_data.rds` | matrix of phenotype data (row = individual, column = phenotype)
+`pheno_type.rds` | vector of phenotype types (this will probably disappear)
+`peaks.rds` | data frame of peak information (one row per peak)
+`hotspot.rds` | hotspot object with counts of peaks by position and phenotype set
+`query_mrna.rds` | query of mRNA data
+`query_probs.rds` | query of genotype probabilities
+
+Likely changes:
+
+- pheno_type.rds will disappear
+- pheno_data.rds may become a feather database
+- analyses.rds will be redesigned
+
+Some projects have an `RNAseq` folder. This, and accompanying routines for mRNA now in [R/DOread](https://github.com/byandell/DOread) and other packages, will likely be redesigned. Currently, code is set up for only one type of mRNA data.
 
 ## Data files
 
