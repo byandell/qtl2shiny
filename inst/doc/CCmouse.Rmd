@@ -9,7 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This sets up the `CCmouse` taxa information.
+This sets up the `CCmouse` taxa information for [R/qtl2shiny](https://github.com/byandell/qtl2shiny).
+See also [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd) for needed files for the `Recla` project.
+
+The `project_info` data frame contains control information about each project (see [R/qtl2shiny](https://github.com/byandell/qtl2shiny)). In this case, the `project` is empty as we focus on populating the `taxa` material.
 
 ```{r}
 project_info <- data.frame(project = "",
