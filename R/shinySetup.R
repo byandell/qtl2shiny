@@ -24,7 +24,6 @@ shinySetup <- function(input, output, session,
                        cov_df, pheno_data, projects_info) {
   ns <- session$ns
 
-  # This is called in app.R and here. Check app.R on server as I destroyed the local version.
   project_info <- shiny::callModule(shinyProject, "project", projects_info)
   
   # Select phenotype dataset
@@ -87,8 +86,9 @@ shinySetup <- function(input, output, session,
   
   # Pick phenotype names
   output$pheno_names <- shiny::renderUI({
-    shiny::req(project_info())
-    out <- select_phenames(input$pheno_names, peaks_df())
+    shiny::req(project_info(), win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
+    out <- select_phenames(input$pheno_names, peaks_df(), win_par$local,
+                           win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
     shiny::selectInput(ns("pheno_names"), out$label,
                        choices = out$choices,
                        selected = out$selected,
@@ -116,7 +116,9 @@ shinySetup <- function(input, output, session,
     output$num_pheno <- shiny::renderText({
       num_pheno(input$pheno_names, analyses_tbl())
     })
-    out <- select_phenames("none", peaks_df())
+    shiny::req(win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
+    out <- select_phenames("none", peaks_df(), win_par$local,
+                           win_par$chr_id, win_par$peak_Mbp, win_par$window_Mbp)
     updateSelectInput(session, "pheno_names", out$label,
       choices = out$choices, selected = "none")
   })

@@ -7,7 +7,7 @@
 \title{Shiny coefficient analysis and plot module}
 \usage{
 shinyAllele1(input, output, session, win_par, phe_mx, cov_df, probs_obj, K_chr,
-  analyses_df, patterns, scan_pat, snp_action)
+  analyses_df, patterns, scan_pat, project_info, snp_action)
 
 shinyAllele1UI(id)
 
@@ -16,7 +16,7 @@ shinyAllele1Output(id)
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, patterns, scan_pat, snp_action}{reactive arguments}
+\item{win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, patterns, scan_pat, project_info, snp_action}{reactive arguments}
 
 \item{id}{identifier for \code{\link{shinyScan1SNP}} use}
 }

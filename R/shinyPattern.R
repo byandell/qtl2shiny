@@ -1,7 +1,7 @@
 #' Shiny Pattern module
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,chr_pos,win_par,phe_mx,cov_df,probs36_obj,K_chr,analyses_df,patterns,allele_info,snp_action reactive arguments
+#' @param job_par,chr_pos,win_par,phe_mx,cov_df,probs36_obj,K_chr,analyses_df,patterns,project_info,allele_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -26,7 +26,8 @@
 shinyPattern <- function(input, output, session,
                          job_par, chr_pos, win_par,
                          phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
-                         patterns, allele_info, snp_action = shiny::reactive({NULL})) {
+                         patterns, project_info, allele_info, 
+                         snp_action = shiny::reactive({NULL})) {
   ns <- session$ns
   
   phe1_mx <- reactive({
@@ -35,7 +36,7 @@ shinyPattern <- function(input, output, session,
   shiny::callModule(shinyAllele1, "alleles",
                     win_par, 
                     phe1_mx, cov_df, probs36_obj, K_chr, analyses_df,
-                    patterns, scan_pat, snp_action)
+                    patterns, scan_pat, project_info, snp_action)
   
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({

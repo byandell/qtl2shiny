@@ -42,7 +42,7 @@ shinyDiplo <- function(input, output, session,
   shiny::callModule(shinyPattern, "dip_pat",
                     input, chr_pos, win_par,
                     phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
-                    patterns, allele_info, snp_action)
+                    patterns, project_info, allele_info, snp_action)
   
   output$allele_names <- shiny::renderText({
     shiny::req(allele_info())
