@@ -9,27 +9,69 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+This document concerns a suite of packages complementary to [R/qtl2](http://www.rqtl.org/qtl2) that extend capabilities in terms of plotting, fast data access, deeper probe of SNPs and structural variants, and a user-friendly interface for deep investigation of small intervals. 
+
+The QTL2 Shiny Interface can be invoked from the Shiny server
+<http://www.statlab.wisc.edu/shiny/qtl2shiny>. We demonstrate with a publicly available dataset from Recla (see <https://github.com/rqtl/qtl2data>).
+However, this Shiny server is set up
+with project-specific login and password protection for data that has not been published, using [server side Apache htaccess](https://httpd.apache.org/docs/current/howto/ssi.html).
+
+## Strategy to Study Small Interval
+
+Here is a strategy to look at multiple traits in a small interval. These are rough and ready notes that will be smoothed out in time.
+
+- use analyses table (or other approach) to identify region of interest
+    + say 1-5Mb window
+- identify set of traits in region
+- estimate allele effects at peak for each trait
+    + useful plots?
+- find best SNP(s) and pattern(s)
+    + identify SDP and pattern for each
+    + useful plots?
+- do same for full effects
+    + 36 diplotypes
+    + 3-level SNPs
+    
+Some challenges
+
+- don't have useful thresholds yet
+- would like to think about inference across related patterns
+- multiple peaks in small region
+- pleiotropy vs close linkage
+
+How to incorporate this into shiny tool?
+
+- quick computation: limit size of region
+- do we have to run genome scan?
+    + or just consider flanking markers for each peak?
+
+## QTL2 Shiny Interface
+
+Information will appear here about how the Shiny Interface works. Or perhaps that is best as another package. 
+
+Most of the rest of this is more of a Developer Guide, to explain the data structures and how the [R/qtl2shiny](https://github.com/byandell/qtl2shiny) package is organized. Those wishing to _use_ the shiny interface with their own data will want to read about the data structures, and contact me. Those wishing to _extend_ capabilities of the package, or understand its inner working, with be interested in the package organization.
+
+## R/qtl2 companion packages
+
 The popular [R/qtl](http://www.rqtl.org) package for gene mapping has been redeveloped for high volume, multi-parent systems genetics data as [R/qtl2](http://www.rqtl.org/qtl2). This new package is still in a state of flux, so please work with us to improve.
 
-This document concerns a suite of packages complementary to [R/qtl2](http://www.rqtl.org/qtl2) that extend capabilities in terms of plotting, fast data access, deeper probe of SNPs and structural variants, and a user-friendly interface for deep investigation. The packages are:
+This document describes companion packages that are used to build the Shiny server:
 
 - [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2)
 - [R/qtl2feather](https://github.com/byandell/qtl2feather)
 - [R/qtl2pattern](https://github.com/byandell/qtl2pattern)
 - [R/qtl2shiny](https://github.com/byandell/qtl2shiny)
 
-See the other packages for their own documentation. 
+The three other packages can be employed on their own separate from the server. In particular, [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2) provides full capability for `ggplot2` plot objects. The [R/qtl2feather](https://github.com/byandell/qtl2feather) package transforms large, slow `calc_genoprob` objects central to [R/qtl2](http://www.rqtl.org/qtl2) into a set of `feather` databases for quick access. See each package for its own documentation. 
+
 There are two additional packages that are more specialized and still need documentation:
 
 - [R/DOread](https://github.com/byandell/DOread)
 - [R/CausalMST](https://github.com/byandell/CausalMST)
 
-## QTL2 Shiny Interface
-
-The QTL2 Shiny Interface can be invoked from the Shiny server
-<http://www.statlab.wisc.edu/shiny/qtl2shiny>. This is being set up
-with project-specific login and password protection for data that has not been published, using [server side Apache htaccess](https://httpd.apache.org/docs/current/howto/ssi.html).
-
+[R/DOread](https://github.com/byandell/DOread) has code to set up Diversity Outbred (DO) mouse data for the Shiny server, and routines to read those data.
+[R/CausalMST](https://github.com/byandell/CausalMST) concerns Causal Model Selection Tests, which are used in conjuction with mediation to formally infer causal relationship between a phenotype and other phenotypes that co-map.
+    
 ## Organization of qtl2shiny data files
 
 The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shiny/app.R) is in a directory with other support documents and the data. The projects are identified in a CSV file `projects.csv`, which has the following content:
@@ -108,6 +150,47 @@ The query files are designed to encapsulate specific information about where dat
 
 Note that if you use a similar format as [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) and [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd) examples
 to create and store the queries, you may have to quit RStudio and restart it to have it properly pick up the `project` or `taxa` directory.
+
+The following two `create` functions are in [R/qtl2](http://www.rqtl.org/qtl2). They create functions (`query_genes` and `query_variants`) that contain, in their local environment, the location of the respective SQL database. Saving these as RDS preserves this environment information for later reuse.
+
+```{r eval=FALSE}
+query_genes <- 
+  qtl2::create_gene_query_func("CCmouse/mouse_genes.sqlite")
+saveRDS(query_genes, "query_genes.rds")
+```
+
+```{r eval=FALSE}
+query_variants <- 
+  qtl2::create_variant_query_func("CCmouse/cc_variants.sqlite"))
+saveRDS(query_variants, "query_variants.rds")
+```
+
+This allows calls of the following form to be embedded in code, without reference to where the database is, or even what type of database it might be. Here we look on chromosome `"1"` between `39` and `40` Mbp.
+
+```{r eval=FALSE}
+genes <- query_genes("1", 39, 40)
+variants <- query_variants("1", 39, 40)
+```
+
+The above two routines would generally be used across all projects involving the CC mouse. The following two routines are project specific, refering to genotype probabilities and mRNA data. They do not directly identify the data file, as that is currently hard-coded into the [R/DOread](https://github.com/byandell/DOread) package. These will change substantially in the near future.
+
+```{r}
+query_probs <- DOread::create_probs_query_func_do("CCmouse/Recla")
+saveRDS(query_probs, "query_probs.rds")
+```
+
+```{r}
+query_mrna <- DOread::create_probs_query_func_do("CCmouse/Recla")
+saveRDS(query_probs, "query_mrna.rds")
+```
+
+Again, these enable calls to access data in a region. I include additional arguments that are used for these routines. The call, respectively, `DOread::read_probs` and `DOread::read_mrna`.
+
+```{r eval=FALSE}
+probs <- query_probs("1", 39, 40, allele = TRUE, method = "feather")
+mrna <- query_mrna("1", 39, 40, local = TRUE, qtl = FALSE)
+```
+
 
 ## Details of Data and Shiny Setup
 

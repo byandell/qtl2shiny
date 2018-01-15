@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This sets up the `Recla` project for [R/qtl2shiny](https://github.com/byandell/qtl2shiny).
+This sets up the `Recla` project using data from <https://github.com/rqtl/qtl2data> for use with [R/qtl2shiny](https://github.com/byandell/qtl2shiny).
 See also [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) for needed files for `CCmouse` taxa.
 
 The `project_info` data frame contains control information about each project (see [R/qtl2shiny](https://github.com/byandell/qtl2shiny)).
