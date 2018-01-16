@@ -1,0 +1,36 @@
+node,type,logic,shiny,task,detail
+Allele1,module,server,module,,
+AllelePat,module,server,module,,
+Diplo,module,server,module,,
+GeneExon,module,server,module,,
+GeneRegion,module,server,module,,
+Haplo,module,server,module,,
+Hotspot,module,server,module,,
+Main,module,server,module,,
+Mediate1Plot,module,server,module,,
+Pattern,module,server,module,,
+Peaks,module,server,module,,
+PhenoPlot,module,server,module,,
+Phenos,module,server,module,,
+Probs,module,server,module,,genotype probabilities
+Probs36,module,server,module,,genotype probabilities
+Project,module,server,module,,
+Scan1Plot,module,server,module,,
+Scan1SNP,module,server,module,,
+ScatterPlot,module,server,module,,
+Setup,module,server,module,,
+SNP,module,server,module,,
+SNPAllele,module,server,module,,
+SNPAssoc,module,server,module,,
+SNPProbs,module,server,module,,genotype probabilities
+TopFeature,module,server,module,,
+pat_par,output,reactive,output,,button
+win_par,output,reactive,output,,"chr,peak,window"
+ass_par,output,reactive,reactive,,button
+patterns,table,reactive,reactive,,
+probs,list,reactive,reactive,,
+probs36,list,reactive,reactive,,
+project,table,reactive,reactive,,
+set_par,list,reactive,reactive,,"project,win_par,phenames"
+snpprobs,list,reactive,reactive,,
+server,shiny,shiny,shiny,,
