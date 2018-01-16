@@ -1,1 +1,0 @@
-source,logic,module,descriptionpheno,Setup,Phenos,"pheno_names,phe_df"chr,Setup,Peaks,chr_idregion,Setup,Peaks,"peak_Mbp,window_Mbp"snp_action,Setup,Diplo,snp_actionprobs,Probs,,probs_objscan,Scan1Plot,,scan_objeffects,Scan1Plot,,eff_objsnp_probs,Probs,,snpprobs_objsnp_scan,,,snp_scan_tbltop_snps,,,top_snps_tblgene_region,,,gene_exon,,,

@@ -74,7 +74,7 @@ There are two additional packages that are more specialized and still need docum
     
 ## Organization of qtl2shiny data files
 
-The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shiny/app.R) is in a directory with other support documents and the data. The projects are identified in a CSV file `projects.csv`, which has the following content:
+The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/app.R) is in a directory with other support documents and the data. The projects are identified in a CSV file `projects.csv`, which has the following content:
 
 ```
 project,taxa,directory
@@ -83,15 +83,13 @@ Recla,CCmouse,qtl2shinyData
 
 The column names are fixed. The `project` is the project name (`Recla`), `taxa` has the taxa name (`CCmouse`), and `directory` is the relative or absolute address of the directory where data are kept (`qtl2shinyData`, which is relative here). In this case, the basic structure of the app is:
 
-```
-app.R
-about.md
-about-extended.md
-project.csv
-qtl2shinyData/
-  CCmouse/
-    Recla/
-```
+[`app.R`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/app.R)  
+[`about.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about.md)  
+[`about-extended.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about-extended.md)  
+[`project.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/extdata/project.csv)  
+`qtl2shinyData/`  
+`qtl2shinyData/CCmouse/`  
+`qtl2shinyData/CCmouse/Recla/`
 
 The `about.md` and `about-extended.md` files are place-holders for now for online documentation. All data are now stored under the directory (`qtl2shinyData`) using relative addresses. However, it is possible for data for a `taxa` and `project` to be stored in another place, in which case an absolute address would be supplied in the `projects.csv` file.
 
@@ -121,7 +119,7 @@ Note that [R/qtl2](http://www.rqtl.org/qtl2) wants data files to be consistent i
 
 file | contents
 -----|------------------------------------------------
-`genoprob` | directory with genotype probabilities created with [R/qtl2feather](https://github.com/byandell/qtl2feather)
+`genoprob/` | directory with genotype probabilities created with [R/qtl2feather](https://github.com/byandell/qtl2feather)
 `kinship.rds` | kinship object using LOCO (see [R/qtl2](http://kbroman.org/qtl2/assets/vignettes/user_guide.html#calculating_a_kinship_matrix))
 `pmap.rds` | physical map
 `analyses.rds` | data frame of information about analyses (one row per phenotype)
@@ -198,7 +196,7 @@ The `qtl2shiny` interface can be invoked within R using [runApp](https://shiny.r
 
 The shiny server consists of the server app (`server()` and `ui()` in file`app.R`) and 25 shiny modules. The modules form a directed acyclic graph with `Main` being the root node.
 
-![](shiny_logic/net.jpg)
+![](../extdata/net.jpg)
 
 The `Main` module calls the `Setup`, `Haplo` and `Diplo` modules, corresponding to the three dashboard menu items. Each of these modules in turn calls other modules. The modules were each designed to do one task, and be kept small, ideally about 100 lines. Here is a list of modules:
 
