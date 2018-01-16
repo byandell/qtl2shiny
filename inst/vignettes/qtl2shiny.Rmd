@@ -86,7 +86,7 @@ The column names are fixed. The `project` is the project name (`Recla`), `taxa` 
 [`app.R`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/app.R)  
 [`about.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about.md)  
 [`about-extended.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about-extended.md)  
-[`project.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/extdata/project.csv)  
+[`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/extdata/projects.csv)  
 `qtl2shinyData/`  
 `qtl2shinyData/CCmouse/`  
 `qtl2shinyData/CCmouse/Recla/`
