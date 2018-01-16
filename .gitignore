@@ -18,4 +18,5 @@ R/variants.R
 data/
 inst/doc/images
 inst/doc/CCmouse
+*.jpg
 
