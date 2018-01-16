@@ -2,20 +2,17 @@
 % Please edit documentation in R/shinyProject.R
 \name{shinyProject}
 \alias{shinyProject}
-\alias{shinyProjectUI}
 \title{Shiny project selection}
 \usage{
 shinyProject(input, output, session, projects_info)
-
-shinyProjectUI(id)
 }
 \arguments{
 \item{input, output, session, projects_info}{standard shiny arguments}
 
-\item{id}{identifier for \code{\link{shinyProject}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for selection of project. Uses global \code{projects} table.
+Shiny module for selection of project, with interface \code{shinyProjectUI}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

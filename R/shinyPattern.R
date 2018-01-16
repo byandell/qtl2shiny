@@ -1,7 +1,10 @@
 #' Shiny Pattern module
 #'
+#' Shiny module for SNP pattern plots, with interfaces \code{shinyPatternUI} and  \code{shinyPatternOutput}.
+#'
 #' @param input,output,session standard shiny arguments
 #' @param job_par,chr_pos,win_par,phe_mx,cov_df,probs36_obj,K_chr,analyses_df,patterns,project_info,allele_info,snp_action reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -220,9 +223,6 @@ shinyPattern <- function(input, output, session,
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
   })
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinyPattern
-#' @export
 
 shinyPatternUI <- function(id) {
   ns <- shiny::NS(id)
@@ -233,8 +233,6 @@ shinyPatternUI <- function(id) {
     shiny::uiOutput(ns("pheno_name")),
     shiny::uiOutput(ns("select")))
 }
-#' @rdname shinyPattern
-#' @export
 shinyPatternOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(

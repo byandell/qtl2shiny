@@ -1,9 +1,10 @@
 #' Shiny phenotype selection
 #'
-#' Shiny module for phenotype selection.
+#' Shiny module for phenotype selection, with interfaces \code{shinyPhenosUI} and  \code{shinyPhenosOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param set_par,win_par,peaks_df,analyses_tbl,pheno_data,cov_df,project_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -70,15 +71,11 @@ shinyPhenos <- function(input, output, session,
     collapse_covar(analyses_plot())
   }, options = list(scrollX = TRUE, pageLength = 10))
 }
-#' @param id identifier for \code{\link{shinyScan1}} use
-#' @rdname shinyPhenos
-#' @export
+
 shinyPhenosUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("radio"))
 }
-#' @rdname shinyPhenos
-#' @export
 shinyPhenosOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(

@@ -1,9 +1,10 @@
 #' Shiny peaks selection
 #'
-#' Shiny module for peaks selection. Does not yet have return.
+#' Shiny module for peaks selection, with interfaces \code{shinyPeaksInput}, \code{shinyPeaksUI} and  \code{shinyPeaksOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param set_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -147,9 +148,7 @@ shinyPeaks <- function(input, output, session,
   ## Return.
   input
 }
-#' @param id identifier for \code{\link{shinyScan1}} use
-#' @rdname shinyPeaks
-#' @export
+
 shinyPeaksInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -160,15 +159,11 @@ shinyPeaksInput <- function(id) {
       shiny::column(4, shiny::uiOutput(ns("window_Mbp")))
     ))
 }
-#' @rdname shinyPeaks
-#' @export
 shinyPeaksUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shinyHotspotInput(ns("hotspot")))
 }
-#' @rdname shinyPeaks
-#' @export
 shinyPeaksOutput <- function(id) {
   ns <- shiny::NS(id)
   shinyHotspotOutput(ns("hotspot"))

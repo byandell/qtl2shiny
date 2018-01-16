@@ -1,9 +1,10 @@
 #' Shiny coefficient analysis and plot module
 #'
-#' Shiny module for scan1 coefficient plots.
+#' Shiny module for scan1 LOD and coefficient plots, with interfaces \code{shinyScan1PlotUI} and  \code{shinyScan1PlotOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param job_par,win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -183,9 +184,6 @@ shinyScan1Plot <- function(input, output, session,
                  input$button)
   })
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinyScan1Plot
-#' @export
 shinyScan1PlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -199,8 +197,6 @@ shinyScan1PlotUI <- function(id) {
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
 }
-#' @rdname shinyScan1Plot
-#' @export
 shinyScan1PlotOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(

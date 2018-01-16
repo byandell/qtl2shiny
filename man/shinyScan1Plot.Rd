@@ -2,26 +2,20 @@
 % Please edit documentation in R/shinyScan1Plot.R
 \name{shinyScan1Plot}
 \alias{shinyScan1Plot}
-\alias{shinyScan1PlotUI}
-\alias{shinyScan1PlotOutput}
 \title{Shiny coefficient analysis and plot module}
 \usage{
 shinyScan1Plot(input, output, session, job_par, win_par, phe_mx, cov_df,
   probs_obj, K_chr, analyses_df, project_info, allele_info)
-
-shinyScan1PlotUI(id)
-
-shinyScan1PlotOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{job_par, win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, project_info, allele_info}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for scan1 coefficient plots.
+Shiny module for scan1 LOD and coefficient plots, with interfaces \code{shinyScan1PlotUI} and  \code{shinyScan1PlotOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

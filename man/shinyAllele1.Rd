@@ -2,26 +2,20 @@
 % Please edit documentation in R/shinyAllele1.R
 \name{shinyAllele1}
 \alias{shinyAllele1}
-\alias{shinyAllele1UI}
-\alias{shinyAllele1Output}
 \title{Shiny coefficient analysis and plot module}
 \usage{
 shinyAllele1(input, output, session, win_par, phe_mx, cov_df, probs_obj, K_chr,
   analyses_df, patterns, scan_pat, project_info, snp_action)
-
-shinyAllele1UI(id)
-
-shinyAllele1Output(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, patterns, scan_pat, project_info, snp_action}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for scan1 coefficient plots.
+Shiny module for scan1 coefficient plots, with interfaces \code{shinyAllele1UI} and  \code{shinyAllele1Output}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

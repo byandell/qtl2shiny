@@ -2,24 +2,21 @@
 % Please edit documentation in R/shinyHaplo.R
 \name{shinyHaplo}
 \alias{shinyHaplo}
-\alias{shinyHaploUI}
 \title{Shiny haplotype analysis}
 \usage{
 shinyHaplo(input, output, session, win_par, pmap_obj, phe_mx, cov_df, K_chr,
   analyses_df, covar, pheno_data, analyses_tbl, peaks, project_info,
   allele_info)
-
-shinyHaploUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{win_par, pmap_obj, phe_mx, cov_df, K_chr, analyses_df, covar, pheno_data, analyses_tbl, peaks, project_info, allele_info}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for analysis based on haplotype alleles.
+Shiny module for analysis based on haplotype alleles, with interface \code{shinyHaploUI}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

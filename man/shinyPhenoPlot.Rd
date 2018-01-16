@@ -2,31 +2,24 @@
 % Please edit documentation in R/shinyPhenoPlot.R
 \name{shinyPhenoPlot}
 \alias{shinyPhenoPlot}
-\alias{shinyPhenoPlotUI}
 \title{Shiny Phenotype Plot module}
 \usage{
 shinyPhenoPlot(input, output, session, phe_mx, cov_df)
-
-shinyPhenoPlotUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{phe_mx, cov_df}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1}} use}
+\item{id}{shiny identifier}
 }
 \value{
 2-element vector of scan window
 }
 \description{
-Shiny module to plot phenotypes.
-
-UI for phenotype plots and summaries to use in shiny module.
+Shiny module to plot phenotypes, with interface \code{shinyPhenoPlotUI}.
 }
 \author{
-Brian S Yandell, \email{brian.yandell@wisc.edu}
-
 Brian S Yandell, \email{brian.yandell@wisc.edu}
 }
 \keyword{utilities}

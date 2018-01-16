@@ -1,9 +1,10 @@
 #' Shiny scan1 SNP analysis and plot module
 #'
-#' Shiny module for scan1 analysis and plots.
+#' Shiny module for scan1 analysis and plots, with interfaces \code{shinyScan1SNPUI} and  \code{shinyScan1SNPOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,snp_action reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -50,14 +51,10 @@ shinyScan1SNP <- function(input, output, session,
     }
   )
 }
-#' @rdname shinyScan1SNP
-#' @export
 shinyScan1SNPUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::downloadButton(ns("downloadPlot"), "Plots")
 }
-#' @rdname shinyScan1SNP
-#' @export
 shinyScan1SNPOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::plotOutput(ns("snpPlot"))

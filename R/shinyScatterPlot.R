@@ -1,9 +1,10 @@
 #' Shiny scatter plot module
 #'
-#' Shiny module for scatter plots.
+#' Shiny module for scatter plots, with interfaces \code{shinyScatterPlotUI} and  \code{shinyScatterPlotOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,allele_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -127,9 +128,7 @@ shinyScatterPlot <- function(input, output, session,
     })
   med_ls
 }
-#' @param id identifier for shiny use
-#' @rdname shinyScatterPlot
-#' @export
+
 shinyScatterPlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -141,8 +140,6 @@ shinyScatterPlotUI <- function(id) {
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
 }
-#' @rdname shinyScatterPlot
-#' @export
 shinyScatterPlotOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::plotOutput(ns("scatPlot"))

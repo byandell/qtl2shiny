@@ -1,9 +1,10 @@
 #' Shiny Diplotype module
 #'
-#' Shiny diplotype SNP/Gene action analysis.
+#' Shiny diplotype SNP/Gene action analysis, with interface \code{shinyDiploUI}.
 #' 
 #' @param input,output,session standard shiny arguments
 #' @param win_par,phe_mx,cov_df,K_chr,analyses_df,project_info,allele_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -87,9 +88,6 @@ shinyDiplo <- function(input, output, session,
                                    "\n")))
   })
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinyDiplo
-#' @export
 shinyDiploUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(

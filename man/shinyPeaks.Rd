@@ -2,32 +2,23 @@
 % Please edit documentation in R/shinyPeaks.R
 \name{shinyPeaks}
 \alias{shinyPeaks}
-\alias{shinyPeaksInput}
-\alias{shinyPeaksUI}
-\alias{shinyPeaksOutput}
 \title{Shiny peaks selection}
 \usage{
 shinyPeaks(input, output, session, set_par, pheno_type, peaks_tbl, pmap_obj,
   project_info)
-
-shinyPeaksInput(id)
-
-shinyPeaksUI(id)
-
-shinyPeaksOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{set_par, pheno_type, peaks_tbl, pmap_obj, project_info}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1}} use}
+\item{id}{shiny identifier}
 }
 \value{
 list of inputs and scan summary
 }
 \description{
-Shiny module for peaks selection. Does not yet have return.
+Shiny module for peaks selection, with interfaces \code{shinyPeaksInput}, \code{shinyPeaksUI} and  \code{shinyPeaksOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

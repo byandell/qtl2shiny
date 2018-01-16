@@ -2,26 +2,20 @@
 % Please edit documentation in R/shinyPhenos.R
 \name{shinyPhenos}
 \alias{shinyPhenos}
-\alias{shinyPhenosUI}
-\alias{shinyPhenosOutput}
 \title{Shiny phenotype selection}
 \usage{
 shinyPhenos(input, output, session, set_par, win_par, peaks_df, analyses_tbl,
   pheno_data, cov_df, project_info)
-
-shinyPhenosUI(id)
-
-shinyPhenosOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{set_par, win_par, peaks_df, analyses_tbl, pheno_data, cov_df, project_info}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for phenotype selection.
+Shiny module for phenotype selection, with interfaces \code{shinyPhenosUI} and  \code{shinyPhenosOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

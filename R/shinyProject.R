@@ -1,8 +1,9 @@
 #' Shiny project selection
 #'
-#' Shiny module for selection of project. Uses global \code{projects} table.
+#' Shiny module for selection of project, with interface \code{shinyProjectUI}.
 #'
 #' @param input,output,session,projects_info standard shiny arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -38,9 +39,6 @@ shinyProject <- function(input, output, session, projects_info) {
       project, .keep_all = TRUE)
   })
 }
-#' @param id identifier for \code{\link{shinyProject}} use
-#' @rdname shinyProject
-#' @export
 shinyProjectUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("project"))

@@ -1,9 +1,10 @@
 #' Shiny coefficient analysis and plot module
 #'
-#' Shiny module for scan1 coefficient plots.
+#' Shiny module for scan1 coefficient plots, with interfaces \code{shinyMediate1PlotUI} and  \code{shinyMediate1PlotOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param job_par,win_par,patterns,phe_mx,cov_df,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks,project_info,allele_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -288,9 +289,6 @@ shinyMediate1Plot <- function(input, output, session,
       shiny::uiOutput(ns("out_choice"))
   })
 }
-#' @param id identifier for shiny use
-#' @rdname shinyMediate1Plot
-#' @export
 shinyMediate1PlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -298,8 +296,6 @@ shinyMediate1PlotUI <- function(id) {
     shiny::uiOutput(ns("checkplot")),
     shiny::uiOutput(ns("medUI")))
 }
-#' @rdname shinyMediate1Plot
-#' @export
 shinyMediate1PlotOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("medOutput"))

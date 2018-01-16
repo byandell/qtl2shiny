@@ -1,12 +1,19 @@
 ---
 title: "QTL2 Shiny Interface"
 author: "Brian S. Yandell"
-date: "1/12/2018"
-output: html_document
+date: "1/16/2018"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 ```
 
 This document concerns a suite of packages complementary to [R/qtl2](http://www.rqtl.org/qtl2) that extend capabilities in terms of plotting, fast data access, deeper probe of SNPs and structural variants, and a user-friendly interface for deep investigation of small intervals. 
@@ -172,12 +179,12 @@ variants <- query_variants("1", 39, 40)
 
 The above two routines would generally be used across all projects involving the CC mouse. The following two routines are project specific, refering to genotype probabilities and mRNA data. They do not directly identify the data file, as that is currently hard-coded into the [R/DOread](https://github.com/byandell/DOread) package. These will change substantially in the near future.
 
-```{r}
+```{r eval=FALSE}
 query_probs <- DOread::create_probs_query_func_do("CCmouse/Recla")
 saveRDS(query_probs, "query_probs.rds")
 ```
 
-```{r}
+```{r eval=FALSE}
 query_mrna <- DOread::create_probs_query_func_do("CCmouse/Recla")
 saveRDS(query_probs, "query_mrna.rds")
 ```
@@ -194,34 +201,40 @@ mrna <- query_mrna("1", 39, 40, local = TRUE, qtl = FALSE)
 The `qtl2shiny` interface can be invoked within R using [runApp](https://shiny.rstudio.com/reference/shiny/latest/runApp.html) on the file
 [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shiny/app.R). There is a routine [qtl2shinyApp](https://github.com/byandell/qtl2shiny/blob/master/R/qtl2shinyApp.R) to do this as well. However, one first should set up the data and query files.
 
-The shiny server consists of the server app (`server()` and `ui()` in file`app.R`) and 25 shiny modules. The modules form a directed acyclic graph with `Main` being the root node.
+The shiny server consists of the server app (`server()` and `ui()` in file`app.R`) and 27 shiny modules. The modules form a directed acyclic graph with `Main` being the root node.
 
-![](../extdata/net.jpg)
+![](../inst/extdata/net.jpg)
 
-The `Main` module calls the `Setup`, `Haplo` and `Diplo` modules, corresponding to the three dashboard menu items. Each of these modules in turn calls other modules. The modules were each designed to do one task, and be kept small, ideally about 100 lines. Here is a list of modules:
+The `Main` module calls the `Setup`, `Haplo` and `Diplo` modules, corresponding to the three dashboard menu items. Each of these modules in turn calls other modules. The modules were each designed to do one task, and be kept small, ideally about 100 lines of code (including documentation). Here is a list of modules:
 
 modeul | lines | task            | output
 ------|--------|-----------------|-------
-Allele1 | 126 | allele and allele pair means | plot, tablt
-AllelePat | 276 | SNP allele patterns | plot, table
-Diplo | 107 | SNP/Gene Action |
-GeneExon | 162 | exons for individual genes | plot, table
-GeneRegion | 115 | genes and SNPs in region | plot, table
-Haplo | 103 | Haplotype Scans |
-Hotspot | 190 | hotspot count by location | plot, table
 Main | 129 | call Setup, Haplo, Diplo |
-Mediate1Plot | 306 | mediation by other phenotypes | plot, table
-Pattern | 247 | LOD and imputed SNP effects by pattern | plot, table
-Peaks | 175 | select chr, peak and window width |
-PhenoPlot | 66 | plot phenotypes | plot
-Phenos | 88 | phenotype information | table
-Probs | 93 | extract genotype probabilities |
-Project | 47 | pick project | 
-SNP | 143 | create table of top SNPs | table
-SNPAllele | 225 | manage SNP processng |
-SNPAssoc | 102 | SNP association mapping | table
-Scan1Plot | 210 | allele genome LOD and effect scans | plot, table
-Scan1SNP | 64 | plot SNP association | plot
-ScatterPlot | 149 | scatter plot for mediator | plot
 Setup | 209 | set up project |
+Haplo | 103 | Haplotype Scans |
+Diplo | 107 | SNP/Gene Action |
+ | | |
+Project | 47 | pick project | 
+Peaks | 175 | select chr, peak and window width |
+Phenos | 88 | phenotype information | table
+Hotspot | 190 | hotspot count by location | plot, table
+PhenoPlot | 66 | plot phenotypes | plot
+ | | |
+Probs | 93 | allele genotype probabilities |
+Scan1Plot | 210 | allele genome LOD and effect scans | plot, table
+Mediate1Plot | 306 | mediation by other phenotypes | plot, table
+ScatterPlot | 149 | scatter plot for mediator | plot
+ | | |
+Probs36 | 93 | allele pair genotype probabilities |
+Pattern | 247 | LOD and imputed SNP effects by pattern | plot, table
+Allele1 | 126 | allele and allele pair means | plot, tablt
+ | | |
+SNPAllele | 225 | manage SNP processng |
+SNPProbs | 93 | SNP genotype probabilities |
+SNPAssoc | 102 | SNP association mapping | table
+AllelePat | 276 | SNP allele patterns | plot, table
+SNP | 143 | create table of top SNPs | table
+GeneRegion | 115 | genes and SNPs in region | plot, table
+GeneExon | 162 | exons for individual genes | plot, table
+Scan1SNP | 64 | plot SNP association | plot
 TopFeature | 113 | top SNP features | plot, table

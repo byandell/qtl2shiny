@@ -5,7 +5,7 @@ date: "Jackson Labs, 18 October 2016"
 output:
   beamer_presentation:
     includes:
-      in_header: page_number.tex
+      in_header: ../scripts/page_number.tex
   ioslides_presentation:
     widescreen: no
 ---

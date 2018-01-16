@@ -2,30 +2,21 @@
 % Please edit documentation in R/shinyAllelePat.R
 \name{shinyAllelePat}
 \alias{shinyAllelePat}
-\alias{shinyAllelePatInput}
-\alias{shinyAllelePatUI}
-\alias{shinyAllelePatOutput}
 \title{Shiny top SNP analysis and plot module}
 \usage{
 shinyAllelePat(input, output, session, snp_par, chr_pos, pheno_names,
   snp_scan_obj, snpinfo, top_snps_tbl, gene_exon_tbl, allele_info,
   snp_action = shiny::reactive({     "basic" }))
-
-shinyAllelePatInput(id)
-
-shinyAllelePatUI(id)
-
-shinyAllelePatOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_par, chr_pos, pheno_names, snp_scan_obj, snpinfo, top_snps_tbl, gene_exon_tbl, allele_info, snp_action}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyAllelePat}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for top SNP analysis and plots.
+Shiny module for top SNP analysis and plots, with interfaces \code{shinyAllelePatInput}, \code{shinyAllelePatUI} and  \code{shinyAllelePatOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

@@ -2,23 +2,20 @@
 % Please edit documentation in R/shinyDiplo.R
 \name{shinyDiplo}
 \alias{shinyDiplo}
-\alias{shinyDiploUI}
 \title{Shiny Diplotype module}
 \usage{
 shinyDiplo(input, output, session, win_par, phe_mx, cov_df, K_chr, analyses_df,
   project_info, allele_info)
-
-shinyDiploUI(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{win_par, phe_mx, cov_df, K_chr, analyses_df, project_info, allele_info}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny diplotype SNP/Gene action analysis.
+Shiny diplotype SNP/Gene action analysis, with interface \code{shinyDiploUI}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

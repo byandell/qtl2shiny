@@ -2,27 +2,21 @@
 % Please edit documentation in R/shinyMediate1Plot.R
 \name{shinyMediate1Plot}
 \alias{shinyMediate1Plot}
-\alias{shinyMediate1PlotUI}
-\alias{shinyMediate1PlotOutput}
 \title{Shiny coefficient analysis and plot module}
 \usage{
 shinyMediate1Plot(input, output, session, job_par, win_par, patterns, phe_mx,
   cov_df, probs_obj, K_chr, analyses_df, pmap_obj, covar, pheno_data,
   analyses_tbl, peaks, project_info, allele_info)
-
-shinyMediate1PlotUI(id)
-
-shinyMediate1PlotOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{job_par, win_par, patterns, phe_mx, cov_df, probs_obj, K_chr, analyses_df, pmap_obj, covar, pheno_data, analyses_tbl, peaks, project_info, allele_info}{reactive arguments}
 
-\item{id}{identifier for shiny use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for scan1 coefficient plots.
+Shiny module for scan1 coefficient plots, with interfaces \code{shinyMediate1PlotUI} and  \code{shinyMediate1PlotOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

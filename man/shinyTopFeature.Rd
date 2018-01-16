@@ -2,29 +2,20 @@
 % Please edit documentation in R/shinyTopFeature.R
 \name{shinyTopFeature}
 \alias{shinyTopFeature}
-\alias{shinyTopFeatureInput}
-\alias{shinyTopFeatureUI}
-\alias{shinyTopFeatureOutput}
 \title{Shiny Top Features in SNP Region module}
 \usage{
 shinyTopFeature(input, output, session, snp_par, chr_pos, snp_scan_obj, snpinfo,
   top_snps_tbl, gene_exon_tbl, snp_action = shiny::reactive({     "basic" }))
-
-shinyTopFeatureInput(id)
-
-shinyTopFeatureUI(id)
-
-shinyTopFeatureOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_scan_obj, top_snps_tbl, snpinfo, gene_exon_tbl, snp_action}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for scan1 analysis and plots.
+Shiny module for scan1 analysis and plots, with interfaces \code{shinyTopFeatureInput}, \code{shinyTopFeatureUI} and  \code{shinyTopFeatureOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

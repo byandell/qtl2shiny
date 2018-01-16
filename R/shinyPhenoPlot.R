@@ -1,9 +1,10 @@
 #' Shiny Phenotype Plot module
 #'
-#' Shiny module to plot phenotypes.
+#' Shiny module to plot phenotypes, with interface \code{shinyPhenoPlotUI}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param phe_mx,cov_df reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -49,17 +50,6 @@ shinyPhenoPlot <- function(input, output, session,
   })
 }
 
-#' UI for shinyPhenoPlot Shiny Module
-#'
-#' UI for phenotype plots and summaries to use in shiny module.
-#'
-#' @param id identifier for \code{\link{shinyScan1}} use
-#'
-#' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
-#' @keywords utilities
-#'
-#' @rdname shinyPhenoPlot
-#' @export
 shinyPhenoPlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("phePlotTable"))

@@ -1,9 +1,10 @@
 #' Shiny Genes and Exons with nearby SNPs module
 #'
-#' Shiny module for scan1 analysis and plots.
+#' Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneExonInput}, \code{shinyGeneExonUI} and  \code{shinyGeneExonOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -137,25 +138,18 @@ shinyGeneExon <- function(input, output, session,
                 input$button)
   })
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinyGeneExon
-#' @export
 shinyGeneExonInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
     shiny::uiOutput(ns("select")),
     shiny::uiOutput(ns("exon_input")))
 }
-#' @rdname shinyGeneExon
-#' @export
 shinyGeneExonUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
     shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
     shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
 }
-#' @rdname shinyGeneExon
-#' @export
 shinyGeneExonOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("exon_output"))

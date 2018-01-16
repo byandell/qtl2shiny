@@ -23,7 +23,7 @@ shinyMainOutput2(id)
 
 \item{projects_info}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1}} use}
+\item{id}{shiny identifier}
 }
 \description{
 Shiny module for phenotype selection.

@@ -1,9 +1,10 @@
 #' Shiny Genes in SNP Region module
 #'
-#' Shiny module for scan1 analysis and plots.
+#' Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneRegionInput}, \code{shinyGeneRegionUI} and  \code{shinyGeneRegionOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,top_snps_tbl,project_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -88,15 +89,10 @@ shinyGeneRegion <- function(input, output, session,
     }
   )
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinyGeneRegion
-#' @export
 shinyGeneRegionInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("SNP"))
 }
-#' @rdname shinyGeneRegion
-#' @export
 shinyGeneRegionUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
@@ -104,8 +100,6 @@ shinyGeneRegionUI <- function(id) {
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plot"))))
 }
-#' @rdname shinyGeneRegion
-#' @export
 shinyGeneRegionOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(

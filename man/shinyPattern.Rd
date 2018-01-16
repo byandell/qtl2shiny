@@ -2,27 +2,21 @@
 % Please edit documentation in R/shinyPattern.R
 \name{shinyPattern}
 \alias{shinyPattern}
-\alias{shinyPatternUI}
-\alias{shinyPatternOutput}
 \title{Shiny Pattern module}
 \usage{
 shinyPattern(input, output, session, job_par, chr_pos, win_par, phe_mx, cov_df,
   probs36_obj, K_chr, analyses_df, patterns, project_info, allele_info,
   snp_action = shiny::reactive({     NULL }))
-
-shinyPatternUI(id)
-
-shinyPatternOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{job_par, chr_pos, win_par, phe_mx, cov_df, probs36_obj, K_chr, analyses_df, patterns, project_info, allele_info, snp_action}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny Pattern module
+Shiny module for SNP pattern plots, with interfaces \code{shinyPatternUI} and  \code{shinyPatternOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

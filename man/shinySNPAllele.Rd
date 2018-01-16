@@ -2,27 +2,21 @@
 % Please edit documentation in R/shinySNPAllele.R
 \name{shinySNPAllele}
 \alias{shinySNPAllele}
-\alias{shinySNPAlleleUI}
-\alias{shinySNPAlleleOutput}
 \title{Shiny SNP and Allele analysis and plot module}
 \usage{
 shinySNPAllele(input, output, session, job_par, win_par, phe_mx, cov_df,
   probs_obj, K_chr, analyses_df, project_info, allele_info,
   snp_action = shiny::reactive({     "basic" }))
-
-shinySNPAlleleUI(id)
-
-shinySNPAlleleOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, project_info, allele_info, snp_action}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinySNPAllele}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module to coordinate SNP and allele analyses and plots.
+Shiny module to coordinate SNP and allele analyses and plots, with interfaces \code{shinySNPAlleleUI} and  \code{shinySNPAlleleOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

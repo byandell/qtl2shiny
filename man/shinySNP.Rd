@@ -2,29 +2,20 @@
 % Please edit documentation in R/shinySNP.R
 \name{shinySNP}
 \alias{shinySNP}
-\alias{shinySNPInput}
-\alias{shinySNPUI}
-\alias{shinySNPOutput}
 \title{Shiny SNP analysis and plot module}
 \usage{
 shinySNP(input, output, session, chr_pos, top_snps_tbl,
   snp_action = shiny::reactive({     "basic" }))
-
-shinySNPInput(id)
-
-shinySNPUI(id)
-
-shinySNPOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{chr_pos, top_snps_tbl}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for scan1 analysis and plots.
+Shiny module for scan1 analysis and plots, with interfaces \code{shinySNPInput}, \code{shinySNPUI} and  \code{shinySNPOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

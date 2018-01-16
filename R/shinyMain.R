@@ -102,7 +102,7 @@ shinyMain <- function(input, output, session, projects_info) {
                     project_info, allele_info)
 }
 
-#' @param id identifier for \code{\link{shinyScan1}} use
+#' @param id shiny identifier
 #' @rdname shinyMain
 #' @export
 shinyMainInput <- function(id) {

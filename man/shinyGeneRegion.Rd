@@ -2,29 +2,20 @@
 % Please edit documentation in R/shinyGeneRegion.R
 \name{shinyGeneRegion}
 \alias{shinyGeneRegion}
-\alias{shinyGeneRegionInput}
-\alias{shinyGeneRegionUI}
-\alias{shinyGeneRegionOutput}
 \title{Shiny Genes in SNP Region module}
 \usage{
 shinyGeneRegion(input, output, session, snp_par, top_snps_tbl, project_info,
   snp_action = shiny::reactive({     "basic" }))
-
-shinyGeneRegionInput(id)
-
-shinyGeneRegionUI(id)
-
-shinyGeneRegionOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_par, top_snps_tbl, project_info}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{id}{shiny identifier}
 }
 \description{
-Shiny module for scan1 analysis and plots.
+Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneRegionInput}, \code{shinyGeneRegionUI} and  \code{shinyGeneRegionOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

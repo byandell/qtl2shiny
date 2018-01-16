@@ -2,33 +2,24 @@
 % Please edit documentation in R/shinySNPAssoc.R
 \name{shinySNPAssoc}
 \alias{shinySNPAssoc}
-\alias{shinySNPAssocInput}
-\alias{shinySNPAssocUI}
-\alias{shinySNPAssocOutput}
-\title{Shiny SNP Consequence}
+\title{Shiny SNP Association}
 \usage{
 shinySNPAssoc(input, output, session, snp_par, chr_pos, pheno_names,
   snp_scan_obj, snpinfo, top_snps_tbl, gene_exon_tbl, project_info,
   snp_action = shiny::reactive({     "basic" }))
-
-shinySNPAssocInput(id)
-
-shinySNPAssocUI(id)
-
-shinySNPAssocOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_par, chr_pos, pheno_names, snp_scan_obj, snpinfo, top_snps_tbl, gene_exon_tbl, project_info, snp_action}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1SNP}} use}
+\item{id}{shiny identifier}
 }
 \value{
 tbl with top SNPs
 }
 \description{
-Shiny SNP Consequence
+Shiny module for SNP association mapping, with interfaces \code{shinySNPAssocInput}, \code{shinySNPAssocUI} and  \code{shinySNPAssocOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

@@ -2,29 +2,23 @@
 % Please edit documentation in R/shinyHotspot.R
 \name{shinyHotspot}
 \alias{shinyHotspot}
-\alias{shinyHotspotInput}
-\alias{shinyHotspotOutput}
 \title{Shiny hotspot views}
 \usage{
 shinyHotspot(input, output, session, set_par, pheno_type, peaks_tbl, pmap_obj,
   project_info)
-
-shinyHotspotInput(id)
-
-shinyHotspotOutput(id)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{set_par, pheno_type, peaks_tbl, pmap_obj, project_info}{reactive arguments}
 
-\item{id}{identifier for \code{\link{shinyScan1}} use}
+\item{id}{shiny identifier}
 }
 \value{
 list of inputs and scan summary
 }
 \description{
-Shiny module to view hotspots for peak selection.
+Shiny module to view hotspots for peak selection, with interfaces \code{shinyHotspotInput} and  \code{shinyHotspotOutput}.
 }
 \author{
 Brian S Yandell, \email{brian.yandell@wisc.edu}

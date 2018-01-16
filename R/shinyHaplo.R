@@ -1,9 +1,10 @@
 #' Shiny haplotype analysis
 #'
-#' Shiny module for analysis based on haplotype alleles.
+#' Shiny module for analysis based on haplotype alleles, with interface \code{shinyHaploUI}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param win_par,pmap_obj,phe_mx,cov_df,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks,project_info,allele_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -84,9 +85,6 @@ shinyHaplo <- function(input, output, session,
                                    "\n")))
   })
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinyHaplo
-#' @export
 shinyHaploUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(

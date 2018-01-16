@@ -1,9 +1,10 @@
 #' Shiny Top Features in SNP Region module
 #'
-#' Shiny module for scan1 analysis and plots.
+#' Shiny module for scan1 analysis and plots, with interfaces \code{shinyTopFeatureInput}, \code{shinyTopFeatureUI} and  \code{shinyTopFeatureOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_scan_obj,top_snps_tbl,snpinfo,gene_exon_tbl,snp_action reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -89,24 +90,18 @@ shinyTopFeature <- function(input, output, session,
     }
   )
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinyTopFeature
-#' @export
+
 shinyTopFeatureInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::selectInput(ns("by_choice"), NULL, 
               c("Pattern","Consequence"))
 }
-#' @rdname shinyTopFeature
-#' @export
 shinyTopFeatureUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
     shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
     shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
 }
-#' @rdname shinyTopFeature
-#' @export
 shinyTopFeatureOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("by_choice"))

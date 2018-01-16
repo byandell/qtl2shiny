@@ -1,9 +1,10 @@
 #' Shiny setup for DOQTL selection
 #'
-#' Shiny module for phenotype selection.
+#' Shiny module for phenotype selection, with interfaces \code{shinySetupInput} and  \code{shinySetupUI}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_df,pheno_data,projects_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -179,9 +180,6 @@ shinySetup <- function(input, output, session,
          win_par = win_par)
   })
 }
-#' @param id identifier for \code{\link{shinyScan1}}
-#' @rdname shinySetup
-#' @export
 shinySetupInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -190,8 +188,6 @@ shinySetupInput <- function(id) {
     shiny::uiOutput(ns("chr_pos"))
   )
 }
-#' @rdname shinySetup
-#' @export
 shinySetupUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(

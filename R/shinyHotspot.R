@@ -1,9 +1,10 @@
 #' Shiny hotspot views
 #'
-#' Shiny module to view hotspots for peak selection.
+#' Shiny module to view hotspots for peak selection, with interfaces \code{shinyHotspotInput} and  \code{shinyHotspotOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param set_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -164,9 +165,6 @@ shinyHotspot <- function(input, output, session,
   ## Return.
   scan_tbl
 }
-#' @param id identifier for \code{\link{shinyScan1}} use
-#' @rdname shinyHotspot
-#' @export
 shinyHotspotInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -178,8 +176,6 @@ shinyHotspotInput <- function(id) {
       shiny::column(4, shiny::uiOutput(ns("minLOD"))),
       shiny::column(4, shiny::uiOutput(ns("window_Mbp")))))
 }
-#' @rdname shinyHotspot
-#' @export
 shinyHotspotOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(

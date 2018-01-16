@@ -1,9 +1,10 @@
 #' Shiny top SNP analysis and plot module
 #'
-#' Shiny module for top SNP analysis and plots.
+#' Shiny module for top SNP analysis and plots, with interfaces \code{shinyAllelePatInput}, \code{shinyAllelePatUI} and  \code{shinyAllelePatOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,allele_info,snp_action reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -252,9 +253,6 @@ shinyAllelePat <- function(input, output, session,
 
   input
 }
-#' @param id identifier for \code{\link{shinyAllelePat}} use
-#' @rdname shinyAllelePat
-#' @export
 shinyAllelePatInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -262,14 +260,10 @@ shinyAllelePatInput <- function(id) {
     shiny::uiOutput(ns("pat_input"))
   )
 }
-#' @rdname shinyAllelePat
-#' @export
 shinyAllelePatUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("download_csv_plot"))
 }
-#' @rdname shinyAllelePat
-#' @export
 shinyAllelePatOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("pat_output"))

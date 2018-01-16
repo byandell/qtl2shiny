@@ -1,7 +1,7 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for R/qtl2 and R/doqtl2
-Version: 0.9.6
+Version: 0.9.7
 Date: 2018-01-16
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
@@ -20,5 +20,8 @@ Imports:
 Suggests:
     flexdashboard,
     qtl2db,
-    DOread
+    DOread,
+    knitr,
+    rmarkdown
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr

@@ -1,7 +1,10 @@
-#' Shiny SNP Consequence
+#' Shiny SNP Association
+#' 
+#' Shiny module for SNP association mapping, with interfaces \code{shinySNPAssocInput}, \code{shinySNPAssocUI} and  \code{shinySNPAssocOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,project_info,snp_action reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -76,9 +79,7 @@ shinySNPAssoc <- function(input, output, session,
   })
   input
 }
-#' @param id identifier for \code{\link{shinyScan1SNP}} use
-#' @rdname shinySNPAssoc
-#' @export
+
 shinySNPAssocInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -88,14 +89,10 @@ shinySNPAssocInput <- function(id) {
     shiny::uiOutput(ns("snp_input"))
   )
 }
-#' @rdname shinySNPAssoc
-#' @export
 shinySNPAssocUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("download_csv_plot"))
 }
-#' @rdname shinySNPAssoc
-#' @export
 shinySNPAssocOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("snp_output"))

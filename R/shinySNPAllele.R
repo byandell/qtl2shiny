@@ -1,9 +1,10 @@
 #' Shiny SNP and Allele analysis and plot module
 #'
-#' Shiny module to coordinate SNP and allele analyses and plots.
+#' Shiny module to coordinate SNP and allele analyses and plots, with interfaces \code{shinySNPAlleleUI} and  \code{shinySNPAlleleOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info,snp_action reactive arguments
+#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -204,9 +205,7 @@ shinySNPAllele <- function(input, output, session,
     }
   })
 }
-#' @param id identifier for \code{\link{shinySNPAllele}} use
-#' @rdname shinySNPAllele
-#' @export
+
 shinySNPAlleleUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -217,8 +216,6 @@ shinySNPAlleleUI <- function(id) {
     shiny::uiOutput(ns("win_choice")),
     shiny::uiOutput(ns("download_csv_plot")))
 }
-#' @rdname shinySNPAllele
-#' @export
 shinySNPAlleleOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("snp_output"))
