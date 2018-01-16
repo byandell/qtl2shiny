@@ -19,7 +19,7 @@
 #'   renderDataTable renderPlot renderUI
 #'   fluidRow column strong tagList
 #'   withProgress setProgress
-#'   downloadButton downloadHandler
+#'   downloadButton downloadHandler callModule
 #' @importFrom plotly renderPlotly plotlyOutput
 #' @importFrom dplyr filter
 #' 

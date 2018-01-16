@@ -21,7 +21,7 @@
 #'   renderDataTable renderPlot renderUI
 #'   fluidRow column tagList
 #'   withProgress setProgress
-#'   downloadButton downloadHandler
+#'   downloadButton downloadHandler callModule
 #'   
 shinyPattern <- function(input, output, session,
                          job_par, chr_pos, win_par,

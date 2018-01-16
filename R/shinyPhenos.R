@@ -69,8 +69,6 @@ shinyPhenos <- function(input, output, session,
   output$analyses_tbl <- shiny::renderDataTable({
     collapse_covar(analyses_plot())
   }, options = list(scrollX = TRUE, pageLength = 10))
-  
-  input
 }
 #' @param id identifier for \code{\link{shinyScan1}} use
 #' @rdname shinyPhenos

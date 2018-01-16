@@ -37,10 +37,10 @@ Set node & edge options in two ways:
 ```{r}
 nodes <- 
    read_csv(file.path(data_dir,
-                      "ShinyLogicNodes.csv"))
+                      "qtl2shinyNode.csv"))
 links <- 
    read_csv(file.path(data_dir, 
-                      "ShinyLogicEdges.csv"))
+                      "qtl2shinyEdge.csv"))
 ```
 
 Convert dataset 1 to an igraph object.
@@ -69,6 +69,10 @@ Find specific nodes and edges by attribute
 V(net)[type=="shiny"]
 ```
 
+```{r}
+V(net)[logic=="reactive"]
+```
+
 Extract an edge list or matrix from igraph networks.
 
 ```{r}
@@ -76,7 +80,7 @@ tbl_df(as_edgelist(net, names=T))
 ```
 
 ```{r}
-as_adjacency_matrix(net, attr="weight")
+as_adjacency_matrix(net)
 ```
 
 Look at network matrix directly:
@@ -125,7 +129,7 @@ plot(net, edge.arrow.size=.4, edge.curved=0,
 Semantic network with only node labels.
 
 ```{r}
-plot(net, vertex.shape="none", vertex.label=V(net)$media, 
+plot(net, vertex.shape="none", vertex.label=V(net)$name, 
      vertex.label.font=2, vertex.label.color="gray40",
      vertex.label.cex=0.7, edge.color="gray90")
 ```
@@ -134,12 +138,12 @@ plot(net, vertex.shape="none", vertex.label=V(net)$media,
 
 ```{r}
 # Generate colors based on media type:
-colrs <- c("skyblue", "tomato", "slategrey", "gold")
-V(net)$color <- colrs[factor(V(net)$logic)]
+colrs <- c("skyblue", "tomato", "lightgrey", "gold","lightgreen")
+V(net)$color <- colrs[factor(V(net)$type)]
 
 # Compute node degree (#links) and use it to set node size:
 deg <- degree(net, mode="all")
-V(net)$size <- deg*3
+V(net)$size <- sqrt(deg)*5
 #V(net)$size <- V(net)$audience.size*0.6
 
 # The labels are currently node IDs.
@@ -176,15 +180,43 @@ Add legend explaining color meaning.
 * `ncol`: number of columns for legend
 
 ```{r}
-### NOT CHANGED YET.
 plot(net) 
 legend(x = -1.1, y = -1.1,
-       c("Newspaper","Television", "Online News"), 
+       c("list","module", "output", "shiny","table"), 
        pch = 21,
        col = "#777777", pt.bg = colrs, 
        pt.cex = 2.5, 
        bty = "n", ncol = 1)
 ```
+
+```{r}
+netModule <-
+  delete_vertices(
+    delete_edges(
+      net,
+      E(net)[assign == "output"]),
+    unclass(V(net)[shiny != "module"]))
+plot(netModule)
+```
+
+```{r}
+plot(netModule, vertex.shape="none", vertex.label=V(netModule)$name, 
+     vertex.label.font=2, vertex.label.color="gray40",
+     vertex.label.cex=0.5, edge.color="gray50")
+```
+
+```{r}
+jpeg("net.jpg", width = 700, height = 700)
+plot(netModule, vertex.shape="none", vertex.label=V(netModule)$name, 
+     vertex.label.font=2, vertex.label.color="black",
+     vertex.label.cex=0.75, edge.color="gray50",
+     layout = layout_as_tree)
+dev.off()
+```
+
+See <https://stackoverflow.com/questions/7521381/draw-network-in-r-control-edge-thickness-plus-non-overlapping-edges> about non-overlapping edges.
+
+Try layout-on-grid <https://www.reddit.com/r/rstats/comments/3idbde/igraph_help_vertex_spacing/>
 
 ### Highlight Graph Aspects
 
@@ -196,6 +228,10 @@ Here `ends()` gives us the start and end for each edge in `es`, and
 edge.start <- ends(net, es=E(net), names=F)[,1] # get the "from" node
 edge.col <- V(net)$color[edge.start]
 plot(net, edge.color = edge.col, edge.curved = .1)
+```
+
+```{r}
+knitr::knit_exit()
 ```
 
 Keep only edges with weight higher than network mean using `delete_edges(net, edges)`.

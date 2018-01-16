@@ -191,8 +191,39 @@ probs <- query_probs("1", 39, 40, allele = TRUE, method = "feather")
 mrna <- query_mrna("1", 39, 40, local = TRUE, qtl = FALSE)
 ```
 
-
 ## Details of Data and Shiny Setup
 
 The `qtl2shiny` interface can be invoked within R using [runApp](https://shiny.rstudio.com/reference/shiny/latest/runApp.html) on the file
 [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shiny/app.R). There is a routine [qtl2shinyApp](https://github.com/byandell/qtl2shiny/blob/master/R/qtl2shinyApp.R) to do this as well. However, one first should set up the data and query files.
+
+The shiny server consists of the server app (`server()` and `ui()` in file`app.R`) and 25 shiny modules. The modules form a directed acyclic graph with `Main` being the root node.
+
+![](shiny_logic/net.jpg)
+
+The `Main` module calls the `Setup`, `Haplo` and `Diplo` modules, corresponding to the three dashboard menu items. Each of these modules in turn calls other modules. The modules were each designed to do one task, and be kept small, ideally about 100 lines. Here is a list of modules:
+
+modeul | lines | task            | output
+------|--------|-----------------|-------
+Allele1 | 126 | allele and allele pair means | plot, tablt
+AllelePat | 276 | SNP allele patterns | plot, table
+Diplo | 107 | SNP/Gene Action |
+GeneExon | 162 | exons for individual genes | plot, table
+GeneRegion | 115 | genes and SNPs in region | plot, table
+Haplo | 103 | Haplotype Scans |
+Hotspot | 190 | hotspot count by location | plot, table
+Main | 129 | call Setup, Haplo, Diplo |
+Mediate1Plot | 306 | mediation by other phenotypes | plot, table
+Pattern | 247 | LOD and imputed SNP effects by pattern | plot, table
+Peaks | 175 | select chr, peak and window width |
+PhenoPlot | 66 | plot phenotypes | plot
+Phenos | 88 | phenotype information | table
+Probs | 93 | extract genotype probabilities |
+Project | 47 | pick project | 
+SNP | 143 | create table of top SNPs | table
+SNPAllele | 225 | manage SNP processng |
+SNPAssoc | 102 | SNP association mapping | table
+Scan1Plot | 210 | allele genome LOD and effect scans | plot, table
+Scan1SNP | 64 | plot SNP association | plot
+ScatterPlot | 149 | scatter plot for mediator | plot
+Setup | 209 | set up project |
+TopFeature | 113 | top SNP features | plot, table

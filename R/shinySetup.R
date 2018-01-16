@@ -129,7 +129,7 @@ shinySetup <- function(input, output, session,
   })
   
   ## Use window as input to shinyPhenos.
-  phe_par <- shiny::callModule(shinyPhenos, "phenos",
+  shiny::callModule(shinyPhenos, "phenos",
              input, win_par, peaks_df, analyses_tbl, pheno_data, cov_df,
              project_info)
   
@@ -175,7 +175,7 @@ shinySetup <- function(input, output, session,
   ## Return.
   shiny::reactive({
     list(project_info = project_info(),
-         phe_par = input,
+         pheno_names = input$pheno_names,
          win_par = win_par)
   })
 }
