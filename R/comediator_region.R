@@ -1,12 +1,12 @@
-comediator_region <- function(pheno_name, chr_id, scan_window, 
-                              covar, analyses_tbl, pheno_data, peaks, 
+comediator_region <- function(pheno_name, chr_id, scan_window,
+                              covar, analyses_tbl, pheno_data, peaks,
                               qtls = 2, pmap) {
-  
+
   peaks <- dplyr::filter(peaks,
                          !(pheno_group == "Islet.mRNA"))
-  
+
   # Annotation for phenotypes.
-  annot <- dplyr::filter(peaks, 
+  annot <- dplyr::filter(peaks,
                          chr == chr_id,
                          pos >= scan_window[1],
                          pos <= scan_window[2],
@@ -15,17 +15,17 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
                             analyses_tbl,
                             by = c("pheno", "longname", "output",
                                    "pheno_group", "pheno_type"))
-  
+
   # Covariates used by comediators.
   covars <- colnames(covar)
   covars <- covars[!is.na(match(covars, colnames(annot)))]
-  
+
   # Replace any NA with FALSE.
-  annot[, covars] <- apply(annot[, covars], 2, 
+  annot[, covars] <- apply(annot[, covars], 2,
                            function(x) ifelse(is.na(x), FALSE, x))
-  
+
   # Add QTL peaks
-  annot <- 
+  annot <-
     dplyr::inner_join(
       annot,
       dplyr::ungroup(
@@ -36,20 +36,20 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
                        round(pos), ":",
                        round(lod), collapse = ","))),
       by = "pheno")
-  
+
   # Kludge to get names of covariates that are used by comediators.
   covars <- apply(annot[, covars], 2, any)
   covars <- names(covars)[covars]
-  
+
   if(qtls == 2)
-    annot$driver <- qtl2geno::find_marker(pmap, chr_id, annot$pos)
+    annot$driver <- qtl2::find_marker(pmap, chr_id, annot$pos)
 
   list(comediators = qtl2pattern::pheno_trans(pheno_data,
                                               annot$pheno,
                                               annot$transf,
                                               annot$offset,
                                               annot$winsorize),
-       annot = dplyr::rename(annot, 
+       annot = dplyr::rename(annot,
                              id = pheno,
                              biotype = pheno_type),
        cov_med = covar[, covars],

@@ -10,7 +10,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom qtl2scan scan1
+#' @importFrom qtl2 scan1
 #' @importFrom qtl2pattern sdp_to_pattern
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req isTruthy
@@ -21,9 +21,9 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 #' @importFrom plotly renderPlotly plotlyOutput
-#' 
+#'
 shinyScatterPlot <- function(input, output, session,
-                  med_par, patterns, 
+                  med_par, patterns,
                   geno_max, peak_mar, med_ls, mediate_obj,
                   phe_mx, cov_df, K_chr,
                   allele_info) {
@@ -47,8 +47,8 @@ shinyScatterPlot <- function(input, output, session,
     shiny::selectInput(ns("med_name"), NULL,
                        choices = choices)
   })
-  
-  # Select pattern 
+
+  # Select pattern
   sdps <- shiny::reactive({
     shiny::req(patterns(), med_par$pheno_name)
     unique(dplyr::filter(patterns(), pheno == med_par$pheno_name)$sdp)
@@ -62,20 +62,20 @@ shinyScatterPlot <- function(input, output, session,
     shiny::selectInput(ns("pattern"), NULL,
                        choices = choices, input$pattern)
   })
-  
+
   scat_dat <- reactive({
     shiny::req(geno_max(), phe_mx(), med_ls(), medID(), sdps(),
                input$med_name, input$pattern)
     med_scat(med_ls(), geno_max(), phe_mx(), K_chr()[[1]], cov_df(), sdps(),
              input$pattern, input$med_name, medID(), haplos())
   })
-  
+
   ## Select plot format.
   output$med_plot <- shiny::renderUI({
     shiny::selectInput(ns("med_plot"), NULL,
-                       choices = c("by_mediator", 
-                                   "by_target", 
-                                   "driver_offset", 
+                       choices = c("by_mediator",
+                                   "by_target",
+                                   "driver_offset",
                                    "driver"))
   })
 
@@ -114,9 +114,9 @@ shinyScatterPlot <- function(input, output, session,
     content = function(file) {
       shiny::req(phe_mx(), scat_dat(), input$med_plot)
       pdf(file, width=9,height=9)
-      for(types in c("by_mediator", 
-                     "by_target", 
-                     "driver_offset", 
+      for(types in c("by_mediator",
+                     "by_target",
+                     "driver_offset",
                      "driver")) {
         print(ggplot2::autoplot(scat_dat(), type = types,
                    dname = peak_mar(),
