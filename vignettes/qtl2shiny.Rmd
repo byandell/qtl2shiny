@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This document concerns a suite of packages complementary to [R/qtl2](http://www.rqtl.org/qtl2) that extend capabilities in terms of plotting, fast data access, deeper probe of SNPs and structural variants, and a user-friendly interface for deep investigation of small intervals. 
+This document concerns a suite of packages complementary to [R/qtl2](http://www.rqtl.org/qtl2) that extend capabilities in terms of plotting, fast data access, deeper probe of SNPs and structural variants, and a user-friendly interface for deep investigation of small intervals.
 
 The QTL2 Shiny Interface can be invoked from the Shiny server
 <http://www.statlab.wisc.edu/shiny/qtl2shiny>. We demonstrate with a publicly available dataset from Recla (see <https://github.com/rqtl/qtl2data>).
@@ -38,7 +38,7 @@ Here is a strategy to look at multiple traits in a small interval. These are rou
 - do same for full effects
     + 36 diplotypes
     + 3-level SNPs
-    
+
 Some challenges
 
 - don't have useful thresholds yet
@@ -54,7 +54,7 @@ How to incorporate this into shiny tool?
 
 ## QTL2 Shiny Interface
 
-Information will appear here about how the Shiny Interface works. Or perhaps that is best as another package. 
+Information will appear here about how the Shiny Interface works. Or perhaps that is best as another package.
 
 Most of the rest of this is more of a Developer Guide, to explain the data structures and how the [R/qtl2shiny](https://github.com/byandell/qtl2shiny) package is organized. Those wishing to _use_ the shiny interface with their own data will want to read about the data structures, and contact me. Those wishing to _extend_ capabilities of the package, or understand its inner working, with be interested in the package organization.
 
@@ -69,7 +69,7 @@ This document describes companion packages that are used to build the Shiny serv
 - [R/qtl2pattern](https://github.com/byandell/qtl2pattern)
 - [R/qtl2shiny](https://github.com/byandell/qtl2shiny)
 
-The three other packages can be employed on their own separate from the server. In particular, [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2) provides full capability for `ggplot2` plot objects. The [R/qtl2feather](https://github.com/byandell/qtl2feather) package transforms large, slow `calc_genoprob` objects central to [R/qtl2](http://www.rqtl.org/qtl2) into a set of `feather` databases for quick access. See each package for its own documentation. 
+The three other packages can be employed on their own separate from the server. In particular, [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2) provides full capability for `ggplot2` plot objects. The [R/qtl2feather](https://github.com/byandell/qtl2feather) package transforms large, slow `calc_genoprob` objects central to [R/qtl2](http://www.rqtl.org/qtl2) into a set of `feather` databases for quick access. See each package for its own documentation.
 
 There are two additional packages that are more specialized and still need documentation:
 
@@ -78,7 +78,7 @@ There are two additional packages that are more specialized and still need docum
 
 [R/DOread](https://github.com/byandell/DOread) has code to set up Diversity Outbred (DO) mouse data for the Shiny server, and routines to read those data.
 [R/CausalMST](https://github.com/byandell/CausalMST) concerns Causal Model Selection Tests, which are used in conjuction with mediation to formally infer causal relationship between a phenotype and other phenotypes that co-map.
-    
+
 ## Organization of qtl2shiny data files
 
 The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/app.R) is in a directory with other support documents and the data. The projects are identified in a CSV file `projects.csv`, which has the following content:
@@ -90,12 +90,12 @@ Recla,CCmouse,qtl2shinyData
 
 The column names are fixed. The `project` is the project name (`Recla`), `taxa` has the taxa name (`CCmouse`), and `directory` is the relative or absolute address of the directory where data are kept (`qtl2shinyData`, which is relative here). In this case, the basic structure of the app is:
 
-[`app.R`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/app.R)  
-[`about.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about.md)  
-[`about-extended.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about-extended.md)  
-[`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/extdata/projects.csv)  
-`qtl2shinyData/`  
-`qtl2shinyData/CCmouse/`  
+[`app.R`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/app.R)
+[`about.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about.md)
+[`about-extended.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about-extended.md)
+[`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/extdata/projects.csv)
+`qtl2shinyData/`
+`qtl2shinyData/CCmouse/`
 `qtl2shinyData/CCmouse/Recla/`
 
 The `about.md` and `about-extended.md` files are place-holders for now for online documentation. All data are now stored under the directory (`qtl2shinyData`) using relative addresses. However, it is possible for data for a `taxa` and `project` to be stored in another place, in which case an absolute address would be supplied in the `projects.csv` file.
@@ -104,7 +104,8 @@ Detailed information about the `taxa` and `project` can be found with the [CCmou
 
 ### Taxa information
 
-The `taxa` sub-directory (`CCmouse`) contains the following files. See <https://github.com/rqtl/qtl2db>
+The `taxa` sub-directory (`CCmouse`) contains the following files. See
+the [R/qtl2 user guide](http://kbroman.org/qtl2/assets/vignettes/user_guide.html#connecting_to_snp_and_gene_databases)
 for explanation of the SQL databases and query routines.
 
 file | contents
@@ -159,13 +160,13 @@ to create and store the queries, you may have to quit RStudio and restart it to 
 The following two `create` functions are in [R/qtl2](http://www.rqtl.org/qtl2). They create functions (`query_genes` and `query_variants`) that contain, in their local environment, the location of the respective SQL database. Saving these as RDS preserves this environment information for later reuse.
 
 ```{r eval=FALSE}
-query_genes <- 
+query_genes <-
   qtl2::create_gene_query_func("CCmouse/mouse_genes.sqlite")
 saveRDS(query_genes, "query_genes.rds")
 ```
 
 ```{r eval=FALSE}
-query_variants <- 
+query_variants <-
   qtl2::create_variant_query_func("CCmouse/cc_variants.sqlite"))
 saveRDS(query_variants, "query_variants.rds")
 ```
@@ -214,7 +215,7 @@ Setup | 209 | set up project |
 Haplo | 103 | Haplotype Scans |
 Diplo | 107 | SNP/Gene Action |
  | | |
-Project | 47 | pick project | 
+Project | 47 | pick project |
 Peaks | 175 | select chr, peak and window width |
 Phenos | 88 | phenotype information | table
 Hotspot | 190 | hotspot count by location | plot, table

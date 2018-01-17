@@ -12,7 +12,7 @@
 #' @export
 #' @importFrom CausalMST mediate1_test
 #' @importFrom qtl2pattern pheno_trans
-#' @importFrom qtl2scan scan1
+#' @importFrom qtl2 scan1
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
@@ -23,14 +23,14 @@
 #'   downloadButton downloadHandler callModule
 #' @importFrom plotly renderPlotly plotlyOutput
 #' @importFrom dplyr filter
-#' 
+#'
 shinyMediate1Plot <- function(input, output, session,
                               job_par, win_par, patterns,
                               phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                               pmap_obj, covar, pheno_data, analyses_tbl, peaks,
                               project_info, allele_info) {
   ns <- session$ns
-  
+
   chr_id <- reactive({
     shiny::req(win_par$chr_id)
   })
@@ -41,16 +41,16 @@ shinyMediate1Plot <- function(input, output, session,
   ## Expression data
   expr_ls <- reactive({
     shiny::req(win_par)
-    expr_region(chr_id(), scan_window(), covar(), 
+    expr_region(chr_id(), scan_window(), covar(),
                 shiny::req(input$qtls), shiny::req(pmap_obj()),
                 project_info())
   })
-  
+
   ## Comediator data
   comed_ls <- reactive({
     shiny::req(input$pheno_name, win_par)
-    comediator_region(input$pheno_name, chr_id(), scan_window(), 
-                      covar(), analyses_tbl(), pheno_data(), peaks(), 
+    comediator_region(input$pheno_name, chr_id(), scan_window(),
+                      covar(), analyses_tbl(), pheno_data(), peaks(),
                       shiny::req(input$qtls), shiny::req(pmap_obj()))
   })
   med_ls <- reactive({
@@ -59,19 +59,19 @@ shinyMediate1Plot <- function(input, output, session,
            phenotype = comediator_type(comed_ls(), shiny::isTruthy(input$other)))
     out
   })
-  
-  # Get genotype matrix and map at 
+
+  # Get genotype matrix and map at
   peak_mar <- reactive({
-    qtl2geno::find_marker(probs_obj()$map, chr_id(), input$pos_Mbp)
+    qtl2::find_marker(probs_obj()$map, chr_id(), input$pos_Mbp)
   })
   geno_max <- reactive({
     shiny::req(input$pos_Mbp, probs_obj())
     subset(probs_obj()$probs, chr = chr_id(), mar = peak_mar())[[1]][,,1]
   })
-  
+
   ## Scatter Plots
   shiny::callModule(shinyScatterPlot, "scatter",
-                    input, patterns, 
+                    input, patterns,
                     geno_max, peak_mar, med_ls, mediate_signif,
                     phe1_mx, cov_df, K_chr,
                     allele_info)
@@ -81,7 +81,7 @@ shinyMediate1Plot <- function(input, output, session,
     probs_obj()$probs[[chr_id()]]
   })
   mediate_obj <- shiny::reactive({
-    shiny::req(phe1_mx(), probs_obj(), K_chr(), cov_df(), geno_max(), 
+    shiny::req(phe1_mx(), probs_obj(), K_chr(), cov_df(), geno_max(),
                input$pos_Mbp, input$med_type, med_ls())
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
@@ -110,8 +110,8 @@ shinyMediate1Plot <- function(input, output, session,
   ## Select plot format.
   output$med_plot <- shiny::renderUI({
     shiny::selectInput(ns("med_plot"), NULL,
-                       choices = c("Position by LOD", 
-                                   "Position by P-value", 
+                       choices = c("Position by LOD",
+                                   "Position by P-value",
                                    "P-value by LOD",
                                    "Allele Effects",
                                    "Mediator Effects"),
@@ -123,7 +123,7 @@ shinyMediate1Plot <- function(input, output, session,
                        choices = c("phenotype","expression"),
                        selected = input$med_type)
   })
-  
+
   med_plot_type <- reactive({
     switch(shiny::req(input$med_plot),
            "Position by LOD" = "pos_lod",
@@ -142,7 +142,7 @@ shinyMediate1Plot <- function(input, output, session,
         shiny::setProgress(1)
         ggplot2::autoplot(
           mediate_obj(), med_plot_type(),
-          local_only = input$local, 
+          local_only = input$local,
           significant = input$signif)
       })
     }
@@ -154,7 +154,7 @@ shinyMediate1Plot <- function(input, output, session,
       shiny::setProgress(1)
       ggplot2::autoplot(
         mediate_signif(), med_plot_type(),
-        local_only = input$local, 
+        local_only = input$local,
         significant = TRUE)
     })
   })
@@ -177,8 +177,8 @@ shinyMediate1Plot <- function(input, output, session,
   observeEvent(chr_id(), {
     map <- shiny::req(probs_obj()$map)
     rng <- round(2 * range(map[[chr_id()]])) / 2
-    shiny::updateSliderInput(session, "pos_Mbp", NULL, 
-                             req(win_par$peak_Mbp), 
+    shiny::updateSliderInput(session, "pos_Mbp", NULL,
+                             req(win_par$peak_Mbp),
                              rng[1], rng[2], step=.1)
   })
 
@@ -241,19 +241,19 @@ shinyMediate1Plot <- function(input, output, session,
                         probs_chr())
         print(ggplot2::autoplot(
           med, "pos_lod",
-          local_only = input$local, 
+          local_only = input$local,
           significant = input$signif))
         print(ggplot2::autoplot(
           med, "pos_pvalue",
-          local_only = input$local, 
+          local_only = input$local,
           significant = TRUE))
         print(ggplot2::autoplot(
           med, "pvalue_lod",
-          local_only = input$local, 
+          local_only = input$local,
           significant = TRUE))
         print(ggplot2::autoplot(
           med, "mediator",
-          local_only = input$local, 
+          local_only = input$local,
           significant = TRUE))
       }
       dev.off()

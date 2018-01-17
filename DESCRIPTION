@@ -13,13 +13,12 @@ Imports:
     shiny,shinydashboard,
     gdata, grid, GGally,
     plotly, RSQLite, dbplyr,
-    qtl2,
+    qtl2 (>= 0.8),
     qtl2ggplot,
     qtl2pattern,
     CausalMST
 Suggests:
     flexdashboard,
-    qtl2db,
     DOread,
     knitr,
     rmarkdown

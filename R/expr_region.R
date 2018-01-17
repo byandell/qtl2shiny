@@ -5,7 +5,7 @@ expr_region <- function(chr_id, scan_window, covar, qtls, pmap,
   out <- query_mrna(chr_id, scan_window[1], scan_window[2], qtl = TRUE)
   if(is.null(out))
     return(NULL)
-  
+
   # Check covariates
   expr_covars <- unique(out$annot$covar)
   if(length(expr_covars) > 1)
@@ -14,13 +14,13 @@ expr_region <- function(chr_id, scan_window, covar, qtls, pmap,
   m <- match(tolower(expr_covars), tolower(colnames(covar)), nomatch = 0)
   if(any(m == 0))
     cat(paste(paste(expr_covars, collapse = ","), "not found in data"), file = stderr())
-  
+
   out$cov_med <- covar[, m]
-  
+
   if(qtls == 2) {
-    
-    out$annot$driver <- qtl2geno::find_marker(pmap, chr_id, out$annot$qtl_pos)
+
+    out$annot$driver <- qtl2::find_marker(pmap, chr_id, out$annot$qtl_pos)
   }
-  
+
   out
 }

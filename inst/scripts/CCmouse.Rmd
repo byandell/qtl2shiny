@@ -46,20 +46,20 @@ The query for genes and variants are usually common across all projects for a ta
 Here we use query routines from R/qtl2 for the CC mouse.
 
 ```{r}
-query_genes <- 
+query_genes <-
   qtl2::create_gene_query_func(
     file.path(taxa_path, "mouse_genes.sqlite"))
 saveRDS(query_genes, file.path(taxa_dir, "query_genes.rds"))
 ```
 
 ```{r}
-query_variants <- 
+query_variants <-
   qtl2::create_variant_query_func(
     file.path(taxa_path, "cc_variants.sqlite"))
 saveRDS(query_variants, file.path(taxa_dir, "query_variants.rds"))
 ```
 
-The large files [mouse_genes.sqlite](https://figshare.com/articles/SQLite_database_with_MGI_mouse_gene_annotations_from_Mouse_Genome_Informatics_MGI_at_The_Jackson_Laboratory/5286019) and [cc_variants.sqlite](https://figshare.com/articles/SQLite_database_of_variants_in_Collaborative_Cross_founder_mouse_strains/5280229) can be found at FigShare. See [R/qtl2 db ReadMe](https://github.com/rqtl/qtl2db/blob/master/ReadMe.md) for more information.
+The large files [mouse_genes.sqlite](https://figshare.com/articles/SQLite_database_with_MGI_mouse_gene_annotations_from_Mouse_Genome_Informatics_MGI_at_The_Jackson_Laboratory/5286019) and [cc_variants.sqlite](https://figshare.com/articles/SQLite_database_of_variants_in_Collaborative_Cross_founder_mouse_strains/5280229) can be found at FigShare. See the [R/qtl2 user guide](http://kbroman.org/qtl2/assets/vignettes/user_guide.html#connecting_to_snp_and_gene_databases) for more information.
 
 ## Colors and Alleles
 
@@ -75,7 +75,7 @@ qtl2::CCcolors
 ```
 
 ```{r}
-allele_info <- 
+allele_info <-
   data.frame(
     code = LETTERS[1:8],
     shortname = names(qtl2::CCcolors),
@@ -99,5 +99,3 @@ allele_info <-
 ```{r}
 saveRDS(allele_info, file.path(taxa_dir, "allele_info.rds"))
 ```
-
-

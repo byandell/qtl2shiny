@@ -11,9 +11,9 @@
 #'
 #' @export
 #' @importFrom qtl2pattern listof_scan1coef
-#' @importFrom qtl2scan scan1
+#' @importFrom qtl2 scan1
 #' @importFrom ggplot2 autoplot
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny NS reactive req
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
@@ -21,11 +21,11 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 shinyScan1Plot <- function(input, output, session,
-                  job_par, win_par, 
+                  job_par, win_par,
                   phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                   project_info, allele_info) {
   ns <- session$ns
-  
+
   ## Scan1
   scan_obj <- shiny::reactive({
     shiny::req(phe_mx(), probs_obj(), K_chr(), cov_df(), win_par$window_Mbp,
@@ -36,7 +36,7 @@ shinyScan1Plot <- function(input, output, session,
                   sex_type = job_par$sex_type)
     })
   })
-  
+
   # Scan Window slider
   output$scan_window <- shiny::renderUI({
     shiny::req(project_info(), phe_mx(), win_par$window_Mbp)
@@ -53,10 +53,10 @@ shinyScan1Plot <- function(input, output, session,
     map <- shiny::req(probs_obj()$map)
     chr <- shiny::req(win_par$chr_id)
     rng <- round(2 * range(map[[chr]])) / 2
-    shiny::updateSliderInput(session, "scan_window", NULL, rng, 
+    shiny::updateSliderInput(session, "scan_window", NULL, rng,
                       rng[1], rng[2], step=.5)
   })
-  
+
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({
     shiny::req(phe_mx())
@@ -71,11 +71,11 @@ shinyScan1Plot <- function(input, output, session,
     shiny::req(win_par$chr_id, input$scan_window, scan_obj(), probs_obj())
     shiny::withProgress(message = 'Genome LOD Plot ...', value = 0, {
       shiny::setProgress(1)
-      plot_scan(scan_obj(), 
-                probs_obj()$map, 
-                seq(ncol(scan_obj())), 
-                win_par$chr_id, 
-                input$scan_window, 
+      plot_scan(scan_obj(),
+                probs_obj()$map,
+                seq(ncol(scan_obj())),
+                win_par$chr_id,
+                input$scan_window,
                 phe_mx())
     })
   })
@@ -95,7 +95,7 @@ shinyScan1Plot <- function(input, output, session,
     map <- shiny::req(probs_obj())$map
     shiny::withProgress(message = 'Effect plots ...', value = 0, {
       shiny::setProgress(1)
-      plot_eff(input$pheno_name, eff_obj(), map, scan_obj(), 
+      plot_eff(input$pheno_name, eff_obj(), map, scan_obj(),
                input$scan_window,, allele_info())
     })
   })
@@ -107,7 +107,7 @@ shinyScan1Plot <- function(input, output, session,
     })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
-  
+
   ## Effect and LOD Plot
   output$lod_effPlot <- shiny::renderPlot({
     shiny::req(input$pheno_name, input$scan_window, win_par$chr_id,
@@ -119,7 +119,7 @@ shinyScan1Plot <- function(input, output, session,
                addlod = TRUE, allele_info())
     })
   })
-  
+
   output$pheno_choice <- shiny::renderUI({
     switch(shiny::req(input$button),
            "LOD & Effects" =,

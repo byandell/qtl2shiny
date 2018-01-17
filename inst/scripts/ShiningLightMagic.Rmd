@@ -26,7 +26,7 @@ Shiny tool to study DO and other MAGIC crosses
 
 ## what is MAGIC?
 
-- Multiparent Advanced Generation Inter-Cross (MAGIC) 
+- Multiparent Advanced Generation Inter-Cross (MAGIC)
     + experimental populations with >2 segregating alleles
 - advanced generations yield many meiotic events
     + typically low linkage disequilibrium
@@ -46,7 +46,7 @@ Shiny tool to study DO and other MAGIC crosses
     * proteomic, metabolomic, lipidomic
 
 ![Valdar et al. 2006 doi:10.1534/genetics.104.039313](images/valdar2006.gif)
-    
+
 ----
 
 ![http://compgen.unc.edu](images/ccmice.png)
@@ -67,7 +67,7 @@ Shiny tool to study DO and other MAGIC crosses
 ## simple story on chr 1
 
 ![chr 1 scan](images/scan_1.pdf)
-    
+
 ----
 
 ![chr 1 zoom scan & effects](images/scan_1_effect.pdf)
@@ -77,7 +77,7 @@ Shiny tool to study DO and other MAGIC crosses
 - SNP-based genome scan: GWAS Manhattan plots
     + discrete tests of SNPs or other features
     + typically 2 SNP alleles (1 is reference)
-    + model effect of number of non-ref SNP copies 
+    + model effect of number of non-ref SNP copies
 - SNP recorded as pair of DNA base pairs (A,C,G,T)
     + SNPs typically have two values (G/T)
     + individual has genotype GG, GT or TT
@@ -131,7 +131,7 @@ Shiny tool to study DO and other MAGIC crosses
 - extend discrete SNP-based scan to continuous
     + scan of particular allele contrasts
     + LOD and allele contrast scans
-    
+
 ```{r echo=FALSE, fig.height=3}
 data <- data.frame(x=rep(0:2,4),y=c(0:2,0,1.5,2,0,2,2,0,0,2),
                    z=rep(c("additive","general","dominant","recessive"), each = 3))
@@ -140,7 +140,7 @@ ggplot(data, aes(x,y)) +
   geom_point(size=4) +
   geom_line(size=2) +
   facet_grid(~z) +
-  labs(x="",y="phenotype mean") + 
+  labs(x="",y="phenotype mean") +
   theme(axis.text.y = element_blank()) +
   scale_x_continuous(breaks=0:2)
 ```
@@ -148,7 +148,7 @@ ggplot(data, aes(x,y)) +
 ## complicated story on chr 3
 
 ![chr 3 scan](images/scan_3.pdf)
-    
+
 ----
 
 ![chr 3 zoom scan & effects](images/scan_3_effect.pdf)
@@ -174,7 +174,7 @@ ggplot(data, aes(x,y)) +
     + LOD scan with 2 df of AB:het:CDEFGH
     + allele group scan
 
-## additive BFGH:ACDE 
+## additive BFGH:ACDE
 
 ![](images/snp_allele_3_BEFGH:ACD_additive.pdf)
 
@@ -213,8 +213,8 @@ ggplot(data, aes(x,y)) +
 
 - Original batch pipeline: [DOQTL](http://dx.doi.org/10.1534/g3.114.013748) (Dan Gatti et al. 2014 G3)
 - [R/qtl2](http://kbroman.org/qtl2/assets/vignettes/user_guide.html) (Karl Broman) (Karl Broman et al. in progress)
-    + qtl2geno, qtl2scan, qtl2plot
-    + [web site](https://github.com/kbroman/qtl2/tree/gh-pages)
+    + [R/qtl2 web site](http://kbroman.org/qtl2)
+    + [R/qtl2 source on GitHub](https://github.com/kbroman/qtl2/tree/gh-pages)
 - new R packages
     + [R/qtl2 package suite](http://kbroman.org/qtl2/assets/vignettes/user_guide.html) (Karl Broman)
     + [R/doqtl2](https://bitbucket.org/byandell/doqtl2) package
@@ -241,7 +241,7 @@ ggplot(data, aes(x,y)) +
 - visualizations
     + scalable & interactive (D3) visual displays
     + automated report generation
-    
+
 ## data storage issues
 
 - raw data
@@ -259,7 +259,7 @@ ggplot(data, aes(x,y)) +
 - portability issues
     + CSV vs RDS vs SQL vs ...
     + common pool vs on-site
-    
+
 ## software issues
 
 - R analysis & visualization
@@ -276,4 +276,3 @@ ggplot(data, aes(x,y)) +
     + high throughput phenotypes
     + data resampling for thresholds
 - scaling up to muli-user interactive system
-    
