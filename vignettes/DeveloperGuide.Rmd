@@ -178,7 +178,7 @@ modeul | lines | task            | output
 [`Mediate`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyMediate.R) | 306 | mediation by other phenotypes | plot, table
 [`ScatterPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScatterPlot.R) | 149 | scatter plot for mediator | plot
  | | |
-[`Probs36`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProbs36.R) | 93 | allele pair genotype probabilities |
+[`PairProbs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPairProbs.R) | 93 | allele pair genotype probabilities |
 [`Pattern`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPattern.R) | 247 | LOD and imputed SNP effects by pattern | plot, table
 [`Allele1`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllele1.R) | 126 | allele and allele pair means | plot, tablt
  | | |

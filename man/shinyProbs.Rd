@@ -2,13 +2,13 @@
 % Please edit documentation in R/shinyProbs.R
 \name{shinyProbs}
 \alias{shinyProbs}
-\alias{shinyProbs36}
+\alias{shinyPairProbs}
 \alias{shinySNPProbs}
 \title{Shiny Probability module}
 \usage{
 shinyProbs(input, output, session, win_par, project_info)
 
-shinyProbs36(input, output, session, win_par, project_info)
+shinyPairProbs(input, output, session, win_par, project_info)
 
 shinySNPProbs(input, output, session, win_par, pheno_names, probs_obj,
   project_info)

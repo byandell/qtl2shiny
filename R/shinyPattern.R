@@ -3,7 +3,7 @@
 #' Shiny module for SNP pattern plots, with interfaces \code{shinyPatternUI} and  \code{shinyPatternOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,chr_pos,win_par,phe_mx,cov_df,probs36_obj,K_chr,analyses_df,patterns,project_info,allele_info,snp_action reactive arguments
+#' @param job_par,chr_pos,win_par,phe_mx,cov_df,pairprobs_obj,K_chr,analyses_df,patterns,project_info,allele_info,snp_action reactive arguments
 #' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -28,7 +28,7 @@
 #'   
 shinyPattern <- function(input, output, session,
                          job_par, chr_pos, win_par,
-                         phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
+                         phe_mx, cov_df, pairprobs_obj, K_chr, analyses_df,
                          patterns, project_info, allele_info, 
                          snp_action = shiny::reactive({NULL})) {
   ns <- session$ns
@@ -38,7 +38,7 @@ shinyPattern <- function(input, output, session,
   })
   shiny::callModule(shinyAllele1, "alleles",
                     win_par, 
-                    phe1_mx, cov_df, probs36_obj, K_chr, analyses_df,
+                    phe1_mx, cov_df, pairprobs_obj, K_chr, analyses_df,
                     patterns, scan_pat, project_info, snp_action)
   
   ## Select phenotype for plots.
@@ -89,12 +89,12 @@ shinyPattern <- function(input, output, session,
   scan_pat <- shiny::reactive({
     req(snp_action())
     pheno_in <- shiny::req(input$pheno_name)
-    shiny::req(phe_mx(), cov_df(), probs36_obj(), K_chr(),
+    shiny::req(phe_mx(), cov_df(), pairprobs_obj(), K_chr(),
                pats(), analyses_df(), job_par$sex_type)
     withProgress(message = 'Scan Patterns ...', value = 0, {
       setProgress(1)
       scan1_pattern(pheno_in, phe_mx(), cov_df(), 
-                    probs36_obj(), K_chr(), analyses_df(),
+                    pairprobs_obj(), K_chr(), analyses_df(),
                                 pats(), job_par$sex_type, input$blups)
     })
   })
@@ -102,20 +102,20 @@ shinyPattern <- function(input, output, session,
   output$scan_pat_lod <- shiny::renderPlot({
     if(is.null(scan_pat()))
       return(plot_null())
-    shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
+    shiny::req(scan_pat(), pattern_choices(), input$pheno_name, pairprobs_obj())
     withProgress(message = 'Pattern LODs ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), probs36_obj()$map, "lod", pattern_choices(), 
+      scan_pat_type(scan_pat(), pairprobs_obj()$map, "lod", pattern_choices(), 
                     input$pheno_name, haplos())
     })
   })
   output$scan_pat_coef <- shiny::renderPlot({
     if(is.null(scan_pat()))
       return(plot_null())
-    shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
+    shiny::req(scan_pat(), pattern_choices(), input$pheno_name, pairprobs_obj())
     withProgress(message = 'Pattern Effects ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), probs36_obj()$map, "coef", pattern_choices(), 
+      scan_pat_type(scan_pat(), pairprobs_obj()$map, "coef", pattern_choices(), 
                     input$pheno_name, haplos())
     })
   })
@@ -123,7 +123,7 @@ shinyPattern <- function(input, output, session,
     shiny::req(scan_pat())
     withProgress(message = 'Pattern summary ...', value = 0, {
       setProgress(1)
-      summary(scan_pat(), probs36_obj()$map)
+      summary(scan_pat(), pairprobs_obj()$map)
     })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
@@ -131,10 +131,10 @@ shinyPattern <- function(input, output, session,
   output$eff_lodPlot <- shiny::renderPlot({
     if(is.null(scan_pat()))
       return(plot_null())
-    shiny::req(scan_pat(), pattern_choices(), input$pheno_name, probs36_obj())
+    shiny::req(scan_pat(), pattern_choices(), input$pheno_name, pairprobs_obj())
     withProgress(message = 'Pattern Effects & LOD ...', value = 0, {
       setProgress(1)
-      scan_pat_type(scan_pat(), probs36_obj()$map, "coef_and_lod", pattern_choices(), 
+      scan_pat_type(scan_pat(), pairprobs_obj()$map, "coef_and_lod", pattern_choices(), 
                     input$pheno_name, haplos())
     })
   })
@@ -175,8 +175,8 @@ shinyPattern <- function(input, output, session,
     },
     content = function(file) {
       scan_in <- shiny::req(scan_pat())
-      shiny::req(probs36_obj())
-      write.csv(summary(scan_in, probs36_obj()$map), file)
+      shiny::req(pairprobs_obj())
+      write.csv(summary(scan_in, pairprobs_obj()$map), file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -194,10 +194,10 @@ shinyPattern <- function(input, output, session,
         pat_choices <- qtl2pattern::sdp_to_pattern(pats$sdp, haplos())
         
         scan_now <- scan1_pattern(pheno_in, phe_mx(), cov_df(), 
-                                  probs36_obj(), K_chr(), analyses_df(),
+                                  pairprobs_obj(), K_chr(), analyses_df(),
                                   pats, job_par$sex_type, input$blups)
         
-        scan_pat_type(scan_now, probs36_obj()$map, "coef_and_lod", pat_choices,
+        scan_pat_type(scan_now, pairprobs_obj()$map, "coef_and_lod", pat_choices,
                       pheno_in, haplos())
       }
       dev.off()

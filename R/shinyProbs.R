@@ -42,11 +42,11 @@ shinyProbs <- function(input, output, session,
 }
 #' @rdname shinyProbs
 #' @export
-shinyProbs36 <- function(input, output, session,
+shinyPairProbs <- function(input, output, session,
                          win_par, project_info) {
   ns <- session$ns
 
-  ## Probs object for 36 diplotypes.
+  ## Probs object for allele pair diplotypes.
   probs_obj <- shiny::reactive({
     shiny::req(project_info())
     chr_id <- shiny::req(win_par$chr_id)

@@ -27,8 +27,8 @@ shinyDiplo <- function(input, output, session,
                  win_par$window_Mbp)
   })
 
-  ## Probs object for 36 diplotypes.
-  probs36_obj <- shiny::callModule(shinyProbs36, "probs36", 
+  ## Probs object for allele pair diplotypes.
+  pairprobs_obj <- shiny::callModule(shinyPairProbs, "pairprobs", 
                             win_par, project_info)
 
   snp_action <- shiny::reactive({input$snp_action})
@@ -36,13 +36,13 @@ shinyDiplo <- function(input, output, session,
   ## SNP Association
   patterns <- shiny::callModule(shinySNPAllele, "snp_allele",
                          input, win_par, 
-                         phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
+                         phe_mx, cov_df, pairprobs_obj, K_chr, analyses_df,
                          project_info, allele_info,
                          snp_action)
   
   shiny::callModule(shinyPattern, "dip_pat",
                     input, chr_pos, win_par,
-                    phe_mx, cov_df, probs36_obj, K_chr, analyses_df,
+                    phe_mx, cov_df, pairprobs_obj, K_chr, analyses_df,
                     patterns, project_info, allele_info, snp_action)
   
   output$allele_names <- shiny::renderText({
