@@ -13,5 +13,5 @@
 #' @export
 #' @importFrom shiny runApp
 qtl2shinyApp <- function(appfile = "app.R") {
-  shiny::runApp(system.file(file.path("qtl2shiny", appfile), package='qtl2shiny'))
+  shiny::runApp(system.file(file.path("qtl2shinyApp", appfile), package='qtl2shiny'))
 }

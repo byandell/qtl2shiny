@@ -1,7 +1,7 @@
 ---
-title: "QTL2 Shiny Interface"
+title: "qtl2shiny Developer Guide"
 author: "Brian S. Yandell"
-date: "1/16/2018"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
@@ -16,72 +16,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-This document concerns a suite of packages complementary to [R/qtl2](http://www.rqtl.org/qtl2) that extend capabilities in terms of plotting, fast data access, deeper probe of SNPs and structural variants, and a user-friendly interface for deep investigation of small intervals. 
+This document is a Developer Guide for the [R/qtl2shiny](https://github.com/byandell/qtl2shiny) package, with goals to explain:
 
-The QTL2 Shiny Interface can be invoked from the Shiny server
-<http://www.statlab.wisc.edu/shiny/qtl2shiny>. We demonstrate with a publicly available dataset from Recla (see <https://github.com/rqtl/qtl2data>).
-However, this Shiny server is set up
-with project-specific login and password protection for data that has not been published, using [server side Apache htaccess](https://httpd.apache.org/docs/current/howto/ssi.html).
+- data structures and folder organization
+- package workflow and shiny tool components
 
-## Strategy to Study Small Interval
+Those wishing to _use_ the shiny interface with their own data will want to read about the data structures, and contact me. Those wishing to _extend_ capabilities of the package, or understand its inner working, with be interested in the package organization.
 
-Here is a strategy to look at multiple traits in a small interval. These are rough and ready notes that will be smoothed out in time.
-
-- use analyses table (or other approach) to identify region of interest
-    + say 1-5Mb window
-- identify set of traits in region
-- estimate allele effects at peak for each trait
-    + useful plots?
-- find best SNP(s) and pattern(s)
-    + identify SDP and pattern for each
-    + useful plots?
-- do same for full effects
-    + 36 diplotypes
-    + 3-level SNPs
     
-Some challenges
+## Data Structures and Folder Organization
 
-- don't have useful thresholds yet
-- would like to think about inference across related patterns
-- multiple peaks in small region
-- pleiotropy vs close linkage
+The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R) is in a directory with other support documents and the data. 
 
-How to incorporate this into shiny tool?
-
-- quick computation: limit size of region
-- do we have to run genome scan?
-    + or just consider flanking markers for each peak?
-
-## QTL2 Shiny Interface
-
-Information will appear here about how the Shiny Interface works. Or perhaps that is best as another package. 
-
-Most of the rest of this is more of a Developer Guide, to explain the data structures and how the [R/qtl2shiny](https://github.com/byandell/qtl2shiny) package is organized. Those wishing to _use_ the shiny interface with their own data will want to read about the data structures, and contact me. Those wishing to _extend_ capabilities of the package, or understand its inner working, with be interested in the package organization.
-
-## R/qtl2 companion packages
-
-The popular [R/qtl](http://www.rqtl.org) package for gene mapping has been redeveloped for high volume, multi-parent systems genetics data as [R/qtl2](http://www.rqtl.org/qtl2). This new package is still in a state of flux, so please work with us to improve.
-
-This document describes companion packages that are used to build the Shiny server:
-
-- [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2)
-- [R/qtl2feather](https://github.com/byandell/qtl2feather)
-- [R/qtl2pattern](https://github.com/byandell/qtl2pattern)
-- [R/qtl2shiny](https://github.com/byandell/qtl2shiny)
-
-The three other packages can be employed on their own separate from the server. In particular, [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2) provides full capability for `ggplot2` plot objects. The [R/qtl2feather](https://github.com/byandell/qtl2feather) package transforms large, slow `calc_genoprob` objects central to [R/qtl2](http://www.rqtl.org/qtl2) into a set of `feather` databases for quick access. See each package for its own documentation. 
-
-There are two additional packages that are more specialized and still need documentation:
-
-- [R/DOread](https://github.com/byandell/DOread)
-- [R/CausalMST](https://github.com/byandell/CausalMST)
-
-[R/DOread](https://github.com/byandell/DOread) has code to set up Diversity Outbred (DO) mouse data for the Shiny server, and routines to read those data.
-[R/CausalMST](https://github.com/byandell/CausalMST) concerns Causal Model Selection Tests, which are used in conjuction with mediation to formally infer causal relationship between a phenotype and other phenotypes that co-map.
-    
-## Organization of qtl2shiny data files
-
-The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/app.R) is in a directory with other support documents and the data. The projects are identified in a CSV file `projects.csv`, which has the following content:
+The CSV file [`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/projects.csv), in that same directory, contains project information. This file has the following content:
 
 ```
 project,taxa,directory
@@ -90,10 +37,10 @@ Recla,CCmouse,qtl2shinyData
 
 The column names are fixed. The `project` is the project name (`Recla`), `taxa` has the taxa name (`CCmouse`), and `directory` is the relative or absolute address of the directory where data are kept (`qtl2shinyData`, which is relative here). In this case, the basic structure of the app is:
 
-[`app.R`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/app.R)  
-[`about.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about.md)  
-[`about-extended.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/about-extended.md)  
-[`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/extdata/projects.csv)  
+[`app.R`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R)  
+[`about.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/about.md)  
+[`about-extended.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/about-extended.md)  
+[`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/projects.csv)  
 `qtl2shinyData/`  
 `qtl2shinyData/CCmouse/`  
 `qtl2shinyData/CCmouse/Recla/`
@@ -196,45 +143,51 @@ probs <- query_probs("1", 39, 40, allele = TRUE, method = "feather")
 mrna <- query_mrna("1", 39, 40, local = TRUE, qtl = FALSE)
 ```
 
-## Details of Data and Shiny Setup
+## Package Workflow and Shiny Tool Components
 
 The `qtl2shiny` interface can be invoked within R using [runApp](https://shiny.rstudio.com/reference/shiny/latest/runApp.html) on the file
-[app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shiny/app.R). There is a routine [qtl2shinyApp](https://github.com/byandell/qtl2shiny/blob/master/R/qtl2shinyApp.R) to do this as well. However, one first should set up the data and query files.
+[app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R). There is a routine [qtl2shinyApp](https://github.com/byandell/qtl2shiny/blob/master/R/qtl2shinyApp.R) in the package to do this as well:
 
-The shiny server consists of the server app (`server()` and `ui()` in file`app.R`) and 27 shiny modules. The modules form a directed acyclic graph with `Main` being the root node.
+```{r}
+qtl2shiny::qtl2shinyApp
+```
 
-![](../inst/extdata/net.jpg)
+However, one first should set up the data and query files as described above.
+
+The shiny server consists of the server app (`server()` and `ui()` in file `app.R`) and 27 shiny modules. The modules form a directed acyclic graph with `Main` being the root node.
+
+![](net.jpg)
 
 The `Main` module calls the `Setup`, `Haplo` and `Diplo` modules, corresponding to the three dashboard menu items. Each of these modules in turn calls other modules. The modules were each designed to do one task, and be kept small, ideally about 100 lines of code (including documentation). Here is a list of modules:
 
 modeul | lines | task            | output
 ------|--------|-----------------|-------
-Main | 129 | call Setup, Haplo, Diplo |
-Setup | 209 | set up project |
-Haplo | 103 | Haplotype Scans |
-Diplo | 107 | SNP/Gene Action |
+[`Main`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyMain.R)| 129 | call Setup, Haplo, Diplo |
+[`Setup`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySetup.R)| 209 | set up project |
+[`Haplo`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyHaplo.R)| 103 | Haplotype Scans |
+[`Diplo`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyDiplo.R)| 107 | SNP/Gene Action |
  | | |
-Project | 47 | pick project | 
-Peaks | 175 | select chr, peak and window width |
-Phenos | 88 | phenotype information | table
-Hotspot | 190 | hotspot count by location | plot, table
-PhenoPlot | 66 | plot phenotypes | plot
+[`Project`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProject.R)| 47 | pick project | 
+[`Peaks`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPeaks.R)| 175 | select chr, peak and window width |
+[`Phenos`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPhenos.R)| 88 | phenotype information | table
+[`Hotspot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyHotspot.R)| 190 | hotspot count by location | plot, table
+[`PhenoPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPhenoPlot.R)| 66 | plot phenotypes | plot
  | | |
-Probs | 93 | allele genotype probabilities |
-Scan1Plot | 210 | allele genome LOD and effect scans | plot, table
-Mediate1Plot | 306 | mediation by other phenotypes | plot, table
-ScatterPlot | 149 | scatter plot for mediator | plot
+[`Probs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProbs.R)| 93 | allele genotype probabilities |
+[`Scan1Plot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1Plot.R)| 210 | allele genome LOD and effect scans | plot, table
+[`Mediate1Plot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyMediate1Plot.R)| 306 | mediation by other phenotypes | plot, table
+[`ScatterPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScatterPlot.R)| 149 | scatter plot for mediator | plot
  | | |
-Probs36 | 93 | allele pair genotype probabilities |
-Pattern | 247 | LOD and imputed SNP effects by pattern | plot, table
-Allele1 | 126 | allele and allele pair means | plot, tablt
+[`Probs36`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProbs36.R)| 93 | allele pair genotype probabilities |
+[`Pattern`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPattern.R)| 247 | LOD and imputed SNP effects by pattern | plot, table
+[`Allele1`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllele1.R)| 126 | allele and allele pair means | plot, tablt
  | | |
-SNPAllele | 225 | manage SNP processng |
-SNPProbs | 93 | SNP genotype probabilities |
-SNPAssoc | 102 | SNP association mapping | table
-AllelePat | 276 | SNP allele patterns | plot, table
-SNP | 143 | create table of top SNPs | table
-GeneRegion | 115 | genes and SNPs in region | plot, table
-GeneExon | 162 | exons for individual genes | plot, table
-Scan1SNP | 64 | plot SNP association | plot
-TopFeature | 113 | top SNP features | plot, table
+[`SNPAllele`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPAllele.R)| 225 | manage SNP processng |
+[`SNPProbs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPProbs.R)| 93 | SNP genotype probabilities |
+[`SNPAssoc`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPAssoc.R)| 102 | SNP association mapping | table
+[`AllelePat`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllelePat.R)| 276 | SNP allele patterns | plot, table
+[`SNP`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNP.R)| 143 | create table of top SNPs | table
+[`GeneRegion`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneRegion.R)| 115 | genes and SNPs in region | plot, table
+[`GeneExon`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneExon.R)| 162 | exons for individual genes | plot, table
+[`Scan1SNP`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1SNP.R)| 64 | plot SNP association | plot
+[`TopFeature`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyTopFeature.R)| 113 | top SNP features | plot, table
