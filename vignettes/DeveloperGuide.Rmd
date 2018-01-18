@@ -182,12 +182,12 @@ modeul | lines | task            | output
 [`Pattern`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPattern.R) | 247 | LOD and imputed SNP effects by pattern | plot, table
 [`Allele1`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllele1.R) | 126 | allele and allele pair means | plot, tablt
  | | |
-[`SNPAllele`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPAllele.R) | 225 | manage SNP processng |
+[`SNPSetup`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPSetup.R) | 225 | set up SNP processng |
 [`SNPProbs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPProbs.R) | 93 | SNP genotype probabilities |
 [`SNPAssoc`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPAssoc.R) | 102 | SNP association mapping | table
+[`SNPPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPPlot.R) | 64 | plot SNP association | plot
 [`AllelePat`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllelePat.R) | 276 | SNP allele patterns | plot, table
 [`SNPSum`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPSum.R) | 143 | create table of top SNPs | table
 [`GeneRegion`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneRegion.R) | 115 | genes and SNPs in region | plot, table
 [`GeneExon`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneExon.R) | 162 | exons for individual genes | plot, table
-[`SNPPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPPlot.R) | 64 | plot SNP association | plot
 [`TopFeature`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyTopFeature.R) | 113 | top SNP features | plot, table
