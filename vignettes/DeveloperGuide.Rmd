@@ -174,7 +174,7 @@ modeul | lines | task            | output
 [`PhenoPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPhenoPlot.R) | 66 | plot phenotypes | plot
  | | |
 [`Probs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProbs.R) | 93 | allele genotype probabilities |
-[`Scan1Plot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1Plot.R) | 210 | allele genome LOD and effect scans | plot, table
+[`Scan1`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1.R) | 210 | allele genome LOD and effect scans | plot, table
 [`Mediate`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyMediate.R) | 306 | mediation by other phenotypes | plot, table
 [`ScatterPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScatterPlot.R) | 149 | scatter plot for mediator | plot
  | | |

@@ -27,7 +27,7 @@ shinyHaplo <- function(input, output, session,
                           win_par, project_info)
 
   ## Genome Scan.
-  shiny::callModule(shinyScan1Plot, "hap_scan", 
+  shiny::callModule(shinyScan1, "hap_scan", 
              input, win_par, 
              phe_mx, cov_df, probs_obj, K_chr, analyses_df,
              project_info, allele_info)
@@ -53,14 +53,14 @@ shinyHaplo <- function(input, output, session,
 
   output$hap_input <- shiny::renderUI({
     switch(shiny::req(input$button),
-           "Genome Scans"    = shinyScan1PlotUI(ns("hap_scan")),
+           "Genome Scans"    = shinyScan1UI(ns("hap_scan")),
            "SNP Association" =,
            "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")),
            "Mediation"       = shinyMediateUI(ns("mediate")))
   })
   output$hap_output <- shiny::renderUI({
     switch(shiny::req(input$button),
-           "Genome Scans"    = shinyScan1PlotOutput(ns("hap_scan")),
+           "Genome Scans"    = shinyScan1Output(ns("hap_scan")),
            "SNP Association" = ,
            "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")),
            "Mediation"       = shinyMediateOutput(ns("mediate")))
