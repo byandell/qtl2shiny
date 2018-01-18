@@ -27,7 +27,7 @@ shinySNPAssoc <- function(input, output, session,
 
   ## Shiny Modules
   ## SNP Association Scan
-  shiny::callModule(shinyScan1SNP, "snp_scan",
+  shiny::callModule(shinySNPPlot, "snp_scan",
              snp_par, chr_pos, pheno_names,
              snp_scan_obj, snpinfo, snp_action)
   ## SNP Summary
@@ -56,7 +56,7 @@ shinySNPAssoc <- function(input, output, session,
   })
   output$snp_output <- shiny::renderUI({
     switch(shiny::req(input$button),
-           Scan    = shinyScan1SNPOutput(ns("snp_scan")),
+           Scan    = shinySNPPlotOutput(ns("snp_scan")),
            Genes   = shinyGeneRegionOutput(ns("gene_region")),
            Exons   = shinyGeneExonOutput(ns("gene_exon")),
            Summary = shinySNPOutput(ns("best_snp")))
@@ -68,7 +68,7 @@ shinySNPAssoc <- function(input, output, session,
            Scan    =,
            Summary = shiny::tagList(shiny::fluidRow(
              shiny::column(6, shinySNPUI(ns("best_snp"))),
-             shiny::column(6, shinyScan1SNPUI(ns("snp_scan"))))),
+             shiny::column(6, shinySNPPlotUI(ns("snp_scan"))))),
            Genes   = shinyGeneRegionUI(ns("gene_region")),
            Exons   = shinyGeneExonUI(ns("gene_exon")))
   })

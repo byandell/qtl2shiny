@@ -1,6 +1,6 @@
 #' Shiny scan1 SNP analysis and plot module
 #'
-#' Shiny module for scan1 analysis and plots, with interfaces \code{shinyScan1SNPUI} and  \code{shinyScan1SNPOutput}.
+#' Shiny module for scan1 analysis and plots, with interfaces \code{shinySNPPlotUI} and  \code{shinySNPPlotOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,snp_action reactive arguments
@@ -15,7 +15,7 @@
 #'   renderPlot
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
-shinyScan1SNP <- function(input, output, session,
+shinySNPPlot <- function(input, output, session,
                           snp_par, chr_pos, pheno_names,
                           snp_scan_obj, snpinfo,
                           snp_action = shiny::reactive({"basic"})) {
@@ -51,11 +51,11 @@ shinyScan1SNP <- function(input, output, session,
     }
   )
 }
-shinyScan1SNPUI <- function(id) {
+shinySNPPlotUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::downloadButton(ns("downloadPlot"), "Plots")
 }
-shinyScan1SNPOutput <- function(id) {
+shinySNPPlotOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::plotOutput(ns("snpPlot"))
 }

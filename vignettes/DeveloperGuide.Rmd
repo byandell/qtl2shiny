@@ -189,5 +189,5 @@ modeul | lines | task            | output
 [`SNP`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNP.R) | 143 | create table of top SNPs | table
 [`GeneRegion`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneRegion.R) | 115 | genes and SNPs in region | plot, table
 [`GeneExon`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneExon.R) | 162 | exons for individual genes | plot, table
-[`Scan1SNP`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1SNP.R) | 64 | plot SNP association | plot
+[`SNPPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPPlot.R) | 64 | plot SNP association | plot
 [`TopFeature`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyTopFeature.R) | 113 | top SNP features | plot, table
