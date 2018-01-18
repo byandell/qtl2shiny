@@ -1,6 +1,6 @@
 #' Shiny coefficient analysis and plot module
 #'
-#' Shiny module for scan1 coefficient plots, with interfaces \code{shinyMediate1PlotUI} and  \code{shinyMediate1PlotOutput}.
+#' Shiny module for scan1 coefficient plots, with interfaces \code{shinyMediateUI} and  \code{shinyMediateOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param job_par,win_par,patterns,phe_mx,cov_df,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks,project_info,allele_info reactive arguments
@@ -24,7 +24,7 @@
 #' @importFrom plotly renderPlotly plotlyOutput
 #' @importFrom dplyr filter
 #' 
-shinyMediate1Plot <- function(input, output, session,
+shinyMediate <- function(input, output, session,
                               job_par, win_par, patterns,
                               phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                               pmap_obj, covar, pheno_data, analyses_tbl, peaks,
@@ -289,14 +289,14 @@ shinyMediate1Plot <- function(input, output, session,
       shiny::uiOutput(ns("out_choice"))
   })
 }
-shinyMediate1PlotUI <- function(id) {
+shinyMediateUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::strong("Mediation"),
     shiny::uiOutput(ns("checkplot")),
     shiny::uiOutput(ns("medUI")))
 }
-shinyMediate1PlotOutput <- function(id) {
+shinyMediateOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("medOutput"))
 }

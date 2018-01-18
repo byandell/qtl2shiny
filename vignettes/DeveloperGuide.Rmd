@@ -162,32 +162,32 @@ The `Main` module calls the `Setup`, `Haplo` and `Diplo` modules, corresponding 
 
 modeul | lines | task            | output
 ------|--------|-----------------|-------
-[`Main`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyMain.R)| 129 | call Setup, Haplo, Diplo |
-[`Setup`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySetup.R)| 209 | set up project |
-[`Haplo`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyHaplo.R)| 103 | Haplotype Scans |
-[`Diplo`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyDiplo.R)| 107 | SNP/Gene Action |
+[`Main`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyMain.R) | 129 | call Setup, Haplo, Diplo |
+[`Setup`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySetup.R) | 209 | set up project |
+[`Haplo`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyHaplo.R) | 103 | Haplotype Scans |
+[`Diplo`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyDiplo.R) | 107 | SNP/Gene Action |
  | | |
-[`Project`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProject.R)| 47 | pick project | 
-[`Peaks`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPeaks.R)| 175 | select chr, peak and window width |
-[`Phenos`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPhenos.R)| 88 | phenotype information | table
-[`Hotspot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyHotspot.R)| 190 | hotspot count by location | plot, table
-[`PhenoPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPhenoPlot.R)| 66 | plot phenotypes | plot
+[`Project`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProject.R) | 47 | pick project | 
+[`Peaks`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPeaks.R) | 175 | select chr, peak and window width |
+[`Phenos`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPhenos.R) | 88 | phenotype information | table
+[`Hotspot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyHotspot.R) | 190 | hotspot count by location | plot, table
+[`PhenoPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPhenoPlot.R) | 66 | plot phenotypes | plot
  | | |
-[`Probs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProbs.R)| 93 | allele genotype probabilities |
-[`Scan1Plot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1Plot.R)| 210 | allele genome LOD and effect scans | plot, table
-[`Mediate1Plot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyMediate1Plot.R)| 306 | mediation by other phenotypes | plot, table
-[`ScatterPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScatterPlot.R)| 149 | scatter plot for mediator | plot
+[`Probs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProbs.R) | 93 | allele genotype probabilities |
+[`Scan1Plot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1Plot.R) | 210 | allele genome LOD and effect scans | plot, table
+[`Mediate`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyMediate.R) | 306 | mediation by other phenotypes | plot, table
+[`ScatterPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScatterPlot.R) | 149 | scatter plot for mediator | plot
  | | |
-[`Probs36`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProbs36.R)| 93 | allele pair genotype probabilities |
-[`Pattern`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPattern.R)| 247 | LOD and imputed SNP effects by pattern | plot, table
-[`Allele1`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllele1.R)| 126 | allele and allele pair means | plot, tablt
+[`Probs36`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProbs36.R) | 93 | allele pair genotype probabilities |
+[`Pattern`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPattern.R) | 247 | LOD and imputed SNP effects by pattern | plot, table
+[`Allele1`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllele1.R) | 126 | allele and allele pair means | plot, tablt
  | | |
-[`SNPAllele`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPAllele.R)| 225 | manage SNP processng |
-[`SNPProbs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPProbs.R)| 93 | SNP genotype probabilities |
-[`SNPAssoc`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPAssoc.R)| 102 | SNP association mapping | table
-[`AllelePat`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllelePat.R)| 276 | SNP allele patterns | plot, table
-[`SNP`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNP.R)| 143 | create table of top SNPs | table
-[`GeneRegion`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneRegion.R)| 115 | genes and SNPs in region | plot, table
-[`GeneExon`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneExon.R)| 162 | exons for individual genes | plot, table
-[`Scan1SNP`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1SNP.R)| 64 | plot SNP association | plot
-[`TopFeature`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyTopFeature.R)| 113 | top SNP features | plot, table
+[`SNPAllele`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPAllele.R) | 225 | manage SNP processng |
+[`SNPProbs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPProbs.R) | 93 | SNP genotype probabilities |
+[`SNPAssoc`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPAssoc.R) | 102 | SNP association mapping | table
+[`AllelePat`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllelePat.R) | 276 | SNP allele patterns | plot, table
+[`SNP`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNP.R) | 143 | create table of top SNPs | table
+[`GeneRegion`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneRegion.R) | 115 | genes and SNPs in region | plot, table
+[`GeneExon`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneExon.R) | 162 | exons for individual genes | plot, table
+[`Scan1SNP`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1SNP.R) | 64 | plot SNP association | plot
+[`TopFeature`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyTopFeature.R) | 113 | top SNP features | plot, table

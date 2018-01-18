@@ -54,7 +54,7 @@ How to incorporate this into shiny tool?
 
 ## QTL2 Shiny Interface
 
-Information will appear here about how the Shiny Interface works. Or perhaps that is best as another package. 
+Information will appear here about how the Shiny Interface works.
 
 ## R/qtl2 companion packages
 

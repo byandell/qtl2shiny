@@ -39,7 +39,7 @@ shinyHaplo <- function(input, output, session,
               project_info, allele_info)
 
   ## Mediation
-  shiny::callModule(shinyMediate1Plot, "mediate",
+  shiny::callModule(shinyMediate, "mediate",
                     input, win_par, patterns,
                     phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                     pmap_obj, 
@@ -56,14 +56,14 @@ shinyHaplo <- function(input, output, session,
            "Genome Scans"    = shinyScan1PlotUI(ns("hap_scan")),
            "SNP Association" =,
            "Allele Pattern"  = shinySNPAlleleUI(ns("snp_allele")),
-           "Mediation"       = shinyMediate1PlotUI(ns("mediate")))
+           "Mediation"       = shinyMediateUI(ns("mediate")))
   })
   output$hap_output <- shiny::renderUI({
     switch(shiny::req(input$button),
            "Genome Scans"    = shinyScan1PlotOutput(ns("hap_scan")),
            "SNP Association" = ,
            "Allele Pattern"  = shinySNPAlleleOutput(ns("snp_allele")),
-           "Mediation"       = shinyMediate1PlotOutput(ns("mediate")))
+           "Mediation"       = shinyMediateOutput(ns("mediate")))
   })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
