@@ -1,6 +1,6 @@
 #' Shiny top SNP analysis and plot module
 #'
-#' Shiny module for top SNP analysis and plots, with interfaces \code{shinyAllelePatInput}, \code{shinyAllelePatUI} and  \code{shinyAllelePatOutput}.
+#' Shiny module for top SNP analysis and plots, with interfaces \code{shinySNPPatternInput}, \code{shinySNPPatternUI} and  \code{shinySNPPatternOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,allele_info,snp_action reactive arguments
@@ -23,7 +23,7 @@
 #'   downloadButton downloadHandler
 #' @importFrom plotly plotlyOutput renderPlotly
 #'   
-shinyAllelePat <- function(input, output, session,
+shinySNPPattern <- function(input, output, session,
                         snp_par, chr_pos, pheno_names,
                         snp_scan_obj, snpinfo, top_snps_tbl, 
                         gene_exon_tbl, allele_info, 
@@ -253,18 +253,18 @@ shinyAllelePat <- function(input, output, session,
 
   input
 }
-shinyAllelePatInput <- function(id) {
+shinySNPPatternInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::uiOutput(ns("radio")),
     shiny::uiOutput(ns("pat_input"))
   )
 }
-shinyAllelePatUI <- function(id) {
+shinySNPPatternUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("download_csv_plot"))
 }
-shinyAllelePatOutput <- function(id) {
+shinySNPPatternOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("pat_output"))
 }
