@@ -31,7 +31,7 @@ shinySNPAssoc <- function(input, output, session,
              snp_par, chr_pos, pheno_names,
              snp_scan_obj, snpinfo, snp_action)
   ## SNP Summary
-  shiny::callModule(shinySNP, "best_snp", 
+  shiny::callModule(shinySNPSum, "best_snp", 
              chr_pos, top_snps_tbl, snp_action)
   ## Gene Region
   shiny::callModule(shinyGeneRegion, "gene_region",
@@ -52,14 +52,14 @@ shinySNPAssoc <- function(input, output, session,
   output$snp_input <- shiny::renderUI({
     switch(shiny::req(input$button),
            Exons   = shinyGeneExonInput(ns("gene_exon")),
-           Summary = shinySNPInput(ns("best_snp")))
+           Summary = shinySNPSumInput(ns("best_snp")))
   })
   output$snp_output <- shiny::renderUI({
     switch(shiny::req(input$button),
            Scan    = shinySNPPlotOutput(ns("snp_scan")),
            Genes   = shinyGeneRegionOutput(ns("gene_region")),
            Exons   = shinyGeneExonOutput(ns("gene_exon")),
-           Summary = shinySNPOutput(ns("best_snp")))
+           Summary = shinySNPSumOutput(ns("best_snp")))
   })
   
   ## Downloads
@@ -67,7 +67,7 @@ shinySNPAssoc <- function(input, output, session,
     switch(shiny::req(input$button),
            Scan    =,
            Summary = shiny::tagList(shiny::fluidRow(
-             shiny::column(6, shinySNPUI(ns("best_snp"))),
+             shiny::column(6, shinySNPSumUI(ns("best_snp"))),
              shiny::column(6, shinySNPPlotUI(ns("snp_scan"))))),
            Genes   = shinyGeneRegionUI(ns("gene_region")),
            Exons   = shinyGeneExonUI(ns("gene_exon")))

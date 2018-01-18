@@ -1,6 +1,6 @@
-#' Shiny SNP analysis and plot module
+#' Shiny SNP summary module
 #'
-#' Shiny module for scan1 analysis and plots, with interfaces \code{shinySNPInput}, \code{shinySNPUI} and  \code{shinySNPOutput}.
+#' Shiny module for SNP summary, with interfaces \code{shinySNPInput}, \code{shinySNPUI} and  \code{shinySNPOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param chr_pos,top_snps_tbl reactive arguments
@@ -19,7 +19,7 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 #' @importFrom ggplot2 autoplot
-shinySNP <- function(input, output, session,
+shinySNPSum <- function(input, output, session,
                      chr_pos, top_snps_tbl,
                      snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
@@ -122,17 +122,17 @@ shinySNP <- function(input, output, session,
   )
 }
 
-shinySNPInput <- function(id) {
+shinySNPSumInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::selectInput(ns("snp_sum"), NULL, c("best","indels","peaks","range"))
   )
 }
-shinySNPUI <- function(id) {
+shinySNPSumUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::downloadButton(ns("downloadData"), "CSV")
 }
-shinySNPOutput <- function(id) {
+shinySNPSumOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("snp_sum"))
 }
