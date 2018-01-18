@@ -1,6 +1,6 @@
 #' Shiny SNP Association
 #' 
-#' Shiny module for SNP association mapping, with interfaces \code{shinySNPAssocInput}, \code{shinySNPAssocUI} and  \code{shinySNPAssocOutput}.
+#' Shiny module for SNP association mapping, with interfaces \code{shinySNPGeneInput}, \code{shinySNPGeneUI} and  \code{shinySNPGeneOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,project_info,snp_action reactive arguments
@@ -17,7 +17,7 @@
 #'   uiOutput
 #'   renderUI
 #'   fluidRow column tagList
-shinySNPAssoc <- function(input, output, session,
+shinySNPGene <- function(input, output, session,
                         snp_par, chr_pos, pheno_names,
                         snp_scan_obj, snpinfo, top_snps_tbl, 
                         gene_exon_tbl,
@@ -80,7 +80,7 @@ shinySNPAssoc <- function(input, output, session,
   input
 }
 
-shinySNPAssocInput <- function(id) {
+shinySNPGeneInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::fluidRow(
@@ -89,11 +89,11 @@ shinySNPAssocInput <- function(id) {
     shiny::uiOutput(ns("snp_input"))
   )
 }
-shinySNPAssocUI <- function(id) {
+shinySNPGeneUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("download_csv_plot"))
 }
-shinySNPAssocOutput <- function(id) {
+shinySNPGeneOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("snp_output"))
 }

@@ -184,8 +184,8 @@ modeul | lines | task            | output
  | | |
 [`SNPSetup`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPSetup.R) | 225 | set up SNP processng |
 [`SNPProbs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPProbs.R) | 93 | SNP genotype probabilities |
-[`SNPAssoc`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPAssoc.R) | 102 | SNP association mapping | table
 [`SNPPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPPlot.R) | 64 | plot SNP association | plot
+[`SNPGene`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPGene.R) | 102 | SNP & Gene Choice | table
 [`AllelePat`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllelePat.R) | 276 | SNP allele patterns | plot, table
 [`SNPSum`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPSum.R) | 143 | create table of top SNPs | table
 [`GeneRegion`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneRegion.R) | 115 | genes and SNPs in region | plot, table

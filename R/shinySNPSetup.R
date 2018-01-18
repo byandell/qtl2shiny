@@ -97,7 +97,7 @@ shinySNPSetup <- function(input, output, session,
   
   ## Shiny Modules
   ## SNP Association
-  ass_par <- shiny::callModule(shinySNPAssoc, "snp_assoc",
+  ass_par <- shiny::callModule(shinySNPGene, "snp_gene",
              input, chr_pos, pheno_names,
              snp_scan_obj, snpinfo, top_snps_tbl, 
              gene_exon_tbl, project_info, snp_action)
@@ -174,19 +174,19 @@ shinySNPSetup <- function(input, output, session,
   })
   output$snp_input <- shiny::renderUI({
     switch(shiny::req(job_par$button),
-           "SNP Association" = shinySNPAssocInput(ns("snp_assoc")),
+           "SNP Association" = shinySNPGeneInput(ns("snp_gene")),
            "Allele Pattern"  = shinyAllelePatInput(ns("allele_pat")))
   })
   output$snp_output <- shiny::renderUI({
     switch(shiny::req(job_par$button),
-           "SNP Association" = shinySNPAssocOutput(ns("snp_assoc")),
+           "SNP Association" = shinySNPGeneOutput(ns("snp_gene")),
            "Allele Pattern"  = shinyAllelePatOutput(ns("allele_pat")))
   })
 
   ## Downloads
   output$download_csv_plot <- shiny::renderUI({
     switch(shiny::req(job_par$button),
-           "SNP Association" = shinySNPAssocUI(ns("snp_assoc")),
+           "SNP Association" = shinySNPGeneUI(ns("snp_gene")),
            "Allele Pattern"  = shinyAllelePatUI(ns("allele_pat")))
   })
   
