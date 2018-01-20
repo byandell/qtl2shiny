@@ -11,7 +11,7 @@
 #'
 #' @export
 #' @importFrom CausalMST mediate1_test
-#' @importFrom qtl2pattern pheno_trans
+#' @importFrom qtl2pattern covar_df_mx pheno_trans
 #' @importFrom qtl2scan scan1
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req isTruthy

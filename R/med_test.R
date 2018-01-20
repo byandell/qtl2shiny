@@ -4,8 +4,8 @@ med_test <- function(med_ls, geno_max, phe_mx, kinship, cov_tar,
   if(is.list(kinship))
     kinship <- kinship[[1]]
   
-  cov_tar <- covar_df_mx(cov_tar)
-  cov_med <- covar_df_mx(med_ls$cov_med)
+  cov_tar <- qtl2pattern::covar_df_mx(cov_tar)
+  cov_med <- qtl2pattern::covar_df_mx(med_ls$cov_med)
   
   CausalMST::mediate1_test(med_ls, geno_max, phe_mx,
                            kinship, cov_tar, cov_med,
@@ -25,8 +25,8 @@ med_scat <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps,
   if(length(id) != 1)
     return(NULL)
   
-  cov_tar <- covar_df_mx(cov_tar)
-  cov_med <- covar_df_mx(med_ls$cov_med)
+  cov_tar <- qtl2pattern::covar_df_mx(cov_tar)
+  cov_med <- qtl2pattern::covar_df_mx(med_ls$cov_med)
   
   CausalMST:::med_scatter(geno_max, phe_mx, med_ls[[1]][, id, drop = FALSE],
                           kinship, cov_tar, cov_med,

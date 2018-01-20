@@ -10,7 +10,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom qtl2pattern listof_scan1coef
+#' @importFrom qtl2pattern covar_df_mx listof_scan1coef scan1_covar sexcovar
 #' @importFrom qtl2scan scan1
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req 
@@ -32,7 +32,7 @@ shinyScan1 <- function(input, output, session,
                job_par$sex_type)
     shiny::withProgress(message = "Genome Scan ...", value = 0, {
       shiny::setProgress(1)
-      scan1_covar(phe_mx(), cov_df(), probs_obj()$probs, K_chr(), analyses_df(),
+      qtl2pattern::scan1_covar(phe_mx(), cov_df(), probs_obj()$probs, K_chr(), analyses_df(),
                   sex_type = job_par$sex_type)
     })
   })
