@@ -12,7 +12,7 @@
 #' @export
 #' @importFrom CausalMST mediate1_test
 #' @importFrom qtl2pattern covar_df_mx pheno_trans
-#' @importFrom qtl2scan scan1
+#' @importFrom qtl2 find_marker scan1
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
@@ -62,7 +62,7 @@ shinyMediate <- function(input, output, session,
   
   # Get genotype matrix and map at 
   peak_mar <- reactive({
-    qtl2geno::find_marker(probs_obj()$map, chr_id(), input$pos_Mbp)
+    qtl2::find_marker(probs_obj()$map, chr_id(), input$pos_Mbp)
   })
   geno_max <- reactive({
     shiny::req(input$pos_Mbp, probs_obj())
@@ -98,7 +98,13 @@ shinyMediate <- function(input, output, session,
   })
 
   phe1_mx <- reactive({
-    phe_mx()[, shiny::req(input$pheno_name), drop = FALSE]
+    shiny::req(phe_mx())
+    phename <- shiny::req(input$pheno_name)
+    if(phename %in% colnames(phe_mx())) {
+      phe_mx()[, phename, drop = FALSE]
+    } else {
+      NULL
+    }
   })
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({

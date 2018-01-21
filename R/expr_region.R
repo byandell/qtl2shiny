@@ -19,7 +19,7 @@ expr_region <- function(chr_id, scan_window, covar, qtls, pmap,
   
   if(qtls == 2) {
     
-    out$annot$driver <- qtl2geno::find_marker(pmap, chr_id, out$annot$qtl_pos)
+    out$annot$driver <- qtl2::find_marker(pmap, chr_id, out$annot$qtl_pos)
   }
   
   out

@@ -10,7 +10,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom qtl2scan scan1
+#' @importFrom qtl2 scan1
 #' @importFrom qtl2pattern sdp_to_pattern
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req isTruthy

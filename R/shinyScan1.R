@@ -11,7 +11,7 @@
 #'
 #' @export
 #' @importFrom qtl2pattern covar_df_mx listof_scan1coef scan1_covar sexcovar
-#' @importFrom qtl2scan scan1
+#' @importFrom qtl2 scan1
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req 
 #'   radioButtons selectInput sliderInput updateSliderInput

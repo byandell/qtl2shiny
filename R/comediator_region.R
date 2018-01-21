@@ -42,7 +42,7 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
   covars <- names(covars)[covars]
   
   if(qtls == 2)
-    annot$driver <- qtl2geno::find_marker(pmap, chr_id, annot$pos)
+    annot$driver <- qtl2::find_marker(pmap, chr_id, annot$pos)
 
   list(comediators = qtl2pattern::pheno_trans(pheno_data,
                                               annot$pheno,
