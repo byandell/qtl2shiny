@@ -36,7 +36,7 @@ shinyPattern <- function(input, output, session,
   phe1_mx <- reactive({
     phe_mx()[, shiny::req(input$pheno_name), drop = FALSE]
   })
-  shiny::callModule(shinyAllele1, "alleles",
+  shiny::callModule(shinyAllele, "alleles",
                     win_par, 
                     phe1_mx, cov_df, pairprobs_obj, K_chr, analyses_df,
                     patterns, scan_pat, project_info, snp_action)
@@ -160,7 +160,7 @@ shinyPattern <- function(input, output, session,
   })
   output$Means <- shiny::renderUI({
     switch(shiny::req(input$button),
-           "Allele Means"  = shinyAllele1Output(ns("alleles")))
+           "Allele Means"  = shinyAlleleOutput(ns("alleles")))
   })
   output$Summary <- shiny::renderUI({
     switch(shiny::req(input$button),
@@ -213,7 +213,7 @@ shinyPattern <- function(input, output, session,
   })
   output$select <- shiny::renderUI({
     switch(shiny::req(input$button),
-           "Allele Means"  = shinyAllele1UI(ns("alleles")),
+           "Allele Means"  = shinyAlleleUI(ns("alleles")),
                              uiOutput(ns("patterndown")))
     
   })

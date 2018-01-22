@@ -23,7 +23,6 @@ This document is a Developer Guide for the [R/qtl2shiny](https://github.com/byan
 
 Those wishing to _use_ the shiny interface with their own data will want to read about the data structures, and contact me. Those wishing to _extend_ capabilities of the package, or understand its inner working, with be interested in the package organization.
 
-    
 ## Data Structures and Folder Organization
 
 The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R) is in a directory with other support documents and the data. 
@@ -79,7 +78,6 @@ file | contents
 `analyses.rds` | data frame of information about analyses (one row per phenotype)
 `covar.rds` | data frame of covariates (row = individual, column = covariate)
 `pheno_data.rds` | matrix of phenotype data (row = individual, column = phenotype)
-`pheno_type.rds` | vector of phenotype types (this will probably disappear)
 `peaks.rds` | data frame of peak information (one row per peak)
 `hotspot.rds` | hotspot object with counts of peaks by position and phenotype set
 `query_mrna.rds` | query of mRNA data
@@ -87,7 +85,6 @@ file | contents
 
 Likely changes:
 
-- pheno_type.rds will disappear
 - pheno_data.rds may become a feather database
 - analyses.rds will be redesigned
 

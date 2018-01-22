@@ -1,6 +1,4 @@
-Examples pulled from **Network Visualization with R**, [Polnet 2016](http://www.kateto.net/polnet2016) by Katya Ognyanova.
-
-```{r}
+```{r message=FALSE}
 nodes <- 
    readr::read_csv(system.file("extdata/qtl2shinyNode.csv", package = "qtl2shiny"))
 links <- 
@@ -8,11 +6,11 @@ links <-
 ```
 
 ```{r}
-net <- igraph::graph_from_data_frame(d=links, vertices=nodes, directed=T)
+net <- igraph::graph_from_data_frame(d=links, vertices=nodes, directed=TRUE)
 ```
 
 ```{r}
-net <- igraph::simplify(net, remove.multiple = F, remove.loops = T) 
+net <- igraph::simplify(net, remove.multiple = F, remove.loops = TRUE) 
 ```
 
 ```{r}

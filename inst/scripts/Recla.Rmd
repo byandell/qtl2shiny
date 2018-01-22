@@ -136,14 +136,6 @@ for(i in names(covar))
 saveRDS(analyses_tbl, file.path(project_dir, "analyses.rds"))
 ```
 
-```{r}
-pheno_type   <- DOread::setup_type(analyses_tbl)
-```
-
-```{r}
-saveRDS(pheno_type, file.path(project_dir, "pheno_type.rds"))
-```
-
 ## Hotspots
 
 ```{r}
