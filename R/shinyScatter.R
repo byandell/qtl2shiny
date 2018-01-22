@@ -1,6 +1,6 @@
 #' Shiny scatter plot module
 #'
-#' Shiny module for scatter plots, with interfaces \code{shinyScatterPlotUI} and  \code{shinyScatterPlotOutput}.
+#' Shiny module for scatter plots, with interfaces \code{shinyScatterUI} and  \code{shinyScatterOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,allele_info reactive arguments
@@ -22,7 +22,7 @@
 #'   downloadButton downloadHandler
 #' @importFrom plotly renderPlotly plotlyOutput
 #' 
-shinyScatterPlot <- function(input, output, session,
+shinyScatter <- function(input, output, session,
                   med_par, patterns, 
                   geno_max, peak_mar, med_ls, mediate_obj,
                   phe_mx, cov_df, K_chr,
@@ -129,7 +129,7 @@ shinyScatterPlot <- function(input, output, session,
   med_ls
 }
 
-shinyScatterPlotUI <- function(id) {
+shinyScatterUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::uiOutput(ns("triad")),
@@ -140,7 +140,7 @@ shinyScatterPlotUI <- function(id) {
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
 }
-shinyScatterPlotOutput <- function(id) {
+shinyScatterOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::plotOutput(ns("scatPlot"))
 }

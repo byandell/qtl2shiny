@@ -70,7 +70,7 @@ shinyMediate <- function(input, output, session,
   })
   
   ## Scatter Plots
-  shiny::callModule(shinyScatterPlot, "scatter",
+  shiny::callModule(shinyScatter, "scatter",
                     input, patterns, 
                     geno_max, peak_mar, med_ls, mediate_signif,
                     phe1_mx, cov_df, K_chr,
@@ -285,12 +285,12 @@ shinyMediate <- function(input, output, session,
              shiny::uiOutput(ns("mediation"))
            },
            {
-             shinyScatterPlotUI(ns("scatter"))
+             shinyScatterUI(ns("scatter"))
            })
   })
   output$medOutput <- shiny::renderUI({
     if(shiny::isTruthy(input$checkplot))
-      shinyScatterPlotOutput(ns("scatter"))
+      shinyScatterOutput(ns("scatter"))
     else
       shiny::uiOutput(ns("out_choice"))
   })

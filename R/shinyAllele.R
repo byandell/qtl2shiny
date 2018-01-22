@@ -1,6 +1,6 @@
 #' Shiny coefficient analysis and plot module
 #'
-#' Shiny module for scan1 coefficient plots, with interfaces \code{shinyAllele1UI} and  \code{shinyAllele1Output}.
+#' Shiny module for scan1 coefficient plots, with interfaces \code{shinyAlleleUI} and  \code{shinyAlleleOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,patterns,scan_pat,project_info,snp_action reactive arguments
@@ -20,7 +20,7 @@
 #'   downloadButton downloadHandler
 #' @importFrom ggplot2 autoplot ggtitle
 #' 
-shinyAllele1 <- function(input, output, session,
+shinyAllele <- function(input, output, session,
                   win_par, 
                   phe_mx, cov_df, probs_obj, K_chr, analyses_df, 
                   patterns, scan_pat, project_info, snp_action) {
@@ -106,7 +106,7 @@ shinyAllele1 <- function(input, output, session,
     }
   )
 }
-shinyAllele1UI <- function(id) {
+shinyAlleleUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::uiOutput(ns("pos_Mbp")),
@@ -114,7 +114,7 @@ shinyAllele1UI <- function(id) {
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
 }
-shinyAllele1Output <- function(id) {
+shinyAlleleOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::plotOutput(ns("allele1Plot")),

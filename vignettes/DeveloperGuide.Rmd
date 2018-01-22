@@ -181,11 +181,11 @@ modeul | lines | task            | output
 [`Probs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyProbs.R) | 93 | allele genotype probabilities |
 [`Scan1`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScan1.R) | 210 | allele genome LOD and effect scans | plot, table
 [`Mediate`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyMediate.R) | 306 | mediation by other phenotypes | plot, table
-[`ScatterPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScatterPlot.R) | 149 | scatter plot for mediator | plot
+[`Scatter`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyScatter.R) | 149 | scatter plot for mediator | plot
  | | |
 [`PairProbs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPairProbs.R) | 93 | allele pair genotype probabilities |
 [`Pattern`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyPattern.R) | 247 | LOD and imputed SNP effects by pattern | plot, table
-[`Allele1`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllele1.R) | 126 | allele and allele pair means | plot, tablt
+[`Allele`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllele.R) | 126 | allele and allele pair means | plot, tablt
  | | |
 [`SNPSetup`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPSetup.R) | 225 | set up SNP processng |
 [`SNPPattern`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPPattern.R) | 276 | SNP allele patterns | plot, table

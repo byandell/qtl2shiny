@@ -11,8 +11,8 @@ Haplo,SNPSetup,module
 Main,Diplo,module
 Main,Haplo,module
 Main,Setup,module
-Mediate,ScatterPlot,module
-Pattern,Allele1,module
+Mediate,Scatter,module
+Pattern,Allele,module
 Peaks,Hotspot,module
 Peaks,win_par,output
 Phenos,PhenoPlot,module

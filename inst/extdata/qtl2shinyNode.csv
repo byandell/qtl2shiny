@@ -1,5 +1,5 @@
 node,type,logic,shiny,task,detail
-Allele1,module,server,module,,
+Allele,module,server,module,,
 SNPPattern,module,server,module,,
 Diplo,module,server,module,,
 GeneExon,module,server,module,,
@@ -17,7 +17,7 @@ PairProbs,module,server,module,,genotype probabilities
 Project,module,server,module,,
 Scan1,module,server,module,,
 SNPPlot,module,server,module,,
-ScatterPlot,module,server,module,,
+Scatter,module,server,module,,
 Setup,module,server,module,,
 SNPSum,module,server,module,,
 SNPSetup,module,server,module,,
