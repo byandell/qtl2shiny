@@ -1,6 +1,6 @@
 #' Shiny coefficient analysis and plot module
 #'
-#' Shiny module for scan1 LOD and coefficient plots, with interfaces \code{shinyScan1UI} and  \code{shinyScan1Output}.
+#' Shiny module for scan1 LOD and coefficient plots, with interfaces \code{shinyScanCoefUI} and  \code{shinyScanCoefOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param job_par,win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info reactive arguments
@@ -20,13 +20,13 @@
 #'   fluidRow column strong tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
-shinyScan1 <- function(input, output, session,
+shinyScanCoef <- function(input, output, session,
                   job_par, win_par, 
                   phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                   project_info, allele_info) {
   ns <- session$ns
   
-  ## Scan1
+  ## Genome scan 
   scan_obj <- shiny::reactive({
     shiny::req(phe_mx(), probs_obj(), K_chr(), cov_df(), win_par$window_Mbp,
                job_par$sex_type)
@@ -184,7 +184,7 @@ shinyScan1 <- function(input, output, session,
                  input$button)
   })
 }
-shinyScan1UI <- function(id) {
+shinyScanCoefUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::strong("Genome Scans"),
@@ -197,7 +197,7 @@ shinyScan1UI <- function(id) {
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
 }
-shinyScan1Output <- function(id) {
+shinyScanCoefOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::uiOutput(ns("LOD")),

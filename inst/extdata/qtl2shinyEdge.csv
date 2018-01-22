@@ -6,7 +6,7 @@ Diplo,PairProbs,module
 Diplo,SNPSetup,module
 Haplo,Mediate,module
 Haplo,Probs,module
-Haplo,Scan1,module
+Haplo,ScanCoef,module
 Haplo,SNPSetup,module
 Main,Diplo,module
 Main,Haplo,module

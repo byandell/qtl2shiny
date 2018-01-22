@@ -15,7 +15,7 @@ Phenos,module,server,module,,
 Probs,module,server,module,,genotype probabilities
 PairProbs,module,server,module,,genotype probabilities
 Project,module,server,module,,
-Scan1,module,server,module,,
+ScanCoef,module,server,module,,
 SNPPlot,module,server,module,,
 Scatter,module,server,module,,
 Setup,module,server,module,,
