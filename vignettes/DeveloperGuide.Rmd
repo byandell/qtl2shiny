@@ -156,7 +156,12 @@ However, one first should set up the data and query files as described above.
 
 The shiny server consists of the server app (`server()` and `ui()` in file `app.R`) and 27 shiny modules. The modules form a directed acyclic graph with `Main` being the root node.
 
-![](net.jpg)
+```{r echo=FALSE, child="../inst/scripts/qtl2dag.Rmd"}
+
+```
+
+
+![](../inst/scripts/net.jpg)
 
 The `Main` module calls the `Setup`, `Haplo` and `Diplo` modules, corresponding to the three dashboard menu items. Each of these modules in turn calls other modules. The modules were each designed to do one task, and be kept small, ideally about 100 lines of code (including documentation). Here is a list of modules:
 
@@ -183,11 +188,11 @@ modeul | lines | task            | output
 [`Allele1`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllele1.R) | 126 | allele and allele pair means | plot, tablt
  | | |
 [`SNPSetup`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPSetup.R) | 225 | set up SNP processng |
+[`SNPPattern`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPPattern.R) | 276 | SNP allele patterns | plot, table
+[`SNPFeature`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPFeature.R) | 113 | top SNP features | plot, table
 [`SNPProbs`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPProbs.R) | 93 | SNP genotype probabilities |
-[`SNPPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPPlot.R) | 64 | plot SNP association | plot
 [`SNPGene`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPGene.R) | 102 | SNP & Gene Choice | table
-[`AllelePat`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyAllelePat.R) | 276 | SNP allele patterns | plot, table
+[`SNPPlot`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPPlot.R) | 64 | plot SNP association | plot
 [`SNPSum`](https://github.com/byandell/qtl2shiny/blob/master/R/shinySNPSum.R) | 143 | create table of top SNPs | table
 [`GeneRegion`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneRegion.R) | 115 | genes and SNPs in region | plot, table
 [`GeneExon`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyGeneExon.R) | 162 | exons for individual genes | plot, table
-[`TopFeature`](https://github.com/byandell/qtl2shiny/blob/master/R/shinyTopFeature.R) | 113 | top SNP features | plot, table

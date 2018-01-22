@@ -1,0 +1,41 @@
+Examples pulled from **Network Visualization with R**, [Polnet 2016](http://www.kateto.net/polnet2016) by Katya Ognyanova.
+
+```{r}
+nodes <- 
+   readr::read_csv(system.file("extdata/qtl2shinyNode.csv", package = "qtl2shiny"))
+links <- 
+   readr::read_csv(system.file("extdata/qtl2shinyEdge.csv", package = "qtl2shiny"))
+```
+
+```{r}
+net <- igraph::graph_from_data_frame(d=links, vertices=nodes, directed=T)
+```
+
+```{r}
+net <- igraph::simplify(net, remove.multiple = F, remove.loops = T) 
+```
+
+```{r}
+#change arrow size and edge color:
+igraph::E(net)$arrow.size <- .2
+igraph::E(net)$edge.color <- "gray80"
+```
+
+```{r}
+netModule <-
+  igraph::delete_vertices(
+    igraph::delete_edges(
+      net,
+      igraph::E(net)[assign == "output"]),
+    unclass(igraph::V(net)[shiny != "module"]))
+```
+
+```{r}
+jpeg("net.jpg", width = 700, height = 700)
+plot(netModule, vertex.shape="none", 
+     vertex.label=igraph::V(netModule)$name, 
+     vertex.label.font=2, vertex.label.color="black",
+     vertex.label.cex=0.75, edge.color="gray50",
+     layout = igraph::layout_as_tree)
+dev.off()
+```

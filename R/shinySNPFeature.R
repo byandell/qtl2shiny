@@ -1,6 +1,6 @@
-#' Shiny Top Features in SNP Region module
+#' Shiny SNP Features in SNP Region module
 #'
-#' Shiny module for scan1 analysis and plots, with interfaces \code{shinyTopFeatureInput}, \code{shinyTopFeatureUI} and  \code{shinyTopFeatureOutput}.
+#' Shiny module for scan1 analysis and plots, with interfaces \code{shinySNPFeatureInput}, \code{shinySNPFeatureUI} and  \code{shinySNPFeatureOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_scan_obj,top_snps_tbl,snpinfo,gene_exon_tbl,snp_action reactive arguments
@@ -20,7 +20,7 @@
 #'   fluidRow column tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
-shinyTopFeature <- function(input, output, session,
+shinySNPFeature <- function(input, output, session,
                             snp_par, chr_pos, 
                             snp_scan_obj, snpinfo, top_snps_tbl, 
                             gene_exon_tbl, 
@@ -91,18 +91,18 @@ shinyTopFeature <- function(input, output, session,
   )
 }
 
-shinyTopFeatureInput <- function(id) {
+shinySNPFeatureInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::selectInput(ns("by_choice"), NULL, 
               c("Pattern","Consequence"))
 }
-shinyTopFeatureUI <- function(id) {
+shinySNPFeatureUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
     shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
     shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
 }
-shinyTopFeatureOutput <- function(id) {
+shinySNPFeatureOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("by_choice"))
 }
