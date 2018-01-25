@@ -23,6 +23,37 @@ project_info <- data.frame(project = "Recla",
 
 ```{r}
 project_dir <- file.path(project_info$taxa, project_info$project)
+```
+
+## Query functions
+
+Use `create_probs_query_func_do` from package `qtl2pattern` to query genotype probabilities.
+
+```{r}
+project_path <- file.path(project_info$directory,
+              project_info$taxa,
+              project_info$project)
+```
+
+```{r}
+query_probs <- qtl2pattern::create_probs_query_func(project_path)
+saveRDS(query_probs, file.path("CCmouse/Recla", "query_probs.rds"))
+```
+
+These data do not include mRNA data, so set up null routine. Make sure it has
+required arguments.
+
+```{r}
+tmpfn <- function(dbfile) {
+  function(chr, start, stop,
+           local = TRUE,
+           qtl = FALSE) NULL
+}
+query_mrna <- tmpfn()
+saveRDS(query_mrna, file.path(project_dir, "query_mrna.rds"))
+```
+
+```{r}
 if(!dir.exists(project_dir)) {
   if(!dir.exists(project_info$taxa))
     dir.create(project_info$taxa)
@@ -145,33 +176,3 @@ hots <- qtl2pattern::hotspot(recla$pmap, peaks)
 ```{r}
 saveRDS(hots, file.path(project_dir, "hotspot.rds"))
 ```
-
-## Query functions
-
-Use `create_probs_query_func_do` from package `DOread` to query genotype probabilities.
-
-```{r}
-project_path <- file.path(project_info$directory,
-              project_info$taxa,
-              project_info$project)
-```
-
-```{r}
-query_probs <- DOread::create_probs_query_func_do(project_path)
-saveRDS(query_probs, file.path(project_dir, "query_probs.rds"))
-```
-
-These data do not include mRNA data, so set up null routine. Make sure it has
-required arguments.
-
-```{r}
-tmpfn <- function(dbfile) {
-  function(chr, start, stop,
-           local = TRUE,
-           qtl = FALSE) NULL
-}
-query_mrna <- tmpfn()
-saveRDS(query_mrna, file.path(project_dir, "query_mrna.rds"))
-```
-
-
