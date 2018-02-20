@@ -30,26 +30,15 @@ project_dir <- file.path(project_info$taxa, project_info$project)
 Use `create_probs_query_func_do` from package `qtl2pattern` to query genotype probabilities.
 
 ```{r}
-project_path <- file.path(project_info$directory,
-              project_info$taxa,
-              project_info$project)
-```
-
-```{r}
-query_probs <- qtl2pattern::create_probs_query_func(project_path)
-saveRDS(query_probs, file.path("CCmouse/Recla", "query_probs.rds"))
+query_probs <- qtl2pattern::create_probs_query_func("qtl2shinyData/CCmouse/Recla")
+saveRDS(query_probs, file.path(project_dir, "query_probs.rds"))
 ```
 
 These data do not include mRNA data, so set up null routine. Make sure it has
 required arguments.
 
 ```{r}
-tmpfn <- function(dbfile) {
-  function(chr, start, stop,
-           local = TRUE,
-           qtl = FALSE) NULL
-}
-query_mrna <- tmpfn()
+query_mrna <- qtl2pattern::create_mrna_query_func(NULL)
 saveRDS(query_mrna, file.path(project_dir, "query_mrna.rds"))
 ```
 
@@ -69,22 +58,21 @@ library(qtl2pattern)
 ```
 
 ```{r}
-file <- paste0("https://raw.githubusercontent.com/rqtl/",
-               "qtl2data/master/DO_Recla/recla.zip")
-recla <- read_cross2(file)
-```
-
-```{r}
-saveRDS(recla$pmap, file.path(project_dir, "pmap.rds"))
+recla <- 
+  read_cross2(
+    paste0(
+      "https://raw.githubusercontent.com/rqtl/",
+      "qtl2data/master/DO_Recla/recla.zip"))
 ```
 
 ```{r}
 covar <- recla$covar %>%
   rename(sex = Sex)
-saveRDS(covar, file.path(project_dir, "covar.rds"))
 ```
 
 ```{r}
+saveRDS(recla$pmap, file.path(project_dir, "pmap.rds"))
+saveRDS(covar, file.path(project_dir, "covar.rds"))
 saveRDS(recla$pheno, file.path(project_dir, "pheno_data.rds"))
 ```
 
@@ -95,7 +83,7 @@ if(!dir.exists(feather_dir <- file.path(project_dir, "genoprob"))) {
   dir.create(feather_dir)
 }
 faprobs_file <- file.path(feather_dir, "faprobs.rds")
-if(!file.exists(probs_file <- file.path(feather_dir, "fprobs.rds"))) {
+if(!file.exists(file.path(feather_dir, "fprobs.rds"))) {
   map <- insert_pseudomarkers(recla$gmap, step=1)
   
   cat("allele pair genotype probabilities\n", file = stderr())
@@ -149,10 +137,6 @@ peaks <- peaks %>%
 ```
 
 ```{r}
-saveRDS(peaks, file.path(project_dir, "peaks.rds"))
-```
-
-```{r}
 analyses_tbl <- distinct(peaks, pheno, .keep_all = TRUE) %>%
   select(-lod, -pos, -chr) %>%
   mutate(model = "normal",
@@ -164,6 +148,7 @@ for(i in names(covar))
 ```
 
 ```{r}
+saveRDS(peaks, file.path(project_dir, "peaks.rds"))
 saveRDS(analyses_tbl, file.path(project_dir, "analyses.rds"))
 ```
 

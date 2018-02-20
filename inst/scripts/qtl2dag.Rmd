@@ -28,12 +28,12 @@ netModule <-
     unclass(igraph::V(net)[shiny != "module"]))
 ```
 
-```{r message=FALSE, warning=FALSE}
-jpeg("net.jpg", width = 700, height = 700)
+```{r message=FALSE, warning=FALSE, fig.width=7, fig.height=7}
+#jpeg("net.jpg", width = 700, height = 700)
 plot(netModule, vertex.shape="none", 
      vertex.label=igraph::V(netModule)$name, 
      vertex.label.font=2, vertex.label.color="black",
-     vertex.label.cex=0.75, edge.color="gray50",
+     vertex.label.cex=0.5, edge.color="gray50",
      layout = igraph::layout_as_tree)
-invisible(dev.off())
+#invisible(dev.off())
 ```

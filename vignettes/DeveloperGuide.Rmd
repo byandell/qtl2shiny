@@ -25,7 +25,7 @@ Those wishing to _use_ the shiny interface with their own data will want to read
 
 ## Data Structures and Folder Organization
 
-The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R) is in a directory with other support documents and the data. 
+The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R) is in a directory with other support documents and the data. There is no need to change this file; just put it in place.
 
 The CSV file [`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/projects.csv), in that same directory, contains project information. This file has the following content:
 
@@ -44,7 +44,7 @@ The column names are fixed. The `project` is the project name (`Recla`), `taxa` 
 `qtl2shinyData/CCmouse/`  
 `qtl2shinyData/CCmouse/Recla/`
 
-The `about.md` and `about-extended.md` files are place-holders for now for online documentation. All data are now stored under the directory (`qtl2shinyData`) using relative addresses. However, it is possible for data for a `taxa` and `project` to be stored in another place, in which case an absolute address would be supplied in the `projects.csv` file.
+The `about.md` and `about-extended.md` files are place-holders for now for online documentation. All data may be stored under the directory (`qtl2shinyData`).
 
 Detailed information about the `taxa` and `project` can be found with the [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) and [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd) examples, respectively.
 
@@ -75,9 +75,9 @@ file | contents
 `genoprob/` | directory with genotype probabilities created with [R/qtl2feather](https://github.com/byandell/qtl2feather)
 `kinship.rds` | kinship object using LOCO (see [R/qtl2](http://kbroman.org/qtl2/assets/vignettes/user_guide.html#calculating_a_kinship_matrix))
 `pmap.rds` | physical map
-`analyses.rds` | data frame of information about analyses (one row per phenotype)
 `covar.rds` | data frame of covariates (row = individual, column = covariate)
 `pheno_data.rds` | matrix of phenotype data (row = individual, column = phenotype)
+`analyses.rds` | data frame of information about analyses (one row per phenotype)
 `peaks.rds` | data frame of peak information (one row per peak)
 `hotspot.rds` | hotspot object with counts of peaks by position and phenotype set
 `query_mrna.rds` | query of mRNA data
@@ -92,6 +92,44 @@ Some projects have an `RNAseq` folder. This, and accompanying routines for mRNA 
 
 ## Data files
 
+The easiest way to set up data files is to look at the example in
+[Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd).
+Once you have created the objects in R, you can save them as, for instance, RDS files (here using the same names as in [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd)).
+
+```{r eval=FALSE}
+project_info <- read.csv("project.csv")
+project_dir <- file.path(project_info$taxa[1],
+                         project_info$project[1])
+saveRDS(kinship, file.path(project_dir, "kinship.rds"))
+saveRDS(pmap, file.path(project_dir, "pmap.rds"))
+saveRDS(covar, file.path(project_dir, "covar.rds"))
+saveRDS(pheno, file.path(project_dir, "pheno_data.rds"))
+saveRDS(analyses_tbl, file.path(project_dir, "analyses.rds"))
+saveRDS(peaks, file.path(project_dir, "peaks.rds"))
+saveRDS(hots, file.path(project_dir, "hotspot.rds"))
+```
+
+## Genotype probabilities
+
+Genotype probabilities get stored in `feather` databases by chromosome for rapid access. This takes a few steps, starting with creating a directory to store files and calculating genotype probabilities for allele pairs. 
+
+```{r eval=FALSE}
+# Create directory for feather data; must call it "genoprob"
+feather_dir <- file.path(project_dir, "genoprob")
+dir.create(feather_dir)
+
+# Calculate allele pair genotype probabilities
+probs <- calc_genoprob(recla, gmap, err=0.002)
+# Convert allele pair probs to feather via qtl2feather
+fprobs <- feather_genoprob(probs, "probs", feather_dir)
+saveRDS(fprobs, file = file.path(feather_dir, "fprobs.rds"))
+
+# Compute allele genotype probabilities from those for allele pairs
+aprobs <- genoprob_to_alleleprob(probs)
+# Convert allele probs to feather via qtl2feather
+faprobs <- feather_genoprob(aprobs, "aprobs", feather_dir)
+saveRDS(faprobs, file = file.path(feather_dir, "faprobs.rds"))
+```
 
 ## Query files
 
@@ -121,7 +159,7 @@ genes <- query_genes("1", 39, 40)
 variants <- query_variants("1", 39, 40)
 ```
 
-The above two routines would generally be used across all projects involving the CC mouse. The following two routines are project specific, refering to genotype probabilities and mRNA data. They do not directly identify the data file, as that is currently hard-coded into the [R/DOread](https://github.com/byandell/DOread) package. These will change substantially in the near future.
+The above two routines would generally be used across all projects involving the CC mouse. The following two routines are project specific, refering to genotype probabilities and `mRNA` data. They do not directly identify the data file, as that is currently hard-coded into the [R/DOread](https://github.com/byandell/DOread) package. These will change substantially in the near future.
 
 ```{r eval=FALSE}
 query_probs <- DOread::create_probs_query_func_do("CCmouse/Recla")
@@ -129,16 +167,28 @@ saveRDS(query_probs, "query_probs.rds")
 ```
 
 ```{r eval=FALSE}
-query_mrna <- DOread::create_probs_query_func_do("CCmouse/Recla")
+query_mrna <- DOread::create_mrna_query_func_do(NULL)
 saveRDS(query_probs, "query_mrna.rds")
 ```
 
-Again, these enable calls to access data in a region. I include additional arguments that are used for these routines. The call, respectively, `DOread::read_probs` and `DOread::read_mrna`.
+Again, these enable calls to access data in a region. The `Recla` data does not have mRNA data, but we still have to create a `NULL` query. I include additional arguments that are used for these routines. They call, respectively, `qtl2pattern::read_probs` and `qtl2pattern::read_mrna` (at least, when there are `mRNA` data).
 
 ```{r eval=FALSE}
 probs <- query_probs("1", 39, 40, allele = TRUE, method = "feather")
 mrna <- query_mrna("1", 39, 40, local = TRUE, qtl = FALSE)
 ```
+
+#### Remote files and connections
+
+It is possible for data for a `taxa` and `project` to be stored in another place, in which case an absolute address would be supplied in the `projects.csv` file. For efficient access, that absolute address should probably be in a filesystem that is locally accessible. However, it is possible to have a connection, such as a URL; this has not been tried yet.
+
+#### File types
+
+Most data files work well to be RDS, which preserve attributes of an R object. This is useful if some data columns should be interpreted as character or factor, for instance. Also, the `query` calls must be stored as RDS to preserve the calling environment.
+
+Genotype probabilities are assumed to be `feather` databases.
+This ensures rapid access to this information, which is the largest
+set of data besides the SNP information.
 
 ## Package Workflow and Shiny Tool Components
 
@@ -156,9 +206,6 @@ The shiny server consists of the server app (`server()` and `ui()` in file `app.
 ```{r echo=FALSE, child="../inst/scripts/qtl2dag.Rmd"}
 
 ```
-
-
-![](../inst/scripts/net.jpg)
 
 The `Main` module calls the `Setup`, `Haplo` and `Diplo` modules, corresponding to the three dashboard menu items. Each of these modules in turn calls other modules. The modules were each designed to do one task, and be kept small, ideally about 100 lines of code (including documentation). Here is a list of modules:
 
