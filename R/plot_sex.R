@@ -19,7 +19,7 @@ plot_sex <- function(phe, cov) {
         ggplot2::geom_rug()
     } else {
       any.na <- apply(insex, 1, function(x) any(is.na(x)))
-      GGally::ggscatmat(insex[!any.na,], seq_along(phe), color="sex")
+      GGally::ggscatmat(insex[!any.na,], seq_len(ncol(phe)), color="sex")
     }
   } else {
     if(length(phename) == 1) {
@@ -29,7 +29,7 @@ plot_sex <- function(phe, cov) {
         ggplot2::geom_rug()
     } else {
       any.na <- apply(phe, 1, function(x) any(is.na(x)))
-      GGally::ggscatmat(phe[!any.na,], seq_along(phe))
+      GGally::ggscatmat(phe[!any.na,], seq_len(ncol(phe)))
     }
   }
 }

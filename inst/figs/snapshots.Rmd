@@ -21,7 +21,13 @@ User can choose phenotypes, which are ordered by largest peak in selected window
 
 Switching top button to `Phenotypes` puts a table in top left of top phenotypes at peak.
 
-![](hotspot_phenotypes.png)
+![](phenotypes.png)
+
+![](pheno_covariates.png)
+
+![](pheno_trans.png)
+
+![](pheno_types_raw.png)
 
 Now look at hotspots across whole genome. Uses window width of 1Mb to count peaks above LOD 5.5. Both are tunable.
 
