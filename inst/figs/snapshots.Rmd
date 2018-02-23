@@ -142,3 +142,4 @@ There are several possible gene actions that could be explored.
 
 ![](gene_action_menu.png)
 
+This is saved at HTML in displayed at [~yandell/qtl2shiny.html](http://www.stat.wisc.edu/~yandell/qtl2shiny.html).
