@@ -1,0 +1,144 @@
+---
+title: "Snapshots"
+author: "Brian S. Yandell"
+date: "2/23/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Initial screen shot. Chr and pos set by largest hotspot (region with most LOD peaks above threshold) with default window of 1Mb.
+
+![](initial_screen.png)
+
+## Phenotypes and Region
+
+User can choose phenotypes, which are ordered by largest peak in selected window. Once a phenotype is selected, it is removed from the choice list.
+
+![](initial_choose_phenotypes.png)
+
+Switching top button to `Phenotypes` puts a table in top left of top phenotypes at peak.
+
+![](hotspot_phenotypes.png)
+
+Now look at hotspots across whole genome. Uses window width of 1Mb to count peaks above LOD 5.5. Both are tunable.
+
+![](hotspots.png)
+
+Look only for chromosome 11. Notice how summary table changes to phenotypes on chromosome from counts by chromosome.
+
+![](hotspots_chr_11.png)
+
+As before, you can choose phenotypes driven by a chromosome hotspot.
+
+![](choose_phenotypes.png)
+
+## Haplotype scans
+
+Switching the left dashboard to the second entry starts analyses.
+
+![](lod_scan_1Mb.png)
+
+The window looked too narrow, so switch back to `Region and Phenotypes` to change window width to 5Mb.
+
+![](change_window.png)
+
+And then switch back to see LOD scan.
+
+![](lod_scan_5Mb.png)
+
+Here is the LOD summary.
+
+![](lod_scan_summary.png)
+
+And here are the allele effects. Peak is indicated by vertical dashed line.
+
+![](allele_effects.png)
+
+We can get LOD and allele effects scan on same page.
+
+![](lod_and_allele_effects.png)
+
+The next button in the side panel of the page is `SNP Association`.
+
+
+![](SNP_scan.png)
+
+We can zoom in to isolate the peak region.
+
+![](SNP_scan_zoom.png)
+
+Here is a summary table, which can be downloaded (see `CSV` button on lower left). This is a wide summary, so there are three figures here.
+
+![](SNP_summary_1.png)
+![](SNP_summary_2.png)
+![](SNP_summary_3.png)
+
+We can examine the genes in the peak region.
+
+![](genes_in_region.png)
+
+And underlay SNPs to see how they are related.
+
+![](genes_in_region_SNPs.png)
+
+And zoom in to desired region.
+
+![](genes_in_region_SNPs_zoom.png)
+
+Individual genes and their exons can be viewed as well.
+
+![](gene_with_exons.png)
+
+#### Allele Pattern
+
+SNP association seems rather complicated, but can be partially unraveled by grouping SNPs by their allele patterns. That is, SNPs take on two values (reference or alternate) for each allele. We can use that to color-code allele patterns.
+
+![](allele_pattern.png)
+
+And we can give that as a summary.
+
+![](allele_pattern_summary.png)
+
+Top SNPs can be identified by pattern ...
+
+![](top_SNPs_pattern.png)
+
+and by consequence.
+
+![](top_SNPs_consequence.png)
+
+#### Mediation
+
+Mediation is a way to formally test if two phenotypes are causally related. Taking one phenotype as the `target`, we examine all other phenotypes that map to the same small region as possible `drivers`, and compare causal, reactive, independent and correlated models.
+
+![](mediation.png)
+
+In interactive mode (available for certain plots such as this), we can examine other information on tests.
+
+![](mediation_interactive.png)
+
+We can also get a summary for mediation
+
+![](mediation_summary.png)
+
+## SNP/Gene Action
+
+There are actually three possible values for a SNP: 0, 1, or 2 copies of the reference allele. We can use probabilities for these three values, derived from the genotype probabilities for allele pairs, to do SNP association with 2 degrees of freedom.
+
+![](SNP_scan_dominance.png)
+
+We can also examine allele patterns for additive and dominance effects.
+
+![](allele_pattern_dominance.png)
+
+Based on the best allele pattern, we can impute new SNP genotypes across the region that match this pattern, and construct LOD scans, now with 2 degrees of freedom per allelel pattern.
+
+![](lod_scan_dominance.png)
+
+There are several possible gene actions that could be explored.
+
+![](gene_action_menu.png)
+

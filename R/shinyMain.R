@@ -32,29 +32,29 @@ shinyMain <- function(input, output, session, projects_info) {
   })
   peaks <- shiny::reactive({
     shiny::req(project_info())
-    read_project_rds(project_info(), "peaks")
+    read_project(project_info(), "peaks")
   })
   analyses_tbl <- shiny::reactive({
     shiny::req(project_info())
     ## The analyses_tbl should only have one row per pheno.
-    read_project_rds(project_info(), "analyses")
+    read_project(project_info(), "analyses")
   })
   pheno_data <- shiny::reactive({
     shiny::req(project_info())
-    read_project_rds(project_info(), "pheno_data")
+    read_project(project_info(), "pheno_data")
   })
   covar <- shiny::reactive({
     shiny::req(project_info())
-    read_project_rds(project_info(), "covar")
+    read_project(project_info(), "covar")
   })
   
   pmap_obj <- shiny::reactive({
     shiny::req(project_info())
-    read_project_rds(project_info(), "pmap")
+    read_project(project_info(), "pmap")
   })
   kinship <- shiny::reactive({
     shiny::req(project_info())
-    read_project_rds(project_info(), "kinship")
+    read_project(project_info(), "kinship")
   })
   
   set_par <- shiny::callModule(shinySetup, "setup", 
@@ -85,7 +85,7 @@ shinyMain <- function(input, output, session, projects_info) {
   ## Allele names.
   allele_info <- shiny::reactive({
     shiny::req(project_info())
-    read_project_rds(project_info(), "allele_info")
+    read_project(project_info(), "allele_info")
   })
   
   ## Haplotype Analysis.

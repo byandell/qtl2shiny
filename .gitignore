@@ -19,5 +19,6 @@ data/
 inst/doc/images
 inst/doc/CCmouse
 *.jpg
+*.png
 
 inst/doc

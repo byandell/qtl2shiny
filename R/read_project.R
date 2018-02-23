@@ -17,7 +17,8 @@ read_project <- function(project_info, dataname, filetype = c("rds","csv","feath
   if(!file.exists(filepath)) {
     filepath <- file.path(directory, taxa, paste0(dataname, ".rds"))
   }
-  
+
+  # Only RDS works for now. CSV will be easy, but feather ...  
   switch(filetype,
          rds = read_project_rds(project_info, dataname))
 }
