@@ -22,19 +22,14 @@ shinyPhenos <- function(input, output, session,
                         set_par, win_par, peaks_df, analyses_tbl, pheno_data, cov_df,
                         project_info) {
   ns <- session$ns
-  output$pheno_lod <- shiny::renderDataTable({
-    shiny::req(peaks_df())
-  }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 5,
-                 lengthMenu = c(5,10,25)))
-  
   # Output the peaks table
   output$peaks <- shiny::renderDataTable({
     dplyr::arrange(
       dplyr::select(
         peaks_df(), pheno, chr, pos, lod),
       dplyr::desc(lod))
-  }, options = list(scrollX = TRUE, pageLength = 5))
+  }, options = list(scrollX = TRUE, pageLength = 5,
+                    lengthMenu = c(5,10,25)))
   
   ## Density or scatter plot of phenotypes.
   analyses_plot <- shiny::reactive({
@@ -78,8 +73,5 @@ shinyPhenosUI <- function(id) {
 }
 shinyPhenosOutput <- function(id) {
   ns <- shiny::NS(id)
-  shiny::tagList(
-    shiny::uiOutput(ns("show_data")),
-    shiny::dataTableOutput(ns("pheno_lod"))
-  )
+  shiny::uiOutput(ns("show_data"))
 }

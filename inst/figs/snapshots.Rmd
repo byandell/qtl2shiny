@@ -41,7 +41,7 @@ Switching the left dashboard to the second entry starts analyses.
 
 ![](lod_scan_1Mb.png)
 
-The window looked too narrow, so switch back to `Region and Phenotypes` to change window width to 5Mb.
+The window looked too narrow, so switch back to `Phenotypes and Region` to change window width to 5Mb.
 
 ![](change_window.png)
 
