@@ -4,9 +4,7 @@
 # dplyr::filter(peaks_tbl(), chr == chr_ct, pheno_type %in% dataset)
 # dplyr::select(pheno, pheno_type, chr, pos, lod)
 peakDataTable <- function(scan_tbl, peaks_tbl) {
-  if(length(chrs <- unique(scan_tbl$chr)) > 1) {
-    dplyr::arrange(scan_tbl, desc(count))
-  } else {
+    chrs <- unique(scan_tbl$chr)
     pheno_types <- unique(scan_tbl$pheno)
     peaks_tbl <- dplyr::filter(peaks_tbl, chr %in% chrs)
     pheno_groups <- unique(peaks_tbl$pheno_group)
@@ -21,5 +19,4 @@ peakDataTable <- function(scan_tbl, peaks_tbl) {
                       pheno_type %in% pheno_types),
         pheno, pheno_type, chr, pos, lod),
       desc(lod))
-  }
 }

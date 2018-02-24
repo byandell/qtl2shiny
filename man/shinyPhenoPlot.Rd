@@ -4,12 +4,12 @@
 \alias{shinyPhenoPlot}
 \title{Shiny Phenotype Plot module}
 \usage{
-shinyPhenoPlot(input, output, session, phe_mx, cov_df)
+shinyPhenoPlot(input, output, session, set_par, phe_mx, cov_df)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{phe_mx, cov_df}{reactive arguments}
+\item{set_par, phe_mx, cov_df}{reactive arguments}
 
 \item{id}{shiny identifier}
 }

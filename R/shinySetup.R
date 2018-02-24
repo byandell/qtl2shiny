@@ -140,14 +140,23 @@ shinySetup <- function(input, output, session,
                         shiny::req(project_info()$project),
                         "\n"))
   })
+  output$project_name2 <- renderUI({
+    shiny::strong(paste("Project:", 
+                        shiny::req(project_info()$project),
+                        "\n"))
+  })
   output$title <- shiny::renderUI({
-    shiny::tagList(
-      switch(shiny::req(input$radio),
-             Region = shinyProjectUI(ns("project")),
-             Phenotypes = shiny::strong(paste("Project:", 
-                                              shiny::req(project_info()$project),
-                                              "\n"))),
-      shiny::strong(shiny::req(input$radio)))
+    switch(shiny::req(input$radio),
+           Region = {
+             shiny::tagList(
+               shinyProjectUI(ns("project")),
+               shiny::strong(shiny::req(input$radio)))
+           },
+           Phenotypes = {
+             shiny::tagList(
+               shiny::uiOutput(ns("project_name2")),
+               shiny::strong(shiny::req(input$radio)))
+           })
   })
   output$sidebar_setup <- shiny::renderUI({
     switch(shiny::req(input$radio),

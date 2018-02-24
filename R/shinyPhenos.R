@@ -43,8 +43,8 @@ shinyPhenos <- function(input, output, session,
   raw_phe_mx <- shiny::reactive({
     pheno_read(pheno_data(), analyses_plot(), FALSE)
   })
-  shiny::callModule(shinyPhenoPlot, "PhenoPlotRaw", raw_phe_mx, cov_df)
-  shiny::callModule(shinyPhenoPlot, "PhenoPlotTrans", phe_mx, cov_df)
+  shiny::callModule(shinyPhenoPlot, "PhenoPlotRaw", set_par, raw_phe_mx, cov_df)
+  shiny::callModule(shinyPhenoPlot, "PhenoPlotTrans", set_par, phe_mx, cov_df)
   
   # Show data.
   output$radio <- renderUI({
@@ -54,11 +54,12 @@ shinyPhenos <- function(input, output, session,
                         input$radio)
   })
   output$show_data <- renderUI({
-    switch(shiny::req(input$radio),
-           "LOD Peaks"  = shiny::dataTableOutput(ns("peaks")),
-           "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
-           "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
-           "Covariates" = shiny::dataTableOutput(ns("analyses_tbl")))
+    shiny::tagList(
+      switch(shiny::req(input$radio),
+             "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
+             "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
+             "Covariates" = shiny::dataTableOutput(ns("analyses_tbl"))),
+      shiny::dataTableOutput(ns("peaks")))
   })
   
   # Output the analyses table

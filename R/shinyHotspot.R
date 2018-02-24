@@ -107,6 +107,8 @@ shinyHotspot <- function(input, output, session,
   output$peak_show <- shiny::renderUI({
     if(input$peak_ck) {
       shiny::plotOutput(ns("peak_plot"))
+    } else {
+      shiny::dataTableOutput(ns("peak_tbl"))
     }
   })
   output$peak_plot <- shiny::renderPlot({
@@ -147,6 +149,11 @@ shinyHotspot <- function(input, output, session,
     peakDataTable(scan_tbl(), peaks_tbl())
   }, escape = FALSE,
   options = list(lengthMenu = c(5,10,20,50), pageLength = 5))
+  output$peaks_tbl <- shiny::renderDataTable({
+    shiny::req(scan_tbl())
+    dplyr::arrange(scan_tbl(), desc(count))
+  }, escape = FALSE,
+  options = list(lengthMenu = c(5,10,20,50), pageLength = 5))
   
   # Minimum LOD for SNP top values.
   minLOD <- function(value, peaks_tbl) {
@@ -181,6 +188,6 @@ shinyHotspotOutput <- function(id) {
   shiny::tagList(
     shiny::strong("Hotspot Info"),
     shiny::uiOutput(ns("peak_show")),
-    shiny::dataTableOutput(ns("peak_tbl"))
+    shiny::dataTableOutput(ns("peaks_tbl"))
   )
 }
