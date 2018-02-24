@@ -1,4 +1,4 @@
-Go to the [doqtl2](https://bitbucket.org/byandell/doqtl2) Bitbucket repository.
+Go to the [qtl2shiny](https://github.org/byandell/qtl2shiny) GitHub repository.
 
 The initial work on this project was facilitated by an [NIH NIGMS Grants](https://www.nigms.nih.gov/Research/Pages/default.aspx).
 

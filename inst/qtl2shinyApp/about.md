@@ -5,6 +5,6 @@ Can **Identify Hotspot** to pick region, and **Filter Traits by Region** to narr
 </span>
   
 <span style="background-color:black">
-This gateway is an entry to Diversity Outbred (DO) analysis using [R/qtl2](http://kbroman.org/qtl2/) and [R/doqtl2](https://bitbucket.org/byandell/doqtl2)
+This gateway is an entry to Diversity Outbred (DO) analysis using [R/qtl2](http://rqtl.org/qtl2/) and [R/qtl2shiny](https://github.org/byandell/qtl2shiny)
 maintained by [Brian Yandell](http://www.stat.wisc.edu/~yandell) and [Karl Broman](http://kbroman.org).
 </span>

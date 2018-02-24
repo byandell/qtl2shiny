@@ -113,6 +113,11 @@ shinySetup <- function(input, output, session,
     shiny::req(project_info())
     num_pheno(character(), analyses_tbl())
   })
+  output$version <- shiny::renderText({
+    pv <- packageVersion("qtl2shiny")
+    paste("Version", pv)
+  })
+  
   shiny::observeEvent(project_info(), {
     output$num_pheno <- shiny::renderText({
       num_pheno(input$pheno_names, analyses_tbl())
@@ -194,7 +199,8 @@ shinySetupInput <- function(id) {
   shiny::tagList(
     shiny::uiOutput(ns("project_name")),
     shiny::textOutput(ns("num_pheno")),
-    shiny::uiOutput(ns("chr_pos"))
+    shiny::uiOutput(ns("chr_pos")),
+    shiny::uiOutput(ns("version"))
   )
 }
 shinySetupUI <- function(id) {
