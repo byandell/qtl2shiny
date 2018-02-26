@@ -59,7 +59,8 @@ shinyPhenos <- function(input, output, session,
              "Raw Data"   = shinyPhenoPlotUI(ns("PhenoPlotRaw")),
              "Trans Data" = shinyPhenoPlotUI(ns("PhenoPlotTrans")),
              "Covariates" = shiny::dataTableOutput(ns("analyses_tbl"))),
-      shiny::dataTableOutput(ns("peaks")))
+      if(!(input$radio %in% c("Raw Data","Trans Data")))
+        shiny::dataTableOutput(ns("peaks")))
   })
   
   # Output the analyses table

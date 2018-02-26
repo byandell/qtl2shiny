@@ -13,8 +13,8 @@
 #'
 #' @export
 #' @importFrom shiny NS 
-#'   plotOutput tableOutput
-#'   renderPlot renderTable
+#'   plotOutput dataTableOutput
+#'   renderPlot renderDataTable
 #'   tagList
 #'   withProgress setProgress
 #' @importFrom dplyr mutate
@@ -25,13 +25,16 @@ shinyPhenoPlot <- function(input, output, session,
   ns <- session$ns
   
   ## Scatter plot or density
-  output$phe_sum <- shiny::renderTable({
+  output$phe_sum <- shiny::renderDataTable({
     shiny::req(phe_mx())
     shiny::withProgress(message = 'Pheno Summary ...', value = 0, {
       shiny::setProgress(1)
       summary_na(phe_mx())
     })
-  })
+  }, escape = FALSE, 
+  options = list(scrollX = TRUE, 
+                 pageLength = 5,
+                 lengthMenu = list(c(5,10,-1), c(5,10,"all"))))
   output$phePlot <- shiny::renderPlot({
     # If no df, gives blank area.
     # Better to either do nothing or do plot_null()
@@ -46,7 +49,7 @@ shinyPhenoPlot <- function(input, output, session,
   output$phePlotTable <- shiny::renderUI({
     shiny::tagList(
       shiny::plotOutput(ns("phePlot")),
-      shiny::tableOutput(ns("phe_sum")))
+      shiny::dataTableOutput(ns("phe_sum")))
   })
 }
 
