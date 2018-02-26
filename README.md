@@ -5,8 +5,11 @@ Yandell R/qtl2shiny project.
 ### What is this repository for? ###
 
 * Code to create shiny interface for [R/qtl2](https://kbroman.org/qtl2).
-* Version 0.9.12
-* See demo at [~yandell/software/qtl2shiny](http://www.stat.wisc.edu/~yandell/software/qtl2shiny)
+* Version 0.9.18
+* See following documents:
+    + [~yandell/software/qtl2shiny](http://www.stat.wisc.edu/~yandell/software/qtl2shiny)
+    + [R/qtl2shiny User Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/UserGuide.Rmd)
+    + [R/qtl2shiny Developer Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/DeveloperGuide.Rmd)
 
 ### What has been done ###
 
