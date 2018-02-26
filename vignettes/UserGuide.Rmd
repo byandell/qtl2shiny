@@ -70,5 +70,5 @@ This document describes companion packages that are used to build the Shiny serv
 The three other packages can be employed on their own separate from the server. In particular, [R/qtl2ggplot](https://github.com/byandell/qtl2ggplot) provides full capability for `ggplot2` plot objects. The [R/qtl2feather](https://github.com/byandell/qtl2feather) package transforms large, slow `calc_genoprob` objects central to [R/qtl2](http://www.rqtl.org/qtl2) into a set of `feather` databases for quick access. See each package for its own documentation. 
 
 There is another package that is more specialized and still need documentation:
-[R/CausalMST](https://github.com/byandell/CausalMST) concerns Causal Model Selection Tests, which are used in conjuction with mediation to formally infer causal relationship between a phenotype and other phenotypes that co-map.
+[R/CausalMST](https://github.com/byandell/CausalMST) concerns Causal Model Selection Tests, which are used in conjunction with mediation to formally infer causal relationship between a phenotype and other phenotypes that co-map. Plan is to try to combine this with [R/intermediate](https://github.com/churchill-lab/intermediate).
 
