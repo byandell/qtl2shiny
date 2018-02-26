@@ -100,4 +100,12 @@ allele_info <-
 saveRDS(allele_info, file.path(taxa_dir, "allele_info.rds"))
 ```
 
+```{r}
+taxa_info <- "Mus musculus"
+```
+
+```{r}
+saveRDS(taxa_info, file.path(taxa_dir, "taxa_info.rds"))
+```
+
 

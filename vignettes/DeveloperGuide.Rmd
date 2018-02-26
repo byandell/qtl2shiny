@@ -56,6 +56,7 @@ for explanation of the SQL databases and query routines.
 file | contents
 -----|---------
 `allele_info.rds` | information on alleles for taxa
+`taxa_info.rds` | information on taxa (name of species for Ensembl lookup)
 `cc-variants.sqlite` | CC structural variants in SQL database
 `mouse_genes_mgi.sqlite` | mouse genes curated by MGI in SQL database
 `query_genes.rds` | query routine for genes

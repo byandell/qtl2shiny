@@ -32,7 +32,7 @@ shinySNPGene <- function(input, output, session,
              snp_scan_obj, snpinfo, snp_action)
   ## SNP Summary
   shiny::callModule(shinySNPSum, "best_snp", 
-             chr_pos, top_snps_tbl, snp_action)
+             chr_pos, top_snps_tbl, project_info, snp_action)
   ## Gene Region
   shiny::callModule(shinyGeneRegion, "gene_region",
              snp_par, 

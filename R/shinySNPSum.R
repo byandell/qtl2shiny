@@ -3,7 +3,7 @@
 #' Shiny module for SNP summary, with interfaces \code{shinySNPInput}, \code{shinySNPUI} and  \code{shinySNPOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param chr_pos,top_snps_tbl reactive arguments
+#' @param chr_pos,top_snps_tbl,project_info,snp_action reactive arguments
 #' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -20,56 +20,21 @@
 #'   downloadButton downloadHandler
 #' @importFrom ggplot2 autoplot
 shinySNPSum <- function(input, output, session,
-                     chr_pos, top_snps_tbl,
+                     chr_pos, top_snps_tbl, project_info,
                      snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
   
-  ensembl_species <- shiny::reactive({"Mus_musculus"})
   best_snps <- shiny::reactive({
     shiny::req(top_snps_tbl())
     summary(top_snps_tbl(),"best")
   })
   best_href <- shiny::reactive({
     best <- shiny::req(best_snps())
-    if(!is.null(ensembl_species())) {
-      ensembl_URL <- file.path("http://www.ensembl.org",
-                               ensembl_species(),
-                               "Gene/Summary?g=")
-      best$ensembl_gene <-
-        unlist(apply(dplyr::select(best, ensembl_gene),
-                     1,
-                     function(x,y) {
-                       if(is.na(x))
-                         return("")
-                       if(nchar(x))
-                         as.character(shiny::a(x, href=paste0(y,x)))
-                       else
-                         x
-                     },
-                     ensembl_URL))
-    }
-    best
+    ensembl_gene(best, project_info(), TRUE)
   })
   best_http <- shiny::reactive({
     best <- shiny::req(best_snps())
-    if(!is.null(ensembl_species())) {
-      ensembl_URL <- file.path("http://www.ensembl.org",
-                               ensembl_species(),
-                               "Gene/Summary?g=")
-      best$ensembl_gene <-
-        unlist(apply(dplyr::select(best, ensembl_gene),
-                     1,
-                     function(x,y) {
-                       if(is.na(x))
-                         return("")
-                       if(nchar(x))
-                         paste0(y,x)
-                       else
-                         x
-                     },
-                     ensembl_URL))
-    }
-    best
+    ensembl_gene(best, project_info())
   })
 
   output$top_snps_tbl <- shiny::renderDataTable({
@@ -79,7 +44,8 @@ shinySNPSum <- function(input, output, session,
       shiny::setProgress(1)
       summary(top_snps_tbl())
     })
-  })
+  }, escape = FALSE,
+  options = list(scrollX = TRUE, pageLength = 10))
   output$top_snps_best <- shiny::renderDataTable({
     shiny::withProgress(message = "Top SNP Best ...", value = 0,
     {
@@ -103,7 +69,8 @@ shinySNPSum <- function(input, output, session,
       shiny::setProgress(1)
       summary(top_snps_tbl(),"peak")
     })
-  })
+  }, escape = FALSE,
+  options = list(scrollX = TRUE, pageLength = 10))
   output$snp_sum <- shiny::renderUI({
     switch(input$snp_sum,
            best   = shiny::dataTableOutput(ns("top_snps_best")),
