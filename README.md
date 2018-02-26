@@ -6,7 +6,7 @@ Yandell R/qtl2shiny project.
 
 * Code to create shiny interface for [R/qtl2](https://kbroman.org/qtl2).
 * Version 0.9.12
-* See demo at [~yandell/qtl2shiny.html](http://www.stat.wisc.edu/~yandell/qtl2shiny.html)
+* See demo at [~yandell/software/qtl2shiny](http://www.stat.wisc.edu/~yandell/software/qtl2shiny)
 
 ### What has been done ###
 
