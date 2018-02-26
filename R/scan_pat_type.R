@@ -6,6 +6,8 @@ scan_pat_type <- function(scan_pat, map, type, pattern, pheno, haplos) {
   pattern_cont <- 
     unique(dplyr::filter(scan_pat$patterns,
                          qtl2pattern::sdp_to_pattern(sdp, haplos) %in% pattern)$founders)
+  # plot at most 8 curves
+  lodcolumn <- seq_len(min(8, length(pattern_cont)))
   maxpos <- NULL
   maxcol <- 1
   if(type == "coef") {
@@ -18,5 +20,5 @@ scan_pat_type <- function(scan_pat, map, type, pattern, pheno, haplos) {
     title <- FALSE
   ggplot2::autoplot(
     scan_pat, map, type, pattern_cont, main = title,
-    maxpos = maxpos, maxcol = maxcol) 
+    maxpos = maxpos, maxcol = maxcol, lodcolumn = lodcolumn) 
 }
