@@ -1,4 +1,3 @@
-#' @export
 read_project_rds <- function(project_info, dataname) {
   if(!nrow(project_info))
     return(NULL)

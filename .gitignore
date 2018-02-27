@@ -22,3 +22,5 @@ inst/doc/CCmouse
 *.png
 
 inst/doc
+inst/scripts/CCmouse
+

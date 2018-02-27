@@ -83,14 +83,14 @@ if(!dir.exists(feather_dir <- file.path(project_dir, "genoprob"))) {
   dir.create(feather_dir)
 }
 faprobs_file <- file.path(feather_dir, "faprobs.rds")
-if(!file.exists(file.path(feather_dir, "fprobs.rds"))) {
+if(!file.exists(fprobs_file <- file.path(feather_dir, "fprobs.rds"))) {
   map <- insert_pseudomarkers(recla$gmap, step=1)
   
   cat("allele pair genotype probabilities\n", file = stderr())
   pr <- calc_genoprob(recla, map, err=0.002)
   cat("allele pair prob conversion via qtl2feather\n", file = stderr())
   fprobs <- feather_genoprob(pr, "probs", feather_dir, verbose = FALSE)
-  saveRDS(fprobs, file = file.path(feather_dir, "fprobs.rds"))
+  saveRDS(fprobs, file = fprobs_file)
 
   cat("allele genotype probabilities\n", file = stderr())
   apr <- genoprob_to_alleleprob(pr)
@@ -98,12 +98,13 @@ if(!file.exists(file.path(feather_dir, "fprobs.rds"))) {
   faprobs <- feather_genoprob(apr, "aprobs", feather_dir, verbose = FALSE)
   saveRDS(faprobs, file = faprobs_file)
 } else {
+  fprobs <- readRDS(fprobs_file)
   faprobs <- readRDS(faprobs_file)
 }
 ```
 
 ```{r}
-kinship_loco <- calc_kinship(pr, "loco")
+kinship_loco <- calc_kinship(faprobs, "loco")
 ```
 
 ```{r}
@@ -131,7 +132,7 @@ peaks <- peaks %>%
   mutate(
     longname = pheno,
     output = pheno,
-    pheno_group = "recla",
+    pheno_group = "Recla",
     pheno_type = "recla") %>%
   select(-lodindex)
 ```

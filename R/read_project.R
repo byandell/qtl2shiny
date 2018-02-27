@@ -1,3 +1,4 @@
+#' @export
 read_project <- function(project_info, dataname, filetype = c("rds","csv","feather")) {
   filetype <- match.arg(filetype)
   
