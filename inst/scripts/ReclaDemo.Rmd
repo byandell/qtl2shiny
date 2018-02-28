@@ -215,7 +215,7 @@ autoplot(snp_scan_obj, snpprobs_obj$snpinfo, show_all_snps = FALSE,
 top_snps_tbl <- qtl2pattern::top_snps_all(snp_scan_obj,
                         snpprobs_obj$snpinfo,
                         1.5)
-summary(top_snps_tbl)
+(patterns <- summary(top_snps_tbl))
 ```
 
 #### Genes and Exons
@@ -273,7 +273,7 @@ autoplot(top_feature, pheno_name, "consequence")
 
 #### Mediation
 
-Going to skip this for now, as it takes another package and is under redesign.
+This is **ugly**. It takes another package (`CausalMST`) and is under redesign.
 
 ```{r}
 peak_mar <- qtl2::find_marker(probs_obj$map, chr_id, pos_Mbp)
@@ -293,6 +293,18 @@ annot <- dplyr::left_join(
   peaks %>% filter(pheno %in% all_analyses$pheno),
   all_analyses,
   by = "pheno")
+annot <- 
+    dplyr::inner_join(
+      annot,
+      dplyr::ungroup(
+        dplyr::summarize(
+          dplyr::group_by(peaks, pheno),
+          qtl_ct = n(),
+          QTL = paste0(chr_id, "@",
+                       round(pos), ":",
+                       round(lod), collapse = ","))),
+      by = "pheno")
+annot$local <- FALSE
 annot$driver <- qtl2::find_marker(probs_obj$map, chr_id, annot$pos)
 med_ls <- 
   list(comediators = qtl2pattern::pheno_trans(all_pheno_data,
@@ -328,7 +340,25 @@ autoplot(mediate_obj)
 
 ```{r}
 # See shinyScatter.R
+triad <- levels(mediate_obj$best$triad)[1]
+medID <- ifelse("symbol" %in% names(mediate_obj$best), "symbol", "longname")
+med_name <- dplyr::filter(mediate_obj$best, triad == triad)[[medID]]
+id <- med_ls[[2]]$id[med_ls[[2]][[medID]] == med_name]
+sdps <- unique(dplyr::filter(patterns, pheno == pheno_name)$sdp)
+pattern <- qtl2pattern::sdp_to_pattern(sdps, LETTERS[1:8])
+sdp <- sdps[qtl2pattern::sdp_to_pattern(sdps, LETTERS[1:8]) == pattern][1]
+mediator <- med_ls[[1]][, id, drop = FALSE]
+```
 
+```{r}
+scat_dat <- CausalMST::med_scatter(geno_max, pheno_data, mediator,
+                          kinship[[1]], addcovar, med_ls$cov_med,
+                          qtl2::fit1,
+                          sdp = sdp, allele = TRUE)
+```
+
+```{r}
+autoplot(scat_dat)
 ```
 
 ## Gene Action
