@@ -11,7 +11,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 This shows a series of screen shots, giving examples of `R/qtl2shiny` in action. For more details on use of the package, see the 
 [R/qtl2shiny package](https://github.com/byandell/qtl2shiny),
-[R/qtl2shiny User Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/UserGuide.Rmd) and [R/qtl2shiny Developer Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/DeveloperGuide.Rmd). This document is created by [inst/figs/index.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/figs/index.Rmd) and is saved as HTML at [~yandell/software/qtl2shiny](http://www.stat.wisc.edu/~yandell/qtl2shiny).
+[R/qtl2shiny User Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/UserGuide.Rmd) and [R/qtl2shiny Developer Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/DeveloperGuide.Rmd). This document is created by [inst/figs/index.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/figs/index.Rmd) and is saved as HTML at [~yandell/software/qtl2shiny](http://www.stat.wisc.edu/~yandell/qtl2shiny). See also
+[inst/scripts/ReclaDemo.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/ReclaDemo.Rmd) for scripts to generate most of these summaries and figures.
 
 
 Initial screen shot. The `chr` and `pos` are preset by largest hotspot (region with most LOD peaks above threshold) with default window of 1Mb. In pink boxes in side dashboard and side panel, notice project name and `chr` and `pos`.

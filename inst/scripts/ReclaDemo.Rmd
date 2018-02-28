@@ -190,6 +190,9 @@ autoplot(eff_obj, probs_obj$map, scan1_output = scan_obj,
 query_variants <- create_variant_query_func(
   file.path(project_info$taxa, "cc_variants.sqlite"))
 snpinfo <- query_variants(chr_id, start_val, end_val)
+```
+
+```{r}
 snpprobs_obj <- get_snpprobs(chr_id, pos_Mbp, window_Mbp,
                    pheno_name, 
                    probs_obj$probs,
@@ -198,20 +201,20 @@ snpprobs_obj <- get_snpprobs(chr_id, pos_Mbp, window_Mbp,
 ```
 
 ```{r}
-snpscan_obj <- scan1_covar(pheno_data, covar, snpprobs_obj$snpprobs, kinship, analyses)
+snp_scan_obj <- scan1_covar(pheno_data, covar, snpprobs_obj$snpprobs, kinship, analyses)
 ```
 
 ```{r}
-autoplot(snpscan_obj, snpprobs_obj$snpinfo, show_all_snps = FALSE,
+autoplot(snp_scan_obj, snpprobs_obj$snpinfo, show_all_snps = FALSE,
          drop_hilit = 1.5,)
 ```
 
 ```{r}
 # See shinySNPSum and shinySNPSetup
-topsnps <- top_snps_all(snpscan_obj,
+top_snps_tbl <- top_snps_all(snp_scan_obj,
                         snpprobs_obj$snpinfo,
                         1.5)
-summary(topsnps)
+summary(top_snps_tbl)
 ```
 
 #### Genes and Exons
@@ -220,32 +223,159 @@ summary(topsnps)
 # See shinyGeneRegion.R
 query_genes <- create_gene_query_func(
   file.path(project_info$taxa, "mouse_genes.sqlite"))
-rng <- range(topsnps$pos) + c(-.005, .005)
+rng <- range(top_snps_tbl$pos) + c(-.005, .005)
 gene_tbl <- query_genes(chr_id, rng[1], rng[2])
-genes <- get_genes(chr_id, rng[1], rng[2], gene_tbl)
+gene_region_tbl <- get_genes(chr_id, rng[1], rng[2], gene_tbl)
 ```
 
 ```{r}
-autoplot(genes)
+autoplot(gene_region_tbl)
 ```
 
 ```{r}
-autoplot(genes, top_snps_tbl = topsnps)
+autoplot(gene_region_tbl, top_snps_tbl = top_snps_tbl)
 ```
 
 ```{r}
 # See shinyGeneExon.R
-exons <- get_gene_exon_snp(topsnps, gene_tbl)
+gene_exon_tbl <- get_gene_exon_snp(top_snps_tbl, gene_tbl)
 ```
 
 ```{r}
-(exon_sum <- summary(exons, top_snps_tbl = topsnps))
+(exon_sum <- summary(gene_exon_tbl, top_snps_tbl = top_snps_tbl))
 ```
 
 ```{r}
-autoplot(exons, topsnps, genes = exon_sum$gene[1])
+autoplot(gene_exon_tbl, top_snps_tbl, genes = exon_sum$gene[1])
 ```
 
-## And more
+#### SNP Allele Patterns
 
-Need to do allele patterns, gene action and multiple traits.
+```{r}
+# See shinySNPPattern.R
+autoplot(snp_scan_obj, snpprobs_obj$snpinfo, patterns = "hilit", drop_hilit = 1.5)
+```
+
+```{r}
+# See shinySNPFeature.R
+top_feature <- merge_feature(top_snps_tbl, snpprobs_obj$snpinfo,
+                             snp_scan_obj, 1.5, 0, gene_exon_tbl)
+```
+
+```{r}
+autoplot(top_feature, pheno_name, "pattern")
+```
+
+```{r}
+autoplot(top_feature, pheno_name, "consequence")
+```
+
+#### Mediation
+
+Going to skip this for now, as it takes another package and is under redesign.
+
+## Gene Action
+
+```{r}
+# See shinyDiplo.R and shinyProbs.R
+pairprobs_obj <- query_probs(chr_id, start_val, end_val, allele = FALSE)
+```
+
+```{r}
+snppairprobs_obj <- get_snpprobs(chr_id, pos_Mbp, window_Mbp,
+                   pheno_name, 
+                   pairprobs_obj$probs,
+                   pairprobs_obj$map,
+                   snpinfo)
+```
+
+```{r}
+snppair_scan_obj <- scan1_covar(pheno_data, covar, 
+                                snppairprobs_obj$snpprobs, kinship, analyses)
+```
+
+```{r}
+autoplot(snppair_scan_obj, snppairprobs_obj$snpinfo, show_all_snps = FALSE,
+         drop_hilit = 1.5,)
+```
+
+```{r}
+# See shinySNPPattern.R
+autoplot(snppair_scan_obj, snppairprobs_obj$snpinfo, patterns = "hilit", drop_hilit = 1.5)
+```
+
+```{r}
+top_snppairs_tbl <- 
+  top_snps_all(snppair_scan_obj,
+               snppairprobs_obj$snpinfo,
+               1.5)
+```
+
+```{r}
+(patterns <- summary(top_snppairs_tbl))
+```
+
+```{r}
+# See shinyPattern.R
+scan_pat <- scan_pattern(pairprobs_obj$probs,
+                            pheno_data,
+                            kinship, addcovar,
+                            pairprobs_obj$map,
+                            patterns)
+```
+
+```{r}
+pattern_choices <- sdp_to_pattern(patterns$sdp, LETTERS[1:8])
+```
+
+```{r}
+autoplot(scan_pat, pairprobs_obj$map, "lod", pattern_choices)
+```
+
+## Multiple Phenotypes
+
+```{r}
+pheno_names <- peaks$pheno[1:2]
+```
+
+Assume for now covariates are the same. The routine `qtl2pattern::scan1_covar` helps sort out covariates that change among phenotypes.
+
+```{r}
+# See shinyMain.R
+(analyses <- readRDS(file.path(project_dir, "analyses.rds")) %>%
+  filter(pheno %in% pheno_names))
+```
+
+```{r}
+# See shinyMain.R
+(pheno_data <- readRDS(file.path(project_dir, "pheno_data.rds")) %>%
+   pheno_trans(analyses$pheno, 
+               analyses$transf,
+               analyses$offset,
+               analyses$winsorize)) %>% 
+  head
+```
+```{r}
+# See shinyScanCoef.R
+scan_obj <- scan1_covar(pheno_data, covar, probs_obj$probs, kinship,
+                        analyses)
+```
+
+```{r}
+autoplot(scan_obj, probs_obj$map, 1:2)
+```
+
+```{r}
+snp_scan_obj <- scan1_covar(pheno_data, covar, snpprobs_obj$snpprobs, kinship, analyses)
+```
+
+```{r}
+autoplot(snp_scan_obj, snpprobs_obj$snpinfo, 1:2, show_all_snps = FALSE,
+         drop_hilit = 1.5, facet = "pheno")
+```
+
+```{r}
+# See shinySNPPattern.R
+autoplot(snp_scan_obj, snpprobs_obj$snpinfo, 1:2, 
+         patterns = "hilit", drop_hilit = 1.5, facet = "pheno")
+```
