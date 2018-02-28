@@ -14,11 +14,12 @@ This is a demo of the Recla et al. dataset using functionality of [R/qtl2shiny](
 [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd)
 scripts have already been run to put data in the `CCmouse` directory.
 
+Here we just attach the `dplyr` and `ggplot2` packages, but explicitly use
+elements of the `qtl2`, `qtl2ggplot` and `qtl2pattern` packages. 
+The `qtl2feather` package is used implicitly for access to genotype probabilities.
+
 ```{r message=FALSE}
 library(dplyr)
-library(qtl2)
-library(qtl2ggplot)
-library(qtl2pattern)
 library(ggplot2)
 ```
 
@@ -62,12 +63,12 @@ hotspots <- readRDS(file.path(project_dir, "hotspot.rds"))
 
 ```{r}
 # See shinyHotspot.R
-autoplot(hotspots$scan, hotspots$map)
+qtl2ggplot::ggplot_scan1(hotspots$scan, hotspots$map)
 ```
 
 ```{r}
 # See shinyHotspot.R
-(hot_sum <- summary(hotspots$scan, hotspots$map) %>%
+(hot_sum <- qtl2pattern::summary_scan1(hotspots$scan, hotspots$map) %>%
   filter(pheno == "all") %>%
   rename(count = lod) %>%
   select(-marker) %>%
@@ -117,7 +118,7 @@ pheno_name <- peaks$pheno[1]
 ```{r}
 # See shinyMain.R
 (pheno_data <- readRDS(file.path(project_dir, "pheno_data.rds")) %>%
-   pheno_trans(analyses$pheno, 
+   qtl2pattern::pheno_trans(analyses$pheno, 
                analyses$transf,
                analyses$offset,
                analyses$winsorize)) %>% 
@@ -127,7 +128,7 @@ pheno_name <- peaks$pheno[1]
 ```{r}
 # See shinyMain.R
 (covar <- readRDS(file.path(project_dir, "covar.rds")) %>%
-  get_covar(analyses)) %>%
+  qtl2pattern::get_covar(analyses)) %>%
   head
 ```
 
@@ -140,7 +141,7 @@ kinship <- readRDS(file.path(project_dir, "kinship.rds"))[chr_id]
 
 ```{r}
 # See shinyProbs.R and Recla.Rmd
-query_probs <- create_probs_query_func(project_dir)
+query_probs <- qtl2pattern::create_probs_query_func(project_dir)
 probs_obj <- query_probs(chr_id, start_val, end_val)
 ```
 
@@ -151,7 +152,7 @@ dim(probs_obj$probs)
 
 ```{r}
 # See shinyScanCoef.R
-scan_obj <- scan1_covar(pheno_data, covar, probs_obj$probs, kinship,
+scan_obj <- qtl2pattern::scan1_covar(pheno_data, covar, probs_obj$probs, kinship,
                         analyses)
 ```
 
@@ -164,12 +165,12 @@ summary(scan_obj, probs_obj$map)
 ```
 
 ```{r}
-find_peaks(scan_obj, probs_obj$map)
+qtl2::find_peaks(scan_obj, probs_obj$map)
 ```
 
 ```{r}
-addcovar <- covar_df_mx(covar)
-eff_obj <- scan1coef(probs_obj$probs, pheno_data, kinship, addcovar)
+addcovar <- qtl2pattern::covar_df_mx(covar)
+eff_obj <- qtl2::scan1coef(probs_obj$probs, pheno_data, kinship, addcovar)
 ```
 
 ```{r}
@@ -187,13 +188,13 @@ autoplot(eff_obj, probs_obj$map, scan1_output = scan_obj,
 
 ```{r}
 # See shinySNPSetup.R and shinyProbs.R
-query_variants <- create_variant_query_func(
+query_variants <- qtl2::create_variant_query_func(
   file.path(project_info$taxa, "cc_variants.sqlite"))
 snpinfo <- query_variants(chr_id, start_val, end_val)
 ```
 
 ```{r}
-snpprobs_obj <- get_snpprobs(chr_id, pos_Mbp, window_Mbp,
+snpprobs_obj <- qtl2pattern::get_snpprobs(chr_id, pos_Mbp, window_Mbp,
                    pheno_name, 
                    probs_obj$probs,
                    probs_obj$map,
@@ -201,7 +202,7 @@ snpprobs_obj <- get_snpprobs(chr_id, pos_Mbp, window_Mbp,
 ```
 
 ```{r}
-snp_scan_obj <- scan1_covar(pheno_data, covar, snpprobs_obj$snpprobs, kinship, analyses)
+snp_scan_obj <- qtl2pattern::scan1_covar(pheno_data, covar, snpprobs_obj$snpprobs, kinship, analyses)
 ```
 
 ```{r}
@@ -211,7 +212,7 @@ autoplot(snp_scan_obj, snpprobs_obj$snpinfo, show_all_snps = FALSE,
 
 ```{r}
 # See shinySNPSum and shinySNPSetup
-top_snps_tbl <- top_snps_all(snp_scan_obj,
+top_snps_tbl <- qtl2pattern::top_snps_all(snp_scan_obj,
                         snpprobs_obj$snpinfo,
                         1.5)
 summary(top_snps_tbl)
@@ -221,11 +222,11 @@ summary(top_snps_tbl)
 
 ```{r}
 # See shinyGeneRegion.R
-query_genes <- create_gene_query_func(
+query_genes <- qtl2::create_gene_query_func(
   file.path(project_info$taxa, "mouse_genes.sqlite"))
 rng <- range(top_snps_tbl$pos) + c(-.005, .005)
 gene_tbl <- query_genes(chr_id, rng[1], rng[2])
-gene_region_tbl <- get_genes(chr_id, rng[1], rng[2], gene_tbl)
+gene_region_tbl <- qtl2pattern::get_genes(chr_id, rng[1], rng[2], gene_tbl)
 ```
 
 ```{r}
@@ -238,7 +239,7 @@ autoplot(gene_region_tbl, top_snps_tbl = top_snps_tbl)
 
 ```{r}
 # See shinyGeneExon.R
-gene_exon_tbl <- get_gene_exon_snp(top_snps_tbl, gene_tbl)
+gene_exon_tbl <- qtl2pattern::get_gene_exon_snp(top_snps_tbl, gene_tbl)
 ```
 
 ```{r}
@@ -258,7 +259,7 @@ autoplot(snp_scan_obj, snpprobs_obj$snpinfo, patterns = "hilit", drop_hilit = 1.
 
 ```{r}
 # See shinySNPFeature.R
-top_feature <- merge_feature(top_snps_tbl, snpprobs_obj$snpinfo,
+top_feature <- qtl2pattern::merge_feature(top_snps_tbl, snpprobs_obj$snpinfo,
                              snp_scan_obj, 1.5, 0, gene_exon_tbl)
 ```
 
@@ -282,7 +283,7 @@ pairprobs_obj <- query_probs(chr_id, start_val, end_val, allele = FALSE)
 ```
 
 ```{r}
-snppairprobs_obj <- get_snpprobs(chr_id, pos_Mbp, window_Mbp,
+snppairprobs_obj <- qtl2pattern::get_snpprobs(chr_id, pos_Mbp, window_Mbp,
                    pheno_name, 
                    pairprobs_obj$probs,
                    pairprobs_obj$map,
@@ -290,7 +291,7 @@ snppairprobs_obj <- get_snpprobs(chr_id, pos_Mbp, window_Mbp,
 ```
 
 ```{r}
-snppair_scan_obj <- scan1_covar(pheno_data, covar, 
+snppair_scan_obj <- qtl2pattern::scan1_covar(pheno_data, covar, 
                                 snppairprobs_obj$snpprobs, kinship, analyses)
 ```
 
@@ -306,7 +307,7 @@ autoplot(snppair_scan_obj, snppairprobs_obj$snpinfo, patterns = "hilit", drop_hi
 
 ```{r}
 top_snppairs_tbl <- 
-  top_snps_all(snppair_scan_obj,
+  qtl2pattern::top_snps_all(snppair_scan_obj,
                snppairprobs_obj$snpinfo,
                1.5)
 ```
@@ -317,7 +318,7 @@ top_snppairs_tbl <-
 
 ```{r}
 # See shinyPattern.R
-scan_pat <- scan_pattern(pairprobs_obj$probs,
+scan_pat <- qtl2pattern::scan_pattern(pairprobs_obj$probs,
                             pheno_data,
                             kinship, addcovar,
                             pairprobs_obj$map,
@@ -325,7 +326,7 @@ scan_pat <- scan_pattern(pairprobs_obj$probs,
 ```
 
 ```{r}
-pattern_choices <- sdp_to_pattern(patterns$sdp, LETTERS[1:8])
+pattern_choices <- qtl2pattern::sdp_to_pattern(patterns$sdp, LETTERS[1:8])
 ```
 
 ```{r}
@@ -349,7 +350,7 @@ Assume for now covariates are the same. The routine `qtl2pattern::scan1_covar` h
 ```{r}
 # See shinyMain.R
 (pheno_data <- readRDS(file.path(project_dir, "pheno_data.rds")) %>%
-   pheno_trans(analyses$pheno, 
+   qtl2pattern::pheno_trans(analyses$pheno, 
                analyses$transf,
                analyses$offset,
                analyses$winsorize)) %>% 
@@ -357,7 +358,7 @@ Assume for now covariates are the same. The routine `qtl2pattern::scan1_covar` h
 ```
 ```{r}
 # See shinyScanCoef.R
-scan_obj <- scan1_covar(pheno_data, covar, probs_obj$probs, kinship,
+scan_obj <- qtl2pattern::scan1_covar(pheno_data, covar, probs_obj$probs, kinship,
                         analyses)
 ```
 
@@ -366,7 +367,7 @@ autoplot(scan_obj, probs_obj$map, 1:2)
 ```
 
 ```{r}
-snp_scan_obj <- scan1_covar(pheno_data, covar, snpprobs_obj$snpprobs, kinship, analyses)
+snp_scan_obj <- qtl2pattern::scan1_covar(pheno_data, covar, snpprobs_obj$snpprobs, kinship, analyses)
 ```
 
 ```{r}
