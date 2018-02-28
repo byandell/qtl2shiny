@@ -178,3 +178,74 @@ autoplot(eff_obj, probs_obj$map) +
 ```
 
 
+```{r}
+autoplot(eff_obj, probs_obj$map, scan1_output = scan_obj,
+         legend.position = "none")
+```
+
+## SNP Scans
+
+```{r}
+# See shinySNPSetup.R and shinyProbs.R
+query_variants <- create_variant_query_func(
+  file.path(project_info$taxa, "cc_variants.sqlite"))
+snpinfo <- query_variants(chr_id, start_val, end_val)
+snpprobs_obj <- get_snpprobs(chr_id, pos_Mbp, window_Mbp,
+                   pheno_name, 
+                   probs_obj$probs,
+                   probs_obj$map,
+                   snpinfo)
+```
+
+```{r}
+snpscan_obj <- scan1_covar(pheno_data, covar, snpprobs_obj$snpprobs, kinship, analyses)
+```
+
+```{r}
+autoplot(snpscan_obj, snpprobs_obj$snpinfo, show_all_snps = FALSE,
+         drop_hilit = 1.5,)
+```
+
+```{r}
+# See shinySNPSum and shinySNPSetup
+topsnps <- top_snps_all(snpscan_obj,
+                        snpprobs_obj$snpinfo,
+                        1.5)
+summary(topsnps)
+```
+
+#### Genes and Exons
+
+```{r}
+# See shinyGeneRegion.R
+query_genes <- create_gene_query_func(
+  file.path(project_info$taxa, "mouse_genes.sqlite"))
+rng <- range(topsnps$pos) + c(-.005, .005)
+gene_tbl <- query_genes(chr_id, rng[1], rng[2])
+genes <- get_genes(chr_id, rng[1], rng[2], gene_tbl)
+```
+
+```{r}
+autoplot(genes)
+```
+
+```{r}
+autoplot(genes, top_snps_tbl = topsnps)
+```
+
+```{r}
+# See shinyGeneExon.R
+exons <- get_gene_exon_snp(topsnps, gene_tbl)
+```
+
+```{r}
+(exon_sum <- summary(exons, top_snps_tbl = topsnps))
+```
+
+```{r}
+autoplot(exons, topsnps, genes = exon_sum$gene[1])
+```
+
+## And more
+
+Need to do allele patterns, gene action and multiple traits.
