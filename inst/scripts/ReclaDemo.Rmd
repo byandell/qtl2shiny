@@ -275,6 +275,62 @@ autoplot(top_feature, pheno_name, "consequence")
 
 Going to skip this for now, as it takes another package and is under redesign.
 
+```{r}
+peak_mar <- qtl2::find_marker(probs_obj$map, chr_id, pos_Mbp)
+```
+
+```{r}
+# See shinyMediate.R
+all_analyses <- readRDS(file.path(project_dir, "analyses.rds")) %>%
+  filter(pheno != pheno_name,
+         pheno %in% peaks$pheno)
+all_pheno_data <- readRDS(file.path(project_dir, "pheno_data.rds")) %>%
+   qtl2pattern::pheno_trans(all_analyses$pheno, 
+               all_analyses$transf,
+               all_analyses$offset,
+               all_analyses$winsorize)
+annot <- dplyr::left_join(
+  peaks %>% filter(pheno %in% all_analyses$pheno),
+  all_analyses,
+  by = "pheno")
+annot$driver <- qtl2::find_marker(probs_obj$map, chr_id, annot$pos)
+med_ls <- 
+  list(comediators = qtl2pattern::pheno_trans(all_pheno_data,
+                                              annot$pheno,
+                                              annot$transf,
+                                              annot$offset,
+                                              annot$winsorize),
+       annot = dplyr::rename(annot, 
+                             id = pheno,
+                             biotype = pheno_type),
+       cov_med = addcovar,
+       phe_type = (dplyr::filter(peaks, pheno == pheno_name))$pheno_type[1])
+```
+
+```{r}
+geno_max <- subset(probs_obj$probs, chr = chr_id, mar = peak_mar)[[1]][,,1]
+```
+
+```{r}
+driver_med <- probs_obj$probs[[chr_id]]
+```
+
+```{r}
+mediate_obj <- CausalMST::mediate1_test(med_ls, geno_max, pheno_data,
+                           kinship[[1]], addcovar, med_ls$cov_med,
+                           driver_med,
+                           test = "wilc", pos = pos_Mbp)
+```
+
+```{r}
+autoplot(mediate_obj)
+```
+
+```{r}
+# See shinyScatter.R
+
+```
+
 ## Gene Action
 
 ```{r}
