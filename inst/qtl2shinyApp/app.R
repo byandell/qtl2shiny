@@ -1,7 +1,7 @@
 ## app.R ##
 
 # Master control file for projects
-projects <- read.csv("projects.csv", stringsAsFactors = FALSE)
+projects <- read.csv("qtl2shinyData/projects.csv", stringsAsFactors = FALSE)
 
 #####################################################
 ## Function from Joe Cheng

@@ -25,9 +25,9 @@ Those wishing to _use_ the shiny interface with their own data will want to read
 
 ## Data Structures and Folder Organization
 
-The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R) is in a directory with other support documents and the data. There is no need to change this file; just put it in place.
+The interface assumes the Shiny app file [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R) is in a directory with other support documents and the data folder, `qtl2shinyData`. There is no need to change this file; just put it in place.
 
-The CSV file [`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/projects.csv), in that same directory, contains project information. This file has the following content:
+The CSV file [`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/projects.csv), in the sub-folder, `qtl2shinyData`, contains project information. This file has the following content:
 
 ```
 project,taxa,directory
@@ -39,12 +39,13 @@ The column names are fixed. The `project` is the project name (`Recla`), `taxa` 
 [`app.R`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R)  
 [`about.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/about.md)  
 [`about-extended.md`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/about-extended.md)  
-[`projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/projects.csv)  
 `qtl2shinyData/`  
+[`qtl2shinyData/projects.csv`](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/qtl2shinyData/projects.csv)  
 `qtl2shinyData/CCmouse/`  
 `qtl2shinyData/CCmouse/Recla/`
 
-The `about.md` and `about-extended.md` files are place-holders for now for online documentation. All data may be stored under the directory (`qtl2shinyData`).
+The `about.md` and `about-extended.md` files are place-holders for now for online documentation. 
+All data may be stored under the directory (`qtl2shinyData`).
 
 Detailed information about the `taxa` and `project` can be found with the [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) and [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd) examples, respectively.
 

@@ -1,0 +1,35 @@
+---
+title: "qtl2shiny Information"
+author: "Brian S. Yandell"
+date: "`r format(Sys.Date(), '%d %b %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The popular [R/qtl](http://www.rqtl.org) package for gene mapping has been redeveloped for high volume, multi-parent systems genetics data as [R/qtl2](http://www.rqtl.org/qtl2). This new package is still in a state of flux, so please work with us to improve. Information in this folder largely refers to extensions to [R/qtl2](http://www.rqtl.org/qtl2), including a [Shiny](http://shiny.rstudio.org) interface.
+
+[R/qtl2shiny Screen Shots](screenshots.html) shows a series of screen shots, giving examples of [R/qtl2shiny](https://github.com/byandell/qtl2shiny) in action. For more details on use of the package, see the 
+[R/qtl2shiny package](https://github.com/byandell/qtl2shiny),
+[R/qtl2shiny User Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/UserGuide.Rmd) and [R/qtl2shiny Developer Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/DeveloperGuide.Rmd). This document is created by [inst/scripts/qtl2shiny_index.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/qtl2shiny_index.Rmd).
+
+- [R/qtl2shiny Package](https://github.com/byandell/qtl2shiny)
+- [R/qtl2shiny Screen Shots](screenshots.html)
+    + [Screen Shots Markdown](https://github.com/byandell/qtl2shiny/blob/master/inst/figs/screenshots.Rmd)
+    + [Screen Shot Figures](figs)
+- [R/qtl2shiny User Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/UserGuide.Rmd)
+- [R/qtl2shiny Developer Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/DeveloperGuide.Rmd)
+
+See also
+[ReclaDemo.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/ReclaDemo.Rmd) for scripts to generate most of these summaries and figures.
+This uses four other packages that can be employed on their own separate from [R/qtl2shiny](https://github.com/byandell/qtl2shiny). In particular, [R/qtl2ggplot](https://github.com/byandell/qtl2ggplot) provides full capability for `ggplot2` plot objects. The [R/qtl2feather](https://github.com/byandell/qtl2feather) package transforms large, slow `calc_genoprob` objects central to [R/qtl2](http://www.rqtl.org/qtl2) into a set of `feather` databases for quick access. [R/qtl2pattern](https://github.com/byandell/qtl2pattern) provides added funtionality to look at SNP patterns and other information in more detail. See each package for its own documentation. 
+
+- [ReclaDemo.html](ReclaDemo.html) & [ReclaDemo.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/ReclaDemo.Rmd)
+- [R/qtl2ggplot](https://github.com/byandell/qtl2ggplot)
+- [R/qtl2feather](https://github.com/byandell/qtl2feather)
+- [R/qtl2pattern](https://github.com/byandell/qtl2pattern)
+
+There is another package that is more specialized and still need documentation:
+[R/CausalMST](https://github.com/byandell/CausalMST) concerns Causal Model Selection Tests, which are used in conjunction with mediation to formally infer causal relationship between a phenotype and other phenotypes that co-map.

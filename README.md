@@ -7,7 +7,7 @@ Yandell R/qtl2shiny project.
 * Code to create shiny interface for [R/qtl2](https://kbroman.org/qtl2).
 * Version 0.9.18
 * See following documents:
-    + [~yandell/software/qtl2shiny](http://www.stat.wisc.edu/~yandell/software/qtl2shiny)
+    + [R/qtl2shiny Screen Shots](http://www.stat.wisc.edu/~yandell/software/qtl2shiny/screenshots.html)
     + [R/qtl2shiny User Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/UserGuide.Rmd)
     + [R/qtl2shiny Developer Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/DeveloperGuide.Rmd)
 
@@ -23,7 +23,6 @@ Yandell R/qtl2shiny project.
     + [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2)
     + [R/qtl2feather](https://github.com/byandell/qtl2feather)
     + [R/qtl2pattern](https://github.com/byandell/qtl2pattern)
-    + [R/DOread](https://github.com/byandell/DOread)
     + [R/CausalMST](https://github.com/byandell/CausalMST)
 
 ### What are open development issues ###
