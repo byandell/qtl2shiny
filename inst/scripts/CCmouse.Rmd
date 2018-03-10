@@ -21,10 +21,20 @@ project_info <- data.frame(project = "",
                            stringsAsFactors = FALSE)
 ```
 
+Assume local directory already created with `taxa` under.
+
 ```{r}
-taxa_dir <- file.path(project_info$taxa)
+localdir <- "../../.."
+```
+
+```{r}
+(taxa_dir <- file.path(localdir, project_info$taxa))
+```
+
+```{r}
 if(!dir.exists(taxa_dir)) {
-  dir.create(taxa_dir)
+  warning("taxa director does not exist")
+  knitr::knit_exit()
 }
 ```
 

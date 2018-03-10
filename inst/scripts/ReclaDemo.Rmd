@@ -1,7 +1,7 @@
 ---
 title: "Recla qtl2shiny Demo"
 author: "Brian S. Yandell"
-date: "2/27/2018"
+date: "`r format(Sys.Date(), '%d %b %Y')`"
 output: html_document
 ---
 
@@ -26,18 +26,27 @@ library(ggplot2)
 ```{r}
 project_info <- data.frame(project = "Recla",
                            taxa = "CCmouse",
-                           directory = ".",
+                           directory = "../../..",
                            stringsAsFactors = FALSE)
 ```
 
 ```{r}
-(project_dir <- file.path(project_info$directory, 
-                          project_info$taxa, 
-                          project_info$project))
+(taxa_dir <- file.path(project_info$directory, 
+                          project_info$taxa))
 ```
 
 ```{r}
-dir.exists(project_dir)
+(project_dir <- file.path(taxa_dir, project_info$project))
+```
+
+Assume local directory already created with `taxa` and `project` under,
+and with all data already installed.
+
+```{r}
+if(!dir.exists(project_dir)) {
+  warning("project director does not exist")
+  knitr::knit_exit()
+}
 ```
 
 List files for the taxa and for the project.
@@ -170,6 +179,9 @@ qtl2::find_peaks(scan_obj, probs_obj$map)
 
 ```{r}
 addcovar <- qtl2pattern::covar_df_mx(covar)
+```
+
+```{r}
 eff_obj <- qtl2::scan1coef(probs_obj$probs, pheno_data, kinship, addcovar)
 ```
 
@@ -189,7 +201,7 @@ autoplot(eff_obj, probs_obj$map, scan1_output = scan_obj,
 ```{r}
 # See shinySNPSetup.R and shinyProbs.R
 query_variants <- qtl2::create_variant_query_func(
-  file.path(project_info$taxa, "cc_variants.sqlite"))
+  file.path(taxa_dir, "cc_variants.sqlite"))
 snpinfo <- query_variants(chr_id, start_val, end_val)
 ```
 
@@ -223,7 +235,7 @@ top_snps_tbl <- qtl2pattern::top_snps_all(snp_scan_obj,
 ```{r}
 # See shinyGeneRegion.R
 query_genes <- qtl2::create_gene_query_func(
-  file.path(project_info$taxa, "mouse_genes.sqlite"))
+  file.path(taxa_dir, "mouse_genes.sqlite"))
 rng <- range(top_snps_tbl$pos) + c(-.005, .005)
 gene_tbl <- query_genes(chr_id, rng[1], rng[2])
 gene_region_tbl <- qtl2pattern::get_genes(chr_id, rng[1], rng[2], gene_tbl)
@@ -273,11 +285,9 @@ autoplot(top_feature, pheno_name, "consequence")
 
 #### Mediation
 
-This is **ugly**. It takes another package (`CausalMST`) and is under redesign.
+This section (and package `CausalMST`) is working but will likely be rearranged.
 
-```{r}
-peak_mar <- qtl2::find_marker(probs_obj$map, chr_id, pos_Mbp)
-```
+First, identify all phenotypes that map to the region. This is done using `peaks` in the region to identify phenotype names and `all_analyses` to construct the appropriate phenotype transformation.
 
 ```{r}
 # See shinyMediate.R
@@ -289,72 +299,64 @@ all_pheno_data <- readRDS(file.path(project_dir, "pheno_data.rds")) %>%
                all_analyses$transf,
                all_analyses$offset,
                all_analyses$winsorize)
-annot <- dplyr::left_join(
-  peaks %>% filter(pheno %in% all_analyses$pheno),
-  all_analyses,
-  by = "pheno")
-annot <- 
-    dplyr::inner_join(
-      annot,
-      dplyr::ungroup(
-        dplyr::summarize(
-          dplyr::group_by(peaks, pheno),
-          qtl_ct = n(),
-          QTL = paste0(chr_id, "@",
-                       round(pos), ":",
-                       round(lod), collapse = ","))),
-      by = "pheno")
-annot$local <- FALSE
-annot$driver <- qtl2::find_marker(probs_obj$map, chr_id, annot$pos)
-med_ls <- 
-  list(comediators = qtl2pattern::pheno_trans(all_pheno_data,
-                                              annot$pheno,
-                                              annot$transf,
-                                              annot$offset,
-                                              annot$winsorize),
-       annot = dplyr::rename(annot, 
-                             id = pheno,
-                             biotype = pheno_type),
-       cov_med = addcovar,
-       phe_type = (dplyr::filter(peaks, pheno == pheno_name))$pheno_type[1])
+```
+
+The following works for mediators as other phenotypes. But see `qtl2pattern::expr_region()` and `qtl2pattern::create_mrna_query_func()` to create `query_mrna()` to access expression data.
+
+The basic idea here is to construct a list containing at least three items:
+
+- `pheno`: matrix of phenotypes (columns) by individuals (rows)
+- `annot`: data frame of annotation
+- `covar`: data frame of covariates
+- `peaks`: data frame of peak information (optional)
+
+```{r}
+med_ls <- qtl2pattern::pheno_region(
+  chr_id, start_val, end_val, covar, probs_obj$map,
+  peaks, all_analyses, all_pheno_data)
 ```
 
 ```{r}
-geno_max <- subset(probs_obj$probs, chr = chr_id, mar = peak_mar)[[1]][,,1]
+peak_mar <- qtl2::find_marker(probs_obj$map, chr_id, pos_Mbp)
+# waiting for fix to qtl2
+#geno_max <- qtl2::pull_genoprobpos(probs_obj$probs, peak_mar)
+geno_max <- subset(probs_obj$probs, mar = peak_mar)[[1]][,,1]
 ```
 
-```{r}
-driver_med <- probs_obj$probs[[chr_id]]
-```
+Mediate the target (`pheno_data`) using information in `med_ls` about potential mediators. The driver for the target is `geno_max`, while the driver for the mediators come from `driver_med` using names from `med_ls$annot$driver`.
 
 ```{r}
-mediate_obj <- CausalMST::mediate1_test(med_ls, geno_max, pheno_data,
-                           kinship[[1]], addcovar, med_ls$cov_med,
-                           driver_med,
-                           test = "wilc", pos = pos_Mbp)
+mediate_obj <- CausalMST::mediate1_test(
+  med_ls, 
+  geno_max, 
+  pheno_data,
+  kinship[[1]],
+  covar,
+  med_ls$covar,
+  driver_med = probs_obj$probs[[chr_id]],
+  test = "wilc",
+  pos = pos_Mbp)
 ```
 
 ```{r}
 autoplot(mediate_obj)
 ```
 
+Now look at one of the mediators (the strongest one) in a scatter plot against the target. There are various flavors of plot for this.
+
 ```{r}
-# See shinyScatter.R
-triad <- levels(mediate_obj$best$triad)[1]
-medID <- ifelse("symbol" %in% names(mediate_obj$best), "symbol", "longname")
-med_name <- dplyr::filter(mediate_obj$best, triad == triad)[[medID]]
-id <- med_ls[[2]]$id[med_ls[[2]][[medID]] == med_name]
-sdps <- unique(dplyr::filter(patterns, pheno == pheno_name)$sdp)
-pattern <- qtl2pattern::sdp_to_pattern(sdps, LETTERS[1:8])
-sdp <- sdps[qtl2pattern::sdp_to_pattern(sdps, LETTERS[1:8]) == pattern][1]
-mediator <- med_ls[[1]][, id, drop = FALSE]
+scat_ls <- qtl2pattern::pull_mediator(mediate_obj, med_ls, patterns)
 ```
 
 ```{r}
-scat_dat <- CausalMST::med_scatter(geno_max, pheno_data, mediator,
-                          kinship[[1]], addcovar, med_ls$cov_med,
-                          qtl2::fit1,
-                          sdp = sdp, allele = TRUE)
+scat_dat <- CausalMST::med_scatter(geno_max, pheno_data, 
+                                   scat_ls$mediator,
+                                   kinship[[1]], 
+                                   covar, 
+                                   med_ls$covar,
+                                   qtl2::fit1,
+                                   sdp = scat_ls$sdp, 
+                                   allele = TRUE)
 ```
 
 ```{r}

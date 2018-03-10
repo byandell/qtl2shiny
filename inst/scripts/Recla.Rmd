@@ -21,8 +21,21 @@ project_info <- data.frame(project = "Recla",
                            stringsAsFactors = FALSE)
 ```
 
+Assume local directory already created with `taxa` and `project` under.
+
 ```{r}
-project_dir <- file.path(project_info$taxa, project_info$project)
+localdir <- "../../.."
+```
+
+```{r}
+(project_dir <- file.path(localdir, project_info$taxa, project_info$project))
+```
+
+```{r}
+if(!dir.exists(project_dir)) {
+  warning("project director does not exist")
+  knitr::knit_exit()
+}
 ```
 
 ## Query functions

@@ -11,7 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The popular [R/qtl](http://www.rqtl.org) package for gene mapping has been redeveloped for high volume, multi-parent systems genetics data as [R/qtl2](http://www.rqtl.org/qtl2). This new package is still in a state of flux, so please work with us to improve. Information in this folder largely refers to extensions to [R/qtl2](http://www.rqtl.org/qtl2), including a [Shiny](http://shiny.rstudio.org) interface.
 
-[R/qtl2shiny Screen Shots](screenshots.html) shows a series of screen shots, giving examples of [R/qtl2shiny](https://github.com/byandell/qtl2shiny) in action. For more details on use of the package, see the 
+<http://www.statlab.wisc.edu/shiny/qtl2shiny> shows this server in action.
+[R/qtl2shiny Screen Shots](screenshots.html) has a series of screen shots, giving examples of [R/qtl2shiny](https://github.com/byandell/qtl2shiny) in action.
+
+For more details on use of the package, see the 
 [R/qtl2shiny package](https://github.com/byandell/qtl2shiny),
 [R/qtl2shiny User Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/UserGuide.Rmd) and [R/qtl2shiny Developer Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/DeveloperGuide.Rmd). This document is created by [inst/scripts/qtl2shiny_index.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/qtl2shiny_index.Rmd).
 
