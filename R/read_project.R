@@ -1,5 +1,8 @@
+#' 
 #' @export
 #' @importFrom tools file_ext file_path_sans_ext
+#' @importFrom qtl2pattern read_fast
+#' 
 read_project <- function(project_info, dataname, columns, filetype) {
   # Read data frame or matrix in some file format.
   
@@ -65,8 +68,8 @@ read_project <- function(project_info, dataname, columns, filetype) {
   datapath <- datapath[m]
   
   out <- switch(filetype,
-         fst     = fst::read_fst(datapath, columns),
-         feather = feather::read_feather(datapath, columns),
+         fst     = ,
+         feather = qtl2pattern::read_fast(datapath, columns, fast = filetype),
          rds     = readRDS(datapath),
          csv     = read.csv(datapath, stringsAsFactors = FALSE))
   
