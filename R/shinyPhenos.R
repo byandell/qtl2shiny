@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection, with interfaces \code{shinyPhenosUI} and  \code{shinyPhenosOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param set_par,win_par,peaks_df,analyses_tbl,pheno_data,cov_df,project_info reactive arguments
+#' @param set_par,win_par,peaks_df,analyses_tbl,cov_df,project_info reactive arguments
 #' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -19,7 +19,7 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 shinyPhenos <- function(input, output, session,
-                        set_par, win_par, peaks_df, analyses_tbl, pheno_data, cov_df,
+                        set_par, win_par, peaks_df, analyses_tbl, cov_df,
                         project_info) {
   ns <- session$ns
   # Output the peaks table
@@ -38,10 +38,10 @@ shinyPhenos <- function(input, output, session,
     dplyr::filter(analyses_tbl(), pheno %in% phename)
   })
   phe_mx <- shiny::reactive({
-    pheno_read(pheno_data(), analyses_plot())
+    pheno_read(project_info(), analyses_plot())
   })
   raw_phe_mx <- shiny::reactive({
-    pheno_read(pheno_data(), analyses_plot(), FALSE)
+    pheno_read(project_info(), analyses_plot(), FALSE)
   })
   shiny::callModule(shinyPhenoPlot, "PhenoPlotRaw", set_par, raw_phe_mx, cov_df)
   shiny::callModule(shinyPhenoPlot, "PhenoPlotTrans", set_par, phe_mx, cov_df)

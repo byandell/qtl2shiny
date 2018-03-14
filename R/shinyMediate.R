@@ -3,7 +3,7 @@
 #' Shiny module for scan1 coefficient plots, with interfaces \code{shinyMediateUI} and  \code{shinyMediateOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,patterns,phe_mx,cov_df,probs_obj,K_chr,analyses_df,pmap_obj,covar,pheno_data,analyses_tbl,peaks,project_info,allele_info reactive arguments
+#' @param job_par,win_par,patterns,phe_mx,cov_df,probs_obj,K_chr,analyses_df,pmap_obj,covar,analyses_tbl,peaks,project_info,allele_info reactive arguments
 #' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -27,7 +27,7 @@
 shinyMediate <- function(input, output, session,
                               job_par, win_par, patterns,
                               phe_mx, cov_df, probs_obj, K_chr, analyses_df,
-                              pmap_obj, covar, pheno_data, analyses_tbl, peaks,
+                              pmap_obj, covar, analyses_tbl, peaks,
                               project_info, allele_info) {
   ns <- session$ns
   
@@ -48,10 +48,11 @@ shinyMediate <- function(input, output, session,
   
   ## Comediator data
   comed_ls <- reactive({
-    shiny::req(input$pheno_name, win_par)
+    shiny::req(input$pheno_name, win_par, project_info())
     comediator_region(input$pheno_name, chr_id(), scan_window(), 
-                      covar(), analyses_tbl(), pheno_data(), peaks(), 
-                      shiny::req(input$qtls), shiny::req(pmap_obj()))
+                      covar(), analyses_tbl(), peaks(), 
+                      shiny::req(input$qtls), shiny::req(pmap_obj()),
+                      project_info())
   })
   med_ls <- reactive({
     out <- switch(shiny::req(input$med_type),

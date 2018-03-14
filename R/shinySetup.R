@@ -3,7 +3,7 @@
 #' Shiny module for phenotype selection, with interfaces \code{shinySetupInput} and  \code{shinySetupUI}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_df,pheno_data,projects_info reactive arguments
+#' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_df,projects_info reactive arguments
 #' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -22,7 +22,7 @@
 #'   strong tagList
 shinySetup <- function(input, output, session,
                        pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, 
-                       cov_df, pheno_data, projects_info) {
+                       cov_df, projects_info) {
   ns <- session$ns
 
   project_info <- shiny::callModule(shinyProject, "project", projects_info)
@@ -136,7 +136,7 @@ shinySetup <- function(input, output, session,
   
   ## Use window as input to shinyPhenos.
   shiny::callModule(shinyPhenos, "phenos",
-             input, win_par, peaks_df, analyses_tbl, pheno_data, cov_df,
+             input, win_par, peaks_df, analyses_tbl, cov_df,
              project_info)
   
   ## Setup input logic.

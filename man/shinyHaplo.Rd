@@ -5,13 +5,12 @@
 \title{Shiny haplotype analysis}
 \usage{
 shinyHaplo(input, output, session, win_par, pmap_obj, phe_mx, cov_df, K_chr,
-  analyses_df, covar, pheno_data, analyses_tbl, peaks, project_info,
-  allele_info)
+  analyses_df, covar, analyses_tbl, peaks, project_info, allele_info)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, pmap_obj, phe_mx, cov_df, K_chr, analyses_df, covar, pheno_data, analyses_tbl, peaks, project_info, allele_info}{reactive arguments}
+\item{win_par, pmap_obj, phe_mx, cov_df, K_chr, analyses_df, covar, analyses_tbl, peaks, project_info, allele_info}{reactive arguments}
 
 \item{id}{shiny identifier}
 }

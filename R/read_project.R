@@ -1,6 +1,6 @@
 #' @export
 #' @importFrom tools file_ext file_path_sans_ext
-read_project <- function(project_info, dataname, filetype) {
+read_project <- function(project_info, dataname, columns, filetype) {
   # Read data frame or matrix in some file format.
   
   if(!nrow(project_info))
@@ -64,9 +64,16 @@ read_project <- function(project_info, dataname, filetype) {
   m <- match(filetype, datatypes)
   datapath <- datapath[m]
   
-  switch(filetype,
-         fst = fst::read_fst(datapath),
-         feather = feather::read_feather(datapath),
-         rds = readRDS(datapath),
-         csv = read.csv(datapath, stringsAsFactors = FALSE))
+  out <- switch(filetype,
+         fst     = fst::read_fst(datapath, columns),
+         feather = feather::read_feather(datapath, columns),
+         rds     = readRDS(datapath),
+         csv     = read.csv(datapath, stringsAsFactors = FALSE))
+  
+  if(filetype %in% c("rds","csv")) {
+    # Pick columns post hoc.
+    if(is.data.frame(out) | is.matrix(out))
+      out <- out[, columns, drop = FALSE]
+  }
+  out
 }

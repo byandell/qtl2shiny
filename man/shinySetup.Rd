@@ -5,12 +5,12 @@
 \title{Shiny setup for DOQTL selection}
 \usage{
 shinySetup(input, output, session, pheno_typer, peaks_tbl, pmap_obj,
-  analyses_tbl, cov_df, pheno_data, projects_info)
+  analyses_tbl, cov_df, projects_info)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_df, pheno_data, projects_info}{reactive arguments}
+\item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_df, projects_info}{reactive arguments}
 
 \item{id}{shiny identifier}
 }

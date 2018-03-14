@@ -5,13 +5,13 @@
 \title{Shiny coefficient analysis and plot module}
 \usage{
 shinyMediate(input, output, session, job_par, win_par, patterns, phe_mx, cov_df,
-  probs_obj, K_chr, analyses_df, pmap_obj, covar, pheno_data, analyses_tbl,
-  peaks, project_info, allele_info)
+  probs_obj, K_chr, analyses_df, pmap_obj, covar, analyses_tbl, peaks,
+  project_info, allele_info)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{job_par, win_par, patterns, phe_mx, cov_df, probs_obj, K_chr, analyses_df, pmap_obj, covar, pheno_data, analyses_tbl, peaks, project_info, allele_info}{reactive arguments}
+\item{job_par, win_par, patterns, phe_mx, cov_df, probs_obj, K_chr, analyses_df, pmap_obj, covar, analyses_tbl, peaks, project_info, allele_info}{reactive arguments}
 
 \item{id}{shiny identifier}
 }

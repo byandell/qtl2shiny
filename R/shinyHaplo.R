@@ -3,7 +3,7 @@
 #' Shiny module for analysis based on haplotype alleles, with interface \code{shinyHaploUI}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pmap_obj,phe_mx,cov_df,K_chr,analyses_df,covar,pheno_data,analyses_tbl,peaks,project_info,allele_info reactive arguments
+#' @param win_par,pmap_obj,phe_mx,cov_df,K_chr,analyses_df,covar,analyses_tbl,peaks,project_info,allele_info reactive arguments
 #' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -18,7 +18,7 @@
 shinyHaplo <- function(input, output, session,
                        win_par, pmap_obj, 
                        phe_mx, cov_df, K_chr, analyses_df, 
-                       covar, pheno_data, analyses_tbl, peaks,
+                       covar, analyses_tbl, peaks,
                        project_info, allele_info) {
   ns <- session$ns
 
@@ -43,7 +43,7 @@ shinyHaplo <- function(input, output, session,
                     input, win_par, patterns,
                     phe_mx, cov_df, probs_obj, K_chr, analyses_df,
                     pmap_obj, 
-                    covar, pheno_data, analyses_tbl, peaks,
+                    covar, analyses_tbl, peaks,
                     project_info, allele_info)
 
   output$allele_names <- shiny::renderText({

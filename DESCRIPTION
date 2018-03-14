@@ -17,11 +17,12 @@ Imports:
     qtl2ggplot,
     qtl2pattern,
     CausalMST,
-    feather, fst, tools
+    tools
 Suggests:
     flexdashboard,
     qtl2db,
     DOread,
+    feather, fst, 
     knitr,
     rmarkdown
 VignetteBuilder: knitr

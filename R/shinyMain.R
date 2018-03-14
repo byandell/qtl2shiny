@@ -39,10 +39,6 @@ shinyMain <- function(input, output, session, projects_info) {
     ## The analyses_tbl should only have one row per pheno.
     read_project(project_info(), "analyses")
   })
-  pheno_data <- shiny::reactive({
-    shiny::req(project_info())
-    read_project(project_info(), "pheno_data")
-  })
   covar <- shiny::reactive({
     shiny::req(project_info())
     read_project(project_info(), "covar")
@@ -60,7 +56,7 @@ shinyMain <- function(input, output, session, projects_info) {
   set_par <- shiny::callModule(shinySetup, "setup", 
                                pheno_type, peaks, 
                                pmap_obj, analyses_tbl, 
-                               cov_df, pheno_data, projects_info)
+                               cov_df, projects_info)
   
   ## Continue with Plots and Analysis.
   
@@ -70,8 +66,8 @@ shinyMain <- function(input, output, session, projects_info) {
     dplyr::filter(analyses_tbl(), pheno %in% phename)
   })
   phe_mx <- shiny::reactive({
-    shiny::req(analyses_df())
-    pheno_read(pheno_data(), analyses_df())
+    shiny::req(analyses_df(), project_info())
+    pheno_read(project_info(), analyses_df())
   })
   cov_df <- shiny::reactive({
     qtl2pattern::get_covar(covar(), analyses_df())
@@ -92,7 +88,7 @@ shinyMain <- function(input, output, session, projects_info) {
   shiny::callModule(shinyHaplo, "hap_scan", 
                     set_par()$win_par, pmap_obj, 
                     phe_mx, cov_df, K_chr, analyses_df, 
-                    covar, pheno_data, analyses_tbl, peaks,
+                    covar, analyses_tbl, peaks,
                     project_info, allele_info)
   
   ## Diplotype Analysis.

@@ -5,12 +5,12 @@
 \title{Shiny phenotype selection}
 \usage{
 shinyPhenos(input, output, session, set_par, win_par, peaks_df, analyses_tbl,
-  pheno_data, cov_df, project_info)
+  cov_df, project_info)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{set_par, win_par, peaks_df, analyses_tbl, pheno_data, cov_df, project_info}{reactive arguments}
+\item{set_par, win_par, peaks_df, analyses_tbl, cov_df, project_info}{reactive arguments}
 
 \item{id}{shiny identifier}
 }
