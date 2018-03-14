@@ -1,8 +1,8 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for R/qtl2 Fine Mapping
-Version: 0.9.24
-Date: 2018-03-12
+Version: 0.9.25
+Date: 2018-03-14
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
 Description: Shiny Interface for R/qtl2 and R/doqtl2.
@@ -16,7 +16,8 @@ Imports:
     qtl2,
     qtl2ggplot,
     qtl2pattern,
-    CausalMST
+    CausalMST,
+    feather, fst, tools
 Suggests:
     flexdashboard,
     qtl2db,

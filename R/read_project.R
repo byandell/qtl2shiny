@@ -1,25 +1,72 @@
 #' @export
-read_project <- function(project_info, dataname, filetype = c("rds","csv","feather")) {
-  filetype <- match.arg(filetype)
+#' @importFrom tools file_ext file_path_sans_ext
+read_project <- function(project_info, dataname, filetype) {
+  # Read data frame or matrix in some file format.
   
   if(!nrow(project_info))
     return(NULL)
   
-  project <- project_info$project
-  taxa <- project_info$taxa
+  # Taxa and project paths.
+  taxapath <- file.path(project_info$directory,
+                        project_info$taxa)
+  projectpath <- file.path(taxapath,
+                           project_info$project)
   
-  directory <- match(project, project_info$project)
-  assertthat::assert_that(!is.na(directory))
-  directory <- project_info$directory[directory]
-  if(is.na(directory) || is.null(directory))
-    directory <- "."
-  
-  filepath <- file.path(directory, taxa, project, paste0(dataname, ".rds"))
-  if(!file.exists(filepath)) {
-    filepath <- file.path(directory, taxa, paste0(dataname, ".rds"))
+  # Compare file roots in project path to dataname.
+  match_filename <- function(dataname, filepath) {
+    filenames <- list.files(filepath)
+    m <- grep(dataname, filenames)
+    if(!length(m)) {
+      fileroots <- tools::file_path_sans_ext(filenames)
+      m <- grep(tools::file_path_sans_ext(dataname), fileroots)
+      if(length(m) > 1) {
+        cat(paste("multiple", dataname, "matches"),
+            file = stderr())
+      }
+    }
+    if(length(m))
+      file.path(filepath, filenames[m])
+    else
+      NULL
   }
-
-  # Only RDS works for now. CSV will be easy, but feather ...  
+  
+  datapath <- match_filename(dataname, projectpath)
+  if(is.null(datapath))
+    datapath <- match_filename(dataname, taxapath)
+  if(is.null(datapath))
+    return(NULL)
+  
+  # File type in order of preference. First use filetype if supplied.
+  # Then use extensions of datapath.
+  # Watch out for CSV, as may need to preserve column characteristics.
+  filetypes <- c("fst","feather","rds","csv")
+  datatypes <- tools::file_ext(datapath)
+  if(missing(filetype)) {
+    # pick in order of filetypes
+    m <- match(filetypes, datatypes, nomatch = 0)
+    if(!any(m > 0)) {
+      cat(paste("file type", paste(datatypes, collapse = ","), "not in approved list"),
+          file = stderr())
+      return(NULL)
+    }
+    m <- m[m>0][1]
+    filetype <- datatypes[m]
+  } else {
+    filetype <- match.arg(filetype, filetypes)
+    if(!(filetype %in% datatypes)) {
+      cat(paste("file type", filetype, "not in directory"),
+          file = stderr())
+      return(NULL)
+    }
+  }
+  
+  # If more that one in datapath, pick by order of filetypes.
+  m <- match(filetype, datatypes)
+  datapath <- datapath[m]
+  
   switch(filetype,
-         rds = read_project_rds(project_info, dataname))
+         fst = fst::read_fst(datapath),
+         feather = feather::read_feather(datapath),
+         rds = readRDS(datapath),
+         csv = read.csv(datapath, stringsAsFactors = FALSE))
 }
