@@ -16,7 +16,7 @@ scripts have already been run to put data in the `CCmouse` directory.
 
 Here we just attach the `dplyr` and `ggplot2` packages, but explicitly use
 elements of the `qtl2`, `qtl2ggplot` and `qtl2pattern` packages. 
-The `qtl2feather` package is used implicitly for access to genotype probabilities.
+The `qtl2fst` package is used implicitly for access to genotype probabilities.
 
 ```{r message=FALSE}
 library(dplyr)
@@ -157,6 +157,10 @@ probs_obj <- query_probs(chr_id, start_val, end_val)
 ```{r}
 names(probs_obj)
 dim(probs_obj$probs)
+```
+
+```{r}
+str(probs_obj$map)
 ```
 
 ```{r}

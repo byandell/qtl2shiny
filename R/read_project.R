@@ -1,9 +1,8 @@
-#' 
 #' @export
 #' @importFrom tools file_ext file_path_sans_ext
 #' @importFrom qtl2pattern read_fast
 #' 
-read_project <- function(project_info, dataname, columns, filetype) {
+read_project <- function(project_info, dataname, columns, rownames = TRUE, filetype) {
   # Read data frame or matrix in some file format.
   
   if(!nrow(project_info))
@@ -69,7 +68,7 @@ read_project <- function(project_info, dataname, columns, filetype) {
   
   out <- switch(filetype,
          fst     = ,
-         feather = qtl2pattern::read_fast(datapath, columns, fast = filetype),
+         feather = qtl2pattern::read_fast(datapath, columns, rownames, filetype),
          rds     = readRDS(datapath),
          csv     = read.csv(datapath, stringsAsFactors = FALSE))
   
