@@ -91,7 +91,7 @@ Then, install R/qtl2 using `devtools::install_github()`.
 Once you have installed these, install qtl2shiny and related packages as
 
     install_github(paste0("byandell/",
-      c("DOread","qtl2pattern","qtl2ggplot","qtl2feather","CausalMST","qtl2shiny")))
+      c("qtl2pattern","qtl2ggplot","qtl2feather","CausalMST","qtl2shiny")))
 
 To install `qtl2shiny` with vignettes (takes a bit longer):
 
