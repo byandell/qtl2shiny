@@ -331,14 +331,14 @@ Mediate the target (`pheno_data`) using information in `med_ls` about potential 
 
 ```{r}
 mediate_obj <- CausalMST::mediate1_test(
-  mediator = med_ls[[1]], 
-  driver = geno_max, 
   target = pheno_data,
-  kinship = kinship[[1]],
+  mediator = med_ls[[1]], 
+  annotation = med_ls[[2]],
+  driver = geno_max, 
   covar_tar = covar,
   covar_med = med_ls$covar,
+  kinship = kinship[[1]],
   driver_med = probs_obj$probs[[chr_id]],
-  annot_med = med_ls[[2]],
   test = "wilc",
   pos = pos_Mbp)
 ```
