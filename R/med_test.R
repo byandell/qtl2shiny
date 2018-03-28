@@ -4,10 +4,7 @@ med_test <- function(med_ls, geno_max, phe_mx, kinship, cov_tar,
   if(is.list(kinship))
     kinship <- kinship[[1]]
   
-  # Somewhere in this, cov_med ends up as vector rather than column matrix.
-  # Seems mediate1_test wants cov_med as dataframe, then later convert?
-  # see CausalMST:::cmst_pheno is where problem lies.
-  CausalMST::mediate1_test(phe_mx, med_ls[[1]], med_ls[[2]], geno_max,
+  CausalMST::mediation_test(phe_mx, med_ls[[1]], med_ls[[2]], geno_max,
                            cov_tar, med_ls$covar, kinship,
                            driver_med,
                            test = "wilc", pos = pos_Mbp,

@@ -330,7 +330,7 @@ geno_max <- subset(probs_obj$probs, mar = peak_mar)[[1]][,,1]
 Mediate the target (`pheno_data`) using information in `med_ls` about potential mediators. The driver for the target is `geno_max`, while the driver for the mediators come from `driver_med` using names from `med_ls$annot$driver`.
 
 ```{r}
-mediate_obj <- CausalMST::mediate1_test(
+mediate_obj <- CausalMST::mediation_test(
   target = pheno_data,
   mediator = med_ls[[1]], 
   annotation = med_ls[[2]],
