@@ -4,13 +4,17 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
   
   # This is specific to CCmouse.
   peaks <- dplyr::filter(peaks,
+                         pheno != pheno_name,
                          !(pheno_group == "Islet.mRNA"))
+  
+  # Filter peaks and analyses to region and drop pheno_name
   peaks_local <- dplyr::filter(peaks,
                                chr == chr_id,
                                pos >= scan_window[1],
                                pos <= scan_window[2])
   analyses_df <- dplyr::filter(analyses_tbl,
-                               pheno %in% peaks_local$pheno)
+                               pheno %in% peaks_local$pheno,
+                               pheno != pheno_name)
   
   # Read the phenos we need.
   phenos <- analyses_df$pheno
@@ -22,7 +26,7 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
   
   out
 }
-comediator_type <- function(comed, peaks, doThis) {
+comediator_type <- function(comed, peaks, pheno_name, doThis) {
   if(doThis & !is.null(comed)) {
     phe_type <- (dplyr::filter(peaks, pheno == pheno_name))$pheno_type[1]
     not_type <- comed$annot$id[comed$annot$biotype != phe_type]

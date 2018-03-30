@@ -55,9 +55,10 @@ shinyMediate <- function(input, output, session,
                       project_info())
   })
   med_ls <- reactive({
-    out <- switch(shiny::req(input$med_type),
+    out <- switch(shiny::req(input$med_type, input$pheno_name),
            expression = expr_ls(),
            phenotype = comediator_type(comed_ls(), shiny::req(peaks()),
+                                       input$pheno_name,
                                        shiny::isTruthy(input$other)))
     out
   })
