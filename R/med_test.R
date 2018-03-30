@@ -11,7 +11,7 @@ med_test <- function(med_ls, geno_max, phe_mx, kinship, cov_tar,
                            data_type = data_type)
 }
 
-med_scat <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps, 
+med_pair <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps, 
                      pattern, med_name, medID, haplos) {
   
   if(is.list(kinship))
