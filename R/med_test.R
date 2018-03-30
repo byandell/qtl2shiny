@@ -27,8 +27,9 @@ med_scat <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps,
   cov_tar <- qtl2pattern::covar_df_mx(cov_tar)
   cov_med <- qtl2pattern::covar_df_mx(med_ls$covar)
   
-  CausalMST:::med_scatter(geno_max, phe_mx, med_ls[[1]][, id, drop = FALSE],
-                          kinship, cov_tar, cov_med,
-                          qtl2::fit1,
-                          sdp = sdp, allele = TRUE)
+  CausalMST:::mediation_pair(phe_mx, med_ls[[1]][, id, drop = FALSE],
+                             geno_max, 
+                             cov_tar, cov_med, kinship,
+                             qtl2::fit1,
+                             sdp = sdp, allele = TRUE)
 }

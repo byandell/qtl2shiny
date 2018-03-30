@@ -10,7 +10,7 @@
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom CausalMST mediation_test
+#' @importFrom CausalMST mediation_pair mediation_test
 #' @importFrom qtl2pattern covar_df_mx pheno_trans pheno_region expr_region
 #' @importFrom qtl2 find_marker scan1
 #' @importFrom ggplot2 autoplot

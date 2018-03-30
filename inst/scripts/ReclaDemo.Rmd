@@ -354,14 +354,15 @@ scat_ls <- qtl2pattern::pull_mediator(mediate_obj, med_ls, patterns)
 ```
 
 ```{r}
-scat_dat <- CausalMST::med_scatter(geno_max, pheno_data, 
-                                   scat_ls$mediator,
-                                   kinship[[1]], 
-                                   covar, 
-                                   med_ls$covar,
-                                   qtl2::fit1,
-                                   sdp = scat_ls$sdp, 
-                                   allele = TRUE)
+scat_dat <- CausalMST::mediation_pair(pheno_data, 
+                                      scat_ls$mediator,
+                                      geno_max,
+                                      covar, 
+                                      med_ls$covar,
+                                      kinship[[1]], 
+                                      qtl2::fit1,
+                                      sdp = scat_ls$sdp, 
+                                      allele = TRUE)
 ```
 
 ```{r}

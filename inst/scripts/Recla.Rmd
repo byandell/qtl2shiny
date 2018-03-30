@@ -140,7 +140,7 @@ saveRDS(kinship_loco, file.path(project_dir, "kinship.rds"))
 ```{r}
 form <- formula(paste("~", paste(names(covar), collapse = "+")))
 addcovar <- model.matrix(form, covar)[, -1, drop = FALSE]
-out <- scan1(faprobs, recla$pheno, addcovar=addcovar)
+out <- scan1(faprobs, recla$pheno, kinship_loco, addcovar=addcovar)
 ```
 
 ```{r}
