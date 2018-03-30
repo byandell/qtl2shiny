@@ -11,7 +11,7 @@ med_test <- function(med_ls, geno_max, phe_mx, kinship, cov_tar,
                            data_type = data_type)
 }
 
-med_pair <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps, 
+med_triad <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps, 
                      pattern, med_name, medID, haplos) {
   
   if(is.list(kinship))
@@ -27,7 +27,7 @@ med_pair <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps,
   cov_tar <- qtl2pattern::covar_df_mx(cov_tar)
   cov_med <- qtl2pattern::covar_df_mx(med_ls$covar)
   
-  CausalMST:::mediation_pair(phe_mx, med_ls[[1]][, id, drop = FALSE],
+  CausalMST:::mediation_triad(phe_mx, med_ls[[1]][, id, drop = FALSE],
                              geno_max, 
                              cov_tar, cov_med, kinship,
                              qtl2::fit1,
