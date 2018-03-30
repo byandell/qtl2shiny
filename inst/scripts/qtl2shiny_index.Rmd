@@ -27,12 +27,12 @@ For more details on use of the package, see the
 
 See also
 [ReclaDemo.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/ReclaDemo.Rmd) for scripts to generate most of these summaries and figures.
-This uses four other packages that can be employed on their own separate from [R/qtl2shiny](https://github.com/byandell/qtl2shiny). In particular, [R/qtl2ggplot](https://github.com/byandell/qtl2ggplot) provides full capability for `ggplot2` plot objects. The [R/qtl2feather](https://github.com/byandell/qtl2feather) package transforms large, slow `calc_genoprob` objects central to [R/qtl2](http://www.rqtl.org/qtl2) into a set of `feather` databases for quick access. [R/qtl2pattern](https://github.com/byandell/qtl2pattern) provides added funtionality to look at SNP patterns and other information in more detail. See each package for its own documentation. 
+This uses four other packages that can be employed on their own separate from [R/qtl2shiny](https://github.com/byandell/qtl2shiny). In particular, [R/qtl2ggplot](https://github.com/byandell/qtl2ggplot) provides full capability for `ggplot2` plot objects. The [R/qtl2fst](https://github.com/rqtl/qtl2fst) package transforms large, slow `calc_genoprob` objects central to [R/qtl2](http://www.rqtl.org/qtl2) into a set of `fst` databases for quick access. [R/qtl2pattern](https://github.com/byandell/qtl2pattern) provides added funtionality to look at SNP patterns and other information in more detail. See each package for its own documentation. 
 
 - [ReclaDemo.html](ReclaDemo.html) & [ReclaDemo.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/ReclaDemo.Rmd)
 - [R/qtl2ggplot](https://github.com/byandell/qtl2ggplot)
-- [R/qtl2feather](https://github.com/byandell/qtl2feather)
+- [R/qtl2fst](https://github.com/rqtl/qtl2fst)
 - [R/qtl2pattern](https://github.com/byandell/qtl2pattern)
 
-There is another package that is more specialized and still need documentation:
+There is another package that is more specialized and still needs documentation:
 [R/CausalMST](https://github.com/byandell/CausalMST) concerns Causal Model Selection Tests, which are used in conjunction with mediation to formally infer causal relationship between a phenotype and other phenotypes that co-map.

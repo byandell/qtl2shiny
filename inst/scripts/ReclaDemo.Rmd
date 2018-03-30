@@ -344,6 +344,10 @@ mediate_obj <- CausalMST::mediation_test(
 ```
 
 ```{r}
+summary(mediate_obj)
+```
+
+```{r}
 autoplot(mediate_obj)
 ```
 
