@@ -358,7 +358,7 @@ scat_ls <- qtl2pattern::pull_mediator(mediate_obj, med_ls, patterns)
 ```
 
 ```{r}
-scat_dat <- CausalMST::mediation_pair(pheno_data, 
+scat_dat <- CausalMST::mediation_triad(pheno_data, 
                                       scat_ls$mediator,
                                       geno_max,
                                       covar, 
