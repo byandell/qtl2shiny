@@ -72,8 +72,8 @@ shinyMediate <- function(input, output, session,
     subset(probs_obj()$probs, chr = chr_id(), mar = peak_mar())[[1]][,,1]
   })
   
-  ## Scatter Plots
-  shiny::callModule(shinyScatter, "scatter",
+  ## Triad Plots
+  shiny::callModule(shinyTriad, "triad",
                     input, patterns, 
                     geno_max, peak_mar, med_ls, mediate_signif,
                     phe1_mx, cov_df, K_chr,
@@ -210,7 +210,7 @@ shinyMediate <- function(input, output, session,
                         "Static")
   })
   output$checkplot <- shiny::renderUI({
-    shiny::checkboxInput(ns("checkplot"), "Scatter Plot", input$checkplot)
+    shiny::checkboxInput(ns("checkplot"), "Triad Plot", input$checkplot)
   })
   output$local_other <- shiny::renderUI({
     switch(shiny::req(input$med_type),
@@ -288,12 +288,12 @@ shinyMediate <- function(input, output, session,
              shiny::uiOutput(ns("mediation"))
            },
            {
-             shinyScatterUI(ns("scatter"))
+             shinyTriadUI(ns("triad"))
            })
   })
   output$medOutput <- shiny::renderUI({
     if(shiny::isTruthy(input$checkplot))
-      shinyScatterOutput(ns("scatter"))
+      shinyTriadOutput(ns("triad"))
     else
       shiny::uiOutput(ns("out_choice"))
   })

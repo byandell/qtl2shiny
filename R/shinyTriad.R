@@ -1,6 +1,6 @@
-#' Shiny scatter plot module
+#' Shiny triad plot module
 #'
-#' Shiny module for scatter plots, with interfaces \code{shinyScatterUI} and  \code{shinyScatterOutput}.
+#' Shiny module for triad plots, with interfaces \code{shinyTriadUI} and  \code{shinyTriadOutput}.
 #'
 #' @param input,output,session standard shiny arguments
 #' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,allele_info reactive arguments
@@ -23,7 +23,7 @@
 #'   downloadButton downloadHandler
 #' @importFrom plotly renderPlotly plotlyOutput
 #' 
-shinyScatter <- function(input, output, session,
+shinyTriad <- function(input, output, session,
                   med_par, patterns, 
                   geno_max, peak_mar, med_ls, mediate_obj,
                   phe_mx, cov_df, K_chr,
@@ -80,7 +80,7 @@ shinyScatter <- function(input, output, session,
                                    "driver"))
   })
 
-  ## Scatter plot
+  ## Triad plot
   output$scatPlot <- shiny::renderPlot({
     if(!shiny::isTruthy(patterns())) {
       return(plot_null("first run\nAllele Patterns"))
@@ -89,7 +89,7 @@ shinyScatter <- function(input, output, session,
       plot_null("too much\nmissing data\nin mediators\nreduce window width")
     } else {
       shiny::req(input$med_plot, input$med_name, phe_mx())
-      shiny::withProgress(message = 'Scatter Plot ...', value = 0, {
+      shiny::withProgress(message = 'Triad Plot ...', value = 0, {
         shiny::setProgress(1)
         ggplot2::autoplot(scat_dat(), type = input$med_plot,
              dname = peak_mar(),
@@ -130,7 +130,7 @@ shinyScatter <- function(input, output, session,
   med_ls
 }
 
-shinyScatterUI <- function(id) {
+shinyTriadUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::uiOutput(ns("triad")),
@@ -141,7 +141,7 @@ shinyScatterUI <- function(id) {
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots"))))
 }
-shinyScatterOutput <- function(id) {
+shinyTriadOutput <- function(id) {
   ns <- shiny::NS(id)
   shiny::plotOutput(ns("scatPlot"))
 }
