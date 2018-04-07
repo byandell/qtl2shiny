@@ -325,6 +325,7 @@ peak_mar <- qtl2::find_marker(probs_obj$map, chr_id, pos_Mbp)
 # waiting for fix to qtl2
 #geno_max <- qtl2::pull_genoprobpos(probs_obj$probs, peak_mar)
 geno_max <- subset(probs_obj$probs, mar = peak_mar)[[1]][,,1]
+driver_med <- probs_obj$probs[[chr_id]][,, unique(med_ls[[2]]$driver), drop = FALSE]
 ```
 
 Mediate the target (`pheno_data`) using information in `med_ls` about potential mediators. The driver for the target is `geno_max`, while the driver for the mediators come from `driver_med` using names from `med_ls$annot$driver`.
@@ -333,18 +334,18 @@ Mediate the target (`pheno_data`) using information in `med_ls` about potential 
 mediate_obj <- CausalMST::mediation_test(
   target = pheno_data,
   mediator = med_ls[[1]], 
-  annotation = med_ls[[2]],
   driver = geno_max, 
+  annotation = med_ls[[2]],
   covar_tar = covar,
   covar_med = med_ls$covar,
   kinship = kinship[[1]],
-  driver_med = probs_obj$probs[[chr_id]],
+  driver_med = driver_med,
   test = "wilc",
   pos = pos_Mbp)
 ```
 
 ```{r}
-summary(mediate_obj)
+(sum_med <- summary(mediate_obj))
 ```
 
 ```{r}
@@ -358,15 +359,27 @@ scat_ls <- qtl2pattern::pull_mediator(mediate_obj, med_ls, patterns)
 ```
 
 ```{r}
-scat_dat <- CausalMST::mediation_triad(pheno_data, 
-                                      scat_ls$mediator,
-                                      geno_max,
-                                      covar, 
-                                      med_ls$covar,
-                                      kinship[[1]], 
-                                      qtl2::fit1,
-                                      sdp = scat_ls$sdp, 
-                                      allele = TRUE)
+med_name <- sum_med$id[1]
+mediator <- med_ls[[1]][, med_name, drop = FALSE]
+driver_name <- (med_ls[[2]] %>% 
+  filter(id == med_name))$driver
+driver <- driver_med[,, driver_name]
+```
+
+```{r}
+sdp <- snpprobs_obj$snpinfo$sdp[which.min(abs(snpprobs_obj$snpinfo$pos - sum_med$pos[1]))]
+```
+
+```{r}
+scat_dat <- CausalMST::mediation_triad(
+  target = pheno_data, 
+  mediator = mediator,
+  driver = driver,
+  covar_tar = covar, 
+  covar_med = med_ls$covar,
+  kinship = kinship[[1]], 
+  sdp = scat_ls$sdp,
+  allele = TRUE)
 ```
 
 ```{r}

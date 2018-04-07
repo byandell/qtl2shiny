@@ -4,11 +4,17 @@ med_test <- function(med_ls, geno_max, phe_mx, kinship, cov_tar,
   if(is.list(kinship))
     kinship <- kinship[[1]]
   
-  CausalMST::mediation_test(phe_mx, med_ls[[1]], med_ls[[2]], geno_max,
-                           cov_tar, med_ls$covar, kinship,
-                           driver_med,
-                           test = "wilc", pos = pos_Mbp,
-                           data_type = data_type)
+  CausalMST::mediation_test(target = phe_mx,
+                            mediator = med_ls[[1]],
+                            driver = geno_max,
+                            annotation = med_ls[[2]],
+                            covar_tar = cov_tar,
+                            covar_med = med_ls$covar,
+                            kinship = kinship,
+                            driver_med = driver_med,
+                            test = "wilc",
+                            pos = pos_Mbp,
+                            data_type = data_type)
 }
 
 med_triad <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps, 
@@ -27,9 +33,11 @@ med_triad <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps,
   cov_tar <- qtl2pattern::covar_df_mx(cov_tar)
   cov_med <- qtl2pattern::covar_df_mx(med_ls$covar)
   
-  CausalMST:::mediation_triad(phe_mx, med_ls[[1]][, id, drop = FALSE],
-                             geno_max, 
-                             cov_tar, cov_med, kinship,
-                             qtl2::fit1,
-                             sdp = sdp, allele = TRUE)
+  CausalMST:::mediation_triad(target = phe_mx,
+                              mediator = med_ls[[1]][, id, drop = FALSE],
+                              driver = geno_max, 
+                              covar_tar = cov_tar,
+                              covar_med = cov_med,
+                              kinship = kinship,
+                              sdp = sdp, allele = TRUE)
 }
