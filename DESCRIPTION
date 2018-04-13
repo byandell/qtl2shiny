@@ -1,8 +1,8 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for R/qtl2 Fine Mapping
-Version: 0.9.32
-Date: 2018-04-07
+Version: 0.9.33
+Date: 2018-04-13
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
 Description: Shiny Interface for R/qtl2 and R/doqtl2.
