@@ -41,7 +41,7 @@ read_project <- function(project_info, dataname, columns, rownames = TRUE, filet
   # File type in order of preference. First use filetype if supplied.
   # Then use extensions of datapath.
   # Watch out for CSV, as may need to preserve column characteristics.
-  filetypes <- c("fst","feather","rds","csv")
+  filetypes <- c("fst","rds","csv")
   datatypes <- tools::file_ext(datapath)
   if(missing(filetype)) {
     # pick in order of filetypes
@@ -67,8 +67,7 @@ read_project <- function(project_info, dataname, columns, rownames = TRUE, filet
   datapath <- datapath[m]
   
   out <- switch(filetype,
-         fst     = ,
-         feather = qtl2pattern::read_fast(datapath, columns, rownames, filetype),
+         fst     = qtl2pattern::read_fast(datapath, columns, rownames),
          rds     = readRDS(datapath),
          csv     = read.csv(datapath, stringsAsFactors = FALSE))
   
