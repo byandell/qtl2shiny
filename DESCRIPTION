@@ -1,8 +1,8 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for R/qtl2 Fine Mapping
-Version: 0.9.34
-Date: 2018-05-17
+Version: 0.9.35
+Date: 2018-05-30
 Author: Brian S. Yandell
 Maintainer: Brian S. Yandell <byandell@wisc.edu>
 Description: Shiny Interface for R/qtl2 and R/doqtl2.
@@ -12,7 +12,7 @@ Imports:
     assertthat, dplyr, ggplot2, stringr, tidyr,
     shiny,shinydashboard,
     gdata, grid, GGally,
-    plotly, RSQLite, dbplyr,
+    plotly, RSQLite,
     qtl2,
     qtl2ggplot,
     qtl2pattern,
