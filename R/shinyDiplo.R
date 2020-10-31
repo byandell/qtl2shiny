@@ -4,7 +4,6 @@
 #' 
 #' @param input,output,session standard shiny arguments
 #' @param win_par,phe_mx,cov_df,K_chr,analyses_df,project_info,allele_info reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities

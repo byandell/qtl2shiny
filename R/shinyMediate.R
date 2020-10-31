@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param job_par,win_par,patterns,phe_mx,cov_df,probs_obj,K_chr,analyses_df,pmap_obj,covar,analyses_tbl,peaks,project_info,allele_info reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -23,6 +22,9 @@
 #'   downloadButton downloadHandler callModule
 #' @importFrom plotly renderPlotly plotlyOutput
 #' @importFrom dplyr filter
+#' @importFrom utils write.csv
+#' @importFrom grDevices dev.off pdf
+#' @importFrom rlang .data
 #' 
 shinyMediate <- function(input, output, session,
                               job_par, win_par, patterns,
@@ -95,7 +97,7 @@ shinyMediate <- function(input, output, session,
   })
   mediate_signif <- shiny::reactive({
     out <- shiny::req(mediate_obj())
-    out$best <- dplyr::filter(out$best, pvalue <= 0.1)
+    out$best <- dplyr::filter(out$best, .data$pvalue <= 0.1)
     class(out) <- class(mediate_obj())
     out
   })
@@ -232,7 +234,7 @@ shinyMediate <- function(input, output, session,
       file.path(paste0("mediate_", chr_id(), "_", win_par$peak_Mbp, ".csv")) },
     content = function(file) {
       shiny::req(mediate_obj())
-      write.csv(mediate_obj()$best, file)
+      utils::write.csv(mediate_obj()$best, file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -241,7 +243,7 @@ shinyMediate <- function(input, output, session,
     content = function(file) {
       shiny::req(phe_mx(), geno_max(), K_chr(), cov_df(),
                  input$pos_Mbp, input$med_type)
-      pdf(file, width=9,height=9)
+      grDevices::pdf(file, width=9,height=9)
       for(pheno in colnames(phe_mx())) {
         med <- med_test(med_ls(), geno_max(),
                         phe_mx()[, pheno, drop = FALSE],
@@ -265,7 +267,7 @@ shinyMediate <- function(input, output, session,
           local_only = input$local, 
           significant = TRUE))
       }
-      dev.off()
+      grDevices::dev.off()
     })
   output$mediation <- renderUI({
     shiny::tagList(

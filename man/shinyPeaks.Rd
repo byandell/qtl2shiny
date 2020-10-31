@@ -4,15 +4,21 @@
 \alias{shinyPeaks}
 \title{Shiny peaks selection}
 \usage{
-shinyPeaks(input, output, session, set_par, pheno_type, peaks_tbl, pmap_obj,
-  project_info)
+shinyPeaks(
+  input,
+  output,
+  session,
+  set_par,
+  pheno_type,
+  peaks_tbl,
+  pmap_obj,
+  project_info
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{set_par, pheno_type, peaks_tbl, pmap_obj, project_info}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \value{
 list of inputs and scan summary

@@ -4,16 +4,25 @@
 \alias{shinySNPGene}
 \title{Shiny SNP Association}
 \usage{
-shinySNPGene(input, output, session, snp_par, chr_pos, pheno_names,
-  snp_scan_obj, snpinfo, top_snps_tbl, gene_exon_tbl, project_info,
-  snp_action = shiny::reactive({     "basic" }))
+shinySNPGene(
+  input,
+  output,
+  session,
+  snp_par,
+  chr_pos,
+  pheno_names,
+  snp_scan_obj,
+  snpinfo,
+  top_snps_tbl,
+  gene_exon_tbl,
+  project_info,
+  snp_action = shiny::reactive({     "basic" })
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_par, chr_pos, pheno_names, snp_scan_obj, snpinfo, top_snps_tbl, gene_exon_tbl, project_info, snp_action}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \value{
 tbl with top SNPs

@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param job_par,win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -20,6 +19,9 @@
 #'   fluidRow column strong tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#' @importFrom utils write.csv
+#' @importFrom grDevices dev.off pdf
+#' 
 shinyScanCoef <- function(input, output, session,
                   job_par, win_par, 
                   phe_mx, cov_df, probs_obj, K_chr, analyses_df,
@@ -151,7 +153,7 @@ shinyScanCoef <- function(input, output, session,
       file.path(paste0("sum_effects_", win_par$chr_id, ".csv")) },
     content = function(file) {
       shiny::req(eff_obj(), scan_obj(), probs_obj())
-      write.csv(summary(eff_obj(), scan_obj(), probs_obj()$map), file)
+      utils::write.csv(summary(eff_obj(), scan_obj(), probs_obj()$map), file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -163,7 +165,7 @@ shinyScanCoef <- function(input, output, session,
       scans <- shiny::req(scan_obj())
       win <- shiny::req(input$scan_window)
       map <- shiny::req(probs_obj())$map
-      pdf(file, width=9,height=9)
+      grDevices::pdf(file, width=9,height=9)
       print(ggplot2::autoplot(scans, map,
                  lodcolumn = seq_along(names(effs)),
                  chr = win_par$chr_id,
@@ -172,7 +174,7 @@ shinyScanCoef <- function(input, output, session,
         plot_eff(pheno, effs, map, scans, win,
                  addlod = TRUE, allele_info())
       }
-      dev.off()
+      grDevices::dev.off()
     }
   )
   output$blups <- shiny::renderUI({

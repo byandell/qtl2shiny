@@ -3,7 +3,6 @@
 #' Shiny module for selection of project, with interface \code{shinyProjectUI}.
 #'
 #' @param input,output,session,projects_info standard shiny arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -11,6 +10,9 @@
 #' @export
 #' @importFrom shiny callModule NS isTruthy 
 #'   renderUI uiOutput selectInput
+#' @importFrom dplyr distinct filter
+#' @importFrom rlang .data
+#' 
 shinyProject <- function(input, output, session, projects_info) {
   ns <- session$ns
   
@@ -35,8 +37,8 @@ shinyProject <- function(input, output, session, projects_info) {
     dplyr::distinct(
       dplyr::filter(
         projects_info(),
-        project == project_id),
-      project, .keep_all = TRUE)
+        .data$project == project_id),
+      .data$project, .keep_all = TRUE)
   })
 }
 shinyProjectUI <- function(id) {

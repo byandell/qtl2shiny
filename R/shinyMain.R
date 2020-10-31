@@ -19,6 +19,8 @@
 #'   renderDataTable renderText renderUI
 #'   observeEvent
 #'   strong tagList
+#' @importFrom rlang .data
+#' 
 shinyMain <- function(input, output, session, projects_info) {
   ns <- session$ns
   
@@ -63,7 +65,7 @@ shinyMain <- function(input, output, session, projects_info) {
   ## Phenotypes and Covariates.
   analyses_df <- shiny::reactive({
     phename <- shiny::req(set_par()$pheno_names)
-    dplyr::filter(analyses_tbl(), pheno %in% phename)
+    dplyr::filter(analyses_tbl(), .data$pheno %in% phename)
   })
   phe_mx <- shiny::reactive({
     shiny::req(analyses_df(), project_info())

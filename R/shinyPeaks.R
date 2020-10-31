@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param set_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -21,7 +20,8 @@
 #'   renderUI
 #'   observeEvent
 #'   fluidRow column strong tagList
-#'   
+#' @importFrom rlang .data
+#'    
 shinyPeaks <- function(input, output, session,
                        set_par, pheno_type, peaks_tbl, pmap_obj, 
                        project_info) {
@@ -90,7 +90,7 @@ shinyPeaks <- function(input, output, session,
   update_chr <- function() {
     scan_in <- shiny::req(scan_tbl())
     choices <- scan_in$chr[scan_in$count > 0]
-    scan_in <- dplyr::filter(scan_in, count==max(count))
+    scan_in <- dplyr::filter(scan_in, .data$count == max(.data$count))
     
     chr_ct <- as.character(scan_in$chr)
     if(!any(chr_ct == input$chr_id)) {
@@ -103,9 +103,9 @@ shinyPeaks <- function(input, output, session,
     scan_in <- shiny::req(scan_tbl())
     chr_ct <- shiny::req(input$chr_id)
     scan_in <- dplyr::filter(scan_in, 
-                             chr == chr_ct)
+                             .data$chr == chr_ct)
     if(nrow(scan_in)) {
-      scan_in <- dplyr::filter(scan_in, count==max(count))
+      scan_in <- dplyr::filter(scan_in, .data$count == max(.data$count))
       peak_Mbp <- scan_in$pos[1]
     } else {
       peak_Mbp <- input$peak_Mbp
@@ -128,6 +128,7 @@ shinyPeaks <- function(input, output, session,
     pos <- as.numeric(input$chr_pos)
     if(is.numeric(pos)) {
       if(!is.na(pos)) {
+        pmap <- shiny::req(pmap_obj())
         rng <- round(range(pmap[[chr]]), 2)
         if(pos >= rng[1] & pos <= rng[2]) {
           up <- is.null(input$chr_id)

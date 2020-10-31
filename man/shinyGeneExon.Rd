@@ -4,15 +4,21 @@
 \alias{shinyGeneExon}
 \title{Shiny Genes and Exons with nearby SNPs module}
 \usage{
-shinyGeneExon(input, output, session, snp_par, chr_pos, top_snps_tbl,
-  gene_exon_tbl, snp_action = shiny::reactive({     "basic" }))
+shinyGeneExon(
+  input,
+  output,
+  session,
+  snp_par,
+  chr_pos,
+  top_snps_tbl,
+  gene_exon_tbl,
+  snp_action = shiny::reactive({     "basic" })
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_par, chr_pos, top_snps_tbl, gene_exon_tbl, snp_action}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneExonInput}, \code{shinyGeneExonUI} and  \code{shinyGeneExonOutput}.

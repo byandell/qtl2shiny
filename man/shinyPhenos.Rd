@@ -4,15 +4,22 @@
 \alias{shinyPhenos}
 \title{Shiny phenotype selection}
 \usage{
-shinyPhenos(input, output, session, set_par, win_par, peaks_df, analyses_tbl,
-  cov_df, project_info)
+shinyPhenos(
+  input,
+  output,
+  session,
+  set_par,
+  win_par,
+  peaks_df,
+  analyses_tbl,
+  cov_df,
+  project_info
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{set_par, win_par, peaks_df, analyses_tbl, cov_df, project_info}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for phenotype selection, with interfaces \code{shinyPhenosUI} and  \code{shinyPhenosOutput}.

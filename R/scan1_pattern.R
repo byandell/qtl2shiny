@@ -1,9 +1,12 @@
+#' @importFrom rlang .data
+#' @importFrom dplyr filter mutate
+#' 
 pull_patterns <- function(patterns, pheno_names) {
   if(all(pheno_names %in% patterns$pheno)) {
-    dplyr::filter(patterns, pheno %in% pheno_names)
+    dplyr::filter(patterns, .data$pheno %in% pheno_names)
   }
   else {
-    out <- dplyr::filter(patterns, pheno == "AddSex")
+    out <- dplyr::filter(patterns, .data$pheno == "AddSex")
     if(nrow(out))
       out <- dplyr::mutate(out, pheno = pheno_names[1])
     out

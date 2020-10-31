@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,patterns,scan_pat,project_info,snp_action reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -19,6 +18,10 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 #' @importFrom ggplot2 autoplot ggtitle
+#' @importFrom dplyr mutate select
+#' @importFrom utils write.csv
+#' @importFrom grDevices dev.off pdf
+#' @importFrom rlang .data
 #' 
 shinyAllele <- function(input, output, session,
                   win_par, 
@@ -87,10 +90,10 @@ shinyAllele <- function(input, output, session,
       out <- tidyr::spread(
         dplyr::select(
           dplyr::mutate(allele_obj(),
-                        allele = paste(source, allele, sep = ".")),
-          -probe, -source),
-        allele, effect)
-      write.csv(out, file)
+                        allele = paste(.data$source, .data$allele, sep = ".")),
+          -.data$probe, -.data$source),
+        .data$allele, .data$effect)
+      utils::write.csv(out, file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -98,11 +101,11 @@ shinyAllele <- function(input, output, session,
       file.path(paste0("allele1_", win_par$chr_id, "_", win_par$peak_Mbp, ".pdf")) },
     content = function(file) {
       shiny::req(allele_obj(), input$pos_Mbp)
-      pdf(file, width=9,height=9)
+      grDevices::pdf(file, width=9,height=9)
       print(ggplot2::autoplot(
         allele_obj(), pos = input$pos_Mbp) +
         ggplot2::ggtitle(colnames(phe_mx())))
-      dev.off()
+      grDevices::dev.off()
     }
   )
 }

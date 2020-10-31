@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param set_par,win_par,peaks_df,analyses_tbl,cov_df,project_info reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,6 +17,8 @@
 #'   tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#' @importFrom rlang .data
+#' 
 shinyPhenos <- function(input, output, session,
                         set_par, win_par, peaks_df, analyses_tbl, cov_df,
                         project_info) {
@@ -26,8 +27,8 @@ shinyPhenos <- function(input, output, session,
   output$peaks <- shiny::renderDataTable({
     dplyr::arrange(
       dplyr::select(
-        peaks_df(), pheno, chr, pos, lod),
-      dplyr::desc(lod))
+        peaks_df(), .data$pheno, .data$chr, .data$pos, .data$lod),
+      dplyr::desc(.data$lod))
   }, options = list(scrollX = TRUE, pageLength = 5,
                     lengthMenu = c(5,10,25)))
   
@@ -35,7 +36,7 @@ shinyPhenos <- function(input, output, session,
   analyses_plot <- shiny::reactive({
     shiny::req(analyses_tbl())
     phename <- shiny::req(set_par$pheno_names)
-    dplyr::filter(analyses_tbl(), pheno %in% phename)
+    dplyr::filter(analyses_tbl(), .data$pheno %in% phename)
   })
   phe_mx <- shiny::reactive({
     pheno_read(project_info(), analyses_plot())

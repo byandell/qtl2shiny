@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,snp_action reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -15,6 +14,8 @@
 #'   renderPlot
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#' @importFrom grDevices dev.off pdf
+#' 
 shinySNPPlot <- function(input, output, session,
                           snp_par, chr_pos, pheno_names,
                           snp_scan_obj, snpinfo,
@@ -41,13 +42,13 @@ shinySNPPlot <- function(input, output, session,
     filename = function() {
       file.path(paste0("snp_scan_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
-      pdf(file, width = 9)
+      grDevices::pdf(file, width = 9)
       print(top_snp_asso(shiny::req(snp_scan_obj()), 
                          shiny::req(snpinfo()), 
                          shiny::req(snp_par$scan_window),
                          snp_action(), 
                          minLOD = shiny::req(snp_par$minLOD)))
-      dev.off()
+      grDevices::dev.off()
     }
   )
 }

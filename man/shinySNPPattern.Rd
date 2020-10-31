@@ -4,16 +4,25 @@
 \alias{shinySNPPattern}
 \title{Shiny top SNP analysis and plot module}
 \usage{
-shinySNPPattern(input, output, session, snp_par, chr_pos, pheno_names,
-  snp_scan_obj, snpinfo, top_snps_tbl, gene_exon_tbl, allele_info,
-  snp_action = shiny::reactive({     "basic" }))
+shinySNPPattern(
+  input,
+  output,
+  session,
+  snp_par,
+  chr_pos,
+  pheno_names,
+  snp_scan_obj,
+  snpinfo,
+  top_snps_tbl,
+  gene_exon_tbl,
+  allele_info,
+  snp_action = shiny::reactive({     "basic" })
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_par, chr_pos, pheno_names, snp_scan_obj, snpinfo, top_snps_tbl, gene_exon_tbl, allele_info, snp_action}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for top SNP analysis and plots, with interfaces \code{shinySNPPatternInput}, \code{shinySNPPatternUI} and  \code{shinySNPPatternOutput}.

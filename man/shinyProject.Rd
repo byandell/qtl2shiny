@@ -8,8 +8,6 @@ shinyProject(input, output, session, projects_info)
 }
 \arguments{
 \item{input, output, session, projects_info}{standard shiny arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for selection of project, with interface \code{shinyProjectUI}.

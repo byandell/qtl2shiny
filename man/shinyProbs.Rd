@@ -10,8 +10,15 @@ shinyProbs(input, output, session, win_par, project_info)
 
 shinyPairProbs(input, output, session, win_par, project_info)
 
-shinySNPProbs(input, output, session, win_par, pheno_names, probs_obj,
-  project_info)
+shinySNPProbs(
+  input,
+  output,
+  session,
+  win_par,
+  pheno_names,
+  probs_obj,
+  project_info
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}

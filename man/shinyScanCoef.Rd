@@ -4,15 +4,25 @@
 \alias{shinyScanCoef}
 \title{Shiny coefficient analysis and plot module}
 \usage{
-shinyScanCoef(input, output, session, job_par, win_par, phe_mx, cov_df,
-  probs_obj, K_chr, analyses_df, project_info, allele_info)
+shinyScanCoef(
+  input,
+  output,
+  session,
+  job_par,
+  win_par,
+  phe_mx,
+  cov_df,
+  probs_obj,
+  K_chr,
+  analyses_df,
+  project_info,
+  allele_info
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{job_par, win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, project_info, allele_info}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for scan1 LOD and coefficient plots, with interfaces \code{shinyScanCoefUI} and  \code{shinyScanCoefOutput}.

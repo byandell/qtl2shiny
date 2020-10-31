@@ -1,3 +1,8 @@
+#' Read Query for RDS Object
+#' 
+#' @param project_info table of project information
+#' @param filename name of RDS file
+#' 
 #' @export
 read_query_rds <- function(project_info, filename) {
   if(is.null(project_info))

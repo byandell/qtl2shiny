@@ -4,16 +4,26 @@
 \alias{shinySNPSetup}
 \title{Shiny SNP and Allele analysis and plot module}
 \usage{
-shinySNPSetup(input, output, session, job_par, win_par, phe_mx, cov_df,
-  probs_obj, K_chr, analyses_df, project_info, allele_info,
-  snp_action = shiny::reactive({     "basic" }))
+shinySNPSetup(
+  input,
+  output,
+  session,
+  job_par,
+  win_par,
+  phe_mx,
+  cov_df,
+  probs_obj,
+  K_chr,
+  analyses_df,
+  project_info,
+  allele_info,
+  snp_action = shiny::reactive({     "basic" })
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, project_info, allele_info, snp_action}{reactive arguments}
-
-\item{id}{shiny identifier}
+\item{job_par, win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, project_info, allele_info, snp_action}{reactive arguments}
 }
 \description{
 Shiny module to coordinate SNP and allele analyses and plots, with interfaces \code{shinySNPSetupUI} and  \code{shinySNPSetupOutput}.

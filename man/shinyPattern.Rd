@@ -4,16 +4,28 @@
 \alias{shinyPattern}
 \title{Shiny Pattern module}
 \usage{
-shinyPattern(input, output, session, job_par, chr_pos, win_par, phe_mx, cov_df,
-  pairprobs_obj, K_chr, analyses_df, patterns, project_info, allele_info,
-  snp_action = shiny::reactive({     NULL }))
+shinyPattern(
+  input,
+  output,
+  session,
+  job_par,
+  chr_pos,
+  win_par,
+  phe_mx,
+  cov_df,
+  pairprobs_obj,
+  K_chr,
+  analyses_df,
+  patterns,
+  project_info,
+  allele_info,
+  snp_action = shiny::reactive({     NULL })
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{job_par, chr_pos, win_par, phe_mx, cov_df, pairprobs_obj, K_chr, analyses_df, patterns, project_info, allele_info, snp_action}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for SNP pattern plots, with interfaces \code{shinyPatternUI} and  \code{shinyPatternOutput}.

@@ -1,11 +1,17 @@
 # Plot scan patterns for phenotype.
+#' @importFrom rlang .data
+#' @importFrom qtl2pattern sdp_to_pattern
+#' @importFrom dplyr arrange desc filter
+#' 
 scan_pat_type <- function(scan_pat, map, type, pattern, pheno, haplos) {
   if(is.null(scan_pat))
     return(plot_null())
   
   pattern_cont <- 
-    unique(dplyr::filter(scan_pat$patterns,
-                         qtl2pattern::sdp_to_pattern(sdp, haplos) %in% pattern)$founders)
+    unique(
+      dplyr::filter(
+        scan_pat$patterns,
+        qtl2pattern::sdp_to_pattern(.data$sdp, haplos) %in% pattern)$founders)
   # plot at most 8 curves
   lodcolumn <- seq_len(min(8, length(pattern_cont)))
   maxpos <- NULL
@@ -13,7 +19,7 @@ scan_pat_type <- function(scan_pat, map, type, pattern, pheno, haplos) {
   if(type == "coef") {
     maxpos <- (dplyr::arrange(
       summary(scan_pat$scan, map),
-      dplyr::desc(lod)))$pos[1]
+      dplyr::desc(.data$lod)))$pos[1]
   }
   title <- pheno
   if(ncol(scan_pat$scan) > 1)

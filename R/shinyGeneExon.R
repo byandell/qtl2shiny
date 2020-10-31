@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -19,6 +18,10 @@
 #'   fluidRow column
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#' @importFrom utils write.csv
+#' @importFrom grDevices dev.off pdf
+#' @importFrom rlang .data
+#'   
 shinyGeneExon <- function(input, output, session,
                      snp_par, chr_pos, top_snps_tbl, gene_exon_tbl,
                      snp_action = shiny::reactive({"basic"})) {
@@ -93,7 +96,7 @@ shinyGeneExon <- function(input, output, session,
       shiny::withProgress(message = 'Gene Exon Plot ...', value = 0, {
         shiny::setProgress(1)
         plot_gene_exons(gene_exon_pheno(), 
-                        dplyr::filter(top_snps_tbl(), pheno == pheno_name),
+                        dplyr::filter(top_snps_tbl(), .data$pheno == pheno_name),
                         gene_name, paste(pheno_name, snp_action()))
       })
     }
@@ -115,7 +118,7 @@ shinyGeneExon <- function(input, output, session,
     filename = function() {
       file.path(paste0("gene_exon_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
-      write.csv(shiny::req(summary_gene_exon()), file)
+      utils::write.csv(shiny::req(summary_gene_exon()), file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -124,13 +127,13 @@ shinyGeneExon <- function(input, output, session,
     content = function(file) {
       gene_exon <- shiny::req(gene_exon_pheno())
       pheno_name <- shiny::req(snp_par$pheno_name)
-      top_snps <- dplyr::filter(shiny::req(top_snps_tbl()), pheno == pheno_name)
-      pdf(file, width = 9)
+      top_snps <- dplyr::filter(shiny::req(top_snps_tbl()), .data$pheno == pheno_name)
+      grDevices::pdf(file, width = 9)
       for(gene_name in shiny::req(gene_names())) {
         print(plot_gene_exons(gene_exon, top_snps,
                               gene_name, pheno_name))
       }
-      dev.off()
+      grDevices::dev.off()
     }
   )
   output$select <- shiny::renderUI({

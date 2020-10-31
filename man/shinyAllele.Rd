@@ -4,15 +4,26 @@
 \alias{shinyAllele}
 \title{Shiny coefficient analysis and plot module}
 \usage{
-shinyAllele(input, output, session, win_par, phe_mx, cov_df, probs_obj, K_chr,
-  analyses_df, patterns, scan_pat, project_info, snp_action)
+shinyAllele(
+  input,
+  output,
+  session,
+  win_par,
+  phe_mx,
+  cov_df,
+  probs_obj,
+  K_chr,
+  analyses_df,
+  patterns,
+  scan_pat,
+  project_info,
+  snp_action
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, patterns, scan_pat, project_info, snp_action}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for scan1 coefficient plots, with interfaces \code{shinyAlleleUI} and  \code{shinyAlleleOutput}.

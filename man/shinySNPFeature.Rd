@@ -4,15 +4,23 @@
 \alias{shinySNPFeature}
 \title{Shiny SNP Features in SNP Region module}
 \usage{
-shinySNPFeature(input, output, session, snp_par, chr_pos, snp_scan_obj, snpinfo,
-  top_snps_tbl, gene_exon_tbl, snp_action = shiny::reactive({     "basic" }))
+shinySNPFeature(
+  input,
+  output,
+  session,
+  snp_par,
+  chr_pos,
+  snp_scan_obj,
+  snpinfo,
+  top_snps_tbl,
+  gene_exon_tbl,
+  snp_action = shiny::reactive({     "basic" })
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{snp_scan_obj, top_snps_tbl, snpinfo, gene_exon_tbl, snp_action}{reactive arguments}
-
-\item{id}{shiny identifier}
+\item{snp_par, chr_pos, snp_scan_obj, top_snps_tbl, snpinfo, gene_exon_tbl, snp_action}{reactive arguments}
 }
 \description{
 Shiny module for scan1 analysis and plots, with interfaces \code{shinySNPFeatureInput}, \code{shinySNPFeatureUI} and  \code{shinySNPFeatureOutput}.

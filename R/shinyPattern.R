@@ -4,18 +4,15 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param job_par,chr_pos,win_par,phe_mx,cov_df,pairprobs_obj,K_chr,analyses_df,patterns,project_info,allele_info,snp_action reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
 #' 
-#' @importFrom dplyr distinct
-#' @importFrom stringr str_split
 #' @importFrom grid plotViewport pushViewport
 #' @importFrom qtl2pattern covar_df_mx scan_pattern sdp_to_pattern which_covar wh_covar
-#' @importFrom dplyr filter mutate arrange desc
+#' @importFrom dplyr distinct filter mutate arrange desc
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req 
 #'   observeEvent
@@ -25,6 +22,9 @@
 #'   fluidRow column tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler callModule
+#' @importFrom grDevices dev.off pdf
+#' @importFrom utils write.csv
+#' @importFrom rlang .data
 #'   
 shinyPattern <- function(input, output, session,
                          job_par, chr_pos, win_par,
@@ -72,7 +72,7 @@ shinyPattern <- function(input, output, session,
   shiny::observeEvent(input$pheno_name, update_patterns())
   update_patterns <- function() {
     shiny::req(snp_action(), input$pheno_name, patterns())
-    pats <- dplyr::filter(patterns(), pheno == input$pheno_name)
+    pats <- dplyr::filter(patterns(), .data$pheno == input$pheno_name)
     if(nrow(pats)) {
       choices <- qtl2pattern::sdp_to_pattern(pats$sdp, haplos())
     } else {
@@ -176,7 +176,7 @@ shinyPattern <- function(input, output, session,
     content = function(file) {
       scan_in <- shiny::req(scan_pat())
       shiny::req(pairprobs_obj())
-      write.csv(summary(scan_in, pairprobs_obj()$map), file)
+      utils::write.csv(summary(scan_in, pairprobs_obj()$map), file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -188,9 +188,9 @@ shinyPattern <- function(input, output, session,
       shiny::req(scan_pat(), pattern_choices(), job_par$sex_type)
       scan_in <- shiny::req(scan_pat())
       top_panel_prop <- 0.65
-      pdf(file, width = 9, height = 9)
+      grDevices::pdf(file, width = 9, height = 9)
       for(pheno_in in colnames(phe_mx())) {
-        pats <- dplyr::filter(patterns(), pheno == pheno_in)
+        pats <- dplyr::filter(patterns(), .data$pheno == pheno_in)
         pat_choices <- qtl2pattern::sdp_to_pattern(pats$sdp, haplos())
         
         scan_now <- scan1_pattern(pheno_in, phe_mx(), cov_df(), 
@@ -200,7 +200,7 @@ shinyPattern <- function(input, output, session,
         scan_pat_type(scan_now, pairprobs_obj()$map, "coef_and_lod", pat_choices,
                       pheno_in, haplos())
       }
-      dev.off()
+      grDevices::dev.off()
     }
   )
   output$radio <- shiny::renderUI({

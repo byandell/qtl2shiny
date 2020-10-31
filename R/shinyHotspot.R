@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param set_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -13,7 +12,7 @@
 #'
 #' @export
 #' @importFrom assertthat assert_that
-#' @importFrom dplyr add_row arrange filter rename
+#' @importFrom dplyr add_row arrange distinct filter rename
 #' @importFrom ggplot2 ggtitle scale_y_sqrt
 #' @importFrom qtl2ggplot ggplot_scan1
 #' @importFrom shiny NS reactive req 
@@ -22,6 +21,8 @@
 #'   renderPlot renderDataTable renderUI
 #'   fluidRow column tagList strong
 #'   withProgress incProgress setProgress
+#' @importFrom rlang .data
+#' 
 shinyHotspot <- function(input, output, session,
                          set_par, 
                          pheno_type, peaks_tbl, pmap_obj,
@@ -118,9 +119,9 @@ shinyHotspot <- function(input, output, session,
     if(shiny::isTruthy(set_par$dataset)) {
       peak_set <- set_par$dataset
       dat_sets <- dplyr::distinct(peaks_tbl(), 
-                                  pheno_type, pheno_group)
+                                  .data$pheno_type, .data$pheno_group)
       dat_groups <- unique(dplyr::filter(dat_sets,
-                                         pheno_type %in% peak_set)$pheno_group)
+                                         .data$pheno_type %in% peak_set)$pheno_group)
       peak_set <- c(peak_grp[!(peak_grp %in% dat_groups)], peak_set)
     } else {
       peak_set <- peak_grp
@@ -151,7 +152,7 @@ shinyHotspot <- function(input, output, session,
   options = list(lengthMenu = c(5,10,20,50), pageLength = 5))
   output$peaks_tbl <- shiny::renderDataTable({
     shiny::req(scan_tbl())
-    dplyr::arrange(scan_tbl(), desc(count))
+    dplyr::arrange(scan_tbl(), desc(.data$count))
   }, escape = FALSE,
   options = list(lengthMenu = c(5,10,20,50), pageLength = 5))
   

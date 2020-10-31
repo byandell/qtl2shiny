@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,allele_info,snp_action reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -22,6 +21,8 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 #' @importFrom plotly plotlyOutput renderPlotly
+#' @importFrom utils write.csv
+#' @importFrom grDevices dev.off pdf
 #'   
 shinySNPPattern <- function(input, output, session,
                         snp_par, chr_pos, pheno_names,
@@ -114,8 +115,9 @@ shinySNPPattern <- function(input, output, session,
   output$pattern <- shiny::renderUI({
     shiny::req(snp_action())
     top_pat <- shiny::req(top_snps_tbl())
-    choices <- qtl2pattern::sdp_to_pattern(dplyr::distinct(top_pat, sdp)$sdp,
-                                           haplos())
+    choices <- qtl2pattern::sdp_to_pattern(
+      dplyr::distinct(top_pat, .data$sdp)$sdp,
+      haplos())
     if(!is.null(selected <- input$pattern)) {
       if(!selected %in% choices)
         selected <- NULL
@@ -176,7 +178,7 @@ shinySNPPattern <- function(input, output, session,
     filename = function() {
       file.path(paste0("pattern_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
-      write.csv(sum_top_pat(), file)
+      utils::write.csv(sum_top_pat(), file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -186,7 +188,7 @@ shinySNPPattern <- function(input, output, session,
       scans <- shiny::req(snp_scan_obj())
       snp_w <- shiny::req(snp_par$scan_window)
       phenos <- shiny::req(pheno_names())
-      pdf(file, width = 9)
+      grDevices::pdf(file, width = 9)
       ## Plots over all phenotypes
       print(top_pat_plot(phenos, 
                          scans, 
@@ -216,7 +218,7 @@ shinySNPPattern <- function(input, output, session,
                            drop_hilit = dropHilit(),
                            snp_action = snp_action()))
       }
-      dev.off()
+      grDevices::dev.off()
     }
   )
   output$radio <- shiny::renderUI({

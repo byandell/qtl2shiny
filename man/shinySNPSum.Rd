@@ -4,15 +4,20 @@
 \alias{shinySNPSum}
 \title{Shiny SNP summary module}
 \usage{
-shinySNPSum(input, output, session, chr_pos, top_snps_tbl, project_info,
-  snp_action = shiny::reactive({     "basic" }))
+shinySNPSum(
+  input,
+  output,
+  session,
+  chr_pos,
+  top_snps_tbl,
+  project_info,
+  snp_action = shiny::reactive({     "basic" })
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{chr_pos, top_snps_tbl, project_info, snp_action}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for SNP summary, with interfaces \code{shinySNPInput}, \code{shinySNPUI} and  \code{shinySNPOutput}.

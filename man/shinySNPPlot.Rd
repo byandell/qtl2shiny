@@ -4,15 +4,22 @@
 \alias{shinySNPPlot}
 \title{Shiny scan1 SNP analysis and plot module}
 \usage{
-shinySNPPlot(input, output, session, snp_par, chr_pos, pheno_names,
-  snp_scan_obj, snpinfo, snp_action = shiny::reactive({     "basic" }))
+shinySNPPlot(
+  input,
+  output,
+  session,
+  snp_par,
+  chr_pos,
+  pheno_names,
+  snp_scan_obj,
+  snpinfo,
+  snp_action = shiny::reactive({     "basic" })
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{snp_par, chr_pos, pheno_names, snp_scan_obj, snpinfo, snp_action}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for scan1 analysis and plots, with interfaces \code{shinySNPPlotUI} and  \code{shinySNPPlotOutput}.

@@ -1,6 +1,15 @@
+#' Read Project Data
+#' 
+#' @param project_info table of project information
+#' @param dataname name of data object to read
+#' @param columns columns to select from data object
+#' @param rownames row names to filter from data object (all if \code{TRUE})
+#' @param filetype type of file (one of c("fst","rds","csv"))
+#' 
 #' @export
 #' @importFrom tools file_ext file_path_sans_ext
 #' @importFrom qtl2pattern read_fast
+#' @importFrom utils read.csv
 #' 
 read_project <- function(project_info, dataname, columns, rownames = TRUE, filetype) {
   # Read data frame or matrix in some file format.
@@ -69,7 +78,7 @@ read_project <- function(project_info, dataname, columns, rownames = TRUE, filet
   out <- switch(filetype,
          fst     = qtl2pattern::read_fast(datapath, columns, rownames),
          rds     = readRDS(datapath),
-         csv     = read.csv(datapath, stringsAsFactors = FALSE))
+         csv     = utils::read.csv(datapath, stringsAsFactors = FALSE))
   
   if(filetype %in% c("rds","csv")) {
     # Pick columns post hoc.

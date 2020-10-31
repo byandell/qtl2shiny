@@ -4,15 +4,22 @@
 \alias{shinySetup}
 \title{Shiny setup for DOQTL selection}
 \usage{
-shinySetup(input, output, session, pheno_typer, peaks_tbl, pmap_obj,
-  analyses_tbl, cov_df, projects_info)
+shinySetup(
+  input,
+  output,
+  session,
+  pheno_typer,
+  peaks_tbl,
+  pmap_obj,
+  analyses_tbl,
+  cov_df,
+  projects_info
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_df, projects_info}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for phenotype selection, with interfaces \code{shinySetupInput} and  \code{shinySetupUI}.

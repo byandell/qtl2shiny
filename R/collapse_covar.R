@@ -1,6 +1,8 @@
 # Collapse covariate names in analyses table
 #
 # Collapse covariates used to comma-separated list and return table
+#' @importFrom rlang .data
+#' 
 collapse_covar <- function(analyses_tbl) {
   if(is.null(analyses_tbl))
     return(NULL)
@@ -10,10 +12,10 @@ collapse_covar <- function(analyses_tbl) {
                                                     names(analyses_tbl)))]
   dplyr::select(
     dplyr::mutate(
-      tidyr::unite(analyses_tbl, covar, 
+      tidyr::unite(analyses_tbl, .data$covar, 
                    dplyr::one_of(covar_names)), 
-      covar = sapply(strsplit(covar,"_"),
+      covar = sapply(strsplit(.data$covar,"_"),
                      function(x) paste(covar_names[as.logical(x)],
                                        collapse=","))),
-    pheno, covar, transf, offset, winsorize)
+    .data$pheno, .data$covar, .data$transf, .data$offset, .data$winsorize)
 }

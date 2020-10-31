@@ -4,15 +4,26 @@
 \alias{shinyTriad}
 \title{Shiny triad plot module}
 \usage{
-shinyTriad(input, output, session, med_par, patterns, geno_max, peak_mar,
-  med_ls, mediate_obj, phe_mx, cov_df, K_chr, allele_info)
+shinyTriad(
+  input,
+  output,
+  session,
+  med_par,
+  patterns,
+  geno_max,
+  peak_mar,
+  med_ls,
+  mediate_obj,
+  phe_mx,
+  cov_df,
+  K_chr,
+  allele_info
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{med_par, patterns, geno_max, peak_mar, med_ls, mediate_obj, phe_mx, cov_df, K_chr, allele_info}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny module for triad plots, with interfaces \code{shinyTriadUI} and  \code{shinyTriadOutput}.

@@ -4,15 +4,23 @@
 \alias{shinyDiplo}
 \title{Shiny Diplotype module}
 \usage{
-shinyDiplo(input, output, session, win_par, phe_mx, cov_df, K_chr, analyses_df,
-  project_info, allele_info)
+shinyDiplo(
+  input,
+  output,
+  session,
+  win_par,
+  phe_mx,
+  cov_df,
+  K_chr,
+  analyses_df,
+  project_info,
+  allele_info
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
 \item{win_par, phe_mx, cov_df, K_chr, analyses_df, project_info, allele_info}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \description{
 Shiny diplotype SNP/Gene action analysis, with interface \code{shinyDiploUI}.

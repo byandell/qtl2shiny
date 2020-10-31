@@ -3,8 +3,7 @@
 #' Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneRegionInput}, \code{shinyGeneRegionUI} and  \code{shinyGeneRegionOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_par,top_snps_tbl,project_info reactive arguments
-#' @param id shiny identifier
+#' @param snp_par,top_snps_tbl,project_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -19,6 +18,9 @@
 #'   fluidRow column tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#' @importFrom utils write.csv
+#' @importFrom grDevices dev.off pdf
+#' 
 shinyGeneRegion <- function(input, output, session,
                      snp_par, top_snps_tbl,
                      project_info,
@@ -69,7 +71,7 @@ shinyGeneRegion <- function(input, output, session,
     filename = function() {
       file.path(paste0("gene_region_", chr_pos_all(), "_", snp_action(), ".csv")) },
     content = function(file) {
-      write.csv(shiny::req(gene_region_tbl()), file)
+      utils::write.csv(shiny::req(gene_region_tbl()), file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -81,11 +83,11 @@ shinyGeneRegion <- function(input, output, session,
       phename <- shiny::req(snp_par$pheno_name)
       use_snp <- shiny::isTruthy(input$SNP)
       pheno_names <- unique(shiny::req(top_snps_tbl())$pheno)
-      pdf(file, width = 9)
+      grDevices::pdf(file, width = 9)
       for(pheno in pheno_names)
         print(plot_gene_region(pheno, gene_region_tbl(), top_snps_tbl(), 
                        wrng, use_snp, snp_action()))
-      dev.off()
+      grDevices::dev.off()
     }
   )
 }

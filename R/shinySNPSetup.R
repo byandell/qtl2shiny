@@ -3,8 +3,7 @@
 #' Shiny module to coordinate SNP and allele analyses and plots, with interfaces \code{shinySNPSetupUI} and  \code{shinySNPSetupOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info,snp_action reactive arguments
-#' @param id shiny identifier
+#' @param job_par,win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -18,6 +17,8 @@
 #'   renderUI
 #'   tagList
 #'   withProgress setProgress
+#' @importFrom rlang .data
+#' 
 shinySNPSetup <- function(input, output, session,
                           job_par, win_par, 
                           phe_mx, cov_df,
@@ -196,9 +197,9 @@ shinySNPSetup <- function(input, output, session,
         dplyr::mutate(
           dplyr::filter(
             summary(top_snps_tbl()), 
-            max_lod >= 3), 
+            .data$max_lod >= 3), 
           contrast = snp_action()), 
-        dplyr::desc(max_lod))
+        dplyr::desc(.data$max_lod))
     } else {
       NULL
     }

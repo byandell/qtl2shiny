@@ -9,19 +9,19 @@ Description: Shiny Interface for R/qtl2 and R/doqtl2.
 License: GPL-3
 LazyData: TRUE
 Imports:
+    gdata, grid, GGally,
     assertthat, dplyr, ggplot2, stringr, tidyr,
     shiny,shinydashboard,
-    gdata, grid, GGally,
     plotly, RSQLite,
     qtl2,
     qtl2ggplot,
     qtl2pattern,
     CausalMST,
-    tools
+    tools, utils, grDevices, rlang
 Suggests:
     flexdashboard,
-    qtl2fst, fst, 
+    qtl2fst, fst, igraph,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 7.1.1

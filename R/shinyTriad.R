@@ -4,12 +4,12 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,allele_info reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
+#' @importFrom dplyr filter
 #' @importFrom qtl2 scan1
 #' @importFrom qtl2pattern sdp_to_pattern
 #' @importFrom ggplot2 autoplot
@@ -22,6 +22,8 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 #' @importFrom plotly renderPlotly plotlyOutput
+#' @importFrom utils write.csv
+#' @importFrom grDevices dev.off pdf
 #' 
 shinyTriad <- function(input, output, session,
                   med_par, patterns, 
@@ -44,7 +46,7 @@ shinyTriad <- function(input, output, session,
   ## Select mediator for plots.
   output$med_name <- shiny::renderUI({
     shiny::req(mediate_obj(), input$triad)
-    choices <- dplyr::filter(mediate_obj()$best, triad == input$triad)[[medID()]]
+    choices <- dplyr::filter(mediate_obj()$best, .data$triad == input$triad)[[medID()]]
     shiny::selectInput(ns("med_name"), NULL,
                        choices = choices)
   })
@@ -52,7 +54,7 @@ shinyTriad <- function(input, output, session,
   # Select pattern 
   sdps <- shiny::reactive({
     shiny::req(patterns(), med_par$pheno_name)
-    unique(dplyr::filter(patterns(), pheno == med_par$pheno_name)$sdp)
+    unique(dplyr::filter(patterns(), .data$pheno == med_par$pheno_name)$sdp)
   })
   haplos <- reactive({
     shiny::req(allele_info())$code
@@ -106,7 +108,7 @@ shinyTriad <- function(input, output, session,
       file.path(paste0("scatter.csv")) },
     content = function(file) {
       shiny::req(mediate_obj())
-      write.csv(mediate_obj()$best, file)
+      utils::write.csv(mediate_obj()$best, file)
     }
   )
   output$downloadPlot <- shiny::downloadHandler(
@@ -114,7 +116,7 @@ shinyTriad <- function(input, output, session,
       file.path(paste0("scatter.pdf")) },
     content = function(file) {
       shiny::req(phe_mx(), scat_dat(), input$med_plot)
-      pdf(file, width=9,height=9)
+      grDevices::pdf(file, width=9,height=9)
       for(types in c("by_mediator", 
                      "by_target", 
                      "driver_offset", 
@@ -125,7 +127,7 @@ shinyTriad <- function(input, output, session,
                    tname = colnames(phe_mx()),
                    centerline = NULL))
       }
-      dev.off()
+      grDevices::dev.off()
     })
   med_ls
 }

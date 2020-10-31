@@ -3,8 +3,7 @@
 #' Shiny module for scan1 analysis and plots, with interfaces \code{shinySNPFeatureInput}, \code{shinySNPFeatureUI} and  \code{shinySNPFeatureOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param snp_scan_obj,top_snps_tbl,snpinfo,gene_exon_tbl,snp_action reactive arguments
-#' @param id shiny identifier
+#' @param snp_par,chr_pos,snp_scan_obj,top_snps_tbl,snpinfo,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -20,6 +19,9 @@
 #'   fluidRow column tagList
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
+#' @importFrom utils write.csv
+#' @importFrom grDevices dev.off pdf   
+#'   
 shinySNPFeature <- function(input, output, session,
                             snp_par, chr_pos, 
                             snp_scan_obj, snpinfo, top_snps_tbl, 
@@ -72,7 +74,7 @@ shinySNPFeature <- function(input, output, session,
     filename = function() {
       file.path(paste0("top_feature_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
-      write.csv(shiny::req(top_feature()), file)
+      utils::write.csv(shiny::req(top_feature()), file)
     }
   )
   ## This does not work as items below do not exist.
@@ -81,12 +83,12 @@ shinySNPFeature <- function(input, output, session,
       file.path(paste0("top_feature_", chr_pos(), "_", snp_action(), ".pdf")) },
     content = function(file) {
       shiny::req(top_feature())
-      pdf(file, width = 9)
+      grDevices::pdf(file, width = 9)
       for(phenoi in phename()) {
         print(ggplot2::autoplot(top_feature(), phenoi, "consequence"))
         print(ggplot2::autoplot(top_feature(), phenoi, "pattern"))
       }
-      dev.off()
+      grDevices::dev.off()
     }
   )
 }

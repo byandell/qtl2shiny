@@ -4,15 +4,20 @@
 \alias{shinyGeneRegion}
 \title{Shiny Genes in SNP Region module}
 \usage{
-shinyGeneRegion(input, output, session, snp_par, top_snps_tbl, project_info,
-  snp_action = shiny::reactive({     "basic" }))
+shinyGeneRegion(
+  input,
+  output,
+  session,
+  snp_par,
+  top_snps_tbl,
+  project_info,
+  snp_action = shiny::reactive({     "basic" })
+)
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{snp_par, top_snps_tbl, project_info}{reactive arguments}
-
-\item{id}{shiny identifier}
+\item{snp_par, top_snps_tbl, project_info, snp_action}{reactive arguments}
 }
 \description{
 Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneRegionInput}, \code{shinyGeneRegionUI} and  \code{shinyGeneRegionOutput}.

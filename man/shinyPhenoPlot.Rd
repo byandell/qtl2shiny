@@ -10,8 +10,6 @@ shinyPhenoPlot(input, output, session, set_par, phe_mx, cov_df)
 \item{input, output, session}{standard shiny arguments}
 
 \item{set_par, phe_mx, cov_df}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \value{
 2-element vector of scan window

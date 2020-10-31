@@ -4,7 +4,6 @@
 #'
 #' @param input,output,session standard shiny arguments
 #' @param chr_pos,top_snps_tbl,project_info,snp_action reactive arguments
-#' @param id shiny identifier
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -19,6 +18,9 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 #' @importFrom ggplot2 autoplot
+#' @importFrom utils write.csv
+#' @importFrom rlang .data
+#' 
 shinySNPSum <- function(input, output, session,
                      chr_pos, top_snps_tbl, project_info,
                      snp_action = shiny::reactive({"basic"})) {
@@ -58,7 +60,7 @@ shinySNPSum <- function(input, output, session,
     shiny::withProgress(message = "Top InDels ...", value = 0,
                  {
                    shiny::setProgress(1)
-                   dplyr::filter(shiny::req(best_href()), type != "SNP")
+                   dplyr::filter(shiny::req(best_href()), .data$type != "SNP")
                  })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
@@ -84,7 +86,7 @@ shinySNPSum <- function(input, output, session,
     filename = function() {
       file.path(paste0("top_snps_", chr_pos(), "_", snp_action(), ".csv")) },
     content = function(file) {
-      write.csv(best_http(), file)
+      utils::write.csv(best_http(), file)
     }
   )
 }

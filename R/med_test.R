@@ -33,7 +33,7 @@ med_triad <- function(med_ls, geno_max, phe_mx, kinship, cov_tar, sdps,
   cov_tar <- qtl2pattern::covar_df_mx(cov_tar)
   cov_med <- qtl2pattern::covar_df_mx(med_ls$covar)
   
-  CausalMST:::mediation_triad(target = phe_mx,
+  CausalMST::mediation_triad(target = phe_mx,
                               mediator = med_ls[[1]][, id, drop = FALSE],
                               driver = geno_max, 
                               covar_tar = cov_tar,
