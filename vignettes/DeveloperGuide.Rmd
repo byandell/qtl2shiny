@@ -21,7 +21,11 @@ This document is a Developer Guide for the [R/qtl2shiny](https://github.com/byan
 - data structures and folder organization
 - package workflow and shiny tool components
 
-Those wishing to _use_ the shiny interface with their own data will want to read about the data structures, and contact me. Those wishing to _extend_ capabilities of the package, or understand its inner working, with be interested in the package organization.
+```{r eval = FALSE}
+library(qtl2shiny)
+```
+
+Those wishing to _use_ the shiny interface with their own data will want to read about the data structures, or contact me. Those wishing to _extend_ capabilities of the package, or understand its inner working, will be interested in the package organization.
 
 ## Data Structures and Folder Organization
 
@@ -67,14 +71,14 @@ file | contents
 
 The `project` sub-sub-directory (`Recla`) has the data specific to the project. An example of how this is created can be found in [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd).
 Most of the objects are stored as [RDS](https://www.rdocumentation.org/packages/base/versions/3.4.3/topics/readRDS).
-The genotype probabilities are converted from `calc_genoprob` to `feather_genoprob` format using [R/qtl2feather](https://github.com/byandell/qtl2feather).
+The genotype probabilities are converted from `calc_genoprob` to `fst_genoprob` format using [R/qtl2fst](https://github.com/byandell/qtl2fst).
 Query routines are somewhat analogous to those used for `taxa` above.
 
 Note that [R/qtl2](http://www.rqtl.org/qtl2) wants data files to be consistent in terms of individual identifiers. The `covar.rds` and `pheno_data.rds` files have identifiers as row names, which are also used in the genotype probabilities.
 
 file | contents
 -----|------------------------------------------------
-`genoprob/` | directory with genotype probabilities created with [R/qtl2feather](https://github.com/byandell/qtl2feather)
+`genoprob/` | directory with genotype probabilities created with [R/qtl2fst](https://github.com/byandell/qtl2fst)
 `kinship.rds` | kinship object using LOCO (see [R/qtl2](http://kbroman.org/qtl2/assets/vignettes/user_guide.html#calculating_a_kinship_matrix))
 `pmap.rds` | physical map
 `covar.rds` | data frame of covariates (row = individual, column = covariate)
@@ -87,7 +91,7 @@ file | contents
 
 Likely changes:
 
-- pheno_data.rds may become a feather database
+- pheno_data.rds may become a fst database
 - analyses.rds will be redesigned
 
 Some projects have an `RNAseq` folder. This, and accompanying routines for mRNA now in [R/DOread](https://github.com/byandell/DOread) and other packages, will likely be redesigned. Currently, code is set up for only one type of mRNA data.
@@ -99,7 +103,7 @@ The easiest way to set up data files is to look at the example in
 Once you have created the objects in R, you can save them as, for instance, RDS files (here using the same names as in [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd)).
 
 ```{r eval=FALSE}
-project_info <- read.csv("project.csv")
+project_info <- utils::read.csv("project.csv")
 project_dir <- file.path(project_info$taxa[1],
                          project_info$project[1])
 saveRDS(kinship, file.path(project_dir, "kinship.rds"))
@@ -113,29 +117,29 @@ saveRDS(hots, file.path(project_dir, "hotspot.rds"))
 
 ## Genotype probabilities
 
-Genotype probabilities get stored in `feather` databases by chromosome for rapid access. This takes a few steps, starting with creating a directory to store files and calculating genotype probabilities for allele pairs. 
+Genotype probabilities get stored in `fst` databases by chromosome for rapid access. This takes a few steps, starting with creating a directory to store files and calculating genotype probabilities for allele pairs. 
 
 ```{r eval=FALSE}
-# Create directory for feather data; must call it "genoprob"
-feather_dir <- file.path(project_dir, "genoprob")
-dir.create(feather_dir)
+# Create directory for fst data; must call it "genoprob"
+fst_dir <- file.path(project_dir, "genoprob")
+dir.create(fst_dir)
 
 # Calculate allele pair genotype probabilities
-probs <- calc_genoprob(recla, gmap, err=0.002)
-# Convert allele pair probs to feather via qtl2feather
-fprobs <- feather_genoprob(probs, "probs", feather_dir)
-saveRDS(fprobs, file = file.path(feather_dir, "fprobs.rds"))
+probs <- qtl2::calc_genoprob(recla, gmap, err=0.002)
+# Convert allele pair probs to fst via qtl2fst
+fprobs <- qtl2pattern::fst_genoprob(probs, "probs", fst_dir)
+saveRDS(fprobs, file = file.path(fst_dir, "fprobs.rds"))
 
 # Compute allele genotype probabilities from those for allele pairs
 aprobs <- genoprob_to_alleleprob(probs)
-# Convert allele probs to feather via qtl2feather
-faprobs <- feather_genoprob(aprobs, "aprobs", feather_dir)
-saveRDS(faprobs, file = file.path(feather_dir, "faprobs.rds"))
+# Convert allele probs to fst via qtl2fst
+faprobs <- fst_genoprob(aprobs, "aprobs", fst_dir)
+saveRDS(faprobs, file = file.path(fst_dir, "faprobs.rds"))
 ```
 
 ## Query files
 
-The query files are designed to encapsulate specific information about where data are stored and how to retrieve them, so that different projects might use different strategies. For instance, some projects might use CSV or RDS files, while others might use SQL or feather databases. There are four query objects, for genes, variants, mrna and probs.
+The query files are designed to encapsulate specific information about where data are stored and how to retrieve them, so that different projects might use different strategies. For instance, some projects might use CSV or RDS files, while others might use SQL or fst databases. There are four query objects, for genes, variants, mrna and probs.
 
 Note that if you use a similar format as [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) and [Recla.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/Recla.Rmd) examples
 to create and store the queries, you may have to quit RStudio and restart it to have it properly pick up the `project` or `taxa` directory.
@@ -176,7 +180,7 @@ saveRDS(query_probs, "query_mrna.rds")
 Again, these enable calls to access data in a region. The `Recla` data does not have mRNA data, but we still have to create a `NULL` query. I include additional arguments that are used for these routines. They call, respectively, `qtl2pattern::read_probs` and `qtl2pattern::read_mrna` (at least, when there are `mRNA` data).
 
 ```{r eval=FALSE}
-probs <- query_probs("1", 39, 40, allele = TRUE, method = "feather")
+probs <- query_probs("1", 39, 40, allele = TRUE, method = "fst")
 mrna <- query_mrna("1", 39, 40, local = TRUE, qtl = FALSE)
 ```
 
@@ -188,7 +192,7 @@ It is possible for data for a `taxa` and `project` to be stored in another place
 
 Most data files work well to be RDS, which preserve attributes of an R object. This is useful if some data columns should be interpreted as character or factor, for instance. Also, the `query` calls must be stored as RDS to preserve the calling environment.
 
-Genotype probabilities are assumed to be `feather` databases.
+Genotype probabilities are assumed to be `fst` databases.
 This ensures rapid access to this information, which is the largest
 set of data besides the SNP information.
 
@@ -197,7 +201,7 @@ set of data besides the SNP information.
 The `qtl2shiny` interface can be invoked within R using [runApp](https://shiny.rstudio.com/reference/shiny/latest/runApp.html) on the file
 [app.R](https://github.com/byandell/qtl2shiny/blob/master/inst/qtl2shinyApp/app.R). There is a routine [qtl2shinyApp](https://github.com/byandell/qtl2shiny/blob/master/R/qtl2shinyApp.R) in the package to do this as well:
 
-```{r}
+```{r eval = FALSE}
 qtl2shiny::qtl2shinyApp
 ```
 
