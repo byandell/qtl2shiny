@@ -94,7 +94,7 @@ Likely changes:
 - pheno_data.rds may become a fst database
 - analyses.rds will be redesigned
 
-Some projects have an `RNAseq` folder. This, and accompanying routines for mRNA now in [R/DOread](https://github.com/byandell/DOread) and other packages, will likely be redesigned. Currently, code is set up for only one type of mRNA data.
+Some projects have an `RNAseq` folder. This, and accompanying routines for mRNA now in [R/qtl2pattern](https://github.com/byandell/qtl2pattern) and other packages, will likely be redesigned. Currently, code is set up for only one type of mRNA data.
 
 ## Data files
 
@@ -165,15 +165,15 @@ genes <- query_genes("1", 39, 40)
 variants <- query_variants("1", 39, 40)
 ```
 
-The above two routines would generally be used across all projects involving the CC mouse. The following two routines are project specific, refering to genotype probabilities and `mRNA` data. They do not directly identify the data file, as that is currently hard-coded into the [R/DOread](https://github.com/byandell/DOread) package. These will change substantially in the near future.
+The above two routines would generally be used across all projects involving the CC mouse. The following two routines are project specific, refering to genotype probabilities and `mRNA` data. They do not directly identify the data file, as that is currently hard-coded into the [R/qtl2pattern](https://github.com/byandell/qtl2pattern) package. These will change substantially in the near future.
 
 ```{r eval=FALSE}
-query_probs <- DOread::create_probs_query_func_do("CCmouse/Recla")
+query_probs <- qtl2pattern::create_probs_query_func_do("CCmouse/Recla")
 saveRDS(query_probs, "query_probs.rds")
 ```
 
 ```{r eval=FALSE}
-query_mrna <- DOread::create_mrna_query_func_do(NULL)
+query_mrna <- qtl2pattern::create_mrna_query_func_do(NULL)
 saveRDS(query_probs, "query_mrna.rds")
 ```
 

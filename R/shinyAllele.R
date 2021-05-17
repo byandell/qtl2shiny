@@ -19,6 +19,7 @@
 #'   downloadButton downloadHandler
 #' @importFrom ggplot2 autoplot ggtitle
 #' @importFrom dplyr mutate select
+#' @importFrom tidyr pivot_wider
 #' @importFrom utils write.csv
 #' @importFrom grDevices dev.off pdf
 #' @importFrom rlang .data
@@ -87,12 +88,12 @@ shinyAllele <- function(input, output, session,
       file.path(paste0("allele1_", win_par$chr_id, "_", win_par$peak_Mbp, ".csv")) },
     content = function(file) {
       shiny::req(allele_obj())
-      out <- tidyr::spread(
+      out <- tidyr::pivot_wider(
         dplyr::select(
           dplyr::mutate(allele_obj(),
                         allele = paste(.data$source, .data$allele, sep = ".")),
           -.data$probe, -.data$source),
-        .data$allele, .data$effect)
+        names_from = "allele", values_from = "effect")
       utils::write.csv(out, file)
     }
   )
