@@ -22,6 +22,8 @@ shinyHotspot(
 }
 \value{
 list of inputs and scan summary
+
+No return value; called for side effects.
 }
 \description{
 Shiny module to view hotspots for peak selection, with interfaces \code{shinyHotspotInput} and  \code{shinyHotspotOutput}.

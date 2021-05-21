@@ -25,6 +25,9 @@ shinySNPProbs(
 
 \item{win_par, pheno_names, probs_obj, project_info}{reactive arguments}
 }
+\value{
+Object of class \code{probs}.
+}
 \description{
 Shiny genotype probability access.
 }

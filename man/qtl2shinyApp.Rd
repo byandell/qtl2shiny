@@ -9,6 +9,9 @@ qtl2shinyApp(appfile = "app.R")
 \arguments{
 \item{appfile}{name of app file for shiny}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 run shiny app for doqtl2
 }

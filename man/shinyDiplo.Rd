@@ -22,6 +22,9 @@ shinyDiplo(
 
 \item{win_par, phe_mx, cov_df, K_chr, analyses_df, project_info, allele_info}{reactive arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny diplotype SNP/Gene action analysis, with interface \code{shinyDiploUI}.
 }

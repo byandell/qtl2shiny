@@ -25,6 +25,9 @@ shinyMainOutput2(id)
 
 \item{id}{shiny identifier}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for phenotype selection.
 }

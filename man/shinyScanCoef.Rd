@@ -24,6 +24,9 @@ shinyScanCoef(
 
 \item{job_par, win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, project_info, allele_info}{reactive arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for scan1 LOD and coefficient plots, with interfaces \code{shinyScanCoefUI} and  \code{shinyScanCoefOutput}.
 }

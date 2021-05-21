@@ -26,6 +26,9 @@ shinyHaplo(
 
 \item{win_par, pmap_obj, phe_mx, cov_df, K_chr, analyses_df, covar, analyses_tbl, peaks, project_info, allele_info}{reactive arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for analysis based on haplotype alleles, with interface \code{shinyHaploUI}.
 }

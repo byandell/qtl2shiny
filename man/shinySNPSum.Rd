@@ -19,6 +19,9 @@ shinySNPSum(
 
 \item{chr_pos, top_snps_tbl, project_info, snp_action}{reactive arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for SNP summary, with interfaces \code{shinySNPInput}, \code{shinySNPUI} and  \code{shinySNPOutput}.
 }

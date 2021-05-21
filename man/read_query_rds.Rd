@@ -11,6 +11,9 @@ read_query_rds(project_info, filename)
 
 \item{filename}{name of RDS file}
 }
+\value{
+data frame read from RDS object.
+}
 \description{
 Read Query for RDS Object
 }

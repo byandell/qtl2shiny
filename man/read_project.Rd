@@ -17,6 +17,9 @@ read_project(project_info, dataname, columns, rownames = TRUE, filetype)
 
 \item{filetype}{type of file (one of c("fst","rds","csv"))}
 }
+\value{
+data frame with \code{columns} and \code{rownames}.
+}
 \description{
 Read Project Data
 }

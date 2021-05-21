@@ -21,6 +21,9 @@ shinySetup(
 
 \item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_df, projects_info}{reactive arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for phenotype selection, with interfaces \code{shinySetupInput} and  \code{shinySetupUI}.
 }

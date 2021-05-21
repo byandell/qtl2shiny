@@ -19,6 +19,9 @@ shinyGeneRegion(
 
 \item{snp_par, top_snps_tbl, project_info, snp_action}{reactive arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneRegionInput}, \code{shinyGeneRegionUI} and  \code{shinyGeneRegionOutput}.
 }

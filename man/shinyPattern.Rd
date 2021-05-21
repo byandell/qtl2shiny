@@ -27,6 +27,9 @@ shinyPattern(
 
 \item{job_par, chr_pos, win_par, phe_mx, cov_df, pairprobs_obj, K_chr, analyses_df, patterns, project_info, allele_info, snp_action}{reactive arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for SNP pattern plots, with interfaces \code{shinyPatternUI} and  \code{shinyPatternOutput}.
 }

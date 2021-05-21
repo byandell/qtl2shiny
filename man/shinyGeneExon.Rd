@@ -20,6 +20,9 @@ shinyGeneExon(
 
 \item{snp_par, chr_pos, top_snps_tbl, gene_exon_tbl, snp_action}{reactive arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneExonInput}, \code{shinyGeneExonUI} and  \code{shinyGeneExonOutput}.
 }

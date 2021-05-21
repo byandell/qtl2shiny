@@ -9,6 +9,9 @@ shinyProject(input, output, session, projects_info)
 \arguments{
 \item{input, output, session, projects_info}{standard shiny arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for selection of project, with interface \code{shinyProjectUI}.
 }

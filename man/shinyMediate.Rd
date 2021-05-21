@@ -29,6 +29,9 @@ shinyMediate(
 
 \item{job_par, win_par, patterns, phe_mx, cov_df, probs_obj, K_chr, analyses_df, pmap_obj, covar, analyses_tbl, peaks, project_info, allele_info}{reactive arguments}
 }
+\value{
+No return value; called for side effects.
+}
 \description{
 Shiny module for scan1 coefficient plots, with interfaces \code{shinyMediateUI} and  \code{shinyMediateOutput}.
 }
