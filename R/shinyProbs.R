@@ -7,6 +7,8 @@
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
+#' 
+#' @return Object of class \code{probs}.
 #'
 #' @export
 #' @importFrom qtl2pattern get_snpprobs 

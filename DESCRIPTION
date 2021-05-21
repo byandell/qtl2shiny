@@ -1,11 +1,12 @@
 Package: qtl2shiny
 Type: Package
-Title: Shiny interface for R/qtl2 Fine Mapping
-Version: 1.0.0
-Date: 2020-11-01
-Author: Brian S. Yandell
-Maintainer: Brian S. Yandell <byandell@wisc.edu>
-Description: Shiny Interface for R/qtl2 and R/doqtl2.
+Title: Shiny interface for 'qtl2' Fine Mapping
+Version: 1.0.1
+Date: 2021-05-21
+Authors@R: c(person("Brian S Yandell", "Author",
+                role = c("aut", "cre"),
+                email = "brian.yandell@wisc.edu"))
+Description: Shiny Interface for 'qtl2'.
 License: GPL-3
 LazyData: TRUE
 Imports:

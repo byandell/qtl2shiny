@@ -6,6 +6,8 @@
 #' @param rownames row names to filter from data object (all if \code{TRUE})
 #' @param filetype type of file (one of c("fst","rds","csv"))
 #' 
+#' @return data frame with \code{columns} and \code{rownames}.
+#' 
 #' @export
 #' @importFrom tools file_ext file_path_sans_ext
 #' @importFrom qtl2pattern read_fast

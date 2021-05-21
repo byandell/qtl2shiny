@@ -9,6 +9,8 @@
 #' @keywords utilities
 #'
 #' @return list of inputs and scan summary
+#' 
+#' @return No return value; called for side effects.
 #'
 #' @export
 #' @importFrom assertthat assert_that

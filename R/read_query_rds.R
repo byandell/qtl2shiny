@@ -3,6 +3,8 @@
 #' @param project_info table of project information
 #' @param filename name of RDS file
 #' 
+#' @return data frame read from RDS object.
+#' 
 #' @importFrom qtl2pattern create_probs_query_func create_mrna_query_func
 #' @export
 read_query_rds <- function(project_info, filename) {

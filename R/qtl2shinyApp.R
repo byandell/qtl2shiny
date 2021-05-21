@@ -6,6 +6,8 @@
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
+#' 
+#' @return No return value; called for side effects.
 #'
 #' @examples
 #' \dontrun{doqtl2_app()}

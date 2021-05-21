@@ -7,6 +7,8 @@
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
+#' 
+#' @return No return value; called for side effects.
 #'
 #' @export
 #' @importFrom shiny callModule NS reactive req
