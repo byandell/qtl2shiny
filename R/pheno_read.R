@@ -8,9 +8,9 @@ pheno_read <- function(project_info, analyses_df, transform = TRUE) {
   } else {
     transform <- NULL
   }
-  qtl2pattern::pheno_trans(pheno_data, 
-                           phenos, 
-                           transform,
-                           analyses_df$offset,
-                           analyses_df$winsorize)
+  pheno_trans(pheno_data, 
+              phenos, 
+              transform,
+              analyses_df$offset,
+              analyses_df$winsorize)
 }

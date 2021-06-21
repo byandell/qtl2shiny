@@ -126,7 +126,7 @@ pheno_region <- function(chr_id, start_val, end_val, covar, map,
 #' @seealso \code{\link{create_mrna_query_func}}
 #' @rdname pheno_region
 #' @export
-expr_region <- function(chr_id, start_val, end_val, covar, map, 
+get_expr_region <- function(chr_id, start_val, end_val, covar, map, 
                         project_dir, drivers = 2,
                         query_mrna = create_mrna_query_func(project_dir)) {
   

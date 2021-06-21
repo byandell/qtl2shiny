@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @importFrom dplyr arrange desc filter mutate
-#' @importFrom qtl2pattern get_gene_exon_snp top_snps_all snpprob_collapse scan1_covar
+#' @importFrom qtl2pattern get_gene_exon_snp top_snps_all snpprob_collapse
 #' @importFrom shiny callModule NS reactive req 
 #'   selectInput sliderInput
 #'   numericInput uiOutput
@@ -55,7 +55,7 @@ shinySNPSetup <- function(input, output, session,
       shiny::setProgress(1)
       snpprobs_act <- 
         qtl2pattern::snpprob_collapse(snpprobs, snp_action())
-      qtl2pattern::scan1_covar(phe_mx(), cov_df(), snpprobs_act, K_chr(), analyses_df(),
+      scan1_covar(phe_mx(), cov_df(), snpprobs_act, K_chr(), analyses_df(),
                   sex_type = job_par$sex_type)
     })
   })

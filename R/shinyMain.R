@@ -14,7 +14,6 @@
 #' @importFrom gdata humanReadable
 #' @importFrom dplyr distinct filter mutate one_of select 
 #' @importFrom tidyr unite
-#' @importFrom qtl2pattern pheno_trans get_covar
 #' @importFrom shiny callModule NS reactive req 
 #'   radioButtons selectInput
 #'   dataTableOutput textOutput uiOutput
@@ -74,7 +73,7 @@ shinyMain <- function(input, output, session, projects_info) {
     pheno_read(project_info(), analyses_df())
   })
   cov_df <- shiny::reactive({
-    qtl2pattern::get_covar(covar(), analyses_df())
+    get_covar(covar(), analyses_df())
   })
   
   ## Set up shiny::reactives for scan1 module.

@@ -14,7 +14,6 @@
 #' @importFrom gdata humanReadable
 #' @importFrom dplyr arrange desc distinct filter mutate one_of select 
 #' @importFrom tidyr unite
-#' @importFrom qtl2pattern pheno_trans
 #' @importFrom shiny callModule NS reactive req 
 #'   radioButtons selectInput
 #'   dataTableOutput textOutput uiOutput
