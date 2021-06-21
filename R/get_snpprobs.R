@@ -39,8 +39,6 @@
 #' snpinfo <- snppr$snpinfo
 #' snppr <- snppr$snpprobs
 #'
-#' @export
-#'
 #' @importFrom dplyr bind_rows mutate
 #' @importFrom qtl2 genoprob_to_snpprob index_snps
 #'

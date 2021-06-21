@@ -31,7 +31,6 @@
 #' out <- pheno_region("2", 90, 100, DOex$covar, DOex$pmap, peaks, analyses_tbl, DOex$pheno)
 #' str(out)
 #' 
-#' @export
 #' @importFrom dplyr filter group_by inner_join left_join n rename summarize ungroup
 #' @importFrom qtl2 find_marker
 #' @importFrom stringr str_split
@@ -125,7 +124,6 @@ pheno_region <- function(chr_id, start_val, end_val, covar, map,
 #' 
 #' @seealso \code{\link{create_mrna_query_func}}
 #' @rdname pheno_region
-#' @export
 get_expr_region <- function(chr_id, start_val, end_val, covar, map, 
                         project_dir, drivers = 2,
                         query_mrna = create_mrna_query_func(project_dir)) {

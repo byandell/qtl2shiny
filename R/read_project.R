@@ -8,7 +8,6 @@
 #' 
 #' @return data frame with \code{columns} and \code{rownames}.
 #' 
-#' @export
 #' @importFrom tools file_ext file_path_sans_ext
 #' @importFrom qtl2pattern read_fast
 #' @importFrom utils read.csv

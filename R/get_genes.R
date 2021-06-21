@@ -9,7 +9,6 @@
 #' 
 #' @return object of class \code{feature_tbl}.
 #' 
-#' @export
 #' @importFrom dplyr filter
 #' @importFrom rlang .data
 #' 

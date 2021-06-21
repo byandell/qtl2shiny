@@ -9,8 +9,6 @@
 #' 
 #' @return object of class \code{\link[qtl2]{scan1}}.
 #' 
-#' @export
-#' 
 #' @importFrom qtl2 scan1
 #' @importFrom dplyr select
 #' @importFrom stats model.matrix
@@ -39,7 +37,6 @@ scan1_covar <- function(phe_mx, cov_df, probs_obj, kinship, analyses_df, ...) {
   # reorder by decreasing max lod
   modify_object(scans, scans[,order(-apply(scans,2,max)), drop=FALSE])
 }
-#' @export
 #' @importFrom stats formula model.matrix
 #' @rdname scan1_covar
 which_covar <- function(analyses_df) {
@@ -50,7 +47,6 @@ which_covar <- function(analyses_df) {
   analyses_df[, names(is_covar)[is_covar], drop=FALSE]
 }
 #' @param addcovar Data frame of additive covariate.
-#' @export
 #' @rdname scan1_covar
 covar_df_mx <- function(addcovar) {
   if(is.null(addcovar))
@@ -63,7 +59,6 @@ covar_df_mx <- function(addcovar) {
 }
 
 #' @param wh Index for which row of \code{analyses_df} to use.
-#' @export
 #' @rdname scan1_covar
 wh_covar <- function(analyses_df, wh, cov_df) {
   # Get which covariates from condensed analyses table.
@@ -75,7 +70,6 @@ wh_covar <- function(analyses_df, wh, cov_df) {
 }
 
 #' @param sex_type Logical flag to subset by sex if \code{"F"} or \code{"M"}.
-#' @export
 #' @rdname scan1_covar
 sexcovar <- function(addcovar, sex_type) {
   if(!all(sort(unique(addcovar$sex)) %in% c("M","F")) & sex_type %in% c("M","F")) {
