@@ -11,7 +11,6 @@
 #' @return Object of class \code{probs}.
 #'
 #' @export
-#' @importFrom qtl2pattern get_snpprobs 
 #' @importFrom assertthat assert_that
 #' @importFrom shiny reactive req 
 #'   withProgress setProgress
@@ -86,7 +85,7 @@ shinySNPProbs <- function(input, output, session,
       snpinfo <- query_variants(chr_id,
                                 peak_Mbp - window_Mbp,
                                 peak_Mbp + window_Mbp)
-      qtl2pattern::get_snpprobs(chr_id, peak_Mbp, window_Mbp,
+      get_snpprobs(chr_id, peak_Mbp, window_Mbp,
                    pheno_names(), 
                    probs_obj()$probs,
                    probs_obj()$map,

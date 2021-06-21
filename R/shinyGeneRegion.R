@@ -12,7 +12,6 @@
 #'
 #' @export
 #' @importFrom ggplot2 autoplot ggtitle
-#' @importFrom qtl2pattern get_genes
 #' @importFrom shiny NS reactive req isTruthy
 #'   checkboxInput
 #'   tableOutput plotOutput uiOutput
