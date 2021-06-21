@@ -20,7 +20,7 @@ scan1_pattern <- function(pheno, phe_mx, addcovar, pairprobs_obj, K_chr, analyse
   addcovar <- wh_covar(analyses_df, wh, addcovar)
   addcovar <- covar_df_mx(addcovar)
   
-  qtl2pattern::scan_pattern(pairprobs_obj$probs,
+  qtl2pattern::scan1pattern(pairprobs_obj$probs,
                             phe_mx[,, drop=FALSE],
                             K_chr, addcovar,
                             pairprobs_obj$map,

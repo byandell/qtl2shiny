@@ -13,7 +13,7 @@
 #' @export
 #' 
 #' @importFrom grid plotViewport pushViewport
-#' @importFrom qtl2pattern scan_pattern sdp_to_pattern
+#' @importFrom qtl2pattern scan1pattern sdp_to_pattern
 #' @importFrom dplyr distinct filter mutate arrange desc
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req 

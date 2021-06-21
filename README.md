@@ -4,24 +4,24 @@ Yandell R/qtl2shiny project.
 
 ### What is this repository for? ###
 
-* Code to create shiny interface for [R/qtl2](https://kbroman.org/qtl2).
+* Code to create shiny interface for [R/qtl2](https://cran.r-project.org/package=qtl2).
 * Version 0.9.18
 * See following documents:
-    + [R/qtl2shiny Screen Shots](http://www.stat.wisc.edu/~yandell/software/qtl2shiny/screenshots.html)
+    + [R/qtl2shiny Screen Shots](http://pages.stat.wisc.edu/~yandell/software/qtl2shiny/screenshots.html)
     + [R/qtl2shiny User Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/UserGuide.Rmd)
     + [R/qtl2shiny Developer Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/DeveloperGuide.Rmd)
 
 ### What has been done ###
 
-- created [Shiny](http://shiny.rstudio.org) interface for [R/qtl2](https://kbroman.org/qtl2) data
+- created [Shiny](https://shiny.rstudio.com) interface for [R/qtl2](https://cran.r-project.org/package=qtl2) data
     + handles multiple phenotypes and multiple projects
     + creates plots and scans on the fly
     + uses Shiny modules and dashboard
 - organized in package R/qtl2shiny
 - depends on related packages
-    + [R/qtl2](https://kbroman.org/qtl2)
-    + [R/qtl2ggplot2](https://github.com/byandell/qtl2ggplot2)
-    + [R/qtl2feather](https://github.com/byandell/qtl2feather)
+    + [R/qtl2](https://cran.r-project.org/package=qtl2)
+    + [R/qtl2ggplot2](https://cran.r-project.org/package=qtl2ggplot)
+    + [R/qtl2fst](https://cran.r-project.org/package=qtl2fst)
     + [R/qtl2pattern](https://github.com/byandell/qtl2pattern)
     + [R/CausalMST](https://github.com/byandell/CausalMST)
 
@@ -58,21 +58,18 @@ Minor issues
 
 * [Brian Yandell](http://bitbucket.org/byandell)
 * [Karl Broman](http://bitbucket.org/kbroman)
-  + [R/qtl2](http://kbroman.org/qtl2/)
+  + [R/qtl2](https://cran.r-project.org/package=qtl2)
 
 ### Installation
 
-R/qtl2 is early in development and so is not yet available on
-[CRAN](http://cran.r-project.org).
-
-You can install R/qtl2 from [GitHub](https://github.com/rqtl).
+R/qtl2 is early in development and so is not yet available on CRAN.
 
 You first need to install the
-[devtools](https://github.com/hadley/devtools) package, plus a set of
+[devtools](https://cran.r-project.org/package=devtools) package, plus a set of
 package dependencies: [yaml](https://cran.r-project.org/package=yaml),
 [jsonlite](https://cran.r-project.org/package=jsonlite),
 [data.table](https://cran.r-project.org/package=data.table),
-and [RcppEigen](https://github.com/RcppCore/RcppEigen).
+and [RcppEigen](https://cran.r-project.org/package=RcppEigen).
 (Additional, secondary dependencies will also be installed)
 
     install.packages(c("devtools", "yaml", "jsonlite", "data.table", "RcppEigen", "RSQLite"))
@@ -80,18 +77,17 @@ and [RcppEigen](https://github.com/RcppCore/RcppEigen).
 You will also need the following packages for qtl2shiny dependencies:
 
     install.packages(c("tidyverse", "RColorBrewer", "fst",
-      "shiny", "shinydashboard", "grid", "gridBase", "gdata", "GGally", "Rcpp", "mnormt", "corpcor"))
+      "shiny", "shinydashboard", "grid", "gridBase", "gdata", "GGally", "Rcpp", "mnormt", "corpcor", "qtl2", "qtl2fst", "qtl2ggplot"))
 
-Then, install R/qtl2 using `devtools::install_github()`.
+Then, install plotly using `devtools::install_github()`.
 
     library(devtools)
-    install_github(c("rqtl/qtl2","rqtl/qtl2fst"))
     install_github("ropensci/plotly")
 
 Once you have installed these, install qtl2shiny and related packages as
 
     install_github(paste0("byandell/",
-      c("qtl2pattern","qtl2ggplot","CausalMST","qtl2shiny")))
+      c("qtl2pattern","CausalMST","qtl2shiny")))
 
 To install `qtl2shiny` with vignettes (takes a bit longer):
 
