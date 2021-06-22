@@ -5,7 +5,7 @@
 #' 
 #' @return data frame read from RDS object.
 #' 
-#' @importFrom qtl2pattern create_probs_query_func create_mrna_query_func
+#' @importFrom qtl2pattern create_probs_query_func
 read_query_rds <- function(project_info, filename) {
   if(is.null(project_info))
     return(NULL)
