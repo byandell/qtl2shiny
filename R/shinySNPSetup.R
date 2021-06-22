@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @importFrom dplyr arrange desc filter mutate
-#' @importFrom qtl2pattern get_gene_exon_snp top_snps_all snpprob_collapse
+#' @importFrom qtl2pattern get_gene_exon_snp top_snps_pattern snpprob_collapse
 #' @importFrom shiny callModule NS reactive req 
 #'   selectInput sliderInput
 #'   numericInput uiOutput
@@ -80,7 +80,7 @@ shinySNPSetup <- function(input, output, session,
       minLOD() 
     shiny::withProgress(message = 'Get Top SNPs ...', value = 0, {
       shiny::setProgress(1)
-      qtl2pattern::top_snps_all(snp_scan_obj(),
+      qtl2pattern::top_snps_pattern(snp_scan_obj(),
                                 snpinfo(),
                                 drop_hilit)
     })
