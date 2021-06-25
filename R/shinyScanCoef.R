@@ -11,7 +11,7 @@
 #' @return No return value; called for side effects.
 #'
 #' @export
-#' @importFrom qtl2pattern listof_scan1coef
+#' @importFrom qtl2ggplot listof_scan1coef
 #' @importFrom qtl2 scan1
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req 

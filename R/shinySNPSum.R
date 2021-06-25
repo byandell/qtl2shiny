@@ -62,7 +62,7 @@ shinySNPSum <- function(input, output, session,
     shiny::withProgress(message = "Top InDels ...", value = 0,
                  {
                    shiny::setProgress(1)
-                   dplyr::filter(shiny::req(best_href()), .data$type != "SNP")
+                   dplyr::filter(shiny::req(best_href()), .data$variant_type != "SNP")
                  })
   }, escape = FALSE,
   options = list(scrollX = TRUE, pageLength = 10))
