@@ -14,6 +14,9 @@
 #' 
 get_genes <- function(chr_id, start, stop,
                       gene_tbl = query_genes(chr_id, start, stop)) {
+  if(!exists("query_genes")) { # create null binding
+    query_genes <- function(...) { NULL }
+  }
   out <- dplyr::filter(
     gene_tbl,
     !is.na(.data$Name))

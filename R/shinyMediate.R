@@ -11,7 +11,7 @@
 #' @return No return value; called for side effects.
 #'
 #' @export
-#' @importFrom CausalMST mediation_test mediation_triad
+#' @importFrom intermediate mediation_test mediation_triad
 #' @importFrom qtl2 find_marker scan1
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req isTruthy

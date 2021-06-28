@@ -15,7 +15,7 @@
 #' @importFrom qtl2 scan1
 #' @importFrom qtl2pattern sdp_to_pattern
 #' @importFrom ggplot2 autoplot
-#' @importFrom CausalMST mediation_triad
+#' @importFrom intermediate mediation_triad
 #' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput

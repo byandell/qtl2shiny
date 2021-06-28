@@ -1,8 +1,8 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for 'qtl2' Fine Mapping
-Version: 1.0.2
-Date: 2021-06-21
+Version: 1.0.4
+Date: 2021-06-28
 Authors@R: c(person("Brian S Yandell", "Author",
                 role = c("aut", "cre"),
                 email = "brian.yandell@wisc.edu"))
@@ -11,17 +11,17 @@ License: GPL-3
 LazyData: TRUE
 Imports:
     gdata, grid, GGally,
-    assertthat, dplyr, ggplot2, stringr, tidyr,
+    assertthat, dplyr, ggplot2, stringr, tidyr, purrr,
     shiny,shinydashboard,
-    plotly, RSQLite,
+    plotly, RSQLite, fst,
     qtl2,
     qtl2ggplot,
     qtl2pattern,
-    CausalMST,
+    intermediate,
     tools, utils, grDevices, rlang
 Suggests:
     flexdashboard,
-    qtl2fst, fst, igraph,
+    qtl2fst, igraph,
     knitr,
     rmarkdown, readr
 VignetteBuilder: knitr

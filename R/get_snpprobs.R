@@ -56,6 +56,10 @@ get_snpprobs <- function(chr_id=NULL, peak_Mbp=NULL, window_Mbp=NULL,
   if(peak_Mbp == 0) {
     peak_Mbp <- mean(range(probs_map[[1]]))
   }
+  
+  if(!exists("query_variants")) { # create null binding
+    query_variants <- function(...) { NULL }
+  }
 
   snpinfo <- qtl2::index_snps(probs_map, snpinfo)
   
