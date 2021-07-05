@@ -122,9 +122,9 @@ shinyMediate <- function(input, output, session,
   ## Select plot format.
   output$med_plot <- shiny::renderUI({
     shiny::selectInput(ns("med_plot"), NULL,
-                       choices = c("Position by LOD", 
+                       choices = c("Position by LR", 
                                    "Position by P-value", 
-                                   "P-value by LOD",
+                                   "P-value by LR",
                                    "Allele Effects",
                                    "Mediator Effects"),
                        selected = input$med_plot)
@@ -138,9 +138,9 @@ shinyMediate <- function(input, output, session,
   
   med_plot_type <- reactive({
     switch(shiny::req(input$med_plot),
-           "Position by LOD" = "pos_lod",
+           "Position by LR" = "pos_LR",
            "Position by P-value" = "pos_pvalue",
-           "P-value by LOD" = "pvalue_lod",
+           "P-value by LR" = "pvalue_LR",
            "Allele Effects" = "alleles",
            "Mediator Effects" = "mediator")
   })
@@ -252,7 +252,7 @@ shinyMediate <- function(input, output, session,
                         data_type = input$med_type,
                         probs_chr())
         print(ggplot2::autoplot(
-          med, "pos_lod",
+          med, "pos_LR",
           local_only = input$local, 
           significant = input$signif))
         print(ggplot2::autoplot(
@@ -260,7 +260,7 @@ shinyMediate <- function(input, output, session,
           local_only = input$local, 
           significant = TRUE))
         print(ggplot2::autoplot(
-          med, "pvalue_lod",
+          med, "pvalue_LR",
           local_only = input$local, 
           significant = TRUE))
         print(ggplot2::autoplot(
