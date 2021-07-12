@@ -16,7 +16,7 @@ covar_df_mx(addcovar)
 
 wh_covar(analyses_df, wh, cov_df)
 
-sexcovar(addcovar, sex_type)
+sexcovar(addcovar, sex_type = "all")
 }
 \arguments{
 \item{phe_mx}{matrix of phenotypes}
@@ -35,7 +35,7 @@ sexcovar(addcovar, sex_type)
 
 \item{wh}{Index for which row of \code{analyses_df} to use.}
 
-\item{sex_type}{Logical flag to subset by sex if \code{"F"} or \code{"M"}.}
+\item{sex_type}{subset by sex if \code{"F"} or \code{"M"}.}
 }
 \value{
 object of class \code{\link[qtl2]{scan1}}.

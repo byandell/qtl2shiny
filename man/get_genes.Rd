@@ -4,14 +4,14 @@
 \alias{get_genes}
 \title{Get gene in region}
 \usage{
-get_genes(chr_id, start, stop, gene_tbl = query_genes(chr_id, start, stop))
+get_genes(chr_id, start, end, gene_tbl = query_genes(chr_id, start, end))
 }
 \arguments{
 \item{chr_id}{chromosome identifier}
 
 \item{start}{start position in Mbp}
 
-\item{stop}{stop position in Mbp}
+\item{end}{end position in Mbp}
 
 \item{gene_tbl}{table of genes from user supplied \code{query_genes}; see \code{\link[qtl2]{create_gene_query_func}}}
 }

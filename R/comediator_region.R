@@ -22,6 +22,7 @@ comediator_region <- function(pheno_name, chr_id, scan_window,
   phenos <- analyses_df$pheno
   pheno_data <- read_project(project_info, "pheno_data", phenos)
   
+  # Create comediator object.
   out <- pheno_region(
     chr_id, scan_window[1], scan_window[2], covar, pmap,
     peaks, analyses_tbl, pheno_data, drivers = qtls)

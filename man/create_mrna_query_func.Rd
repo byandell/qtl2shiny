@@ -13,7 +13,7 @@ create_mrna_query_func(dbfile, mrnadir_val = "RNAseq")
 }
 \value{
 Function with seven arguments, `chr`, `start`,
-    `stop`, `local`, `qtl`, `fast` and `mrnadir`. It returns a list with `expr`, `annot` and `peaks` objects
+    `end`, `local`, `qtl`, `fast` and `mrnadir`. It returns a list with `expr`, `annot` and `peaks` objects
     spanning the region specified by the first three arguments.
 }
 \description{

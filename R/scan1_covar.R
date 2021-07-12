@@ -69,9 +69,9 @@ wh_covar <- function(analyses_df, wh, cov_df) {
              stringsAsFactors = FALSE)
 }
 
-#' @param sex_type Logical flag to subset by sex if \code{"F"} or \code{"M"}.
+#' @param sex_type subset by sex if \code{"F"} or \code{"M"}.
 #' @rdname scan1_covar
-sexcovar <- function(addcovar, sex_type) {
+sexcovar <- function(addcovar, sex_type = "all") {
   if(!all(sort(unique(addcovar$sex)) %in% c("M","F")) & sex_type %in% c("M","F")) {
     stop("cannot handle levels of sex not M and F")
   }

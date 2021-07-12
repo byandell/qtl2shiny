@@ -7,7 +7,7 @@
 #' @param mrnadir_val name of mRNA data directory (default \code{"RNAseq"})
 #'
 #' @return Function with seven arguments, `chr`, `start`,
-#'     `stop`, `local`, `qtl`, `fast` and `mrnadir`. It returns a list with `expr`, `annot` and `peaks` objects
+#'     `end`, `local`, `qtl`, `fast` and `mrnadir`. It returns a list with `expr`, `annot` and `peaks` objects
 #'     spanning the region specified by the first three arguments.
 #'
 #' @details Note that this function assumes positions are in Mbp.
@@ -20,16 +20,16 @@ create_mrna_query_func <- function(dbfile,
                                    mrnadir_val = "RNAseq") {
   if(missing(dbfile) || is.null(dbfile)) {
     # No mRNA data.
-    function(chr = NULL, start = NULL, stop = NULL,
+    function(chr = NULL, start = NULL, end = NULL,
              local = TRUE,
              qtl = FALSE,
              mrnadir = mrnadir_val) 
       NULL
   } else {
-    function(chr = NULL, start = NULL, stop = NULL,
+    function(chr = NULL, start = NULL, end = NULL,
              local = TRUE,
              qtl = FALSE,
              mrnadir = mrnadir_val)
-      read_mrna(chr, start, stop, dbfile, local, qtl, mrnadir)
+      read_mrna(chr, start, end, dbfile, local, qtl, mrnadir)
   }
 }

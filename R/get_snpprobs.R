@@ -64,5 +64,6 @@ get_snpprobs <- function(chr_id=NULL, peak_Mbp=NULL, window_Mbp=NULL,
   snpinfo <- qtl2::index_snps(probs_map, snpinfo)
   
   list(snpprobs = qtl2::genoprob_to_snpprob(probs_obj, snpinfo),
-       snpinfo = snpinfo)
+       snpinfo = snpinfo,
+       haplos = dimnames(probs_obj)[[2]][[1]])
 }
