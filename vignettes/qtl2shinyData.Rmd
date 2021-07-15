@@ -56,7 +56,7 @@ The processed data will reside in the following directory:
 taxa_path <- file.path(project_info$directory, project_info$taxa)
 taxa_dir <- file.path(localdir, taxa_path)
 project_path <- file.path(taxa_path, project_info$project)
-(project_dir <- file.path(localdir, taxa_path))
+(project_dir <- file.path(localdir, project_path))
 ```
 
 The data is pulled from this internet directory:
@@ -323,6 +323,44 @@ saveRDS(peaks, file.path(project_dir, "peaks.rds"))
 saveRDS(analyses_tbl, file.path(project_dir, "analyses.rds"))
 ```
 
+## List files
+
+```{r}
+localdir
+```
+
+```{r}
+list.files(localdir)
+```
+
+```{r}
+taxa_dir
+```
+
+```{r}
+list.files(taxa_dir)
+```
+
+```{r}
+project_dir
+```
+
+```{r}
+list.files(project_dir)
+```
+
+```{r}
+list.files(file.path(project_dir, "genoprob")) 
+```
+
+```{r}
+file.size(file.path(project_dir, "genoprob", "fst_probs.rds"))
+```
+
+```{r}
+file.size(file.path(project_dir, "genoprob", "probs_1.fst"))
+```
+
 ## Hotspots
 
 ```{r}
@@ -331,4 +369,14 @@ hots <- qtl2shiny::hotspot(qtl2data$pmap, peaks)
 
 ```{r}
 saveRDS(hots, file.path(project_dir, "hotspot.rds"))
+```
+
+```{r}
+# See shinyHotspot.R
+hotspots <- readRDS(file.path(project_dir, "hotspot.rds"))
+```
+
+```{r}
+# See shinyHotspot.R
+qtl2ggplot::ggplot_scan1(hotspots$scan, hotspots$map)
 ```
