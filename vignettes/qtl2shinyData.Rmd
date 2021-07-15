@@ -19,7 +19,23 @@ params:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This sets up the `Recla` project using data from <https://github.com/rqtl/qtl2data> for use with [R/qtl2shiny](https://github.com/byandell/qtl2shiny).
+The popular [R/qtl](http://www.rqtl.org/) package for gene mapping has been redeveloped for high volume, multi-parent systems genetics data as [R/qtl2](http://www.rqtl.org/qtl2/). This new package provides a [Shiny](http://shiny.rstudio.org/) interface to extensions of [R/qtl2](http://www.rqtl.org/qtl2/).
+
+<http://pages.stat.wisc.edu/~yandell/software/qtl2shiny/> contains further information on the 'qtl2shiny' server in action, including
+[R/qtl2shiny Screen Shots](http://pages.stat.wisc.edu/~yandell/software/qtl2shiny/screenshots.html).
+
+For more details on use of the package, see the 
+[R/qtl2shiny package](https://github.com/byandell/qtl2shiny),
+[R/qtl2shiny User Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/UserGuide.Rmd) and [R/qtl2shiny Developer Guide](https://github.com/byandell/qtl2shiny/blob/master/vignettes/DeveloperGuide.Rmd). This document is created by [inst/scripts/qtl2shiny_index.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/qtl2shiny_index.Rmd).
+
+See also
+
+- [R/qtl2ggplot](https://github.com/byandell/qtl2ggplot/) and on CRAN at <https://cran.r-project.org/package=qtl2ggplot>
+- [R/qtl2fst](https://github.com/rqtl/qtl2fst/): fast 'qtl2' data
+- [R/qtl2pattern](https://github.com/byandell/qtl2pattern/): explore SNP patterns
+- [R/intermediate](https://github.com/byandell/intermediate/): mediation
+
+This document sets up the `Recla` project using data from <https://github.com/rqtl/qtl2data> for use with [R/qtl2shiny](https://github.com/byandell/qtl2shiny).
 See also [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) for needed files for `CCmouse` taxa.
 
 The `project_info` data frame contains control information about each project (see [R/qtl2shiny](https://github.com/byandell/qtl2shiny)).
