@@ -54,6 +54,7 @@ The processed data will reside in the following directory:
 
 ```{r}
 taxa_path <- file.path(project_info$directory, project_info$taxa)
+taxa_dir <- file.path(localdir, taxa_path)
 project_path <- file.path(taxa_path, project_info$project)
 (project_dir <- file.path(localdir, taxa_path))
 ```
@@ -100,10 +101,9 @@ if(dir.exists(project_dir)) {
 Create directories if they do not exist.
 
 ```{r}
+
 if(!dir.exists(project_dir)) {
-  if(!dir.exists(taxa_dir <- file.path(localdir,
-                                     project_info$directory, 
-                                     project_info$taxa))) {
+  if(!dir.exists(taxa_dir)) {
     if(!dir.exists(data_dir <- file.path(localdir,
                                        project_info$directory)))
       dir.create(data_dir)
@@ -126,6 +126,40 @@ for(filename in c("app.R", "about.md", "about-extended.md")) {
     file.copy(system.file(file.path("qtl2shinyApp", filename), package = "qtl2shiny"), fname)
   }
 }
+```
+
+```{r}
+allele_info <- 
+  data.frame(
+    code = LETTERS[1:8],
+    shortname = names(qtl2::CCcolors),
+    longname = c("A/J","C57BL/6J","129S1/SvImJ","NOD/LtJ","NZO/HlLtJ","CAST/EiJ","PWK/PhJ","WSB/EiJ"),
+    allelename = c("A_J","C57BL_6J","129S1_SvImJ","NOD_LtJ","NZO_HlLtJ","CAST_EiJ","PWK_PhJ","WSB_EiJ"),
+    link = c("https://www.jax.org/strain/000646",
+             "https://www.jax.org/strain/000664",
+             "https://www.jax.org/strain/002448",
+             "https://www.jax.org/strain/001289",
+             "https://www.jax.org/strain/002105",
+             "https://www.jax.org/strain/000928",
+             "https://www.jax.org/strain/003715",
+             "https://www.jax.org/strain/001145"),
+    color = qtl2::CCcolors,
+    color_name = c("yellow","grey","salmon","blue","aqua","green","red","purple"),
+    origcolor = qtl2::CCorigcolors,
+    stringsAsFactors = FALSE
+  )
+```
+
+```{r}
+saveRDS(allele_info, file.path(taxa_dir, "allele_info.rds"))
+```
+
+```{r}
+taxa_info <- "Mus musculus"
+```
+
+```{r}
+saveRDS(taxa_info, file.path(taxa_dir, "taxa_info.rds"))
 ```
 
 ## Query functions
