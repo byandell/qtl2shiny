@@ -11,8 +11,8 @@
 #' @return No return value; called for side effects.
 #'
 #' @export
-#' @importFrom intermediate mediation_test mediation_triad
 #' @importFrom qtl2 find_marker scan1
+#' @importFrom qtl2mediate comediator_region comediator_type expr_region mediation_test_qtl2
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
@@ -44,23 +44,30 @@ shinyMediate <- function(input, output, session,
   ## Expression data
   expr_ls <- reactive({
     shiny::req(win_par)
-    expr_region(chr_id(), scan_window(), covar(), 
-                shiny::req(input$qtls), shiny::req(pmap_obj()),
-                project_info())
+    qtl2mediate::expr_region(chr_id(), scan_window(), covar(),
+                             shiny::req(pmap_obj()), 
+                    drivers = shiny::req(input$qtls),
+                    query_mrna = query_mrna())
+  })
+  query_mrna <- reactive({
+    read_query_rds(project_info(), "query_mrna.rds")
+  })
+  pheno_data <- reactive({
+    pheno_read(project_info(), analyses_tbl())
   })
   
   ## Comediator data
   comed_ls <- reactive({
     shiny::req(input$pheno_name, win_par, project_info())
-    comediator_region(input$pheno_name, chr_id(), scan_window(), 
+    qtl2mediate::comediator_region(input$pheno_name, chr_id(), scan_window(), 
                       covar(), analyses_tbl(), peaks(), 
                       shiny::req(input$qtls), shiny::req(pmap_obj()),
-                      project_info())
+                      pheno_data())
   })
   med_ls <- reactive({
     out <- switch(shiny::req(input$med_type, input$pheno_name),
            expression = expr_ls(),
-           phenotype = comediator_type(comed_ls(), shiny::req(peaks()),
+           phenotype = qtl2mediate::comediator_type(comed_ls(), shiny::req(peaks()),
                                        input$pheno_name,
                                        shiny::isTruthy(input$other)))
     out
@@ -91,9 +98,17 @@ shinyMediate <- function(input, output, session,
                input$pos_Mbp, input$med_type, med_ls())
     shiny::withProgress(message = "Mediation Scan ...", value = 0, {
       shiny::setProgress(1)
-      med_test(med_ls(), geno_max(), phe1_mx(), K_chr(), cov_df(),
-               input$pos_Mbp, data_type = input$med_type,
-               probs_chr())
+      qtl2mediate::mediation_test_qtl2(
+        target = phe1_mx(),
+        mediator = med_ls()[[1]],
+        annotation = med_ls()[[2]],
+        covar_tar = cov_df(),
+        covar_med = med_ls()$covar,
+        genoprobs = probs_obj()$probs,
+        map = probs_obj()$map,
+        chr = chr_id(),
+        pos = input$pos_Mbp,
+        kinship = K_chr())
     })
   })
   mediate_signif <- shiny::reactive({
@@ -246,11 +261,18 @@ shinyMediate <- function(input, output, session,
                  input$pos_Mbp, input$med_type)
       grDevices::pdf(file, width=9,height=9)
       for(pheno in colnames(phe_mx())) {
-        med <- med_test(med_ls(), geno_max(),
-                        phe_mx()[, pheno, drop = FALSE],
-                        K_chr(), cov_df(), input$pos_Mbp,
-                        data_type = input$med_type,
-                        probs_chr())
+        med <- qtl2mediate::mediation_test_qtl2(
+          target = phe_mx()[, pheno, drop = FALSE],
+          mediator = med_ls()[[1]],
+          annotation = med_ls()[[2]],
+          covar_tar = cov_df(),
+          covar_med = med_ls()$covar,
+          genoprobs = probs_obj()$probs,
+          map = probs_obj()$map,
+          chr = chr_id(),
+          pos = input$pos_Mbp,
+          kinship = K_chr())
+        
         print(ggplot2::autoplot(
           med, "pos_LR",
           local_only = input$local, 

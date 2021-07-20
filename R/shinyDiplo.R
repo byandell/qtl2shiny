@@ -37,7 +37,7 @@ shinyDiplo <- function(input, output, session,
   ## SNP Association
   patterns <- shiny::callModule(shinySNPSetup, "snp_setup",
                          input, win_par, 
-                         phe_mx, cov_df, pairprobs_obj, K_chr, analyses_df,
+                         phe_mx, cov_df, K_chr, analyses_df,
                          project_info, allele_info,
                          snp_action)
   

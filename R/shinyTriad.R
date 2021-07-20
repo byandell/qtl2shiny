@@ -13,9 +13,8 @@
 #' @export
 #' @importFrom dplyr filter
 #' @importFrom qtl2 scan1
-#' @importFrom qtl2pattern sdp_to_pattern
 #' @importFrom ggplot2 autoplot
-#' @importFrom intermediate mediation_triad
+#' @importFrom qtl2mediate mediation_triad_qtl2
 #' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
@@ -63,7 +62,7 @@ shinyTriad <- function(input, output, session,
   })
   output$pattern <- shiny::renderUI({
     shiny::req(sdps(), haplos())
-    choices <- qtl2pattern::sdp_to_pattern(sdps(), haplos())
+    choices <- sdp_to_pattern(sdps(), haplos())
     shiny::selectInput(ns("pattern"), NULL,
                        choices = choices, input$pattern)
   })
@@ -71,8 +70,26 @@ shinyTriad <- function(input, output, session,
   scat_dat <- reactive({
     shiny::req(geno_max(), phe_mx(), med_ls(), medID(), sdps(),
                input$med_name, input$pattern)
-    med_triad(med_ls(), geno_max(), phe_mx(), K_chr()[[1]], cov_df(), sdps(),
-             input$pattern, input$med_name, medID(), haplos())
+#    med_triad(med_ls(), geno_max(), phe_mx(), K_chr()[[1]], cov_df(), sdps(),
+#             input$pattern, input$med_name, medID(), haplos())
+    # ** This will take work as geno_max is passed from shinyMediat
+    # but can get this from genoprobs, which are not passed.
+    qtl2mediate::mediation_triad_qtl2(
+      target = phe_mx(),
+      mediator = med_ls()[[1]],
+      annotation = med_ls()[[2]],
+      covar_tar = cov_df(),
+      covar_med = med_ls()$covar,
+      genoprobs = probs_obj()$probs,
+      map = probs_obj()$map,
+      chr = chr_id(),
+      pos = input$pos_Mbp,
+      sdps = sdps(),
+      pattern = input$pattern,
+      med_name = input$med_name,
+      medID = medID(),
+      haplos = haplos(),
+      kinship = K_chr()[[1]])
   })
   
   ## Select plot format.

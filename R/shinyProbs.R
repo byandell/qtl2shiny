@@ -3,7 +3,7 @@
 #' Shiny genotype probability access.
 #' 
 #' @param input,output,session standard shiny arguments
-#' @param win_par,pheno_names,probs_obj,project_info reactive arguments
+#' @param win_par,pheno_names,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -12,6 +12,7 @@
 #'
 #' @export
 #' @importFrom assertthat assert_that
+#' @importFrom qtl2mediate get_snpprobs
 #' @importFrom shiny reactive req 
 #'   withProgress setProgress
 shinyProbs <- function(input, output, session,
@@ -67,7 +68,7 @@ shinyPairProbs <- function(input, output, session,
 #' @rdname shinyProbs
 #' @export
 shinySNPProbs <- function(input, output, session,
-                          win_par, pheno_names, probs_obj,
+                          win_par, pheno_names,
                           project_info) {
   ns <- session$ns
   
@@ -76,20 +77,27 @@ shinySNPProbs <- function(input, output, session,
     shiny::req(chr_id <- win_par$chr_id, 
                peak_Mbp <- win_par$peak_Mbp, 
                window_Mbp <- win_par$window_Mbp)
-    shiny::req(pheno_names(), probs_obj())
+    shiny::req(pheno_names())
     shiny::withProgress(message = 'SNP Probs ...', value = 0, {
       shiny::setProgress(1)
+
+      # Define query_probs function
+      query_probs <- read_query_rds(project_info(), "query_probs.rds")
+      probs_obj <- query_probs(chr_id,
+                               peak_Mbp - window_Mbp,
+                               peak_Mbp + window_Mbp,
+                               allele = FALSE)
       
       # define the query_variants function
       query_variants <- read_query_rds(project_info(), "query_variants.rds")
       snpinfo <- query_variants(chr_id,
                                 peak_Mbp - window_Mbp,
                                 peak_Mbp + window_Mbp)
-      get_snpprobs(chr_id, peak_Mbp, window_Mbp,
-                   pheno_names(), 
-                   probs_obj()$probs,
-                   probs_obj()$map,
-                   snpinfo)
+      qtl2mediate::get_snpprobs(chr_id, peak_Mbp, window_Mbp,
+                                pheno_names(), 
+                                probs_obj$probs,
+                                probs_obj$map,
+                                snpinfo)
     })
   })
 }

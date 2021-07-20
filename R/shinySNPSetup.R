@@ -3,7 +3,7 @@
 #' Shiny module to coordinate SNP and allele analyses and plots, with interfaces \code{shinySNPSetupUI} and  \code{shinySNPSetupOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param job_par,win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info,snp_action reactive arguments
+#' @param job_par,win_par,phe_mx,cov_df,K_chr,analyses_df,project_info,allele_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -11,6 +11,7 @@
 #' @export
 #' @importFrom dplyr arrange desc filter mutate
 #' @importFrom qtl2pattern gene_exon top_snps_pattern snpprob_collapse
+#' @importFrom qtl2mediate scan1covar
 #' @importFrom shiny callModule NS reactive req 
 #'   selectInput sliderInput
 #'   numericInput uiOutput
@@ -22,7 +23,7 @@
 shinySNPSetup <- function(input, output, session,
                           job_par, win_par, 
                           phe_mx, cov_df,
-                          probs_obj, K_chr, analyses_df,
+                          K_chr, analyses_df,
                           project_info, allele_info,
                           snp_action = shiny::reactive({"basic"})) {
   ns <- session$ns
@@ -39,7 +40,7 @@ shinySNPSetup <- function(input, output, session,
   ## Reactives
   ## SNP Probabilities.
   snpprobs_obj <- shiny::callModule(shinySNPProbs, "snp_probs",
-                  win_par, pheno_names, probs_obj,
+                  win_par, pheno_names,
                   project_info)
   snpinfo <- reactive({
     shiny::req(project_info(), phe_mx())
@@ -49,13 +50,13 @@ shinySNPSetup <- function(input, output, session,
   ## SNP Scan.
   snp_scan_obj <- shiny::reactive({
     shiny::req(snpprobs_obj(), phe_mx())
-    shiny::req(probs_obj(), K_chr(), cov_df(), job_par$sex_type)
+    shiny::req(K_chr(), cov_df(), job_par$sex_type)
     snpprobs <- snpprobs_obj()$snpprobs
     shiny::withProgress(message = "SNP Scan ...", value = 0, {
       shiny::setProgress(1)
       snpprobs_act <- 
         qtl2pattern::snpprob_collapse(snpprobs, snp_action())
-      scan1_covar(phe_mx(), cov_df(), snpprobs_act, K_chr(), analyses_df(),
+      qtl2mediate::scan1covar(phe_mx(), cov_df(), snpprobs_act, K_chr(), analyses_df(),
                   sex_type = job_par$sex_type)
     })
   })

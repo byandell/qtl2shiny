@@ -11,6 +11,7 @@
 #' @return No return value; called for side effects.
 #'
 #' @export
+#' @importFrom qtl2mediate get_covar
 #' @importFrom gdata humanReadable
 #' @importFrom dplyr distinct filter mutate one_of select 
 #' @importFrom tidyr unite
@@ -73,7 +74,7 @@ shinyMain <- function(input, output, session, projects_info) {
     pheno_read(project_info(), analyses_df())
   })
   cov_df <- shiny::reactive({
-    get_covar(covar(), analyses_df())
+    qtl2mediate::get_covar(covar(), analyses_df())
   })
   
   ## Set up shiny::reactives for scan1 module.

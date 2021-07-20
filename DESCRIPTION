@@ -1,8 +1,8 @@
 Package: qtl2shiny
 Type: Package
 Title: Shiny interface for 'qtl2' Fine Mapping
-Version: 1.0.7
-Date: 2021-07-15
+Version: 1.0.8
+Date: 2021-07-19
 Authors@R: c(person("Brian S Yandell", "Author",
                 role = c("aut", "cre"),
                 email = "brian.yandell@wisc.edu"))
@@ -17,7 +17,7 @@ Imports:
     qtl2,
     qtl2ggplot,
     qtl2pattern,
-    intermediate,
+    qtl2mediate, intermediate,
     tools, utils, grDevices, rlang
 Suggests:
     flexdashboard,
