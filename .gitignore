@@ -20,6 +20,7 @@ inst/doc/images
 inst/doc/CCmouse
 *.jpg
 *.png
+*.js
 
 inst/doc
 inst/scripts/CCmouse

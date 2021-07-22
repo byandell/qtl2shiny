@@ -33,7 +33,8 @@ See also
 - [R/qtl2ggplot](https://github.com/byandell/qtl2ggplot/) and on CRAN at <https://cran.r-project.org/package=qtl2ggplot>
 - [R/qtl2fst](https://github.com/rqtl/qtl2fst/): fast 'qtl2' data
 - [R/qtl2pattern](https://github.com/byandell/qtl2pattern/): explore SNP patterns
-- [R/intermediate](https://github.com/byandell/intermediate/): mediation
+- [R/qtl2mediate](https://github.com/byandell/qtl2mediate): qtl2 mediation interface
+  + [R/intermediate](https://github.com/byandell/intermediate/): mediation
 
 This document sets up the `Recla` project using data from <https://github.com/rqtl/qtl2data> for use with [R/qtl2shiny](https://github.com/byandell/qtl2shiny).
 See also [CCmouse.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/doc/CCmouse.Rmd) for needed files for `CCmouse` taxa.
