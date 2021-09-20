@@ -13,7 +13,7 @@
 #' @export
 #' 
 #' @importFrom grid plotViewport pushViewport
-#' @importFrom qtl2pattern scan1pattern
+#' @importFrom qtl2pattern scan1pattern sdp_to_pattern
 #' @importFrom dplyr distinct filter mutate arrange desc
 #' @importFrom ggplot2 autoplot
 #' @importFrom shiny NS reactive req 
@@ -58,7 +58,7 @@ shinyPattern <- function(input, output, session,
     shiny::req(allele_info())$code
   })
   pattern_choices <- shiny::reactive({
-    sdp_to_pattern(pats()$sdp, haplos())
+    qtl2pattern::sdp_to_pattern(pats()$sdp, haplos())
   })
   output$pattern <- shiny::renderUI({
     shiny::req(pattern_choices(), snp_action())
@@ -76,7 +76,7 @@ shinyPattern <- function(input, output, session,
     shiny::req(snp_action(), input$pheno_name, patterns())
     pats <- dplyr::filter(patterns(), .data$pheno == input$pheno_name)
     if(nrow(pats)) {
-      choices <- sdp_to_pattern(pats$sdp, haplos())
+      choices <- qtl2pattern::sdp_to_pattern(pats$sdp, haplos())
     } else {
       choices <- input$pattern
     }
@@ -193,7 +193,7 @@ shinyPattern <- function(input, output, session,
       grDevices::pdf(file, width = 9, height = 9)
       for(pheno_in in colnames(phe_mx())) {
         pats <- dplyr::filter(patterns(), .data$pheno == pheno_in)
-        pat_choices <- sdp_to_pattern(pats$sdp, haplos())
+        pat_choices <- qtl2pattern::sdp_to_pattern(pats$sdp, haplos())
         
         scan_now <- scan1_pattern(pheno_in, phe_mx(), cov_df(), 
                                   pairprobs_obj(), K_chr(), analyses_df(),

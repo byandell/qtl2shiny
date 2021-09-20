@@ -12,6 +12,7 @@
 #' 
 #' @importFrom dplyr distinct
 #' @importFrom ggplot2 autoplot
+#' @importFrom qtl2pattern sdp_to_pattern
 #' @importFrom shiny callModule NS reactive req 
 #'   radioButtons selectInput updateRadioButtons
 #'   dataTableOutput plotOutput uiOutput
@@ -114,7 +115,7 @@ shinySNPPattern <- function(input, output, session,
   output$pattern <- shiny::renderUI({
     shiny::req(snp_action())
     top_pat <- shiny::req(top_snps_tbl())
-    choices <- sdp_to_pattern(
+    choices <- qtl2pattern::sdp_to_pattern(
       dplyr::distinct(top_pat, .data$sdp)$sdp,
       haplos())
     if(!is.null(selected <- input$pattern)) {
@@ -132,7 +133,7 @@ shinySNPPattern <- function(input, output, session,
       return(plot_null())
 #     shiny::req(input$pattern)
     top_pat <- shiny::req(top_snps_tbl())
-    patterns <- sdp_to_pattern(top_pat$sdp, haplos())
+    patterns <- qtl2pattern::sdp_to_pattern(top_pat$sdp, haplos())
     shiny::withProgress(message = 'SNP Pattern phenos ...', value = 0, {
       shiny::setProgress(1)
       top_pat_plot(pheno_names(), 

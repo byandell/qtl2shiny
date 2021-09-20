@@ -15,6 +15,7 @@
 #' @importFrom qtl2 scan1
 #' @importFrom ggplot2 autoplot
 #' @importFrom qtl2mediate mediation_triad_qtl2
+#' @importFrom qtl2pattern sdp_to_pattern
 #' @importFrom shiny NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
@@ -62,7 +63,7 @@ shinyTriad <- function(input, output, session,
   })
   output$pattern <- shiny::renderUI({
     shiny::req(sdps(), haplos())
-    choices <- sdp_to_pattern(sdps(), haplos())
+    choices <- qtl2pattern::sdp_to_pattern(sdps(), haplos())
     shiny::selectInput(ns("pattern"), NULL,
                        choices = choices, input$pattern)
   })
