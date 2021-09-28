@@ -4,7 +4,7 @@ author: "Brian S. Yandell"
 date: "12/8/2017"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{qtl2shiny Developer Guide}
+  %\VignetteIndexEntry{Prepare qtl2 data for qtl2shiny}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:

@@ -27,6 +27,8 @@
 #' @importFrom utils write.csv
 #' @importFrom grDevices dev.off pdf
 #' 
+# *** NEED probs_obj() and chr_id() here ***
+#
 shinyTriad <- function(input, output, session,
                   med_par, patterns, 
                   geno_max, peak_mar, med_ls, mediate_obj,

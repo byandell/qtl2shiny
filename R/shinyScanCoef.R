@@ -24,6 +24,7 @@
 #'   downloadButton downloadHandler
 #' @importFrom utils write.csv
 #' @importFrom grDevices dev.off pdf
+#' @importFrom qtl2mediate sexcovar
 #' 
 shinyScanCoef <- function(input, output, session,
                   job_par, win_par, 
