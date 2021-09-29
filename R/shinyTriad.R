@@ -47,7 +47,7 @@ shinyTriad <- function(input, output, session,
   })
   ## Select mediator for plots.
   output$med_name <- shiny::renderUI({
-    shiny::req(mediate_obj(), input$triad)
+    shiny::req(mediate_obj(), input$triad, medID())
     choices <- dplyr::filter(mediate_obj()$best, .data$triad == input$triad)[[medID()]]
     shiny::selectInput(ns("med_name"), NULL,
                        choices = choices)
@@ -69,23 +69,21 @@ shinyTriad <- function(input, output, session,
   })
   
   scat_dat <- reactive({
-    shiny::req(geno_max(), phe_mx(), med_ls(), medID(), sdps(),
+    shiny::req(geno_max(), phe_mx(), med_ls(), sdps(),
                input$med_name, input$pattern)
 #    med_triad(med_ls(), geno_max(), phe_mx(), K_chr()[[1]], cov_df(), sdps(),
 #             input$pattern, input$med_name, medID(), haplos())
-    # ** This will take work as geno_max is passed from shinyMediat
-    # but can get this from genoprobs, which are not passed.
     qtl2mediate::mediation_triad_qtl2(
       target = phe_mx(),
-      mediator = med_ls()[[1]],
+      mediator = med_ls()[[1]][,input$med_name, drop = FALSE],
       annotation = med_ls()[[2]],
       covar_tar = cov_df(),
       covar_med = med_ls()$covar,
       genoprobs = probs_obj()$probs,
       map = probs_obj()$map,
       chr = chr_id(),
-      pos = input$pos_Mbp,
-      sdps = sdps(),
+      pos = med_par$pos_Mbp,
+      sdp = sdps(),
       pattern = input$pattern,
       med_name = input$med_name,
       medID = medID(),
