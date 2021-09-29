@@ -8,7 +8,6 @@ Authors@R: c(person("Brian S Yandell", "Author",
                 email = "brian.yandell@wisc.edu"))
 Description: Shiny Interface for 'qtl2'.
 License: GPL-3
-LazyData: TRUE
 Imports:
     gdata, grid, GGally,
     assertthat, dplyr, ggplot2, stringr, tidyr, purrr,

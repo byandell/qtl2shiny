@@ -18,7 +18,7 @@ scan1_pattern <- function(pheno, phe_mx, addcovar, pairprobs_obj, K_chr, analyse
   wh <- match(pheno, colnames(phe_mx))
   
   addcovar <- qtl2mediate::which_covar(analyses_df, wh, addcovar)
-  addcovar <- qtl2mediate::covar_df_mx(addcovar)
+  addcovar <- qtl2mediate::covar_matrix(addcovar)
   
   qtl2pattern::scan1pattern(pairprobs_obj$probs,
                             phe_mx[,, drop=FALSE],

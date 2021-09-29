@@ -86,7 +86,7 @@ shinyMediate <- function(input, output, session,
   shiny::callModule(shinyTriad, "triad",
                     input, patterns, 
                     geno_max, peak_mar, med_ls, mediate_signif,
-                    phe1_mx, cov_df, K_chr,
+                    phe1_mx, cov_df, K_chr, probs_obj, chr_id,
                     allele_info)
 
   ## Mediate1

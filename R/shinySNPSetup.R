@@ -11,7 +11,7 @@
 #' @export
 #' @importFrom dplyr arrange desc filter mutate
 #' @importFrom qtl2pattern gene_exon top_snps_pattern snpprob_collapse
-#' @importFrom qtl2mediate scan1covar covar_df_mx which_covar
+#' @importFrom qtl2mediate scan1covar covar_matrix which_covar
 #' @importFrom shiny callModule NS reactive req 
 #'   selectInput sliderInput
 #'   numericInput uiOutput

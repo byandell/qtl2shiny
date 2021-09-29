@@ -1,7 +1,7 @@
 ---
 title: "Prepare qtl2 data for qtl2shiny"
 author: "Brian S. Yandell"
-date: "12/8/2017"
+date: "`r format(Sys.Date(), '%d %b %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Prepare qtl2 data for qtl2shiny}

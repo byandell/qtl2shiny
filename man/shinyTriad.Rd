@@ -17,13 +17,15 @@ shinyTriad(
   phe_mx,
   cov_df,
   K_chr,
+  probs_obj,
+  chr_id,
   allele_info
 )
 }
 \arguments{
 \item{input, output, session}{standard shiny arguments}
 
-\item{med_par, patterns, geno_max, peak_mar, med_ls, mediate_obj, phe_mx, cov_df, K_chr, allele_info}{reactive arguments}
+\item{med_par, patterns, geno_max, peak_mar, med_ls, mediate_obj, phe_mx, cov_df, K_chr, probs_obj, chr_id, allele_info}{reactive arguments}
 }
 \value{
 No return value; called for side effects.

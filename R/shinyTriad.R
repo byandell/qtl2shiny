@@ -3,7 +3,7 @@
 #' Shiny module for triad plots, with interfaces \code{shinyTriadUI} and  \code{shinyTriadOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,allele_info reactive arguments
+#' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,probs_obj,chr_id,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -26,13 +26,11 @@
 #' @importFrom plotly renderPlotly plotlyOutput
 #' @importFrom utils write.csv
 #' @importFrom grDevices dev.off pdf
-#' 
-# *** NEED probs_obj() and chr_id() here ***
 #
 shinyTriad <- function(input, output, session,
                   med_par, patterns, 
                   geno_max, peak_mar, med_ls, mediate_obj,
-                  phe_mx, cov_df, K_chr,
+                  phe_mx, cov_df, K_chr, probs_obj, chr_id,
                   allele_info) {
   ns <- session$ns
 

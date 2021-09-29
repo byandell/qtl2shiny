@@ -2,21 +2,21 @@
 % Please edit documentation in R/qtl2shinyApp.R
 \name{qtl2shinyApp}
 \alias{qtl2shinyApp}
-\title{Shiny app for doqtl2}
+\title{Shiny app for qtl2}
 \usage{
-qtl2shinyApp(appfile = "app.R")
-}
-\arguments{
-\item{appfile}{name of app file for shiny}
+qtl2shinyApp()
 }
 \value{
 No return value; called for side effects.
 }
 \description{
-run shiny app for doqtl2
+Run shiny app for qtl2 data.
+}
+\details{
+See qtl2shinyData vignette for data setup.
 }
 \examples{
-\dontrun{doqtl2_app()}
+\dontrun{qtl2shinyApp()}
 
 }
 \author{

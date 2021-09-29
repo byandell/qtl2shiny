@@ -24,6 +24,7 @@
 #' summary(out)
 #'
 #' @importFrom assertthat assert_that is.number
+#' @export
 #'
 pheno_trans <- function(phe, phename, transform = NULL, offset = 0,
                         winsor = 0.02) {
