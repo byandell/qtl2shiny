@@ -45,7 +45,7 @@ shinyDash <- function() {
         tags$div(
           id = "popup",
           helpPopup(
-            "qtl2shiny",
+            NULL,
             shiny::includeMarkdown(system.file(file.path("qtl2shinyApp", "about.md"), package='qtl2shiny')),
             placement = "right", trigger = "click"))
       )

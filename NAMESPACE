@@ -2,7 +2,6 @@
 
 S3method(subset,hotspot)
 S3method(summary,hotspot)
-export(helpPopup)
 export(hotspot)
 export(pheno_trans)
 export(qtl2shinyApp)
