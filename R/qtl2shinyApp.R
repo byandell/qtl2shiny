@@ -18,3 +18,56 @@
 qtl2shinyApp <- function() {
   shiny::runApp(system.file(file.path("qtl2shinyApp", "app.R"), package='qtl2shiny'))
 }
+
+#' @export
+#' @rdname qtl2shinyApp
+#' 
+shinyDash <- function() {
+  shinydashboard::dashboardPage(
+    skin="red",
+    shinydashboard::dashboardHeader(
+      title = "qtl2shiny"),
+    shinydashboard::dashboardSidebar(
+      shinydashboard::sidebarMenu(
+        qtl2shiny::shinyMainInput("qtl2shiny"),
+        shinydashboard::menuItem(
+          "Phenotypes and Region",
+          tabName = "phenos",
+          icon = icon("dashboard")),
+        shinydashboard::menuItem(
+          "Haplotype Scans",
+          tabName = "hap_scan",
+          icon = icon("dashboard")),
+        shinydashboard::menuItem(
+          "SNP/Gene Action",
+          tabName = "dip_scan",
+          icon = icon("dashboard")),
+        tags$div(
+          id = "popup",
+          helpPopup(
+            "qtl2shiny",
+            shiny::includeMarkdown(system.file(file.path("qtl2shinyApp", "about.md"), package='qtl2shiny')),
+            placement = "right", trigger = "click"))
+      )
+    ),
+    shinydashboard::dashboardBody(
+      shinydashboard::tabItems(
+        ## Phenotypes and Region
+        shinydashboard::tabItem(
+          tabName = "phenos",
+          qtl2shiny::shinyMainUI("qtl2shiny")),
+        ## Scans
+        shinydashboard::tabItem(
+          tabName="hap_scan",
+          qtl2shiny::shinyMainOutput("qtl2shiny")),
+        ## Diploid Analysis
+        shinydashboard::tabItem(
+          tabName="dip_scan", 
+          qtl2shiny::shinyMainOutput2("qtl2shiny"))
+      )
+    )
+  )
+}
+
+
+

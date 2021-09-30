@@ -2,9 +2,12 @@
 % Please edit documentation in R/qtl2shinyApp.R
 \name{qtl2shinyApp}
 \alias{qtl2shinyApp}
+\alias{shinyDash}
 \title{Shiny app for qtl2}
 \usage{
 qtl2shinyApp()
+
+shinyDash()
 }
 \value{
 No return value; called for side effects.
