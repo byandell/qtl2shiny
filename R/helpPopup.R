@@ -19,14 +19,16 @@ helpPopup <- function(title, content,
       tags$head(
         tags$script("$(function() { $(\"[data-toggle='popover']\").popover()})"),
         tags$style(type = "text/css",
-                   ".popover{max-width:500px; position: fixed; background-color: black;}")
+                   ".popover{max-width:500px; position: fixed; color: black;}")
       )
     ),
     tags$a( # Trying to make title have non-white background with no success.
-      href = "#", class = "btn btn-link",
+      href = "#",
+      class = "btn btn-link",
       `data-toggle` = "popover", `data-html` = "true",
-      title = span(title, style = "background-color: black; color: green"),
-      `data-content` = content, `data-animation` = TRUE,
+      title = title,
+      `data-content` = content,
+      `data-animation` = TRUE,
       `data-placement` = match.arg(placement, several.ok = TRUE)[1],
       `data-trigger` = match.arg(trigger, several.ok = TRUE)[1],
       "Help ..."
