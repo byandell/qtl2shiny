@@ -40,7 +40,7 @@ shinyTriad <- function(input, output, session,
     choices <- levels(triad)
     choices <- choices[choices %in% unique(triad)]
     shiny::selectInput(ns("triad"), NULL,
-                       choices = choices)
+                       choices = choices, input$triad)
   })
   medID <- reactive({
     ifelse("symbol" %in% names(shiny::req(mediate_obj())$best), "symbol", "longname")
@@ -50,7 +50,7 @@ shinyTriad <- function(input, output, session,
     shiny::req(mediate_obj(), input$triad, medID())
     choices <- dplyr::filter(mediate_obj()$best, .data$triad == input$triad)[[medID()]]
     shiny::selectInput(ns("med_name"), NULL,
-                       choices = choices)
+                       choices = choices, input$med_name)
   })
   
   # Select pattern 
@@ -61,21 +61,26 @@ shinyTriad <- function(input, output, session,
   haplos <- reactive({
     shiny::req(allele_info())$code
   })
+  # *** Challenge: pattern keeps getting reset. Need to move to shinyMediate
+  # *** But also need to think about sdps and haplos.
   output$pattern <- shiny::renderUI({
     shiny::req(sdps(), haplos())
     choices <- qtl2pattern::sdp_to_pattern(sdps(), haplos())
+    if(!is.null(selected <- input$pattern)) {
+      if(!(selected %in% choices))
+        selected <- choices[1]
+    }
     shiny::selectInput(ns("pattern"), NULL,
-                       choices = choices, input$pattern)
+                       choices = choices, selected)
+    # *** choices[1] breaks loop, but always gets chosen.
   })
   
   scat_dat <- reactive({
-    shiny::req(geno_max(), phe_mx(), med_ls(), sdps(),
-               input$med_name, input$pattern)
-#    med_triad(med_ls(), geno_max(), phe_mx(), K_chr()[[1]], cov_df(), sdps(),
-#             input$pattern, input$med_name, medID(), haplos())
+    shiny::req(phe_mx(), med_ls(), cov_df(), probs_obj(), chr_id(),
+               input$med_name, med_par$pos_Mbp)
     qtl2mediate::mediation_triad_qtl2(
       target = phe_mx(),
-      mediator = med_ls()[[1]][,input$med_name, drop = FALSE],
+      mediator = med_ls()[[1]][, input$med_name, drop = FALSE],
       annotation = med_ls()[[2]],
       covar_tar = cov_df(),
       covar_med = med_ls()$covar,
@@ -83,11 +88,6 @@ shinyTriad <- function(input, output, session,
       map = probs_obj()$map,
       chr = chr_id(),
       pos = med_par$pos_Mbp,
-      sdp = sdps(),
-      pattern = input$pattern,
-      med_name = input$med_name,
-      medID = medID(),
-      haplos = haplos(),
       kinship = K_chr()[[1]])
   })
   
@@ -97,7 +97,8 @@ shinyTriad <- function(input, output, session,
                        choices = c("by_mediator", 
                                    "by_target", 
                                    "driver_offset", 
-                                   "driver"))
+                                   "driver"),
+                       input$med_plot)
   })
 
   ## Triad plot

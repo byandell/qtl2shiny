@@ -8,7 +8,7 @@ pheno_read <- function(project_info, analyses_df, transform = TRUE) {
   } else {
     transform <- NULL
   }
-  pheno_trans(pheno_data, 
+  qtl2mediate::pheno_trans(pheno_data, 
               phenos, 
               transform,
               analyses_df$offset,

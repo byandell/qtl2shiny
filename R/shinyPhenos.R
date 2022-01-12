@@ -18,6 +18,7 @@
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 #' @importFrom rlang .data
+#' @importFrom qtl2mediate pheno_trans
 #' 
 shinyPhenos <- function(input, output, session,
                         set_par, win_par, peaks_df, analyses_tbl, cov_df,

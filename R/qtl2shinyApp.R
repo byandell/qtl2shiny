@@ -33,15 +33,15 @@ shinyDash <- function() {
         shinydashboard::menuItem(
           "Phenotypes and Region",
           tabName = "phenos",
-          icon = icon("dashboard")),
+          icon = icon("dashboard", verify_fa = FALSE)),
         shinydashboard::menuItem(
           "Haplotype Scans",
           tabName = "hap_scan",
-          icon = icon("dashboard")),
+          icon = icon("dashboard", verify_fa = FALSE)),
         shinydashboard::menuItem(
           "SNP/Gene Action",
           tabName = "dip_scan",
-          icon = icon("dashboard")),
+          icon = icon("dashboard", verify_fa = FALSE)),
         tags$div(
           id = "popup",
           helpPopup(

@@ -1,0 +1,21 @@
+I have created a (somewhat complicated) shiny app that works just fine on my laptop. I would like to deploy it on Rstudio Connect. The app.R and data (qtl2shinyData, ~65GB) are in smb://research.drive.wisc.edu/byandell in subfolder byandell/qtl2shinyApp, and some of the packages I need are in github (not yet in CRAN).
+ 
+There are a couple of challenges:
+Several packages are on github. They can be installed in app.R with:
+devtools::install_github("byandell/intermediate")
+devtools::install_github("byandell/qtl2mediate")
+devtools::install_github("byandell/qtl2shiny")
+Dataset is about 65GB and is stored on ResearchDrive
+smb://research.drive.wisc.edu/byandell
+subfolder byandell/qtl2shinyApp
+app.R is also in this ResearchDrive folder
+/Volumes/byandell/byandell/qtl2shinyApp/app.R
+I cannot figure out how to access these data without having the app.R file in the same place. I presume this is some aspect of how shiny works in its own sandbox, but not sure.
+ 
+I know how to use manifest (via rsconnect) for Rmarkdown on github, and have an idea how to do it for a shiny app (https://docs.rstudio.com/connect/user/git-backed/). I am aware of RStudio Professional Drivers (https://docs.rstudio.com/pro-drivers/) and wonder if this might be useful.
+
+-----
+The qtl2shinyData folder is somewhat ad hoc in construction.
+See the qtl2shinyData.Rmd for details.
+It uses SQLite, RDS and FST for different type of information.
+ 

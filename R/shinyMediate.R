@@ -164,13 +164,14 @@ shinyMediate <- function(input, output, session,
     if(!shiny::isTruthy(med_ls()) || !shiny::isTruthy(mediate_obj())) {
       plot_null("too much\nmissing data\nin mediators\nreduce window width")
     } else {
-      shiny::req(med_plot_type())
+      shiny::req(med_plot_type(), mediate_obj())
       shiny::withProgress(message = 'Mediation Plot ...', value = 0, {
         shiny::setProgress(1)
         ggplot2::autoplot(
           mediate_obj(), med_plot_type(),
           local_only = input$local, 
-          significant = input$signif)
+          significant = input$signif) +
+          ggplot2::geom_point(size = 4)
       })
     }
   })

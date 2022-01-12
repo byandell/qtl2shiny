@@ -16,11 +16,6 @@ suppressPackageStartupMessages({
 })
 ```
 
-```{r}
-data_dir <- file.path("inst", "doc", "shiny_logic")
-data_dir <- "."
-```
-
 Here use [visNetwork](http://datastorm-open.github.io/visNetwork/) package.
 visNetwork enables setting graphic properties as node or edge attributes by adding them as data columns before calling `visNetwork()`. See available options with:
 
@@ -42,13 +37,11 @@ For more information, see:
 
 ```{r}
 nodes <- 
-   read_csv(file.path(data_dir,
-                      "ShinyLogicNodes.csv")) %>%
+   read_csv(system.file("extdata", "ShinyLogicNodes.csv", package = "qtl2shiny")) %>%
   mutate(id = node) %>%
   select(-node)
 links <- 
-   read_csv(file.path(data_dir, 
-                      "ShinyLogicEdges.csv")) %>%
+   read_csv(system.file("extdata", "ShinyLogicEdges.csv", package = "qtl2shiny")) %>%
   mutate(from = source,
          to = target) %>%
   select(-source,-target)

@@ -7,7 +7,7 @@ top_pat_plot <- function(pheno,
                          drop_hilit = 1.5,
                          facet = "pheno",
                          snp_action = "basic",
-                         cex = 2, ...) {
+                         cex = 4, ...) {
   mytitle <- FALSE
   if(length(pheno) == 1) {
     mytitle <- paste(pheno, "chr", chr_id)

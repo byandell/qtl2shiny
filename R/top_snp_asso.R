@@ -3,7 +3,7 @@ top_snp_asso <- function(scan_obj, snpinfo, xlim,
                          snp_action="basic",
                          phename = dimnames(scan_obj)[[2]],
                          minLOD = NULL,
-                         show_all_snps = FALSE) {
+                         show_all_snps = FALSE, cex = 4) {
   if(is.null(phename) | is.null(scan_obj) | is.null(xlim))
     return(print(plot_null()))
   
@@ -22,5 +22,6 @@ top_snp_asso <- function(scan_obj, snpinfo, xlim,
     show_all_snps = show_all_snps,
     drop_hilit = drop_hilit,
     xlim = xlim,
-    facet = facet)
+    facet = facet,
+    cex = cex)
 }
