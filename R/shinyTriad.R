@@ -3,7 +3,7 @@
 #' Shiny module for triad plots, with interfaces \code{shinyTriadUI} and  \code{shinyTriadOutput}.
 #'
 #' @param input,output,session standard shiny arguments
-#' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,probs_obj,chr_id,allele_info reactive arguments
+#' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,probs_obj,chr_id,sdp reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -31,7 +31,7 @@ shinyTriad <- function(input, output, session,
                   med_par, patterns, 
                   geno_max, peak_mar, med_ls, mediate_obj,
                   phe_mx, cov_df, K_chr, probs_obj, chr_id,
-                  allele_info) {
+                  sdp) {
   ns <- session$ns
 
   ## Select triad for plots.
@@ -53,31 +53,10 @@ shinyTriad <- function(input, output, session,
                        choices = choices, input$med_name)
   })
   
-  # Select pattern 
-  sdps <- shiny::reactive({
-    shiny::req(patterns(), med_par$pheno_name)
-    unique(dplyr::filter(patterns(), .data$pheno == med_par$pheno_name)$sdp)
-  })
-  haplos <- reactive({
-    shiny::req(allele_info())$code
-  })
-  # *** Challenge: pattern keeps getting reset. Need to move to shinyMediate
-  # *** But also need to think about sdps and haplos.
-  output$pattern <- shiny::renderUI({
-    shiny::req(sdps(), haplos())
-    choices <- qtl2pattern::sdp_to_pattern(sdps(), haplos())
-    if(!is.null(selected <- input$pattern)) {
-      if(!(selected %in% choices))
-        selected <- choices[1]
-    }
-    shiny::selectInput(ns("pattern"), NULL,
-                       choices = choices, selected)
-    # *** choices[1] breaks loop, but always gets chosen.
-  })
   
   scat_dat <- reactive({
     shiny::req(phe_mx(), med_ls(), cov_df(), probs_obj(), chr_id(),
-               input$med_name, med_par$pos_Mbp)
+               input$med_name, med_par$pos_Mbp, sdp())
     qtl2mediate::mediation_triad_qtl2(
       target = phe_mx(),
       mediator = med_ls()[[1]][, input$med_name, drop = FALSE],
@@ -88,7 +67,8 @@ shinyTriad <- function(input, output, session,
       map = probs_obj()$map,
       chr = chr_id(),
       pos = med_par$pos_Mbp,
-      kinship = K_chr()[[1]])
+      kinship = K_chr()[[1]],
+      sdp = sdp())
   })
   
   ## Select plot format.
@@ -116,6 +96,7 @@ shinyTriad <- function(input, output, session,
              dname = peak_mar(),
              mname = input$med_name,
              tname = colnames(phe_mx()),
+             fitlines = "sdp",
              centerline = NULL)
       })
     }
@@ -156,7 +137,6 @@ shinyTriadUI <- function(id) {
   shiny::tagList(
     shiny::uiOutput(ns("triad")),
     shiny::uiOutput(ns("med_name")),
-    shiny::uiOutput(ns("pattern")),
     shiny::uiOutput(ns("med_plot")),
     shiny::fluidRow(
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),

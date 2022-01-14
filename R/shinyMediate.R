@@ -82,12 +82,40 @@ shinyMediate <- function(input, output, session,
     subset(probs_obj()$probs, chr = chr_id(), mar = peak_mar())[[1]][,,1]
   })
   
+  # Select pattern 
+  sdps <- shiny::reactive({
+    shiny::req(patterns(), input$pheno_name)
+    unique(dplyr::filter(patterns(), .data$pheno == input$pheno_name)$sdp)
+  })
+  haplos <- reactive({
+    shiny::req(allele_info())$code
+  })
+  # *** Challenge: pattern keeps getting reset. Need to move to shinyMediate
+  # *** But also need to think about sdps and haplos.
+  choices_pattern <- reactive({
+    shiny::req(sdps(), haplos())
+    qtl2pattern::sdp_to_pattern(sdps(), haplos())
+  })
+  output$pattern <- shiny::renderUI({
+    choices <- choices_pattern()
+    if(!is.null(selected <- input$pattern)) {
+      if(!(selected %in% choices))
+        selected <- choices[1]
+    }
+    shiny::selectInput(ns("pattern"), NULL,
+                       choices = choices, selected)
+  })
+  sdp <- reactive({
+    choices <- choices_pattern()
+    sdps()[match(input$pattern, choices, nomatch = 1)]
+  })
+  
   ## Triad Plots
   shiny::callModule(shinyTriad, "triad",
                     input, patterns, 
                     geno_max, peak_mar, med_ls, mediate_signif,
                     phe1_mx, cov_df, K_chr, probs_obj, chr_id,
-                    allele_info)
+                    sdp)
 
   ## Mediate1
   probs_chr <- reactive({
@@ -328,6 +356,7 @@ shinyMediateUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::strong("Mediation"),
+    shiny::uiOutput(ns("pattern")), # Works sort of. 
     shiny::uiOutput(ns("checkplot")),
     shiny::uiOutput(ns("medUI")))
 }
