@@ -370,7 +370,7 @@ list.files(file.path(project_dir, "genoprob"))
 ```
 
 ```{r}
-file.size(file.path(project_dir, "genoprob", "fst_probs.rds"))
+file.size(file.path(project_dir, "genoprob", "probs_fstindex.rds"))
 ```
 
 ```{r}

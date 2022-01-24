@@ -90,22 +90,25 @@ shinyMediate <- function(input, output, session,
   haplos <- reactive({
     shiny::req(allele_info())$code
   })
-  # *** Challenge: pattern keeps getting reset. Need to move to shinyMediate
-  # *** But also need to think about sdps and haplos.
   choices_pattern <- reactive({
     shiny::req(sdps(), haplos())
     qtl2pattern::sdp_to_pattern(sdps(), haplos())
   })
   output$pattern <- shiny::renderUI({
+    # This does not quite work right.
     choices <- choices_pattern()
-    if(!is.null(selected <- input$pattern)) {
-      if(!(selected %in% choices))
-        selected <- choices[1]
+    selected <- input$pattern
+    if(is.null(selected)) {
+      selected <- choices[1]
+    }
+    if(!(selected %in% choices)) {
+      selected <- choices[1]
     }
     shiny::selectInput(ns("pattern"), NULL,
                        choices = choices, selected)
   })
   sdp <- reactive({
+    shiny::req(input$pattern)
     choices <- choices_pattern()
     sdps()[match(input$pattern, choices, nomatch = 1)]
   })
@@ -342,7 +345,9 @@ shinyMediate <- function(input, output, session,
              shiny::uiOutput(ns("mediation"))
            },
            {
-             shinyTriadUI(ns("triad"))
+             shiny::tagList(
+               shiny::uiOutput(ns("pattern")), # Works sort of. 
+               shinyTriadUI(ns("triad")))
            })
   })
   output$medOutput <- shiny::renderUI({
@@ -356,7 +361,6 @@ shinyMediateUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::strong("Mediation"),
-    shiny::uiOutput(ns("pattern")), # Works sort of. 
     shiny::uiOutput(ns("checkplot")),
     shiny::uiOutput(ns("medUI")))
 }

@@ -1,0 +1,184 @@
+---
+title: "Shiny Compressed Data"
+author: "Brian Yandell"
+date: "1/21/2022"
+output: html_document
+params:
+  datapath: /Volumes/byandell/byandell/qtl2shinyApp
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This gives a brief look at the compressed data used in [qtl2shiny](https://github.com/byandell/qtl2shiny).
+See [qtl2shinyData.Rmd](https://github.com/byandell/qtl2shiny/blob/master/vignettes/qtl2shinyData.Rmd) for details about how the data are constructed. The key compressed data files use SQL or FST compression. For details on FST, see
+
+- [qtl2fst package](https://github.com/rqtl/qtl2fst) and [qtl2fst user guide](https://kbroman.org/qtl2/assets/vignettes/qtl2fst.html)
+- [fst package](https://www.fstpackage.org/)
+
+For more info on fst, which was developed for R, see
+
+- <https://github.com/fstpackage>
+- <https://github.com/fstpackage/fst/issues/223> (other languages)
+- <https://github.com/xiaodaigh/FstFileFormat.jl> (Julia)
+
+
+Assume here that ResearchDrive <smb://research.drive.wisc.edu/byandell> has been mounted as `/Volumes/byandell`.
+The data for this project are in `/Volumes/byandell/byandell/qtl2shinyApp/`, which contains
+
+- `app.R`: The shiny app fill to execute with `shiny::runApp()`
+- `qtl2shinyData`: folder with data
+  + `CCmouse`: taxa-specific data
+  + `projects.csv`: master file for data used in the shiny app
+
+In the `CCmouse` folder are the following files of import right here:
+
+- `cc_variants.sqlite`: SQL of DNA variants  (3G)
+- `mouse_genes.sqlite`: SQL of mouse genes (677M)
+- `Recla/genoprob`: folder of genotype probabilities (1.4G)
+- `Recla/genoprob/aprobs_fstindex.rds`: (69K)
+- `Recla/genoprob/aprobs_11.fst`: (6.3M)
+
+This is the small problem (`Recla`). The larger problem (`AttieDOv2`) is much larger
+
+- `AttieDOv2/genoprob`: folder of genotype probabilities (11G)
+- `AttieDOv2/genoprob/aprobs_fstindex.rds`: (644K)
+- `AttieDOv2/genoprob/aprobs_11.fst`: (116M)
+
+```{r}
+datapath <- params$datapath
+dir(datapath)
+```
+
+```{r}
+project_name <- "Recla" # or change to "AttieDOv2" for larger example.
+chri <- "11"
+start_val <- 8
+end_val <- 10
+```
+
+```{r}
+ccpath <- file.path(datapath, "qtl2shinyData", "CCmouse")
+```
+
+## Genotype Probabilities
+
+The following gets the genotype probabilities for chr `r chri` between `r start_val` and `r end_val` positions for project names `r project_name` using a function in package
+[qtl2pattern](https://github.com/byandell/qtl2pattern).
+
+```{r}
+(query_probs <- qtl2pattern::create_probs_query_func(file.path(ccpath, project_name)))
+```
+
+```{r}
+pr <- query_probs(chri, start_val, end_val)
+```
+
+```{r}
+names(pr)
+```
+
+The query function sets up a call to `read_probs`, which is an internal function in [qtl2pattern](https://github.com/byandell/qtl2pattern) package. Since the data are in a different place, we use the [qtl2fst]
+
+```{r}
+pr <- qtl2pattern:::read_probs(chr=chri, start_val=start_val, end_val=end_val,
+                               file.path(ccpath, project_name),
+                               allele = TRUE, method = "fast", 
+                               probdir = "genoprob")
+
+(pr$probs <- qtl2fst::replace_path(pr$probs,
+                                  file.path(ccpath, project_name, "genoprob", "aprobs")))
+```
+
+```{r}
+print(object.size(pr$probs), units = "MB")
+```
+
+Here is more detail. First read the master RDS file for FST data. This does not read the genotype data compressed vai FST,
+but includes the information about what is in those FST files. For information, see
+<https://kbroman.org/qtl2/assets/vignettes/qtl2fst.html>.
+
+```{r}
+probs <- readRDS(file.path(ccpath, project_name, "genoprob", "aprobs_fstindex.rds"))
+(probs <- qtl2fst::replace_path(probs, file.path(ccpath, project_name, "genoprob", "aprobs")))
+```
+
+```{r}
+print(object.size(probs), units = "MB")
+```
+
+The following first subsets by chromosome `r chri`, and by a range of positions
+on that chromosome. Again, this changes the master object `probs` but does not change the underlying FST files.
+
+```{r}
+dnames <- dimnames(probs)$mar[chri]
+map <- readRDS(file.path(file.path(ccpath, project_name), "pmap.rds"))
+# Select chromosome chri
+map <- map[chri]
+# Select markers between start_val and end_val
+wh <- which(map[[chri]] >= start_val & map[[chri]] <= end_val)
+(map[[chri]] <- map[[chri]][wh])
+```
+
+```{r}
+(probs <- qtl2fst::subset_fst_genoprob(probs, chr = chri, mar = wh))
+```
+
+```{r}
+print(object.size(probs), units = "MB")
+```
+
+Again, this is the size of the FST master object in R, while the data still resides at ``r project_name`/genoprob/aprobs_`r chri`.fst`.
+
+```{r}
+paste(round(file.size(file.path(ccpath, project_name, "genoprob",
+                          paste0("aprobs_", chri, ".fst"))) / 1e6,
+      2), "Mb")
+```
+
+It is possible to extract the compressed FST file(s) to a `qtl2` object of class `calc_genoprob`.
+If you try to do this for the whole chromosome, or all chromosomes, it will take some time.
+
+```{r}
+probsq <- qtl2fst::fst_extract(probs)
+class(probsq)
+```
+
+```{r}
+print(object.size(probsq), units = "MB")
+```
+
+Here is a fake (unevaluated) extraction of all of chromosome `r `chri` to show the system time and object size.
+
+```{r eval = FALSE}
+probs <- qtl2fst::subset_fst_genoprob(probs, chr = chri)
+system.time(probsq <- qtl2fst::fst_extract(probs))
+```
+
+```
+##    user  system elapsed 
+##   0.102   0.251  44.674 
+```
+
+```{r eval = FALSE}
+print(object.size(probsq), units = "MB")
+```
+
+```
+## 6.3 Mb
+```
+
+## DNA Variants
+
+Internally, we use a query function that embeds the `read_probs` function call:
+
+```{r}
+(query_variants <- 
+  qtl2::create_variant_query_func(file.path(ccpath, "cc_variants.sqlite")))
+```
+
+```{r}
+variants <- query_variants(chri, start_val, end_val)
+```
+
