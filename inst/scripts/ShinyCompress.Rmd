@@ -5,6 +5,10 @@ date: "1/21/2022"
 output: html_document
 params:
   datapath: /Volumes/byandell/byandell/qtl2shinyApp
+  projectName: Recla
+  chr: 11
+  start: 8
+  end: 10
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +16,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 This gives a brief look at the compressed data used in [qtl2shiny](https://github.com/byandell/qtl2shiny).
-See [qtl2shinyData.Rmd](https://github.com/byandell/qtl2shiny/blob/master/vignettes/qtl2shinyData.Rmd) for details about how the data are constructed. The key compressed data files use SQL or FST compression. For details on FST, see
+See [qtl2shinyData.Rmd](https://github.com/byandell/qtl2shiny/blob/master/vignettes/qtl2shinyData.Rmd) for details about how the data are constructed. This document is [ShinyCompress.Rmd](https://github.com/byandell/qtl2shiny/blob/master/inst/scripts/ShinyCompress.Rmd).
+
+The key compressed data files use SQL or FST compression. For details on FST, see
 
 - [qtl2fst package](https://github.com/rqtl/qtl2fst) and [qtl2fst user guide](https://kbroman.org/qtl2/assets/vignettes/qtl2fst.html)
 - [fst package](https://www.fstpackage.org/)
@@ -52,14 +58,26 @@ dir(datapath)
 ```
 
 ```{r}
-project_name <- "Recla" # or change to "AttieDOv2" for larger example.
-chri <- "11"
-start_val <- 8
-end_val <- 10
+project_name <- as.character(params$projectName) # "Recla" or "AttieDOv2"
+chri <- as.character(params$chr)
+start_val <- as.numeric(params$start)
+end_val <- as.numeric(params$end)
 ```
 
 ```{r}
 ccpath <- file.path(datapath, "qtl2shinyData", "CCmouse")
+```
+
+Size in GB of two project genoprob folders:
+
+```{r}
+size_files <- NULL
+for(i in c("Recla","AttieDOv2")) {
+  files<-list.files(file.path(ccpath, i, "genoprob"),full.names = T)
+  vect_size <- sapply(files, file.size)
+  size_files[i] <- sum(vect_size)
+}
+round(size_files / 1e9, 2)
 ```
 
 ## Genotype Probabilities
