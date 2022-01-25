@@ -240,9 +240,14 @@ covar <- dplyr::rename(qtl2data$covar, sex = "Sex")
 ```
 
 ```{r}
-saveRDS(qtl2data$pmap, file.path(project_dir, "pmap.rds"))
 saveRDS(covar, file.path(project_dir, "covar.rds"))
 saveRDS(qtl2data$pheno, file.path(project_dir, "pheno_data.rds"))
+```
+
+```{r}
+gmap <- qtl2::insert_pseudomarkers(qtl2data$gmap, step=1)
+pmap <- qtl2::interp_map(gmap, qtl2data$gmap, qtl2data$pmap)
+saveRDS(pmap, file.path(project_dir, "pmap.rds"))
 ```
 
 ## Genotype probabilities
@@ -257,12 +262,11 @@ fast <- "fst"
 if(!dir.exists(genoprob_dir <- file.path(project_dir, "genoprob"))) {
   dir.create(genoprob_dir)
 }
-faprobs_file <- file.path(genoprob_dir, paste0(fast, "_aprobs.rds"))
-if(!file.exists(fprobs_file <- file.path(genoprob_dir, paste0(fast, "_probs.rds")))) {
-  map <- qtl2::insert_pseudomarkers(qtl2data$gmap, step=1)
-  
+faprobs_file <- file.path(genoprob_dir, paste0("aprobs_fstindex.rds"))
+if(!file.exists(fprobs_file <- file.path(genoprob_dir,
+                                         paste0("probs_fstindex.rds")))) {
   cat("allele pair genotype probabilities ...\n", file = stderr())
-  pr <- qtl2::calc_genoprob(qtl2data, map, err=0.002)
+  pr <- qtl2::calc_genoprob(qtl2data, gmap, err=0.002)
   cat(paste0("allele pair prob conversion via qtl2", fast, "\n"), file = stderr())
   fast_genoprob <- switch(fast,
                           fst = qtl2fst::fst_genoprob,
@@ -298,7 +302,7 @@ out <- qtl2::scan1(faprobs, qtl2data$pheno, kinship_loco, addcovar=addcovar)
 ```
 
 ```{r}
-peaks <- qtl2::find_peaks(out, qtl2data$pmap, threshold = 3)
+peaks <- qtl2::find_peaks(out, pmap, threshold = 3)
 ```
 
 ## Set up analyses and peaks tables for qtl2shiny
@@ -380,7 +384,7 @@ file.size(file.path(project_dir, "genoprob", "probs_1.fst"))
 ## Hotspots
 
 ```{r}
-hots <- qtl2shiny::hotspot(qtl2data$pmap, peaks)
+hots <- qtl2shiny::hotspot(pmap, peaks)
 ```
 
 ```{r}

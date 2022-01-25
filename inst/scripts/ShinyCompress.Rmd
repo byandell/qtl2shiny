@@ -80,42 +80,63 @@ for(i in c("Recla","AttieDOv2")) {
 round(size_files / 1e9, 2)
 ```
 
+Here we show several ways to access the genotype probabilities, which are stored
+in FST files. We begin with a simple call to `R/fst`, followed by a call using
+`R/qtl2fst`, then a call using `R/qtl2pattern`.
+
+```{r}
+map <- readRDS(file.path(file.path(ccpath, project_name), "pmap.rds"))
+# Select chromosome chri
+map <- map[chri]
+# Select markers between start_val and end_val
+wh <- which(map[[chri]] >= start_val & map[[chri]] <= end_val)
+(map[[chri]] <- map[[chri]][wh])
+```
+
+## Bare Bones Read From Compressed Files
+
+### Read FST file with `R/fst`
+
+The FST files are compressed 2D tables. Fof qtl2 data, the 3D genotype probabilities are stored with rows having genotypes and subjects, and the columns having the markers. Here is a raw `R/fst` read of the file to pull out the `r length(wh)` markers (columns), and the first genotype and first 8 subjects (rows):
+
+```{r}
+fstfile <- file.path(ccpath, project_name ,"genoprob",
+                     paste0("aprobs_", chri, ".fst"))
+fst::read_fst(fstfile, columns = names(map[[chri]]), from = 1, to = 8)
+```
+
+### Read SQLite file with `R/RSQLite`
+
+```{r}
+dbfile <- file.path(ccpath, "cc_variants.sqlite")
+db <- RSQLite::dbConnect(RSQLite::SQLite(), dbfile)
+start <- round(start_val * 1e+06)
+end <- round(end_val * 1e+06)
+# Shorten distance to reduce time for demo
+ave <- (start + end) / 2
+start <- ave + (start - ave) / 10
+end <- ave + (end - ave) / 10
+chrselect <- paste0("chr == '", chri, "'")
+startselect <- paste0("pos >= ", start)
+endselect <- paste0("pos <= ", end)
+query <- paste0("SELECT * FROM variants WHERE ", 
+                chrselect, " AND ", startselect, " AND ", endselect)
+variants <- RSQLite::dbGetQuery(db, query)
+RSQLite::dbDisconnect(db)
+```
+
+```{r}
+str(variants)
+```
 ## Genotype Probabilities
 
-The following gets the genotype probabilities for chr `r chri` between `r start_val` and `r end_val` positions for project names `r project_name` using a function in package
-[qtl2pattern](https://github.com/byandell/qtl2pattern).
+The following approaches subsets by chromosome `r chri` and by markers between `r start_val` and `r end_val` positions for project names `r project_name`.
+### Read with `R/qtl2fst`
 
-```{r}
-(query_probs <- qtl2pattern::create_probs_query_func(file.path(ccpath, project_name)))
-```
-
-```{r}
-pr <- query_probs(chri, start_val, end_val)
-```
-
-```{r}
-names(pr)
-```
-
-The query function sets up a call to `read_probs`, which is an internal function in [qtl2pattern](https://github.com/byandell/qtl2pattern) package. Since the data are in a different place, we use the [qtl2fst]
-
-```{r}
-pr <- qtl2pattern:::read_probs(chr=chri, start_val=start_val, end_val=end_val,
-                               file.path(ccpath, project_name),
-                               allele = TRUE, method = "fast", 
-                               probdir = "genoprob")
-
-(pr$probs <- qtl2fst::replace_path(pr$probs,
-                                  file.path(ccpath, project_name, "genoprob", "aprobs")))
-```
-
-```{r}
-print(object.size(pr$probs), units = "MB")
-```
-
-Here is more detail. First read the master RDS file for FST data. This does not read the genotype data compressed vai FST,
-but includes the information about what is in those FST files. For information, see
-<https://kbroman.org/qtl2/assets/vignettes/qtl2fst.html>.
+A `R/qtl2fst` object has a master object typically stored in an RDS file. This does not read the genotype data compressed vai FST,
+but includes the information about what is in those FST files.
+It is good practice to replace the path to where data are stored.
+For information, see <https://kbroman.org/qtl2/assets/vignettes/qtl2fst.html>.
 
 ```{r}
 probs <- readRDS(file.path(ccpath, project_name, "genoprob", "aprobs_fstindex.rds"))
@@ -126,20 +147,12 @@ probs <- readRDS(file.path(ccpath, project_name, "genoprob", "aprobs_fstindex.rd
 print(object.size(probs), units = "MB")
 ```
 
-The following first subsets by chromosome `r chri`, and by a range of positions
-on that chromosome. Again, this changes the master object `probs` but does not change the underlying FST files.
+We now subset by chromosome `r chri`, and by a range of positions
+on that chromosome. This changes the master object `probs` but does not change the underlying FST files.
 
 ```{r}
-dnames <- dimnames(probs)$mar[chri]
-map <- readRDS(file.path(file.path(ccpath, project_name), "pmap.rds"))
-# Select chromosome chri
-map <- map[chri]
-# Select markers between start_val and end_val
-wh <- which(map[[chri]] >= start_val & map[[chri]] <= end_val)
-(map[[chri]] <- map[[chri]][wh])
-```
-
-```{r}
+# Which markers in saved data agree with map.
+wh <- match(names(map[[chri]]), dimnames(probs)$mar[[chri]])
 (probs <- qtl2fst::subset_fst_genoprob(probs, chr = chri, mar = wh))
 ```
 
@@ -147,15 +160,28 @@ wh <- which(map[[chri]] >= start_val & map[[chri]] <= end_val)
 print(object.size(probs), units = "MB")
 ```
 
-Again, this is the size of the FST master object in R, while the data still resides at ``r project_name`/genoprob/aprobs_`r chri`.fst`.
+This is the size of the FST master object in R, while the data still resides at ``r project_name`/genoprob/aprobs_`r chri`.fst`.
 
 ```{r}
-paste(round(file.size(file.path(ccpath, project_name, "genoprob",
-                          paste0("aprobs_", chri, ".fst"))) / 1e6,
-      2), "Mb")
+paste(
+  round(
+    file.size(
+      file.path(ccpath, project_name, "genoprob",
+                paste0("aprobs_", chri, ".fst"))) / 1e6,
+    2),
+  "Mb")
 ```
 
-It is possible to extract the compressed FST file(s) to a `qtl2` object of class `calc_genoprob`.
+#### Extract data from `qtl2fst` object
+
+The `probs` object is a small metadata file with information about the genoprob data, such as dimensions and dimnames of list elements, but no data.
+We can extract data from the object by accessing elements of the 3D array on chromosome `chri`. This is generally what is done in the `R/qtl2` package when using this class of genotype probabilities. The following shows the 3 markers, first genotype, and first 8 subjects:
+
+```{r}
+probs[[chri]][1:8,1,]
+```
+
+It is possible to extract the `calc_genoprob` from the metadata object and compressed FST file(s).
 If you try to do this for the whole chromosome, or all chromosomes, it will take some time.
 
 ```{r}
@@ -187,6 +213,50 @@ print(object.size(probsq), units = "MB")
 ## 6.3 Mb
 ```
 
+### Read data with `R/qtl2pattern`
+
+The following use functions in package
+[qtl2pattern](https://github.com/byandell/qtl2pattern).
+The basics is the function `read_probs` to read the genotype probabilities.
+It actually gets both the `probs` and the `map`.
+
+```{r}
+pr <- qtl2pattern:::read_probs(chr=chri, start_val=start_val, end_val=end_val,
+                               file.path(ccpath, project_name),
+                               allele = TRUE, method = "fast", 
+                               probdir = "genoprob")
+```
+
+```{r}
+names(pr)
+```
+
+Again, we need to replace the path to access the data properly
+```{r}
+(pr$probs <- 
+   qtl2fst::replace_path(
+     pr$probs,
+     file.path(ccpath, project_name, "genoprob", "aprobs")))
+```
+
+```{r}
+print(object.size(pr$probs), units = "MB")
+```
+
+#### Query functions with `R/qtl2pattern`
+
+Query functions provide a way to embed details about the data in a local function, and just focues on identifying the chromosome and marker positions.
+
+```{r}
+(query_probs <- qtl2pattern::create_probs_query_func(file.path(ccpath, project_name)))
+```
+
+```{r}
+pr <- query_probs(chri, start_val, end_val)
+```
+
+The query function sets up a call to `read_probs`, which is an internal function in [qtl2pattern](https://github.com/byandell/qtl2pattern) package described earlier. 
+
 ## DNA Variants
 
 Internally, we use a query function that embeds the `read_probs` function call:
@@ -195,8 +265,25 @@ Internally, we use a query function that embeds the `read_probs` function call:
 (query_variants <- 
   qtl2::create_variant_query_func(file.path(ccpath, "cc_variants.sqlite")))
 ```
-
 ```{r}
-variants <- query_variants(chri, start_val, end_val)
+ls(envir = environment(query_variants))
 ```
 
+```{r}
+get("dbfile", envir = environment(query_variants))
+```
+
+```{r}
+# Shorten distance to reduce time for demo
+ave <- (start_val + end_val) / 2
+start <- ave + (start_val - ave) / 10
+end <- ave + (end_val - ave) / 10
+```
+
+```{r}
+variants <- query_variants(chri, start, end)
+```
+
+```{r}
+str(variants)
+```
