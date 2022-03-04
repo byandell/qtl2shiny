@@ -128,7 +128,7 @@ shinyPattern <- function(input, output, session,
       summary(scan_pat(), pairprobs_obj()$map)
     })
   }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10))
+  options = list(scrollX = TRUE, pageLength = 5))
 
   output$eff_lodPlot <- shiny::renderPlot({
     if(is.null(scan_pat()))

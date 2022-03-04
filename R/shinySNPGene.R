@@ -51,21 +51,21 @@ shinySNPGene <- function(input, output, session,
   output$snp_input <- shiny::renderUI({
     switch(shiny::req(input$button),
            Exons   = shinyGeneExonInput(ns("gene_exon")),
-           Summary = shinySNPSumInput(ns("best_snp")))
+           Scan = shinySNPSumInput(ns("best_snp")))
   })
   output$snp_output <- shiny::renderUI({
     switch(shiny::req(input$button),
-           Scan    = shinySNPPlotOutput(ns("snp_scan")),
+           Scan    = shiny::tagList(
+             shinySNPPlotOutput(ns("snp_scan")),
+             shinySNPSumOutput(ns("best_snp"))),
            Genes   = shinyGeneRegionOutput(ns("gene_region")),
-           Exons   = shinyGeneExonOutput(ns("gene_exon")),
-           Summary = shinySNPSumOutput(ns("best_snp")))
+           Exons   = shinyGeneExonOutput(ns("gene_exon")))
   })
   
   ## Downloads
   output$download_csv_plot <- shiny::renderUI({
     switch(shiny::req(input$button),
-           Scan    =,
-           Summary = shiny::tagList(shiny::fluidRow(
+           Scan    = shiny::tagList(shiny::fluidRow(
              shiny::column(6, shinySNPSumUI(ns("best_snp"))),
              shiny::column(6, shinySNPPlotUI(ns("snp_scan"))))),
            Genes   = shinyGeneRegionUI(ns("gene_region")),
@@ -73,7 +73,7 @@ shinySNPGene <- function(input, output, session,
   })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
-                 c("Scan", "Genes", "Exons", "Summary"),
+                 c("Scan", "Genes", "Exons"),
                  input$button)
   })
   input

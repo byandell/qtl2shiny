@@ -68,7 +68,7 @@ shinyPhenos <- function(input, output, session,
   # Output the analyses table
   output$analyses_tbl <- shiny::renderDataTable({
     collapse_covar(analyses_plot())
-  }, options = list(scrollX = TRUE, pageLength = 10))
+  }, options = list(scrollX = TRUE, pageLength = 5))
 }
 
 shinyPhenosUI <- function(id) {

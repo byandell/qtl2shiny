@@ -49,7 +49,7 @@ shinySNPSum <- function(input, output, session,
       summary(top_snps_tbl())
     })
   }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10))
+  options = list(scrollX = TRUE, pageLength = 5))
   output$top_snps_best <- shiny::renderDataTable({
     shiny::withProgress(message = "Top SNP Best ...", value = 0,
     {
@@ -57,15 +57,16 @@ shinySNPSum <- function(input, output, session,
       shiny::req(best_href())
   })
   }, escape = FALSE,
-    options = list(scrollX = TRUE, pageLength = 10))
+    options = list(scrollX = TRUE, pageLength = 5))
   output$top_indels <- shiny::renderDataTable({
     shiny::withProgress(message = "Top InDels ...", value = 0,
                  {
                    shiny::setProgress(1)
-                   dplyr::filter(shiny::req(best_href()), .data$variant_type != "SNP")
+                   # This might change from .data$type to .data$variant_type someday
+                   dplyr::filter(shiny::req(best_href()), .data$type != "SNP")
                  })
   }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10))
+  options = list(scrollX = TRUE, pageLength = 5))
   output$top_snps_peak <- shiny::renderDataTable({
     shiny::req(top_snps_tbl())
     shiny::withProgress(message = "Top SNP Peaks ...", value = 0,
@@ -74,7 +75,7 @@ shinySNPSum <- function(input, output, session,
       summary(top_snps_tbl(),"peak")
     })
   }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10))
+  options = list(scrollX = TRUE, pageLength = 5))
   output$snp_sum <- shiny::renderUI({
     switch(input$snp_sum,
            best   = shiny::dataTableOutput(ns("top_snps_best")),
@@ -96,7 +97,7 @@ shinySNPSum <- function(input, output, session,
 shinySNPSumInput <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::selectInput(ns("snp_sum"), NULL, c("best","indels","peaks","range"))
+    shiny::selectInput(ns("snp_sum"), "Summary", c("best","indels","peaks","range"))
   )
 }
 shinySNPSumUI <- function(id) {
@@ -105,5 +106,8 @@ shinySNPSumUI <- function(id) {
 }
 shinySNPSumOutput <- function(id) {
   ns <- shiny::NS(id)
-  shiny::uiOutput(ns("snp_sum"))
+  shiny::tagList(
+    shiny::uiOutput(ns("snp_sum")),
+    shiny::uiOutput(ns("radio")),
+  )
 }

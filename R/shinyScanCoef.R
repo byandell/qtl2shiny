@@ -112,7 +112,7 @@ shinyScanCoef <- function(input, output, session,
       summary(eff_obj(), scan_obj(), probs_obj()$map)
     })
   }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10))
+  options = list(scrollX = TRUE, pageLength = 5))
   
   ## Effect and LOD Plot
   output$lod_effPlot <- shiny::renderPlot({

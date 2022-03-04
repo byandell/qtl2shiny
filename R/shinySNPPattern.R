@@ -48,7 +48,7 @@ shinySNPPattern <- function(input, output, session,
   output$snpPatternSum <- shiny::renderDataTable({
     sum_top_pat()
   }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10))
+  options = list(scrollX = TRUE, pageLength = 5))
   
   dropHilit <- reactive({
     max(0,
@@ -158,8 +158,7 @@ shinySNPPattern <- function(input, output, session,
            "By Pheno"     = shiny::plotOutput(ns("snpPatternPlot")),
            "All Phenos"   = shiny::plotOutput(ns("snp_phe_pat")),
            "All Patterns" = shiny::plotOutput(ns("snp_pat_phe")),
-           "Interactive"  = plotly::plotlyOutput(ns("snpPatternPlotly")),
-           Summary        = shiny::dataTableOutput(ns("snpPatternSum")))
+           "Interactive"  = plotly::plotlyOutput(ns("snpPatternPlotly")))
   })
   output$title <- shiny::renderUI({
     if(snp_action() == "basic")
@@ -224,7 +223,7 @@ shinySNPPattern <- function(input, output, session,
   output$radio <- shiny::renderUI({
     button_val <- c("All Phenos","All Patterns",
                     "By Pheno",
-                    "Top SNPs","Interactive","Summary")
+                    "Top SNPs","Interactive")
     if(length(pheno_names()) == 1) {
       button_val <- button_val[-(1:2)]
     }
@@ -239,7 +238,7 @@ shinySNPPattern <- function(input, output, session,
   shiny::observeEvent(pheno_names(), {
     button_val <- c("All Phenos","All Patterns",
                     "By Pheno",
-                    "Top SNPs","Summary")
+                    "Top SNPs")
     if(length(pheno_names()) == 1) {
       button_val <- button_val[-(1:2)]
     }
@@ -268,5 +267,7 @@ shinySNPPatternUI <- function(id) {
 }
 shinySNPPatternOutput <- function(id) {
   ns <- shiny::NS(id)
-  shiny::uiOutput(ns("pat_output"))
+  shiny::tagList(
+    shiny::uiOutput(ns("pat_output")),
+    shiny::dataTableOutput(ns("snpPatternSum")))
 }

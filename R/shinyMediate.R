@@ -221,7 +221,7 @@ shinyMediate <- function(input, output, session,
   output$medSummary <- shiny::renderDataTable({
     shiny::req(mediate_obj())$best
   }, escape = FALSE,
-  options = list(scrollX = TRUE, pageLength = 10))
+  options = list(scrollX = TRUE, pageLength = 5))
 
   # Scan Window slider
   output$pos_Mbp <- shiny::renderUI({
@@ -244,8 +244,7 @@ shinyMediate <- function(input, output, session,
   output$out_choice <- shiny::renderUI({
     switch(shiny::req(input$button),
            Static      = shiny::plotOutput(ns("medPlot")),
-           Interactive = plotly::plotlyOutput(ns("medPlotly")),
-           Summary     = shiny::dataTableOutput(ns("medSummary")))
+           Interactive = plotly::plotlyOutput(ns("medPlotly")))
   })
   output$qtls <- shiny::renderUI({
     if(is.null(selected <- input$qtls))
@@ -256,7 +255,7 @@ shinyMediate <- function(input, output, session,
   })
   output$radio <- shiny::renderUI({
     shiny::radioButtons(ns("button"), "",
-                        c("Static","Interactive","Summary"),
+                        c("Static","Interactive"),
                         "Static")
   })
   output$checkplot <- shiny::renderUI({
@@ -354,7 +353,9 @@ shinyMediate <- function(input, output, session,
     if(shiny::isTruthy(input$checkplot))
       shinyTriadOutput(ns("triad"))
     else
-      shiny::uiOutput(ns("out_choice"))
+      shiny::tagList(
+        shiny::uiOutput(ns("out_choice")),
+        shiny::dataTableOutput(ns("medSummary")))
   })
 }
 shinyMediateUI <- function(id) {
