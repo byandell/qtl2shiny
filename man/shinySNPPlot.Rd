@@ -13,7 +13,9 @@ shinySNPPlot(
   pheno_names,
   snp_scan_obj,
   snpinfo,
-  snp_action = shiny::reactive({     "basic" })
+  snp_action = shiny::reactive({
+     "basic"
+ })
 )
 }
 \arguments{

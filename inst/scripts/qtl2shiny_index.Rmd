@@ -2,7 +2,9 @@
 title: "qtl2shiny Information"
 author: "Brian S. Yandell"
 date: "`r format(Sys.Date(), '%d %b %Y')`"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}

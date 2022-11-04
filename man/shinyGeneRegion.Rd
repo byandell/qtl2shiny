@@ -11,7 +11,9 @@ shinyGeneRegion(
   snp_par,
   top_snps_tbl,
   project_info,
-  snp_action = shiny::reactive({     "basic" })
+  snp_action = shiny::reactive({
+     "basic"
+ })
 )
 }
 \arguments{

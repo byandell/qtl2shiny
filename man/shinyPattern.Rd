@@ -19,7 +19,9 @@ shinyPattern(
   patterns,
   project_info,
   allele_info,
-  snp_action = shiny::reactive({     NULL })
+  snp_action = shiny::reactive({
+     NULL
+ })
 )
 }
 \arguments{

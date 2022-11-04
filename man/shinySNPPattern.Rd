@@ -16,7 +16,9 @@ shinySNPPattern(
   top_snps_tbl,
   gene_exon_tbl,
   allele_info,
-  snp_action = shiny::reactive({     "basic" })
+  snp_action = shiny::reactive({
+     "basic"
+ })
 )
 }
 \arguments{
