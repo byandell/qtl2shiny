@@ -18,7 +18,7 @@ suppressPackageStartupMessages({
 
 ```{r}
 data_dir <- file.path("inst", "doc", "shiny_logic")
-data_dir <- "."
+data_dir <- "../extdata"
 ```
 
 For igraph plotting parameters, node options start with `vertex.` and edge options start with `edge.`. Get options with

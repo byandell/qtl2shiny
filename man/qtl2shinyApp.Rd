@@ -3,17 +3,11 @@
 \name{qtl2shinyApp}
 \alias{qtl2shinyApp}
 \alias{shinyDash}
-\alias{qtl2shinyUI}
-\alias{qtl2shinyServer}
 \title{Shiny app for qtl2}
 \usage{
 qtl2shinyApp()
 
 shinyDash()
-
-qtl2shinyUI()
-
-qtl2shinyServer(input, output, session)
 }
 \value{
 No return value; called for side effects.
