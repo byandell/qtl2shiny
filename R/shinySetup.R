@@ -31,7 +31,7 @@ shinySetup <- function(input, output, session,
   pheno_group <- shiny::reactive({
     shiny::req(project_info())
     sort(unique(shiny::req(analyses_tbl())$pheno_group))
-  })
+  }, label = "pheno_group")
   pheno_type <- shiny::reactive({
     shiny::req(project_info())
     phe_gp <- shiny::req(input$pheno_group)
