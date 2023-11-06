@@ -4,10 +4,12 @@
 \alias{shinyProject}
 \title{Shiny project selection}
 \usage{
-shinyProject(input, output, session, projects_info)
+shinyProject(id, projects_info)
 }
 \arguments{
-\item{input, output, session, projects_info}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
+
+\item{projects_info}{reactive project info data frame}
 }
 \value{
 No return value; called for side effects.

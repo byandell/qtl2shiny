@@ -5,9 +5,7 @@
 \title{Shiny SNP and Allele analysis and plot module}
 \usage{
 shinySNPSetup(
-  input,
-  output,
-  session,
+  id,
   job_par,
   win_par,
   phe_mx,
@@ -22,7 +20,7 @@ shinySNPSetup(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{job_par, win_par, phe_mx, cov_df, K_chr, analyses_df, project_info, allele_info, snp_action}{reactive arguments}
 }

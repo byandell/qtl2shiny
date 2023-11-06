@@ -5,9 +5,7 @@
 \title{Shiny setup for DOQTL selection}
 \usage{
 shinySetup(
-  input,
-  output,
-  session,
+  id,
   pheno_typer,
   peaks_tbl,
   pmap_obj,
@@ -17,7 +15,7 @@ shinySetup(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, cov_df, projects_info}{reactive arguments}
 }

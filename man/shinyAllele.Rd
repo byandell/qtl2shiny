@@ -5,9 +5,7 @@
 \title{Shiny coefficient analysis and plot module}
 \usage{
 shinyAllele(
-  input,
-  output,
-  session,
+  id,
   win_par,
   phe_mx,
   cov_df,
@@ -21,7 +19,7 @@ shinyAllele(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, patterns, scan_pat, project_info, snp_action}{reactive arguments}
 }

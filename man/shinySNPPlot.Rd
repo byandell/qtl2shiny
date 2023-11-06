@@ -5,9 +5,7 @@
 \title{Shiny scan1 SNP analysis and plot module}
 \usage{
 shinySNPPlot(
-  input,
-  output,
-  session,
+  id,
   snp_par,
   chr_pos,
   pheno_names,
@@ -19,7 +17,7 @@ shinySNPPlot(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{snp_par, chr_pos, pheno_names, snp_scan_obj, snpinfo, snp_action}{reactive arguments}
 }

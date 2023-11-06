@@ -5,9 +5,7 @@
 \title{Shiny Genes in SNP Region module}
 \usage{
 shinyGeneRegion(
-  input,
-  output,
-  session,
+  id,
   snp_par,
   top_snps_tbl,
   project_info,
@@ -17,7 +15,7 @@ shinyGeneRegion(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{snp_par, top_snps_tbl, project_info, snp_action}{reactive arguments}
 }

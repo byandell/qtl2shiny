@@ -2,7 +2,7 @@
 #'
 #' Shiny diplotype SNP/Gene action analysis, with interface \code{shinyDiploUI}.
 #' 
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param win_par,phe_mx,cov_df,K_chr,analyses_df,project_info,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -11,15 +11,14 @@
 #' @return No return value; called for side effects.
 #'
 #' @export
-#' @importFrom shiny callModule NS reactive req
+#' @importFrom shiny moduleServer NS reactive req
 #'    radioButtons selectInput
 #'    renderText renderUI
 #'    textOutput uiOutput
 #'    mainPanel sidebarPanel strong tagList
-shinyDiplo <- function(input, output, session,
-                       win_par, 
-                       phe_mx, cov_df, K_chr, analyses_df,
+shinyDiplo <- function(id, win_par, phe_mx, cov_df, K_chr, analyses_df,
                        project_info, allele_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   chr_pos <- shiny::reactive({
@@ -29,22 +28,16 @@ shinyDiplo <- function(input, output, session,
   })
 
   ## Probs object for allele pair diplotypes.
-  pairprobs_obj <- shiny::callModule(shinyPairProbs, "pairprobs", 
-                            win_par, project_info)
+  pairprobs_obj <- shinyPairProbs("pairprobs", win_par, project_info)
 
   snp_action <- shiny::reactive({input$snp_action})
   
   ## SNP Association
-  patterns <- shiny::callModule(shinySNPSetup, "snp_setup",
-                         input, win_par, 
-                         phe_mx, cov_df, K_chr, analyses_df,
-                         project_info, allele_info,
-                         snp_action)
+  patterns <- shinySNPSetup("snp_setup", input, win_par, phe_mx, cov_df, K_chr,
+                            analyses_df, project_info, allele_info, snp_action)
   
-  shiny::callModule(shinyPattern, "dip_pat",
-                    input, chr_pos, win_par,
-                    phe_mx, cov_df, pairprobs_obj, K_chr, analyses_df,
-                    patterns, project_info, allele_info, snp_action)
+  shinyPattern("dip_pat", input, chr_pos, win_par, phe_mx, cov_df, pairprobs_obj, K_chr,
+               analyses_df, patterns, project_info, allele_info, snp_action)
   
   output$allele_names <- shiny::renderText({
     shiny::req(allele_info())
@@ -88,6 +81,7 @@ shinyDiplo <- function(input, output, session,
                                    project_info()$project,
                                    "\n")))
   })
+})
 }
 shinyDiploUI <- function(id) {
   ns <- shiny::NS(id)

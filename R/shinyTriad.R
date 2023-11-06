@@ -2,7 +2,7 @@
 #'
 #' Shiny module for triad plots, with interfaces \code{shinyTriadUI} and  \code{shinyTriadOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param med_par,patterns,geno_max,peak_mar,med_ls,mediate_obj,phe_mx,cov_df,K_chr,probs_obj,chr_id,sdp reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -16,7 +16,7 @@
 #' @importFrom ggplot2 autoplot
 #' @importFrom qtl2mediate mediation_triad_qtl2
 #' @importFrom qtl2pattern sdp_to_pattern
-#' @importFrom shiny NS reactive req isTruthy
+#' @importFrom shiny moduleServer NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
@@ -27,11 +27,9 @@
 #' @importFrom utils write.csv
 #' @importFrom grDevices dev.off pdf
 #
-shinyTriad <- function(input, output, session,
-                  med_par, patterns, 
-                  geno_max, peak_mar, med_ls, mediate_obj,
-                  phe_mx, cov_df, K_chr, probs_obj, chr_id,
-                  sdp) {
+shinyTriad <- function(id, med_par, patterns, geno_max, peak_mar, med_ls,
+                       mediate_obj, phe_mx, cov_df, K_chr, probs_obj, chr_id, sdp) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   ## Select triad for plots.
@@ -130,6 +128,7 @@ shinyTriad <- function(input, output, session,
       grDevices::dev.off()
     })
   med_ls
+})
 }
 
 shinyTriadUI <- function(id) {

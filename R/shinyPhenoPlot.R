@@ -2,7 +2,7 @@
 #'
 #' Shiny module to plot phenotypes, with interface \code{shinyPhenoPlotUI}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param set_par,phe_mx,cov_df reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -11,7 +11,7 @@
 #' @return 2-element vector of scan window
 #'
 #' @export
-#' @importFrom shiny NS 
+#' @importFrom shiny moduleServer NS 
 #'   plotOutput dataTableOutput
 #'   renderPlot renderDataTable
 #'   tagList
@@ -19,8 +19,8 @@
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 ggplot aes_string geom_density geom_rug
 #' @importFrom GGally ggscatmat
-shinyPhenoPlot <- function(input, output, session,
-                           set_par, phe_mx, cov_df) {
+shinyPhenoPlot <- function(id, set_par, phe_mx, cov_df) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   ## Scatter plot or density
@@ -50,6 +50,7 @@ shinyPhenoPlot <- function(input, output, session,
       shiny::plotOutput(ns("phePlot")),
       shiny::dataTableOutput(ns("phe_sum")))
   })
+})
 }
 
 shinyPhenoPlotUI <- function(id) {

@@ -5,9 +5,7 @@
 \title{Shiny SNP Association}
 \usage{
 shinySNPGene(
-  input,
-  output,
-  session,
+  id,
   snp_par,
   chr_pos,
   pheno_names,
@@ -22,7 +20,7 @@ shinySNPGene(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{snp_par, chr_pos, pheno_names, snp_scan_obj, snpinfo, top_snps_tbl, gene_exon_tbl, project_info, snp_action}{reactive arguments}
 }

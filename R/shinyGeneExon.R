@@ -2,7 +2,7 @@
 #'
 #' Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneExonInput}, \code{shinyGeneExonUI} and  \code{shinyGeneExonOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param snp_par,chr_pos,top_snps_tbl,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -13,7 +13,7 @@
 #' @export
 #' @importFrom dplyr filter
 #' @importFrom ggplot2 autoplot ggtitle
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   selectInput updateSelectInput
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
@@ -24,9 +24,9 @@
 #' @importFrom grDevices dev.off pdf
 #' @importFrom rlang .data
 #'   
-shinyGeneExon <- function(input, output, session,
-                     snp_par, chr_pos, top_snps_tbl, gene_exon_tbl,
-                     snp_action = shiny::reactive({"basic"})) {
+shinyGeneExon <- function(id, snp_par, chr_pos, top_snps_tbl, gene_exon_tbl,
+                          snp_action = shiny::reactive({"basic"})) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   pheno_names <- shiny::reactive({
@@ -142,6 +142,7 @@ shinyGeneExon <- function(input, output, session,
     shiny::selectInput(ns("button"), NULL, c("Plot","Summary"),
                 input$button)
   })
+})
 }
 shinyGeneExonInput <- function(id) {
   ns <- shiny::NS(id)

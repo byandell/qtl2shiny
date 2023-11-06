@@ -2,7 +2,7 @@
 #'
 #' Shiny module for top SNP analysis and plots, with interfaces \code{shinySNPPatternInput}, \code{shinySNPPatternUI} and  \code{shinySNPPatternOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,allele_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -13,7 +13,7 @@
 #' @importFrom dplyr distinct
 #' @importFrom ggplot2 autoplot
 #' @importFrom qtl2pattern sdp_to_pattern
-#' @importFrom shiny callModule NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   radioButtons selectInput updateRadioButtons
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
@@ -24,18 +24,15 @@
 #' @importFrom utils write.csv
 #' @importFrom grDevices dev.off pdf
 #'   
-shinySNPPattern <- function(input, output, session,
-                        snp_par, chr_pos, pheno_names,
-                        snp_scan_obj, snpinfo, top_snps_tbl, 
-                        gene_exon_tbl, allele_info, 
-                        snp_action = shiny::reactive({"basic"})) {
+shinySNPPattern <- function(id, snp_par, chr_pos, pheno_names, snp_scan_obj,
+                            snpinfo, top_snps_tbl, gene_exon_tbl, allele_info, 
+                            snp_action = shiny::reactive({"basic"})) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   ## Shiny Module
-  shiny::callModule(shinySNPFeature, "top_feature",
-             snp_par, chr_pos, 
-             snp_scan_obj, snpinfo, top_snps_tbl, 
-             gene_exon_tbl, snp_action)
+  shinySNPFeature("top_feature", snp_par, chr_pos, snp_scan_obj, snpinfo,
+                  top_snps_tbl, gene_exon_tbl, snp_action)
   
   sum_top_pat <- shiny::reactive({
     summary(shiny::req(top_snps_tbl()))
@@ -253,6 +250,7 @@ shinySNPPattern <- function(input, output, session,
   })
 
   input
+})
 }
 shinySNPPatternInput <- function(id) {
   ns <- shiny::NS(id)

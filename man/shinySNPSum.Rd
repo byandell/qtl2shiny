@@ -5,9 +5,7 @@
 \title{Shiny SNP summary module}
 \usage{
 shinySNPSum(
-  input,
-  output,
-  session,
+  id,
   chr_pos,
   top_snps_tbl,
   project_info,
@@ -17,7 +15,7 @@ shinySNPSum(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{chr_pos, top_snps_tbl, project_info, snp_action}{reactive arguments}
 }

@@ -5,9 +5,7 @@
 \title{Shiny haplotype analysis}
 \usage{
 shinyHaplo(
-  input,
-  output,
-  session,
+  id,
   win_par,
   pmap_obj,
   phe_mx,
@@ -22,7 +20,7 @@ shinyHaplo(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{win_par, pmap_obj, phe_mx, cov_df, K_chr, analyses_df, covar, analyses_tbl, peaks, project_info, allele_info}{reactive arguments}
 }

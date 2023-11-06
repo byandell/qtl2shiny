@@ -2,7 +2,7 @@
 #'
 #' Shiny module to coordinate SNP and allele analyses and plots, with interfaces \code{shinySNPSetupUI} and  \code{shinySNPSetupOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param job_par,win_par,phe_mx,cov_df,K_chr,analyses_df,project_info,allele_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -12,7 +12,7 @@
 #' @importFrom dplyr arrange desc filter mutate
 #' @importFrom qtl2pattern gene_exon top_snps_pattern snpprob_collapse
 #' @importFrom qtl2mediate scan1covar covar_matrix which_covar
-#' @importFrom shiny callModule NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   selectInput sliderInput
 #'   numericInput uiOutput
 #'   renderUI
@@ -20,12 +20,10 @@
 #'   withProgress setProgress
 #' @importFrom rlang .data
 #' 
-shinySNPSetup <- function(input, output, session,
-                          job_par, win_par, 
-                          phe_mx, cov_df,
-                          K_chr, analyses_df,
+shinySNPSetup <- function(id, job_par, win_par, phe_mx, cov_df, K_chr, analyses_df,
                           project_info, allele_info,
                           snp_action = shiny::reactive({"basic"})) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   chr_pos <- shiny::reactive({
@@ -39,9 +37,7 @@ shinySNPSetup <- function(input, output, session,
   
   ## Reactives
   ## SNP Probabilities.
-  snpprobs_obj <- shiny::callModule(shinySNPProbs, "snp_probs",
-                  win_par, pheno_names,
-                  project_info)
+  snpprobs_obj <- shinySNPProbs("snp_probs", win_par, pheno_names, project_info)
   snpinfo <- reactive({
     shiny::req(project_info(), phe_mx())
     shiny::req(snpprobs_obj())$snpinfo
@@ -98,15 +94,13 @@ shinySNPSetup <- function(input, output, session,
   
   ## Shiny Modules
   ## SNP Association
-  ass_par <- shiny::callModule(shinySNPGene, "snp_gene",
-             input, chr_pos, pheno_names,
-             snp_scan_obj, snpinfo, top_snps_tbl, 
-             gene_exon_tbl, project_info, snp_action)
+  ass_par <- shinySNPGene("snp_gene", input, chr_pos, pheno_names,
+                          snp_scan_obj, snpinfo, top_snps_tbl, 
+                          gene_exon_tbl, project_info, snp_action)
   ## Allele Patterns
-  pat_par <- shiny::callModule(shinySNPPattern, "snp_pattern",
-             input, chr_pos, pheno_names,
-             snp_scan_obj, snpinfo, top_snps_tbl, 
-             gene_exon_tbl, allele_info, snp_action)
+  pat_par <- shinySNPPattern("snp_pattern", input, chr_pos, pheno_names,
+                             snp_scan_obj, snpinfo, top_snps_tbl, 
+                             gene_exon_tbl, allele_info, snp_action)
 
   # Scan Window slider
   output$scan_window <- shiny::renderUI({
@@ -205,6 +199,7 @@ shinySNPSetup <- function(input, output, session,
       NULL
     }
   })
+})
 }
 
 shinySNPSetupUI <- function(id) {

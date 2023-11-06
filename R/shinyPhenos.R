@@ -2,7 +2,7 @@
 #'
 #' Shiny module for phenotype selection, with interfaces \code{shinyPhenosUI} and  \code{shinyPhenosOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param set_par,win_par,peaks_df,analyses_tbl,cov_df,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -20,9 +20,9 @@
 #' @importFrom rlang .data
 #' @importFrom qtl2mediate pheno_trans
 #' 
-shinyPhenos <- function(input, output, session,
-                        set_par, win_par, peaks_df, analyses_tbl, cov_df,
+shinyPhenos <- function(id, set_par, win_par, peaks_df, analyses_tbl, cov_df,
                         project_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   # Output the peaks table
   output$peaks <- shiny::renderDataTable({
@@ -45,8 +45,8 @@ shinyPhenos <- function(input, output, session,
   raw_phe_mx <- shiny::reactive({
     pheno_read(project_info(), analyses_plot(), FALSE)
   })
-  shiny::callModule(shinyPhenoPlot, "PhenoPlotRaw", set_par, raw_phe_mx, cov_df)
-  shiny::callModule(shinyPhenoPlot, "PhenoPlotTrans", set_par, phe_mx, cov_df)
+  shinyPhenoPlot("PhenoPlotRaw", set_par, raw_phe_mx, cov_df)
+  shinyPhenoPlot("PhenoPlotTrans", set_par, phe_mx, cov_df)
   
   # Show data.
   output$radio <- renderUI({
@@ -69,6 +69,7 @@ shinyPhenos <- function(input, output, session,
   output$analyses_tbl <- shiny::renderDataTable({
     collapse_covar(analyses_plot())
   }, options = list(scrollX = TRUE, pageLength = 5))
+})
 }
 
 shinyPhenosUI <- function(id) {

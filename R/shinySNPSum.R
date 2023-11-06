@@ -2,7 +2,7 @@
 #'
 #' Shiny module for SNP summary, with interfaces \code{shinySNPInput}, \code{shinySNPUI} and  \code{shinySNPOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param chr_pos,top_snps_tbl,project_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -12,7 +12,7 @@
 #'
 #' @export
 #' @importFrom dplyr filter select
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   selectInput
 #'   dataTableOutput uiOutput
 #'   renderDataTable renderUI
@@ -23,9 +23,9 @@
 #' @importFrom utils write.csv
 #' @importFrom rlang .data
 #' 
-shinySNPSum <- function(input, output, session,
-                     chr_pos, top_snps_tbl, project_info,
-                     snp_action = shiny::reactive({"basic"})) {
+shinySNPSum <- function(id, chr_pos, top_snps_tbl, project_info,
+                        snp_action = shiny::reactive({"basic"})) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   best_snps <- shiny::reactive({
@@ -92,6 +92,7 @@ shinySNPSum <- function(input, output, session,
       utils::write.csv(best_http(), file)
     }
   )
+})
 }
 
 shinySNPSumInput <- function(id) {

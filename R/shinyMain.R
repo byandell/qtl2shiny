@@ -2,7 +2,7 @@
 #'
 #' Shiny module for phenotype selection.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param projects_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -15,7 +15,7 @@
 #' @importFrom gdata humanReadable
 #' @importFrom dplyr distinct filter mutate one_of select 
 #' @importFrom tidyr unite
-#' @importFrom shiny callModule NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   radioButtons selectInput
 #'   dataTableOutput textOutput uiOutput
 #'   renderDataTable renderText renderUI
@@ -23,12 +23,13 @@
 #'   strong tagList
 #' @importFrom rlang .data
 #' 
-shinyMain <- function(input, output, session, projects_info) {
+shinyMain <- function(id, projects_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   ## Data Setup
   project_info <- reactive({ 
-    shiny::req(set_par$project_info) 
+    shiny::req(set_par()$project_info) 
   })
   pheno_type <- shiny::reactive({
     analtbl <- shiny::req(analyses_tbl())
@@ -57,7 +58,7 @@ shinyMain <- function(input, output, session, projects_info) {
     read_project(project_info(), "kinship")
   })
   
-  set_par <- shiny::callModule(shinySetup, "setup", 
+  set_par <- shinySetup("setup", 
                                pheno_type, peaks, 
                                pmap_obj, analyses_tbl, 
                                cov_df, projects_info)
@@ -66,7 +67,7 @@ shinyMain <- function(input, output, session, projects_info) {
   
   ## Phenotypes and Covariates.
   analyses_df <- shiny::reactive({
-    phename <- shiny::req(set_par$pheno_names)
+    phename <- shiny::req(set_par()$pheno_names)
     dplyr::filter(analyses_tbl(), .data$pheno %in% phename)
   })
   phe_mx <- shiny::reactive({
@@ -79,7 +80,7 @@ shinyMain <- function(input, output, session, projects_info) {
   
   ## Set up shiny::reactives for scan1 module.
   K_chr <- shiny::reactive({
-    kinship()[set_par$win_par$chr_id]
+    kinship()[set_par()$win_par$chr_id]
   })
   
   ## Allele names.
@@ -89,17 +90,13 @@ shinyMain <- function(input, output, session, projects_info) {
   })
   
   ## Haplotype Analysis.
-  shiny::callModule(shinyHaplo, "hap_scan", 
-                    set_par$win_par, pmap_obj, 
-                    phe_mx, cov_df, K_chr, analyses_df, 
-                    covar, analyses_tbl, peaks,
-                    project_info, allele_info)
+  shinyHaplo("hap_scan", set_par()$win_par, pmap_obj, phe_mx, cov_df, K_chr,
+             analyses_df, covar, analyses_tbl, peaks, project_info, allele_info)
   
   ## Diplotype Analysis.
-  shiny::callModule(shinyDiplo, "dip_scan",
-                    set_par$win_par, 
-                    phe_mx, cov_df, K_chr, analyses_df,
-                    project_info, allele_info)
+  shinyDiplo("dip_scan", set_par()$win_par, phe_mx, cov_df, K_chr, analyses_df,
+             project_info, allele_info)
+})
 }
 
 #' @param id shiny identifier

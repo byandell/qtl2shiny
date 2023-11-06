@@ -2,7 +2,7 @@
 #'
 #' Shiny module for scan1 coefficient plots, with interfaces \code{shinyAlleleUI} and  \code{shinyAlleleOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,patterns,scan_pat,project_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -12,7 +12,7 @@
 #'
 #' @export
 #' @importFrom qtl2pattern allele1
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
@@ -26,10 +26,9 @@
 #' @importFrom grDevices dev.off pdf
 #' @importFrom rlang .data
 #' 
-shinyAllele <- function(input, output, session,
-                  win_par, 
-                  phe_mx, cov_df, probs_obj, K_chr, analyses_df, 
-                  patterns, scan_pat, project_info, snp_action) {
+shinyAllele <- function(id, win_par, phe_mx, cov_df, probs_obj, K_chr,
+                        analyses_df, patterns, scan_pat, project_info, snp_action) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   # Scan Window slider
@@ -111,7 +110,9 @@ shinyAllele <- function(input, output, session,
       grDevices::dev.off()
     }
   )
+})
 }
+
 shinyAlleleUI <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(

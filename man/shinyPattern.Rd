@@ -5,9 +5,7 @@
 \title{Shiny Pattern module}
 \usage{
 shinyPattern(
-  input,
-  output,
-  session,
+  id,
   job_par,
   chr_pos,
   win_par,
@@ -25,7 +23,7 @@ shinyPattern(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{job_par, chr_pos, win_par, phe_mx, cov_df, pairprobs_obj, K_chr, analyses_df, patterns, project_info, allele_info, snp_action}{reactive arguments}
 }

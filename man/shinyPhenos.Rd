@@ -4,20 +4,10 @@
 \alias{shinyPhenos}
 \title{Shiny phenotype selection}
 \usage{
-shinyPhenos(
-  input,
-  output,
-  session,
-  set_par,
-  win_par,
-  peaks_df,
-  analyses_tbl,
-  cov_df,
-  project_info
-)
+shinyPhenos(id, set_par, win_par, peaks_df, analyses_tbl, cov_df, project_info)
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{set_par, win_par, peaks_df, analyses_tbl, cov_df, project_info}{reactive arguments}
 }

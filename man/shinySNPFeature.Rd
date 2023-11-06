@@ -5,9 +5,7 @@
 \title{Shiny SNP Features in SNP Region module}
 \usage{
 shinySNPFeature(
-  input,
-  output,
-  session,
+  id,
   snp_par,
   chr_pos,
   snp_scan_obj,
@@ -20,7 +18,7 @@ shinySNPFeature(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{snp_par, chr_pos, snp_scan_obj, top_snps_tbl, snpinfo, gene_exon_tbl, snp_action}{reactive arguments}
 }

@@ -5,9 +5,7 @@
 \title{Shiny Genes and Exons with nearby SNPs module}
 \usage{
 shinyGeneExon(
-  input,
-  output,
-  session,
+  id,
   snp_par,
   chr_pos,
   top_snps_tbl,
@@ -18,7 +16,7 @@ shinyGeneExon(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{snp_par, chr_pos, top_snps_tbl, gene_exon_tbl, snp_action}{reactive arguments}
 }

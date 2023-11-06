@@ -2,7 +2,7 @@
 #'
 #' Shiny module for SNP pattern plots, with interfaces \code{shinyPatternUI} and  \code{shinyPatternOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param job_par,chr_pos,win_par,phe_mx,cov_df,pairprobs_obj,K_chr,analyses_df,patterns,project_info,allele_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -16,32 +16,30 @@
 #' @importFrom qtl2pattern scan1pattern sdp_to_pattern
 #' @importFrom dplyr distinct filter mutate arrange desc
 #' @importFrom ggplot2 autoplot
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   observeEvent
 #'   radioButtons selectInput updateSelectInput
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
 #'   fluidRow column tagList
 #'   withProgress setProgress
-#'   downloadButton downloadHandler callModule
+#'   downloadButton downloadHandler 
 #' @importFrom grDevices dev.off pdf
 #' @importFrom utils write.csv
 #' @importFrom rlang .data
 #'   
-shinyPattern <- function(input, output, session,
-                         job_par, chr_pos, win_par,
+shinyPattern <- function(id, job_par, chr_pos, win_par,
                          phe_mx, cov_df, pairprobs_obj, K_chr, analyses_df,
                          patterns, project_info, allele_info, 
                          snp_action = shiny::reactive({NULL})) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   phe1_mx <- reactive({
     phe_mx()[, shiny::req(input$pheno_name), drop = FALSE]
   })
-  shiny::callModule(shinyAllele, "alleles",
-                    win_par, 
-                    phe1_mx, cov_df, pairprobs_obj, K_chr, analyses_df,
-                    patterns, scan_pat, project_info, snp_action)
+  shinyAllele("alleles", win_par,  phe1_mx, cov_df, pairprobs_obj, K_chr,
+              analyses_df, patterns, scan_pat, project_info, snp_action)
   
   ## Select phenotype for plots.
   output$pheno_name <- shiny::renderUI({
@@ -224,6 +222,7 @@ shinyPattern <- function(input, output, session,
       shiny::column(6, shiny::downloadButton(ns("downloadData"), "CSV")),
       shiny::column(6, shiny::downloadButton(ns("downloadPlot"), "Plots")))
   })
+})
 }
 
 shinyPatternUI <- function(id) {

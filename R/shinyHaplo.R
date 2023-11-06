@@ -2,7 +2,7 @@
 #'
 #' Shiny module for analysis based on haplotype alleles, with interface \code{shinyHaploUI}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param win_par,pmap_obj,phe_mx,cov_df,K_chr,analyses_df,covar,analyses_tbl,peaks,project_info,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -11,41 +11,32 @@
 #' @return No return value; called for side effects.
 #'
 #' @export
-#' @importFrom shiny callModule NS req 
+#' @importFrom shiny moduleServer NS req 
 #'   radioButtons
 #'   textOutput uiOutput
 #'   renderText renderUI
 #'   mainPanel sidebarPanel strong tagList
-shinyHaplo <- function(input, output, session,
-                       win_par, pmap_obj, 
+shinyHaplo <- function(id, win_par, pmap_obj, 
                        phe_mx, cov_df, K_chr, analyses_df, 
                        covar, analyses_tbl, peaks,
                        project_info, allele_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   ## Genotype Probabilities.
-  probs_obj <- shiny::callModule(shinyProbs, "probs", 
-                          win_par, project_info)
+  probs_obj <- shinyProbs("probs", win_par, project_info)
 
   ## Genome Scan.
-  shiny::callModule(shinyScanCoef, "hap_scan", 
-             input, win_par, 
-             phe_mx, cov_df, probs_obj, K_chr, analyses_df,
-             project_info, allele_info)
+  shinyScanCoef("hap_scan", input, win_par, phe_mx, cov_df, probs_obj, K_chr,
+                analyses_df, project_info, allele_info)
   
   ## SNP Association
-  patterns <- shiny::callModule(shinySNPSetup, "snp_setup",
-              input, win_par, 
-              phe_mx, cov_df, K_chr, analyses_df,
-              project_info, allele_info)
+  patterns <- shinySNPSetup("snp_setup", input, win_par, phe_mx, cov_df, K_chr,
+                            analyses_df, project_info, allele_info)
 
   ## Mediation
-  shiny::callModule(shinyMediate, "mediate",
-                    input, win_par, patterns,
-                    phe_mx, cov_df, probs_obj, K_chr, analyses_df,
-                    pmap_obj, 
-                    covar, analyses_tbl, peaks,
-                    project_info, allele_info)
+  shinyMediate("mediate", input, win_par, patterns, phe_mx, cov_df, probs_obj, K_chr,
+               analyses_df, pmap_obj, covar, analyses_tbl, peaks, project_info, allele_info)
 
   output$allele_names <- shiny::renderText({
     shiny::req(allele_info())
@@ -85,6 +76,7 @@ shinyHaplo <- function(input, output, session,
                                    project_info()$project,
                                    "\n")))
   })
+})
 }
 shinyHaploUI <- function(id) {
   ns <- shiny::NS(id)

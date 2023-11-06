@@ -2,7 +2,7 @@
 #'
 #' Shiny module for scan1 coefficient plots, with interfaces \code{shinyMediateUI} and  \code{shinyMediateOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param job_par,win_par,patterns,phe_mx,cov_df,probs_obj,K_chr,analyses_df,pmap_obj,covar,analyses_tbl,peaks,project_info,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -14,24 +14,23 @@
 #' @importFrom qtl2 find_marker scan1
 #' @importFrom qtl2mediate comediator_region comediator_type expr_region mediation_test_qtl2
 #' @importFrom ggplot2 autoplot
-#' @importFrom shiny NS reactive req isTruthy
+#' @importFrom shiny moduleServer NS reactive req isTruthy
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
 #'   fluidRow column strong tagList
 #'   withProgress setProgress
-#'   downloadButton downloadHandler callModule
+#'   downloadButton downloadHandler
 #' @importFrom plotly renderPlotly plotlyOutput
 #' @importFrom dplyr filter
 #' @importFrom utils write.csv
 #' @importFrom grDevices dev.off pdf
 #' @importFrom rlang .data
 #' 
-shinyMediate <- function(input, output, session,
-                              job_par, win_par, patterns,
-                              phe_mx, cov_df, probs_obj, K_chr, analyses_df,
-                              pmap_obj, covar, analyses_tbl, peaks,
-                              project_info, allele_info) {
+shinyMediate <- function(id, job_par, win_par, patterns, phe_mx, cov_df, probs_obj, K_chr,
+                         analyses_df, pmap_obj, covar, analyses_tbl, peaks,
+                         project_info, allele_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   chr_id <- reactive({
@@ -114,11 +113,8 @@ shinyMediate <- function(input, output, session,
   })
   
   ## Triad Plots
-  shiny::callModule(shinyTriad, "triad",
-                    input, patterns, 
-                    geno_max, peak_mar, med_ls, mediate_signif,
-                    phe1_mx, cov_df, K_chr, probs_obj, chr_id,
-                    sdp)
+  shinyTriad("triad", input, patterns, geno_max, peak_mar, med_ls, mediate_signif,
+             phe1_mx, cov_df, K_chr, probs_obj, chr_id, sdp)
 
   ## Mediate1
   probs_chr <- reactive({
@@ -357,6 +353,7 @@ shinyMediate <- function(input, output, session,
         shiny::uiOutput(ns("out_choice")),
         shiny::dataTableOutput(ns("medSummary")))
   })
+})
 }
 shinyMediateUI <- function(id) {
   ns <- shiny::NS(id)

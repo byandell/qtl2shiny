@@ -6,14 +6,14 @@
 \alias{shinySNPProbs}
 \title{Shiny Probability module}
 \usage{
-shinyProbs(input, output, session, win_par, project_info)
+shinyProbs(id, win_par, project_info)
 
-shinyPairProbs(input, output, session, win_par, project_info)
+shinyPairProbs(id, win_par, project_info)
 
-shinySNPProbs(input, output, session, win_par, pheno_names, project_info)
+shinySNPProbs(id, win_par, pheno_names, project_info)
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{win_par, pheno_names, project_info}{reactive arguments}
 }

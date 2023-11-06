@@ -2,24 +2,24 @@
 #'
 #' Shiny module for scan1 analysis and plots, with interfaces \code{shinySNPPlotUI} and  \code{shinySNPPlotOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
 #'
 #' @export
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   plotOutput
 #'   renderPlot
 #'   withProgress setProgress
 #'   downloadButton downloadHandler
 #' @importFrom grDevices dev.off pdf
 #' 
-shinySNPPlot <- function(input, output, session,
-                          snp_par, chr_pos, pheno_names,
-                          snp_scan_obj, snpinfo,
-                          snp_action = shiny::reactive({"basic"})) {
+shinySNPPlot <- function(id, snp_par, chr_pos, pheno_names,
+                         snp_scan_obj, snpinfo,
+                         snp_action = shiny::reactive({"basic"})) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   output$snpPlot <- shiny::renderPlot({
@@ -51,6 +51,7 @@ shinySNPPlot <- function(input, output, session,
       grDevices::dev.off()
     }
   )
+})
 }
 shinySNPPlotUI <- function(id) {
   ns <- shiny::NS(id)

@@ -5,9 +5,7 @@
 \title{Shiny coefficient analysis and plot module}
 \usage{
 shinyScanCoef(
-  input,
-  output,
-  session,
+  id,
   job_par,
   win_par,
   phe_mx,
@@ -20,7 +18,7 @@ shinyScanCoef(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{job_par, win_par, phe_mx, cov_df, probs_obj, K_chr, analyses_df, project_info, allele_info}{reactive arguments}
 }

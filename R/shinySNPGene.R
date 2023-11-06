@@ -2,7 +2,7 @@
 #' 
 #' Shiny module for SNP association mapping, with interfaces \code{shinySNPGeneInput}, \code{shinySNPGeneUI} and  \code{shinySNPGeneOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param snp_par,chr_pos,pheno_names,snp_scan_obj,snpinfo,top_snps_tbl,gene_exon_tbl,project_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -11,38 +11,28 @@
 #' @return tbl with top SNPs
 #'
 #' @export
-#' @importFrom shiny callModule NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   radioButtons
 #'   uiOutput
 #'   renderUI
 #'   fluidRow column tagList
-shinySNPGene <- function(input, output, session,
-                        snp_par, chr_pos, pheno_names,
-                        snp_scan_obj, snpinfo, top_snps_tbl, 
-                        gene_exon_tbl,
-                        project_info,
-                        snp_action = shiny::reactive({"basic"})) {
+shinySNPGene <- function(id, snp_par, chr_pos, pheno_names,
+                         snp_scan_obj, snpinfo, top_snps_tbl, 
+                         gene_exon_tbl, project_info,
+                         snp_action = shiny::reactive({"basic"})) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   ## Shiny Modules
   ## SNP Association Scan
-  shiny::callModule(shinySNPPlot, "snp_scan",
-             snp_par, chr_pos, pheno_names,
-             snp_scan_obj, snpinfo, snp_action)
+  shinySNPPlot("snp_scan", snp_par, chr_pos, pheno_names,
+               snp_scan_obj, snpinfo, snp_action)
   ## SNP Summary
-  shiny::callModule(shinySNPSum, "best_snp", 
-             chr_pos, top_snps_tbl, project_info, snp_action)
+  shinySNPSum("best_snp", chr_pos, top_snps_tbl, project_info, snp_action)
   ## Gene Region
-  shiny::callModule(shinyGeneRegion, "gene_region",
-             snp_par, 
-             top_snps_tbl,
-             project_info,
-             snp_action)
+  shinyGeneRegion("gene_region", snp_par, top_snps_tbl, project_info, snp_action)
   ## Genes and Exons
-  shiny::callModule(shinyGeneExon, "gene_exon",
-             snp_par, chr_pos, 
-             top_snps_tbl, gene_exon_tbl,
-             snp_action)
+  shinyGeneExon("gene_exon", snp_par, chr_pos, top_snps_tbl, gene_exon_tbl, snp_action)
   
   output$snp_check <- shiny::renderUI({
     switch(shiny::req(input$button),
@@ -77,6 +67,7 @@ shinySNPGene <- function(input, output, session,
                  input$button)
   })
   input
+})
 }
 
 shinySNPGeneInput <- function(id) {

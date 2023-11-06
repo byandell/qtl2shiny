@@ -2,7 +2,7 @@
 #'
 #' Shiny module for scan1 LOD and coefficient plots, with interfaces \code{shinyScanCoefUI} and  \code{shinyScanCoefOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param job_par,win_par,phe_mx,cov_df,probs_obj,K_chr,analyses_df,project_info,allele_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -15,7 +15,7 @@
 #' @importFrom qtl2mediate scan1covar
 #' @importFrom qtl2 scan1
 #' @importFrom ggplot2 autoplot
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   radioButtons selectInput sliderInput updateSliderInput
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
@@ -26,10 +26,9 @@
 #' @importFrom grDevices dev.off pdf
 #' @importFrom qtl2mediate sexcovar
 #' 
-shinyScanCoef <- function(input, output, session,
-                  job_par, win_par, 
-                  phe_mx, cov_df, probs_obj, K_chr, analyses_df,
-                  project_info, allele_info) {
+shinyScanCoef <- function(id, job_par, win_par, phe_mx, cov_df, probs_obj, K_chr,
+                          analyses_df, project_info, allele_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   ## Genome scan 
@@ -189,6 +188,7 @@ shinyScanCoef <- function(input, output, session,
                  c("LOD","Effects","LOD & Effects","Summary"),
                  input$button)
   })
+})
 }
 shinyScanCoefUI <- function(id) {
   ns <- shiny::NS(id)

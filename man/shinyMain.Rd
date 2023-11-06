@@ -8,7 +8,7 @@
 \alias{shinyMainOutput2}
 \title{Shiny app for DOQTL selection}
 \usage{
-shinyMain(input, output, session, projects_info)
+shinyMain(id, projects_info)
 
 shinyMainInput(id)
 
@@ -19,11 +19,9 @@ shinyMainOutput(id)
 shinyMainOutput2(id)
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{shiny identifier}
 
 \item{projects_info}{reactive arguments}
-
-\item{id}{shiny identifier}
 }
 \value{
 No return value; called for side effects.

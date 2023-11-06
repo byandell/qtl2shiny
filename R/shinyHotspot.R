@@ -2,7 +2,7 @@
 #'
 #' Shiny module to view hotspots for peak selection, with interfaces \code{shinyHotspotInput} and  \code{shinyHotspotOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param set_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -17,7 +17,7 @@
 #' @importFrom dplyr add_row arrange distinct filter rename
 #' @importFrom ggplot2 ggtitle scale_y_sqrt
 #' @importFrom qtl2ggplot ggplot_scan1
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   checkboxInput selectInput
 #'   plotOutput dataTableOutput uiOutput
 #'   renderPlot renderDataTable renderUI
@@ -25,10 +25,8 @@
 #'   withProgress incProgress setProgress
 #' @importFrom rlang .data
 #' 
-shinyHotspot <- function(input, output, session,
-                         set_par, 
-                         pheno_type, peaks_tbl, pmap_obj,
-                         project_info) {
+shinyHotspot <- function(id, set_par, pheno_type, peaks_tbl, pmap_obj, project_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   shiny::observeEvent(project_info(), {
@@ -174,6 +172,7 @@ shinyHotspot <- function(input, output, session,
   
   ## Return.
   scan_tbl
+})
 }
 shinyHotspotInput <- function(id) {
   ns <- shiny::NS(id)

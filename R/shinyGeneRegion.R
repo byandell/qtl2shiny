@@ -2,7 +2,7 @@
 #'
 #' Shiny module for scan1 analysis and plots, with interfaces \code{shinyGeneRegionInput}, \code{shinyGeneRegionUI} and  \code{shinyGeneRegionOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param snp_par,top_snps_tbl,project_info,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -12,7 +12,7 @@
 #'
 #' @export
 #' @importFrom ggplot2 autoplot ggtitle
-#' @importFrom shiny NS reactive req isTruthy
+#' @importFrom shiny moduleServer NS reactive req isTruthy
 #'   checkboxInput
 #'   tableOutput plotOutput uiOutput
 #'   renderPlot renderTable renderUI
@@ -22,10 +22,9 @@
 #' @importFrom utils write.csv
 #' @importFrom grDevices dev.off pdf
 #' 
-shinyGeneRegion <- function(input, output, session,
-                     snp_par, top_snps_tbl,
-                     project_info,
-                     snp_action = shiny::reactive({"basic"})) {
+shinyGeneRegion <- function(id, snp_par, top_snps_tbl, project_info,
+                            snp_action = shiny::reactive({"basic"})) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   rng <- shiny::reactive({
@@ -91,6 +90,7 @@ shinyGeneRegion <- function(input, output, session,
       grDevices::dev.off()
     }
   )
+})
 }
 shinyGeneRegionInput <- function(id) {
   ns <- shiny::NS(id)

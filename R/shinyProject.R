@@ -2,7 +2,8 @@
 #'
 #' Shiny module for selection of project, with interface \code{shinyProjectUI}.
 #'
-#' @param input,output,session,projects_info standard shiny arguments
+#' @param id identifier for shiny reactive
+#' @param projects_info reactive project info data frame
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
 #' @keywords utilities
@@ -10,12 +11,12 @@
 #' @return No return value; called for side effects.
 #'
 #' @export
-#' @importFrom shiny callModule NS isTruthy 
-#'   renderUI uiOutput selectInput
+#' @importFrom shiny isTruthy moduleServer NS renderUI selectInput uiOutput
 #' @importFrom dplyr distinct filter
 #' @importFrom rlang .data
 #' 
-shinyProject <- function(input, output, session, projects_info) {
+shinyProject <- function(id, projects_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   output$project <- shiny::renderUI({
@@ -42,6 +43,7 @@ shinyProject <- function(input, output, session, projects_info) {
         .data$project == project_id),
       .data$project, .keep_all = TRUE)
   })
+})
 }
 shinyProjectUI <- function(id) {
   ns <- shiny::NS(id)

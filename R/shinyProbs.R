@@ -2,7 +2,7 @@
 #'
 #' Shiny genotype probability access.
 #' 
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param win_par,pheno_names,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -15,8 +15,8 @@
 #' @importFrom qtl2mediate get_snpprobs
 #' @importFrom shiny reactive req 
 #'   withProgress setProgress
-shinyProbs <- function(input, output, session,
-                       win_par, project_info) {
+shinyProbs <- function(id, win_par, project_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   probs_obj <- shiny::reactive({
@@ -41,11 +41,12 @@ shinyProbs <- function(input, output, session,
   })
   
   probs_obj
+})
 }
 #' @rdname shinyProbs
 #' @export
-shinyPairProbs <- function(input, output, session,
-                         win_par, project_info) {
+shinyPairProbs <- function(id, win_par, project_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   ## Probs object for allele pair diplotypes.
@@ -64,12 +65,12 @@ shinyPairProbs <- function(input, output, session,
     })
   })
   probs_obj
+})
 }
 #' @rdname shinyProbs
 #' @export
-shinySNPProbs <- function(input, output, session,
-                          win_par, pheno_names,
-                          project_info) {
+shinySNPProbs <- function(id, win_par, pheno_names, project_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
   
   shiny::reactive({
@@ -100,4 +101,5 @@ shinySNPProbs <- function(input, output, session,
                                 snpinfo)
     })
   })
+})
 }

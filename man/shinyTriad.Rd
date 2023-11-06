@@ -5,9 +5,7 @@
 \title{Shiny triad plot module}
 \usage{
 shinyTriad(
-  input,
-  output,
-  session,
+  id,
   med_par,
   patterns,
   geno_max,
@@ -23,7 +21,7 @@ shinyTriad(
 )
 }
 \arguments{
-\item{input, output, session}{standard shiny arguments}
+\item{id}{identifier for shiny reactive}
 
 \item{med_par, patterns, geno_max, peak_mar, med_ls, mediate_obj, phe_mx, cov_df, K_chr, probs_obj, chr_id, sdp}{reactive arguments}
 }

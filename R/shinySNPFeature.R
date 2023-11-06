@@ -2,7 +2,7 @@
 #'
 #' Shiny module for scan1 analysis and plots, with interfaces \code{shinySNPFeatureInput}, \code{shinySNPFeatureUI} and  \code{shinySNPFeatureOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param snp_par,chr_pos,snp_scan_obj,top_snps_tbl,snpinfo,gene_exon_tbl,snp_action reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -12,7 +12,7 @@
 #' @importFrom dplyr distinct
 #' @importFrom qtl2pattern merge_feature
 #' @importFrom ggplot2 autoplot
-#' @importFrom shiny NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   selectInput
 #'   dataTableOutput plotOutput uiOutput
 #'   renderDataTable renderPlot renderUI
@@ -22,11 +22,10 @@
 #' @importFrom utils write.csv
 #' @importFrom grDevices dev.off pdf   
 #'   
-shinySNPFeature <- function(input, output, session,
-                            snp_par, chr_pos, 
-                            snp_scan_obj, snpinfo, top_snps_tbl, 
-                            gene_exon_tbl, 
+shinySNPFeature <- function(id, snp_par, chr_pos, snp_scan_obj, snpinfo,
+                            top_snps_tbl, gene_exon_tbl, 
                             snp_action = shiny::reactive({"basic"})) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   top_feature <- shiny::reactive({
@@ -91,6 +90,7 @@ shinySNPFeature <- function(input, output, session,
       grDevices::dev.off()
     }
   )
+})
 }
 
 shinySNPFeatureInput <- function(id) {

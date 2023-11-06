@@ -2,7 +2,7 @@
 #'
 #' Shiny module for phenotype selection, with interfaces \code{shinySetupInput} and  \code{shinySetupUI}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param pheno_typer,peaks_tbl,pmap_obj,analyses_tbl,cov_df,projects_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -14,18 +14,18 @@
 #' @importFrom gdata humanReadable
 #' @importFrom dplyr arrange desc distinct filter mutate one_of select 
 #' @importFrom tidyr unite
-#' @importFrom shiny callModule NS reactive req 
+#' @importFrom shiny moduleServer NS reactive req 
 #'   radioButtons selectInput
 #'   dataTableOutput textOutput uiOutput
 #'   renderDataTable renderText renderUI
 #'   observeEvent
 #'   strong tagList
-shinySetup <- function(input, output, session,
-                       pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, 
+shinySetup <- function(id, pheno_typer, peaks_tbl, pmap_obj, analyses_tbl, 
                        cov_df, projects_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
-  project_info <- shiny::callModule(shinyProject, "project", projects_info)
+  project_info <- shinyProject("project", projects_info)
   
   # Select phenotype dataset
   pheno_group <- shiny::reactive({
@@ -97,9 +97,8 @@ shinySetup <- function(input, output, session,
   })
   
   ## Locate Peak.
-  win_par <- shiny::callModule(shinyPeaks, "shinypeaks",
-                         input, pheno_type, peaks_tbl, pmap_obj, 
-                         project_info)
+  win_par <- shinyPeaks("shinypeaks", input, pheno_type, peaks_tbl, pmap_obj, 
+                        project_info)
   
   chr_pos <- shiny::reactive({
     shiny::req(project_info())
@@ -134,9 +133,7 @@ shinySetup <- function(input, output, session,
   })
   
   ## Use window as input to shinyPhenos.
-  shiny::callModule(shinyPhenos, "phenos",
-             input, win_par, peaks_df, analyses_tbl, cov_df,
-             project_info)
+  shinyPhenos("phenos", input, win_par, peaks_df, analyses_tbl, cov_df, project_info)
   
   ## Setup input logic.
   output$project_name <- renderUI({
@@ -191,6 +188,7 @@ shinySetup <- function(input, output, session,
     list(project_info = project_info(),
          pheno_names = input$pheno_names,
          win_par = win_par)
+  })
   })
 }
 shinySetupInput <- function(id) {

@@ -2,7 +2,7 @@
 #'
 #' Shiny module for peaks selection, with interfaces \code{shinyPeaksInput}, \code{shinyPeaksUI} and  \code{shinyPeaksOutput}.
 #'
-#' @param input,output,session standard shiny arguments
+#' @param id identifier for shiny reactive
 #' @param set_par,pheno_type,peaks_tbl,pmap_obj,project_info reactive arguments
 #'
 #' @author Brian S Yandell, \email{brian.yandell@@wisc.edu}
@@ -13,7 +13,7 @@
 #' @export
 #' 
 #' @importFrom dplyr distinct filter
-#' @importFrom shiny callModule NS req 
+#' @importFrom shiny moduleServer NS req 
 #'   selectInput sliderInput updateSelectInput updateSliderInput textInput
 #'   numericInput updateNumericInput
 #'   uiOutput
@@ -22,9 +22,9 @@
 #'   fluidRow column strong tagList
 #' @importFrom rlang .data
 #'    
-shinyPeaks <- function(input, output, session,
-                       set_par, pheno_type, peaks_tbl, pmap_obj, 
+shinyPeaks <- function(id, set_par, pheno_type, peaks_tbl, pmap_obj, 
                        project_info) {
+  shiny::moduleServer(id, function(input, output, session) {
   ns <- session$ns
 
   shiny::observeEvent(project_info(), {
@@ -79,8 +79,7 @@ shinyPeaks <- function(input, output, session,
     shiny::textInput(ns("chr_pos"), "pos", input$chr_pos)
   })
   
-  scan_tbl <- shiny::callModule(shinyHotspot, "hotspot",
-              set_par, pheno_type, peaks_tbl, pmap_obj, project_info)
+  scan_tbl <- shinyHotspot("hotspot", set_par, pheno_type, peaks_tbl, pmap_obj, project_info)
   
   shiny::observeEvent(scan_tbl(), {
     update_chr()
@@ -148,6 +147,7 @@ shinyPeaks <- function(input, output, session,
   
   ## Return.
   input
+})
 }
 
 shinyPeaksInput <- function(id) {
