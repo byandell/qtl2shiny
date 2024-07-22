@@ -58,8 +58,8 @@ Minor issues
 
 ### Who do I talk to? ###
 
-* [Brian Yandell](http://bitbucket.org/byandell)
-* [Karl Broman](http://bitbucket.org/kbroman)
+* [Brian Yandell](http://github.com/byandell)
+* [Karl Broman](http://github.com/kbroman)
   + [R/qtl2](https://cran.r-project.org/package=qtl2)
 
 ### Installation

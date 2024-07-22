@@ -76,7 +76,7 @@ V(net)[logic=="reactive"]
 Extract an edge list or matrix from igraph networks.
 
 ```{r}
-tbl_df(as_edgelist(net, names=T))
+tibble::as_tibble(as_edgelist(net, names=T))
 ```
 
 ```{r}
